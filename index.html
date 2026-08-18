@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 六核工坊 · 完整最终版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        body {
+            background: #f1f5f9;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            max-width: 1460px;
+            width: 100%;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0f172a, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .tabs {
+            display: flex;
+            gap: 4px;
+            background: white;
+            padding: 4px;
+            border-radius: 40px;
+            border: 1px solid #e2e8f0;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            border: none;
+            background: transparent;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .tab-btn.active-tab {
+            background: #0f172a;
+            color: white;
+        }
+        .tab-btn:hover:not(.active-tab) {
+            background: #e2e8f0;
+        }
+        .badge-save {
+            font-size: 12px;
+            color: #94a3b8;
+            background: #f1f5f9;
+            padding: 4px 14px;
+            border-radius: 30px;
+        }
+
+        .memory-collapse {
+            background: #f8fafc;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 18px;
+            padding: 0 16px;
+        }
+        .memory-collapse summary {
+            padding: 12px 0;
+            font-weight: 600;
+            font-size: 14px;
+            color: #0f172a;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .memory-collapse .form-group {
+            margin-bottom: 12px;
+        }
+        .memory-collapse .form-group:last-child {
+            margin-bottom: 16px;
+        }
+        .memory-collapse input,
+        .memory-collapse textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 13px;
+            background: white;
+        }
+        .memory-collapse input:focus,
+        .memory-collapse textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        .memory-collapse textarea {
+            min-height: 40px;
+            resize: vertical;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 26px;
+            align-items: start;
+        }
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 26px 28px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 3px;
+        }
+        .form-group label small {
+            font-weight: 400;
+            color: #94a3b8;
+            font-size: 12px;
+        }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+            background: #fafcff;
+            transition: 0.2s;
+            color: #0f172a;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
+        }
+        .form-group textarea {
+            min-height: 56px;
+            resize: vertical;
+        }
+        .form-group textarea.small {
+            min-height: 40px;
+        }
+        .row-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn-primary {
+            background: #0f172a;
+            color: white;
+            border: none;
+            padding: 11px 26px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.15s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-primary:hover {
+            background: #1e293b;
+            transform: scale(1.01);
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.15);
+        }
+        .btn-secondary {
+            background: white;
+            color: #1e293b;
+            border: 1.5px solid #e2e8f0;
+            padding: 11px 22px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .btn-secondary:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+        }
+        .btn-sm {
+            padding: 5px 14px;
+            font-size: 13px;
+            border-radius: 30px;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .btn-sm:hover {
+            background: #e2e8f0;
+        }
+        .btn-sm.primary-sm {
+            background: #0f172a;
+            color: white;
+            border-color: #0f172a;
+        }
+        .btn-sm.primary-sm:hover {
+            background: #1e293b;
+        }
+
+        .action-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+        .action-row .btn-primary {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .agent-card {
+            background: #0f172a;
+            border-radius: 18px;
+            padding: 16px 22px;
+            color: #e2e8f0;
+            margin-bottom: 20px;
+            border: 1px solid #334155;
+        }
+        .agent-card .label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+        .agent-identity {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            margin: 3px 0 2px;
+        }
+        .agent-desc {
+            color: #94a3b8;
+            font-size: 14px;
+            border-top: 1px solid #1e293b;
+            padding-top: 8px;
+            margin-top: 5px;
+        }
+
+        .output-box {
+            background: white;
+            border-radius: 18px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 22px;
+            border-bottom: 1px solid #f1f5f9;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .output-header h3 {
+            font-size: 14px;
+            color: #0f172a;
+        }
+        .output-tools {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        #promptDisplay {
+            padding: 22px;
+            font-size: 14px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 460px;
+            overflow-y: auto;
+            color: #1e293b;
+            background: #fafcff;
+        }
+        #promptDisplay:empty::before {
+            content: '👆 填写左侧参数，点击生成';
+            color: #94a3b8;
+            font-style: italic;
+        }
+        .char-counter {
+            padding: 6px 22px 12px;
+            text-align: right;
+            font-size: 12px;
+            color: #94a3b8;
+            border-top: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+        .tab-panel.active-panel {
+            display: block;
+        }
+
+        .strategy-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+        .strategy-grid .btn-sm {
+            background: #f8fafc;
+            border-color: #d1d9e6;
+        }
+        .strategy-grid .btn-sm.active-strategy {
+            background: #0f172a;
+            color: white;
+            border-color: #0f172a;
+        }
+
+        /* 工作流步骤样式 */
+        .wf-step-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .wf-step-item {
+            display: flex;
+            gap: 10px;
+            align-items: stretch;
+            background: #f8fafc;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            flex-wrap: wrap;
+        }
+        .wf-step-item .step-main {
+            flex: 3;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 180px;
+        }
+        .wf-step-item .step-main input,
+        .wf-step-item .step-main textarea {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 13px;
+            background: white;
+            font-family: inherit;
+        }
+        .wf-step-item .step-main textarea {
+            min-height: 44px;
+            resize: vertical;
+        }
+        .wf-step-item .step-tool-select {
+            flex: 1;
+            min-width: 130px;
+            padding: 6px 10px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 13px;
+            background: white;
+        }
+        .wf-step-item .btn-sm {
+            background: #fee2e2;
+            color: #dc2626;
+            border-color: #fecaca;
+            align-self: flex-start;
+            margin-top: 4px;
+        }
+        .wf-step-item .btn-sm:hover {
+            background: #fecaca;
+        }
+
+        /* 工作流输出块 */
+        .wf-block {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 16px 18px;
+            margin-bottom: 14px;
+            border-left: 5px solid #3b82f6;
+            position: relative;
+        }
+        .wf-block .wf-tool-tag {
+            display: inline-block;
+            background: #0f172a;
+            color: white;
+            padding: 2px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .wf-block .wf-content {
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 6px 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .wf-block .wf-content strong {
+            color: #0f172a;
+        }
+        .wf-block .copy-step-btn {
+            background: white;
+            border: 1px solid #d1d9e6;
+            padding: 4px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            cursor: pointer;
+            float: right;
+            margin-top: 4px;
+        }
+        .wf-block .copy-step-btn:hover {
+            background: #e2e8f0;
+        }
+
+        /* 历史模态框 */
+        .history-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+        }
+        .history-modal.open {
+            display: flex;
+        }
+        .history-panel {
+            background: white;
+            border-radius: 24px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            padding: 24px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+        }
+        .history-panel h3 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .history-panel h3 button {
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            color: #94a3b8;
+        }
+        .history-list {
+            overflow-y: auto;
+            flex: 1;
+        }
+        .history-item {
+            padding: 12px 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            border-left: 4px solid #3b82f6;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .history-item:hover {
+            background: #f1f5f9;
+        }
+        .history-item .h-time {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+        .history-item .h-preview {
+            font-size: 13px;
+            color: #1e293b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .history-empty {
+            color: #94a3b8;
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        @media (max-width: 1000px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .row-2col {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 480px) {
+            .card {
+                padding: 16px;
+            }
+            .action-row {
+                flex-direction: column;
+            }
+            .action-row .btn-primary {
+                width: 100%;
+            }
+            .tabs {
+                width: 100%;
+                justify-content: center;
+            }
+            .tab-btn {
+                padding: 5px 12px;
+                font-size: 12px;
+            }
+            .wf-step-item {
+                flex-direction: column;
+            }
+            .wf-step-item .step-tool-select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <h1>⚙️ 六核工坊 · 完整最终版</h1>
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                <div class="tabs">
+                    <button class="tab-btn active-tab" data-tab="prompt">🧠 提示词</button>
+                    <button class="tab-btn" data-tab="paper">📚 论文</button>
+                    <button class="tab-btn" data-tab="strategy">📊 策略</button>
+                    <button class="tab-btn" data-tab="mbti">🍸 MBTI</button>
+                    <button class="tab-btn" data-tab="workflow">🔗 工作流</button>
+                </div>
+                <span class="badge-save">💾 自动记忆</span>
+            </div>
+        </div>
+
+        <!-- 全局记忆 -->
+        <details class="memory-collapse" id="globalMemoryToggle">
+            <summary>🧠 全局记忆设置（默认角色 / 风格偏好）</summary>
+            <div class="form-group"><label>🎭 默认专家角色</label><input type="text" id="globalRole" placeholder="例：资深产品经理" /></div>
+            <div class="form-group"><label>🎨 默认语气/风格</label><textarea id="globalTone" placeholder="例：专业、数据驱动"></textarea></div>
+            <div style="font-size:12px; color:#94a3b8; margin-bottom:12px;">💡 设置后，每次生成都会自动带上这些偏好。</div>
+        </details>
+
+        <div class="grid">
+            <!-- ===== 左侧配置区 ===== -->
+            <div class="card">
+                <!-- 面板1：提示词 -->
+                <div id="panel-prompt" class="tab-panel active-panel">
+                    <div class="card-title">📋 配置智能体</div>
+                    <div style="margin-bottom:14px; display:flex; flex-wrap:wrap; gap:6px;">
+                        <button class="btn-sm" data-preset="xiaohongshu">📕小红书</button>
+                        <button class="btn-sm" data-preset="wechat">📰公众号</button>
+                        <button class="btn-sm" data-preset="python">🐍Python</button>
+                        <button class="btn-sm" data-preset="report">📊周报</button>
+                        <button class="btn-sm" onclick="clearPromptForm()" style="color:#ef4444;">✕清空</button>
+                    </div>
+                    <div class="form-group"><label>🎭 角色设定</label><input type="text" id="pRole" placeholder="例：资深美妆博主" /></div>
+                    <div class="form-group"><label>🎯 核心任务</label><textarea id="pTask" class="small" placeholder="例：写一篇推荐入门护肤品的笔记"></textarea></div>
+                    <div class="form-group"><label>📌 背景信息</label><textarea id="pBg" placeholder="例：受众20-25岁学生党"></textarea></div>
+                    <div class="form-group"><label>⚙️ 具体要求</label><textarea id="pReq" placeholder="例：活泼风格，300字"></textarea></div>
+                    <div class="form-group"><label>📎 参考示例</label><textarea id="pExample" class="small" placeholder="可选"></textarea></div>
+                    <div class="action-row">
+                        <button class="btn-primary" onclick="genPrompt()">✨ 生成提示词</button>
+                        <button class="btn-secondary" onclick="copyOutput()">📋 复制</button>
+                    </div>
+                </div>
+
+                <!-- 面板2：论文 -->
+                <div id="panel-paper" class="tab-panel">
+                    <div class="card-title">📚 论文生成 + 文献管理</div>
+                    <div class="form-group"><label>📝 论文题目</label><input type="text" id="paperTitle" placeholder="例：人工智能对高等教育的变革研究" /></div>
+                    <div class="row-2col">
+                        <div class="form-group"><label>🏷️ 关键词</label><input type="text" id="paperKeywords" placeholder="AI, 教育" /></div>
+                        <div class="form-group"><label>🏛️ 院系</label><input type="text" id="paperDept" placeholder="计算机学院" /></div>
+                    </div>
+                    <div class="row-2col">
+                        <div class="form-group"><label>📏 字数</label><select id="paperWords"><option value="3000">3000字</option><option value="5000" selected>5000字</option><option value="8000">8000字</option></select></div>
+                        <div class="form-group"><label>🎯 风格</label><select id="paperStyle"><option value="academic">严谨学术型</option><option value="applied" selected>应用实证型</option></select></div>
+                    </div>
+                    <div class="form-group"><label>📚 参考文献 (每行一条)</label><textarea id="paperRefs" class="small" placeholder="Smith, J. (2020). AI in Education."></textarea></div>
+                    <div class="form-group"><label>📌 额外要求</label><textarea id="paperExtra" class="small" placeholder="可选"></textarea></div>
+                    <div class="action-row">
+                        <button class="btn-primary" onclick="genPaper()">🚀 生成论文</button>
+                        <button class="btn-secondary" onclick="copyOutput()">📋 复制</button>
+                        <button class="btn-secondary" onclick="exportMarkdown()">⬇️ 导出MD</button>
+                    </div>
+                </div>
+
+                <!-- 面板3：策略 -->
+                <div id="panel-strategy" class="tab-panel">
+                    <div class="card-title">📊 商业与策略模板</div>
+                    <div class="strategy-grid">
+                        <button class="btn-sm active-strategy" data-strategy="swot">📈 SWOT分析</button>
+                        <button class="btn-sm" data-strategy="prd">📋 PRD</button>
+                        <button class="btn-sm" data-strategy="retro">🔄 项目复盘</button>
+                    </div>
+                    <div class="form-group"><label>🎯 项目名称</label><input type="text" id="sTitle" placeholder="例：在线协作白板" /></div>
+                    <div class="form-group"><label>📌 背景/痛点</label><textarea id="sBg" class="small" placeholder="例：竞品有Miro，我们的优势是集成飞书"></textarea></div>
+                    <div class="form-group"><label>📎 额外备注</label><textarea id="sExtra" class="small" placeholder="可选"></textarea></div>
+                    <div class="action-row">
+                        <button class="btn-primary" onclick="genStrategy()">🧠 生成文档</button>
+                        <button class="btn-secondary" onclick="copyOutput()">📋 复制</button>
+                    </div>
+                </div>
+
+                <!-- 面板4：MBTI调酒 -->
+                <div id="panel-mbti" class="tab-panel">
+                    <div class="card-title">🍸 MBTI人格调酒 · 专属特调</div>
+                    <div class="form-group"><label>🧬 人格类型</label>
+                        <select id="mbtiType">
+                            <option value="INTJ">INTJ · 建筑师</option><option value="INTP">INTP · 逻辑学家</option>
+                            <option value="ENTJ">ENTJ · 指挥官</option><option value="ENTP">ENTP · 辩论家</option>
+                            <option value="INFJ">INFJ · 提倡者</option><option value="INFP">INFP · 调停者</option>
+                            <option value="ENFJ">ENFJ · 主人公</option><option value="ENFP">ENFP · 竞选者</option>
+                            <option value="ISTJ">ISTJ · 物流师</option><option value="ISFJ">ISFJ · 守卫者</option>
+                            <option value="ESTJ">ESTJ · 总经理</option><option value="ESFJ">ESFJ · 执政官</option>
+                            <option value="ISTP">ISTP · 鉴赏家</option><option value="ISFP">ISFP · 探险家</option>
+                            <option value="ESTP">ESTP · 企业家</option><option value="ESFP">ESFP · 表演者</option>
+                        </select>
+                    </div>
+                    <div class="row-2col">
+                        <div class="form-group"><label>🍭 口味偏好</label><select id="mbtiFlavor"><option value="sweet">酸甜/果味</option><option value="bitter" selected>苦烈/干型</option><option value="fresh">清爽/草本</option><option value="spicy">辛辣/烟熏</option></select></div>
+                        <div class="form-group"><label>🍷 酒精度</label><select id="mbtiAbv"><option value="low">低度数</option><option value="medium" selected>中高度</option><option value="high">高度数</option></select></div>
+                    </div>
+                    <div class="form-group"><label>📝 场合/心情</label><input type="text" id="mbtiOccasion" placeholder="例：深夜独处、朋友派对..." /></div>
+                    <div class="action-row">
+                        <button class="btn-primary" onclick="genMBTI()">🍸 生成酒谱</button>
+                        <button class="btn-secondary" onclick="copyOutput()">📋 复制</button>
+                    </div>
+                </div>
+
+                <!-- ========== 🚀 面板5：工作流编排（详细指令版） ========== -->
+                <div id="panel-workflow" class="tab-panel">
+                    <div class="card-title">🔗 工作流编排 · 详细指令版</div>
+                    <div style="margin-bottom:12px; display:flex; flex-wrap:wrap; gap:6px;">
+                        <button class="btn-sm" onclick="loadWorkflowTemplate('app')">📱 App开发</button>
+                        <button class="btn-sm" onclick="loadWorkflowTemplate('music')">🎵 音乐项目</button>
+                        <button class="btn-sm" onclick="loadWorkflowTemplate('paper')">📚 论文写作</button>
+                    </div>
+                    <div class="form-group"><label>🎯 项目目标</label><input type="text" id="wfGoal" placeholder="例：做一个AI音乐生成器" /></div>
+                    <div class="form-group"><label>📌 全局背景</label><textarea id="wfContext" class="small" placeholder="例：风格是电子音乐，输出WAV"></textarea></div>
+                    <div style="font-weight:600; font-size:14px; color:#0f172a; margin:8px 0 6px;">⚙️ 工作流步骤 (含详细指令)</div>
+                    <div id="wfStepsContainer" class="wf-step-container">
+                        <!-- 动态由js生成 -->
+                    </div>
+                    <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
+                        <button class="btn-sm" onclick="addWorkflowStep()">➕ 添加步骤</button>
+                        <button class="btn-sm" onclick="clearWorkflowSteps()" style="color:#ef4444;">🗑️ 重置步骤</button>
+                    </div>
+                    <div class="action-row">
+                        <button class="btn-primary" onclick="genWorkflow()">🚀 生成路由包</button>
+                        <button class="btn-secondary" onclick="copyOutput()">📋 复制全部</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 右侧输出区 ===== -->
+            <div>
+                <div class="agent-card">
+                    <div class="label">🤖 当前智能体</div>
+                    <div class="agent-identity" id="agentIdentity">提示词工坊</div>
+                    <div class="agent-desc" id="agentDesc">配置左侧参数，生成标准提示词</div>
+                </div>
+
+                <div class="output-box">
+                    <div class="output-header">
+                        <h3 id="outputTitle">📄 输出预览</h3>
+                        <div class="output-tools">
+                            <button class="btn-sm primary-sm" onclick="expandCurrent()">✍️ 扩写</button>
+                            <button class="btn-sm" onclick="openHistory()">📜 历史</button>
+                            <button class="btn-sm" onclick="copyOutput()">📋 复制</button>
+                        </div>
+                    </div>
+                    <div id="promptDisplay"></div>
+                    <div class="char-counter">
+                        <span id="charCount">0 字符</span>
+                        <span style="font-size:11px; color:#94a3b8;">点击「历史」查看存档</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 历史模态框 -->
+    <div class="history-modal" id="historyModal">
+        <div class="history-panel">
+            <h3>📜 生成历史记录 <button onclick="closeHistory()">✕</button></h3>
+            <div class="history-list" id="historyList"><div class="history-empty">暂无历史记录。</div></div>
+            <div style="margin-top:12px; text-align:right;"><button class="btn-sm" onclick="clearHistory()" style="color:#ef4444;">🗑️ 清空历史</button></div>
+        </div>
+    </div>
+
+    <script>
+        // ================================================================
+        // 1. 预设数据（提示词）
+        // ================================================================
+        const PRESETS = {
+            xiaohongshu: { role: '资深美妆博主', task: '推荐“早C晚A”入门护肤品的小红书笔记', bg: '受众20-25岁学生党，卖点性价比', req: '活泼多Emoji，300字，含标题标签',
+                ex: '' },
+            wechat: { role: '财经科技主编', task: '写AI工具改变普通人工作流的公众号长文', bg: '受众25-40岁职场白领', req: '深度干货，分3小标题，1800字',
+                ex: '' },
+            python: { role: 'Python工程师', task: '爬取新闻标题的脚本', bg: '公开新闻门户，抓标题+时间', req: 'requests+BeautifulSoup，中文注释，输出CSV',
+                ex: '' },
+            report: { role: '项目经理', task: '润色工作周报', bg: '需求评审、联调、修复3个Bug', req: '正式专业，按项目推进/风险/计划三板块', ex: '' }
+        };
+        const STRATEGIES = { swot: 'SWOT分析', prd: '产品需求文档 (PRD)', retro: '项目复盘报告' };
+
+        // ================================================================
+        // 2. MBTI 酒库
+        // ================================================================
+        const MBTI_DRINKS = {
+            INTJ: { name: '干马天尼 · 逻辑秩序', base: '金酒 60ml，干味美思 10ml', ingredients: '橄榄 1颗，柠檬皮油',
+                steps: '1. 搅拌杯加冰，倒入金酒与干味美思。\n2. 搅拌至充分冰镇（约30秒）。\n3. 滤入冰镇马天尼杯。\n4. 柠檬皮挤油擦拭杯口，投入橄榄。',
+                philosophy: 'INTJ 崇尚简洁、精准与结构。' },
+            INTP: { name: '金汤力 · 理性气泡', base: '金酒 45ml，汤力水 120ml', ingredients: '青柠角 1个，杜松子',
+                steps: '1. 高球杯加满冰块。\n2. 倒入金酒，注入汤力水。\n3. 轻轻提拉搅拌，放入青柠角。', philosophy: 'INTP 的脑内永远在冒泡。' },
+            ENTJ: { name: '古典鸡尾酒 · 权力架构', base: '波本威士忌 60ml，方糖 1颗', ingredients: '安高天娜苦精 2滴，橙皮',
+                steps: '1. 古典杯中苦精浸透方糖捣碎。\n2. 加威士忌与冰块搅拌。\n3. 橙皮挤油装饰。', philosophy: 'ENTJ 是天然的架构师。' },
+            ENTP: { name: '内格罗尼 · 辩证之红', base: '金酒 30ml，金巴利 30ml，红味美思 30ml', ingredients: '橙皮 1片',
+                steps: '1. 老式杯加冰等量注入三种酒。\n2. 搅拌融合，橙皮挤油。', philosophy: 'ENTP 是思想的角斗场。' },
+            INFJ: { name: '大都会 · 静谧星辰', base: '伏特加 45ml，君度 15ml，蔓越莓汁 30ml，青柠汁 15ml', ingredients: '橙皮 1条',
+                steps: '1. 摇酒壶加冰混合。\n2. 用力摇匀。\n3. 双重过滤入杯，橙皮装饰。', philosophy: 'INFJ 是深邃的星空。' },
+            INFP: { name: '薰衣草金菲士 · 梦幻之雾', base: '金酒 45ml，薰衣草糖浆 15ml，青柠汁 20ml，苏打水', ingredients: '可食用薰衣草花',
+                steps: '1. 摇酒壶加冰混合。\n2. 摇匀滤入高球杯，加满苏打水。\n3. 撒上薰衣草花。', philosophy: 'INFP 活在理想主义的花园里。' },
+            ENFJ: { name: '墨西哥骡子 · 热烈鼓舞', base: '龙舌兰 45ml，姜汁啤酒 120ml，青柠汁 20ml', ingredients: '姜片，薄荷',
+                steps: '1. 铜杯加冰，倒入龙舌兰与青柠汁。\n2. 注满姜汁啤酒，轻搅。\n3. 姜片与薄荷装饰。', philosophy: 'ENFJ 是人群中的太阳。' },
+            ENFP: { name: '椰林飘香 · 无拘狂欢', base: '白朗姆 45ml，菠萝汁 90ml，椰浆 30ml', ingredients: '菠萝角，樱桃',
+                steps: '1. 搅拌机加冰打至冰沙状。\n2. 倒入冰镇飓风杯，装饰。', philosophy: 'ENFP 是永不枯竭的灵感喷泉。' },
+            ISTJ: { name: '威士忌酸 · 稳重之酸', base: '波本威士忌 50ml，柠檬汁 25ml，糖浆 15ml', ingredients: '蛋清 1个（可选），樱桃',
+                steps: '1. 干摇10秒。\n2. 加冰再摇12秒。\n3. 滤入古典杯，樱桃装饰。', philosophy: 'ISTJ 是值得信赖的基石。' },
+            ISFJ: { name: '贝里尼 · 温柔暖光', base: '白桃果泥 30ml，普洛赛克起泡酒 90ml', ingredients: '白桃切片',
+                steps: '1. 笛形杯倒入果泥。\n2. 缓慢注入起泡酒，轻搅。\n3. 白桃片装饰。', philosophy: 'ISFJ 的关怀如贝里尼的绵密果香。' },
+            ESTJ: { name: '教父 · 教条之威', base: '苏格兰威士忌 45ml，杏仁利口酒 15ml', ingredients: '橙皮',
+                steps: '1. 老式杯加冰。\n2. 注入威士忌与杏仁利口酒。\n3. 搅拌，橙皮挤油。', philosophy: 'ESTJ 是秩序的基石。' },
+            ESFJ: { name: '莫吉托 · 欢乐节拍', base: '白朗姆 45ml，青柠 半个，薄荷叶 10片，苏打水', ingredients: '蔗糖 2勺，薄荷枝',
+                steps: '1. 高球杯中薄荷与青柠、蔗糖捣碎。\n2. 加冰，注入朗姆，加满苏打水。\n3. 搅匀，薄荷枝装饰。', philosophy: 'ESFJ 是社交的核心。' },
+            ISTP: { name: '血腥玛丽 · 冒险之血', base: '伏特加 45ml，番茄汁 90ml，柠檬汁 15ml', ingredients: '辣酱 2滴，伍斯特酱，芹菜杆',
+                steps: '1. 高球杯加冰混合。\n2. 加入调味酱。\n3. 芹菜杆与柠檬角装饰。', philosophy: 'ISTP 是冷静的冒险家。' },
+            ISFP: { name: '水蜜桃贝里尼 · 感官极简', base: '白桃利口酒 30ml，普洛赛克 90ml', ingredients: '薄荷叶',
+                steps: '1. 笛形杯倒入利口酒。\n2. 缓慢注满起泡酒。\n3. 薄荷叶装饰。', philosophy: 'ISFP 用五感拥抱世界。' },
+            ESTP: { name: '长岛冰茶 · 混乱伪装', base: '金酒、朗姆、伏特加、龙舌兰、君度 各15ml，柠檬汁 25ml，糖浆 20ml，可乐',
+                ingredients: '柠檬角', steps: '1. 高球杯加冰混合。\n2. 加满可乐，柠檬角装饰。', philosophy: 'ESTP 是精明的伪装者。' },
+            ESFP: { name: '激情海岸 · 多巴胺浪潮', base: '伏特加 30ml，桃子利口酒 30ml，蔓越莓汁 60ml，菠萝汁 60ml',
+                ingredients: '橙片，樱桃', steps: '1. 摇酒壶加冰混合。\n2. 摇匀滤入冰镇高球杯。\n3. 橙片与樱桃装饰。', philosophy: 'ESFP 是行走的多巴胺。' }
+        };
+
+        // ================================================================
+        // 3. 工具列表（包含你提到的所有工具）
+        // ================================================================
+        const TOOL_OPTIONS = [
+            { value: '豆包', label: '🧠 豆包 (创意)' },
+            { value: 'DeepSeek', label: '💻 DeepSeek (代码/逻辑)' },
+            { value: '通义千问', label: '📝 通义千问 (润色/长文本)' },
+            { value: 'Ollama', label: '🖥️ Ollama (本地)' },
+            { value: '扣子(Coze)', label: '🤖 扣子 Coze' },
+            { value: 'Trae', label: '⚡ Trae' },
+            { value: 'Claude', label: '🌿 Claude' },
+            { value: 'kit up', label: '🎛️ kit up' },
+            { value: 'veclvcl', label: '🎚️ veclvcl' },
+            { value: 'Railway', label: '🚂 Railway' },
+            { value: '手动', label: '✋ 手动' }
+        ];
+
+        // ================================================================
+        // 4. DOM 引用
+        // ================================================================
+        const display = document.getElementById('promptDisplay');
+        const charCount = document.getElementById('charCount');
+        const agentIdentity = document.getElementById('agentIdentity');
+        const agentDesc = document.getElementById('agentDesc');
+        const outputTitle = document.getElementById('outputTitle');
+
+        const globalRole = document.getElementById('globalRole');
+        const globalTone = document.getElementById('globalTone');
+
+        const pRole = document.getElementById('pRole'),
+            pTask = document.getElementById('pTask'),
+            pBg = document.getElementById('pBg'),
+            pReq = document.getElementById('pReq'),
+            pExample = document.getElementById('pExample');
+        const paperTitle = document.getElementById('paperTitle'),
+            paperKeywords = document.getElementById('paperKeywords'),
+            paperDept = document.getElementById('paperDept'),
+            paperWords = document.getElementById('paperWords'),
+            paperStyle = document.getElementById('paperStyle'),
+            paperRefs = document.getElementById('paperRefs'),
+            paperExtra = document.getElementById('paperExtra');
+        const sTitle = document.getElementById('sTitle'),
+            sBg = document.getElementById('sBg'),
+            sExtra = document.getElementById('sExtra');
+        const mbtiType = document.getElementById('mbtiType'),
+            mbtiFlavor = document.getElementById('mbtiFlavor'),
+            mbtiAbv = document.getElementById('mbtiAbv'),
+            mbtiOccasion = document.getElementById('mbtiOccasion');
+        const wfGoal = document.getElementById('wfGoal');
+        const wfContext = document.getElementById('wfContext');
+        const wfStepsContainer = document.getElementById('wfStepsContainer');
+
+        let currentMode = 'prompt';
+        let currentOutput = '';
+        let historyData = [];
+        let workflowSteps = [];
+
+        // ================================================================
+        // 5. 历史记录
+        // ================================================================
+        function loadHistory() {
+            const raw = localStorage.getItem('genHistory');
+            if (raw) { try { historyData = JSON.parse(raw); } catch (e) { historyData = []; } } else historyData = [];
+        }
+
+        function saveHistory(content, mode) {
+            if (!content || content.length < 10) return;
+            const preview = content.replace(/\n/g, ' ').substring(0, 120);
+            const entry = { id: Date.now(), mode: mode, preview: preview, fullText: content, time: new Date()
+                    .toLocaleString() };
+            historyData.unshift(entry);
+            if (historyData.length > 50) historyData = historyData.slice(0, 50);
+            localStorage.setItem('genHistory', JSON.stringify(historyData));
+        }
+
+        function openHistory() {
+            const modal = document.getElementById('historyModal');
+            const list = document.getElementById('historyList');
+            if (historyData.length === 0) { list.innerHTML = '<div class="history-empty">暂无历史记录。</div>'; } else {
+                list.innerHTML = historyData.map((item, idx) => `
+                    <div class="history-item" onclick="restoreHistory(${idx})">
+                        <div class="h-time">${item.time} · ${item.mode}</div>
+                        <div class="h-preview">${item.preview}</div>
+                    </div>
+                `).join('');
+            }
+            modal.classList.add('open');
+        }
+
+        function closeHistory() { document.getElementById('historyModal').classList.remove('open'); }
+
+        function restoreHistory(index) {
+            const item = historyData[index];
+            if (item) {
+                display.innerHTML = item.fullText;
+                currentOutput = item.fullText;
+                charCount.textContent = `${item.fullText.length} 字符`;
+                closeHistory();
+            }
+        }
+
+        function clearHistory() {
+            if (confirm('确定清空所有历史记录吗？')) { historyData = [];
+                localStorage.removeItem('genHistory');
+                openHistory(); }
+        }
+        document.getElementById('historyModal').addEventListener('click', function(e) { if (e.target === this) closeHistory(); });
+
+        // ================================================================
+        // 6. 全局记忆
+        // ================================================================
+        function loadGlobalMemory() {
+            const raw = localStorage.getItem('globalMemory');
+            if (raw) { try { const d = JSON.parse(raw);
+                    globalRole.value = d.role || '';
+                    globalTone.value = d.tone || ''; } catch (e) {} }
+        }
+
+        function saveGlobalMemory() {
+            localStorage.setItem('globalMemory', JSON.stringify({ role: globalRole.value, tone: globalTone.value }));
+        }
+        globalRole.addEventListener('input', saveGlobalMemory);
+        globalTone.addEventListener('input', saveGlobalMemory);
+
+        function injectGlobalMemory(content) {
+            let prefix = '';
+            if (globalRole.value.trim()) prefix += `🎭 全局角色：${globalRole.value.trim()}\n`;
+            if (globalTone.value.trim()) prefix += `🎨 风格：${globalTone.value.trim()}\n`;
+            if (prefix) prefix += `\n---\n\n`;
+            return prefix + content;
+        }
+
+        // ================================================================
+        // 7. Tab 切换
+        // ================================================================
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab'));
+                this.classList.add('active-tab');
+                const tab = this.dataset.tab;
+                document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active-panel'));
+                document.getElementById('panel-' + tab).classList.add('active-panel');
+                currentMode = tab;
+                const map = {
+                    prompt: ['提示词工坊', '全局记忆自动注入', '📄 提示词预览', genPrompt],
+                    paper: ['📚 论文生成器', '文献管理 + 全局风格', '📄 论文大纲', genPaper],
+                    strategy: ['📊 策略模板', 'SWOT / PRD / 复盘', '📄 策略文档', genStrategy],
+                    mbti: ['🍸 MBTI调酒师', '人格 × 微醺科学', '🍸 专属酒谱', genMBTI],
+                    workflow: ['🔗 工作流编排器', '多工具路由 · 定制流程', '📋 路由提示词包', genWorkflow]
+                };
+                const m = map[tab];
+                if (m) { agentIdentity.textContent = m[0];
+                    agentDesc.textContent = m[1];
+                    outputTitle.textContent = m[2];
+                    m[3](); }
+            });
+        });
+
+        // ================================================================
+        // 8. 原有功能（提示词/论文/策略/MBTI）
+        // ================================================================
+        document.querySelectorAll('[data-preset]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const d = PRESETS[this.dataset.preset];
+                if (!d) return;
+                pRole.value = d.role || '';
+                pTask.value = d.task || '';
+                pBg.value = d.bg || '';
+                pReq.value = d.req || '';
+                pExample.value = d.ex || '';
+                savePromptLocal();
+                genPrompt();
+            });
+        });
+
+        function clearPromptForm() {
+            ['pRole', 'pTask', 'pBg', 'pReq', 'pExample'].forEach(id => document.getElementById(id).value = '');
+            savePromptLocal();
+            genPrompt();
+        }
+
+        function genPrompt() {
+            let r = '';
+            const finalRole = pRole.value.trim() || globalRole.value.trim();
+            if (finalRole) r += `> **角色设定**：${finalRole}\n\n`;
+            if (pTask.value.trim()) r += `> **核心任务**：${pTask.value.trim()}\n\n`;
+            if (pBg.value.trim()) r += `> **背景信息**：${pBg.value.trim()}\n\n`;
+            if (pReq.value.trim()) r += `> **具体要求**：${pReq.value.trim()}\n\n`;
+            if (pExample.value.trim()) r += `> **参考示例**：${pExample.value.trim()}`;
+            if (globalTone.value.trim() && r) r += `\n\n> **全局风格**：${globalTone.value.trim()}`;
+            if (!r) { display.innerHTML = '⚠️ 请填写字段或选择预设。';
+                charCount.textContent = '0 字符';
+                currentOutput = ''; return; }
+            display.innerHTML = r;
+            currentOutput = r;
+            charCount.textContent = `${r.length} 字符`;
+            savePromptLocal();
+            saveHistory(r, '提示词');
+        }
+
+        function savePromptLocal() {
+            localStorage.setItem('promptForm', JSON.stringify({ role: pRole.value, task: pTask.value, bg: pBg.value, req: pReq
+                    .value, ex: pExample.value }));
+        }
+        [pRole, pTask, pBg, pReq, pExample].forEach(el => el.addEventListener('input', () => { savePromptLocal();
+            genPrompt(); }));
+
+        function genPaper() {
+            const title = paperTitle.value.trim();
+            if (!title) { display.innerHTML = '⚠️ 请输入论文题目。';
+                charCount.textContent = '0 字符';
+                currentOutput = ''; return; }
+            const refsRaw = paperRefs.value.trim().split('\n').filter(r => r.trim());
+            const style = paperStyle.value;
+            const tone = globalTone.value.trim();
+            let full = `# ${title}\n\n**摘要**：聚焦“${title}”。\n\n## 1. 引言\n## 2. 文献综述\n`;
+            if (refsRaw.length > 0) full += refsRaw.map((r, i) => `${i+1}. ${r}`).join('\n');
+            full += `\n\n## 3. 方法论 (${style})\n## 4. 讨论\n## 5. 结论\n\n## 参考文献\n`;
+            if (tone) full = `🎨 风格：${tone}\n\n` + full;
+            full += `\n\n> 当前约 ${full.length} 字符。`;
+            display.innerHTML = full;
+            currentOutput = full;
+            charCount.textContent = `${full.length} 字符`;
+            savePaperLocal();
+            saveHistory(full, '论文');
+        }
+
+        function savePaperLocal() {
+            localStorage.setItem('paperForm', JSON.stringify({ title: paperTitle.value, keywords: paperKeywords.value,
+                    dept: paperDept.value, words: paperWords.value, style: paperStyle.value, refs: paperRefs.value,
+                    extra: paperExtra.value }));
+        }
+        [paperTitle, paperKeywords, paperDept, paperWords, paperStyle, paperRefs, paperExtra].forEach(el => {
+            el.addEventListener('input', savePaperLocal);
+            el.addEventListener('change', savePaperLocal);
+        });
+
+        let currentStrategy = 'swot';
+        document.querySelectorAll('[data-strategy]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('[data-strategy]').forEach(b => b.classList.remove('active-strategy'));
+                this.classList.add('active-strategy');
+                currentStrategy = this.dataset.strategy;
+                genStrategy();
+            });
+        });
+
+        function genStrategy() {
+            const title = sTitle.value.trim() || '未命名项目';
+            const bg = sBg.value.trim() || '（补充背景）';
+            const extra = sExtra.value.trim();
+            const role = globalRole.value.trim();
+            let content = `# ${STRATEGIES[currentStrategy] || '策略'}：${title}\n\n`;
+            if (role) content += `🎭 角色：${role}\n\n`;
+            content += `**背景**：${bg}\n\n`;
+            if (currentStrategy === 'swot') content += `## SWOT矩阵\n|优势|劣势|\n|技术壁垒|品牌认知|\n|机会|威胁|\n|市场增速|巨头竞争|`;
+            else if (currentStrategy === 'prd') content += `## PRD\nP0 核心A，P1 辅助B。`;
+            else if (currentStrategy === 'retro') content += `## 复盘\n亮点：协作高效。不足：需求变更。`;
+            if (extra) content += `\n\n### 备注\n${extra}`;
+            display.innerHTML = content;
+            currentOutput = content;
+            charCount.textContent = `${content.length} 字符`;
+            saveStrategyLocal();
+            saveHistory(content, '策略');
+        }
+
+        function saveStrategyLocal() {
+            localStorage.setItem('strategyForm', JSON.stringify({ title: sTitle.value, bg: sBg.value, extra: sExtra.value,
+                    type: currentStrategy }));
+        }
+        [sTitle, sBg, sExtra].forEach(el => {
+            el.addEventListener('input', saveStrategyLocal);
+            el.addEventListener('change', saveStrategyLocal);
+        });
+
+        function genMBTI() {
+            const type = mbtiType.value;
+            const drink = MBTI_DRINKS[type];
+            if (!drink) { display.innerHTML = '⚠️ 未找到该人格的酒谱。'; return; }
+            const flavor = mbtiFlavor.value;
+            const abv = mbtiAbv.value;
+            const occasion = mbtiOccasion.value.trim();
+            const flavorMap = { sweet: '酸甜果香', bitter: '苦烈干型', fresh: '清爽草本', spicy: '辛辣烟熏' };
+            const abvMap = { low: '微醺低度', medium: '中度舒适', high: '浓烈高度' };
+            let output = `### 🍸 ${drink.name}\n\n🧬 **${type}**\n🍭 ${flavorMap[flavor]} · ${abvMap[abv]}\n`;
+            if (occasion) output += `📝 ${occasion}\n`;
+            output += `\n**基酒**：${drink.base}\n**配料**：${drink.ingredients}\n\n**步骤**：\n${drink.steps}\n\n**哲学**：${drink.philosophy}`;
+            display.innerHTML = output;
+            currentOutput = output;
+            charCount.textContent = `${output.length} 字符`;
+            saveHistory(output, 'MBTI调酒');
+        }
+
+        // ================================================================
+        // 9. 🚀 工作流编排（详细指令版）
+        // ================================================================
+        function loadWorkflowTemplate(type) {
+            let steps = [];
+            if (type === 'app') {
+                steps = [
+                    { name: '需求分析与创意', tool: '豆包', detail: '描述核心功能、用户故事、差异化亮点。' },
+                    { name: '技术架构设计', tool: 'DeepSeek', detail: '选择前端框架、后端语言、数据库，画出架构图。' },
+                    { name: '核心代码实现', tool: 'DeepSeek', detail: '实现主要API接口和UI交互逻辑，附带单元测试。' },
+                    { name: 'UI交互打磨', tool: '通义千问', detail: '优化页面样式、动效、响应式适配。' },
+                    { name: '本地功能验证', tool: 'Ollama', detail: '运行Ollama模型进行功能验证和性能调优。' },
+                    { name: '部署上线', tool: 'Railway', detail: '配置环境变量，执行 railway up 部署。' }
+                ];
+                wfGoal.value = '做一个MBTI人格调酒Web应用';
+                wfContext.value = '目标用户Z世代，数据本地存储，界面活泼。';
+            } else if (type === 'music') {
+                steps = [
+                    { name: '音乐风格与概念', tool: '豆包', detail: '确定电子/氛围/实验风格，制定情绪基调与BPM范围。' },
+                    { name: 'Web Audio 引擎搭建', tool: 'DeepSeek',
+                    detail: '1. 安装依赖：npm install web-audio-api-ts\n2. 初始化 AudioContext：const ctx = new AudioContext()\n3. 编写振荡器+滤波器基础播放示例。' },
+                    { name: '网易云歌单导入', tool: '手动',
+                    detail: '1. 登录网易云获取歌单ID\n2. 使用 NeteaseCloudMusicApi 拉取歌曲列表\n3. 提取BPM和调性元数据。' },
+                    { name: 'AI 旋律生成', tool: '通义千问',
+                    detail: '输入和弦走向（如 Am-F-C-G），使用AI生成4小节MIDI，导出为JSON格式。' },
+                    { name: '混音与音色设计', tool: 'kit up / veclvcl',
+                    detail: '1. 使用kit up加载采样并编排节奏\n2. 使用veclvcl调整EQ、压缩和立体声宽度\n3. 导出WAV格式成品。' },
+                    { name: '服务化部署', tool: 'Railway',
+                    detail: '1. 将生成器封装为Node.js服务\n2. 编写Dockerfile\n3. 执行 railway login 和 railway deploy 发布。' }
+                ];
+                wfGoal.value = 'AI音乐生成器（电子风格）';
+                wfContext.value = '输出格式WAV，BPM 128，调性C大调。';
+            } else if (type === 'paper') {
+                steps = [
+                    { name: '选题与文献检索', tool: '豆包', detail: '查找10篇核心文献，提炼研究空白和切入点。' },
+                    { name: '论文框架构建', tool: 'DeepSeek', detail: '制定详细大纲，包括引言、文献综述、方法、结果、讨论。' },
+                    { name: '初稿扩写', tool: '通义千问', detail: '根据框架逐段扩写，每段不少于300字，插入数据图表占位。' },
+                    { name: '润色与降重', tool: 'Claude', detail: '优化句式，提升学术性，使用同义替换降低重复率。' },
+                    { name: '格式校验', tool: '手动', detail: '检查引用格式（APA/GB）、图表编号、页眉页脚。' }
+                ];
+                wfGoal.value = 'AI对教育影响的实证研究';
+                wfContext.value = '目标期刊：CSSCI，需量化数据支撑。';
+            }
+            renderWorkflowSteps(steps);
+            saveWorkflowLocal();
+        }
+
+        function renderWorkflowSteps(steps) {
+            workflowSteps = steps || [];
+            wfStepsContainer.innerHTML = '';
+            workflowSteps.forEach((step, index) => {
+                const div = document.createElement('div');
+                div.className = 'wf-step-item';
+                div.innerHTML = `
+                    <span style="font-weight:700;font-size:14px;min-width:30px;align-self:center;">${index+1}.</span>
+                    <div class="step-main">
+                        <input type="text" class="wf-step-name" value="${step.name}" placeholder="步骤名称" />
+                        <textarea class="wf-step-detail" placeholder="详细操作指令（安装/调用/部署等）" rows="2">${step.detail || ''}</textarea>
+                    </div>
+                    <select class="step-tool-select">
+                        ${TOOL_OPTIONS.map(t => `<option value="${t.value}" ${t.value===step.tool?'selected':''}>${t.label}</option>`).join('')}
+                    </select>
+                    <button class="btn-sm" onclick="removeWorkflowStep(${index})">✕</button>
+                `;
+                wfStepsContainer.appendChild(div);
+            });
+            wfStepsContainer.querySelectorAll('.wf-step-name, .wf-step-detail, .step-tool-select').forEach(el => {
+                el.addEventListener('change', saveWorkflowLocal);
+                el.addEventListener('input', saveWorkflowLocal);
+            });
+        }
+
+        function addWorkflowStep() {
+            workflowSteps.push({ name: '新步骤', tool: 'DeepSeek', detail: '' });
+            renderWorkflowSteps(workflowSteps);
+            saveWorkflowLocal();
+        }
+
+        function removeWorkflowStep(index) {
+            workflowSteps.splice(index, 1);
+            renderWorkflowSteps(workflowSteps);
+            saveWorkflowLocal();
+        }
+
+        function clearWorkflowSteps() {
+            if (confirm('重置所有步骤吗？')) {
+                workflowSteps = [];
+                renderWorkflowSteps(workflowSteps);
+                saveWorkflowLocal();
+            }
+        }
+
+        function collectWorkflowFromUI() {
+            const items = wfStepsContainer.querySelectorAll('.wf-step-item');
+            const steps = [];
+            items.forEach(item => {
+                const name = item.querySelector('.wf-step-name').value.trim() || '未命名';
+                const tool = item.querySelector('.step-tool-select').value;
+                const detail = item.querySelector('.wf-step-detail').value.trim();
+                steps.push({ name, tool, detail });
+            });
+            return steps;
+        }
+
+        function saveWorkflowLocal() {
+            const steps = collectWorkflowFromUI();
+            localStorage.setItem('workflowData', JSON.stringify({
+                goal: wfGoal.value,
+                context: wfContext.value,
+                steps: steps
+            }));
+        }
+
+        function loadWorkflowLocal() {
+            const raw = localStorage.getItem('workflowData');
+            if (raw) {
+                try {
+                    const d = JSON.parse(raw);
+                    wfGoal.value = d.goal || '';
+                    wfContext.value = d.context || '';
+                    if (d.steps && d.steps.length > 0) {
+                        renderWorkflowSteps(d.steps);
+                        return;
+                    }
+                } catch (e) {}
+            }
+            // 默认加载音乐模板（契合你的需求）
+            loadWorkflowTemplate('music');
+        }
+
+        function genWorkflow() {
+            const goal = wfGoal.value.trim() || '未命名项目';
+            const context = wfContext.value.trim();
+            const steps = collectWorkflowFromUI();
+            if (steps.length === 0) {
+                display.innerHTML = '⚠️ 请至少添加一个步骤。';
+                charCount.textContent = '0 字符';
+                currentOutput = '';
+                return;
+            }
+
+            let htmlOutput = `<div style="margin-bottom:16px; font-weight:700; font-size:18px;">🔗 工作流路由包：${goal}</div>`;
+            if (context) htmlOutput += `<div style="margin-bottom:14px; padding:8px 16px; background:#eef2ff; border-radius:10px;">📌 全局上下文：${context}</div>`;
+
+            steps.forEach((step, idx) => {
+                const toolLabel = TOOL_OPTIONS.find(t => t.value === step.tool)?.label || step.tool;
+                const taskContent = `【步骤 ${idx+1}】${step.name}`;
+                const detailContent = step.detail || '（无详细指令）';
+                htmlOutput += `
+                    <div class="wf-block" data-step-idx="${idx}">
+                        <div class="wf-tool-tag">${toolLabel}</div>
+                        <div class="wf-content">
+                            <strong>🎯 任务：</strong>${taskContent}<br>
+                            <strong>📝 操作指令：</strong><br>${detailContent.replace(/\n/g, '<br>')}
+                        </div>
+                        <button class="copy-step-btn" onclick="copyStepContent(this)">📋 复制此步骤</button>
+                    </div>
+                `;
+            });
+
+            display.innerHTML = htmlOutput;
+            currentOutput = htmlOutput;
+            charCount.textContent = `${htmlOutput.length} 字符`;
+            saveHistory(htmlOutput, '工作流');
+            saveWorkflowLocal();
+        }
+
+        // 复制单个步骤（在输出区域内）
+        function copyStepContent(btn) {
+            const block = btn.closest('.wf-block');
+            const contentDiv = block.querySelector('.wf-content');
+            // 提取纯文本（包括任务和指令）
+            const text = contentDiv.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const orig = btn.textContent;
+                btn.textContent = '✅ 已复制!';
+                setTimeout(() => btn.textContent = orig, 1500);
+            }).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                alert('复制成功！');
+            });
+        }
+
+        // ================================================================
+        // 10. 通用工具（扩写 / 复制 / 导出）
+        // ================================================================
+        function expandCurrent() {
+            const text = display.innerText;
+            if (!text || text.includes('请填写')) { alert('请先生成有效内容。'); return; }
+            const preview = text.substring(0, 600);
+            const prompt =
+                `请将以下内容扩写到500字以上，保持逻辑与风格：\n\n---\n${preview}\n---\n\n要求：丰富论据，深化分析。`;
+            navigator.clipboard.writeText(prompt).then(() => alert('✅ 扩写提示词已复制！')).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = prompt;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                alert('扩写提示词已复制！');
+            });
+        }
+
+        function copyOutput() {
+            const text = display.innerText;
+            if (!text || text.includes('请填写')) { alert('没有可复制的内容。'); return; }
+            navigator.clipboard.writeText(text).then(() => alert('✅ 已复制！')).catch(() => {
+                const range = document.createRange();
+                range.selectNode(display);
+                window.getSelection().removeAllRanges();
+                window.getSelection().addRange(range);
+                document.execCommand('copy');
+                alert('复制成功！');
+            });
+        }
+
+        function exportMarkdown() {
+            const text = display.innerText;
+            if (!text || text.includes('请填写')) { alert('没有可导出的内容。'); return; }
+            const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            const t = paperTitle.value.trim() || '文档';
+            link.download = `${t}.md`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        }
+
+        // ================================================================
+        // 11. 启动加载
+        // ================================================================
+        function loadAll() {
+            loadHistory();
+            loadGlobalMemory();
+
+            // 提示词
+            const pRaw = localStorage.getItem('promptForm');
+            if (pRaw) { try { const d = JSON.parse(pRaw);
+                    pRole.value = d.role || '';
+                    pTask.value = d.task || '';
+                    pBg.value = d.bg || '';
+                    pReq.value = d.req || '';
+                    pExample.value = d.ex || ''; } catch (e) {} }
+            // 论文
+            const ppRaw = localStorage.getItem('paperForm');
+            if (ppRaw) { try { const d = JSON.parse(ppRaw);
+                    paperTitle.value = d.title || '';
+                    paperKeywords.value = d.keywords || '';
+                    paperDept.value = d.dept || '';
+                    if (d.words) paperWords.value = d.words;
+                    if (d.style) paperStyle.value = d.style;
+                    paperRefs.value = d.refs || '';
+                    paperExtra.value = d.extra || ''; } catch (e) {} }
+            // 策略
+            const sRaw = localStorage.getItem('strategyForm');
+            if (sRaw) { try { const d = JSON.parse(sRaw);
+                    sTitle.value = d.title || '';
+                    sBg.value = d.bg || '';
+                    sExtra.value = d.extra || '';
+                    if (d.type) { currentStrategy = d.type;
+                        document.querySelectorAll('[data-strategy]').forEach(b => { b.classList.toggle('active-strategy', b
+                                .dataset.strategy === d.type); }); } } catch (e) {} }
+
+            // 工作流（自动加载本地保存的步骤）
+            loadWorkflowLocal();
+
+            // 激活默认Tab
+            const activeTab = document.querySelector('.tab-btn.active-tab');
+            if (activeTab) {
+                const tab = activeTab.dataset.tab;
+                document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active-panel'));
+                document.getElementById('panel-' + tab).classList.add('active-panel');
+                if (tab === 'prompt') genPrompt();
+                else if (tab === 'paper') genPaper();
+                else if (tab === 'strategy') genStrategy();
+                else if (tab === 'mbti') genMBTI();
+                else if (tab === 'workflow') genWorkflow();
+            } else { genPrompt(); }
+        }
+        loadAll();
+    </script>
+</body>
+</html>
