@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧠 智能工坊 · 修复版</title>
+    <title>⚙️ 智能工坊 · Y.Mine Agent Studio</title>
     <style>
         /* ========== CSS 变量（深色/浅色） ========== */
         :root {
@@ -121,7 +121,7 @@
 <body>
 <div class="container">
     <div class="header">
-        <h1>⚙️ 智能工坊 · 修复版</h1>
+        <h1>⚙️ 智能工坊 · Y.Mine Agent Studio</h1>
         <div class="header-actions">
             <button class="btn-sm" onclick="toggleTheme()" id="themeToggle">🌙 深色</button>
             <button class="btn-sm" onclick="exportData()">📤 导出配置</button>
@@ -129,7 +129,7 @@
             <input type="file" id="importFileInput" class="hidden-file-input" accept=".json" onchange="importData(event)">
             <div class="tabs">
                 <button class="tab-btn active-tab" data-tab="prompt">🧠 提示词</button>
-                <button class="tab-btn" data-tab="paper">📚 论文</button>
+                <button class="tab-btn" data-tab="paper">📚 长文写作</button>
                 <button class="tab-btn" data-tab="strategy">📊 策略</button>
                 <button class="tab-btn" data-tab="mbti">🍸 MBTI</button>
                 <button class="tab-btn" data-tab="workflow">🔗 工作流</button>
@@ -165,8 +165,8 @@
             </div>
             <!-- 论文 -->
             <div id="panel-paper" class="tab-panel">
-                <div class="card-title">📚 论文生成 + 文献管理</div>
-                <div class="form-group"><label>📝 论文题目</label><input type="text" id="paperTitle" placeholder="例：人工智能对高等教育的变革研究" /></div>
+                <div class="card-title">📚 长文写作 + 文献管理</div>
+                <div class="form-group"><label>📝 文章题目</label><input type="text" id="paperTitle" placeholder="例：人工智能对高等教育的变革研究" /></div>
                 <div class="row-2col">
                     <div class="form-group"><label>🏷️ 关键词</label><input type="text" id="paperKeywords" placeholder="AI, 教育" /></div>
                     <div class="form-group"><label>🏛️ 院系</label><input type="text" id="paperDept" placeholder="计算机学院" /></div>
@@ -177,7 +177,7 @@
                 </div>
                 <div class="form-group"><label>📚 参考文献 (每行一条)</label><textarea id="paperRefs" class="small" placeholder="Smith, J. (2020). AI in Education."></textarea></div>
                 <div class="form-group"><label>📌 额外要求</label><textarea id="paperExtra" class="small" placeholder="可选"></textarea></div>
-                <div class="action-row"><button class="btn-primary" onclick="genPaper()">🚀 生成论文</button><button class="btn-secondary" onclick="copyOutput()">📋 复制</button><button class="btn-secondary" onclick="exportMarkdown()">⬇️ 导出MD</button></div>
+                <div class="action-row"><button class="btn-primary" onclick="genPaper()">🚀 生成文稿</button><button class="btn-secondary" onclick="copyOutput()">📋 复制</button><button class="btn-secondary" onclick="exportMarkdown()">⬇️ 导出MD</button></div>
             </div>
             <!-- 策略 -->
             <div id="panel-strategy" class="tab-panel">
@@ -220,7 +220,7 @@
                 <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
                     <button class="btn-sm" onclick="loadWorkflowTemplate('app')">📱 App开发</button>
                     <button class="btn-sm" onclick="loadWorkflowTemplate('music')">🎵 音乐项目</button>
-                    <button class="btn-sm" onclick="loadWorkflowTemplate('paper')">📚 论文写作</button>
+                    <button class="btn-sm" onclick="loadWorkflowTemplate('paper')">📚 长文写作</button>
                     <button class="btn-sm" onclick="toggleWorkflowView()">📊 导图视图</button>
                 </div>
                 <div class="form-group"><label>🎯 项目目标</label><input type="text" id="wfGoal" placeholder="例：做一个AI音乐生成器" /></div>
@@ -436,7 +436,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
         currentMode = tab;
         const map = {
             prompt: ['提示词工坊','全局记忆自动注入','📄 提示词预览'],
-            paper: ['📚 论文生成器','文献管理 + 全局风格','📄 论文大纲'],
+            paper: ['📚 长文写作器','文献管理 + 全局风格','📄 写作大纲'],
             strategy: ['📊 策略模板','SWOT / PRD / 复盘','📄 策略文档'],
             mbti: ['🍸 MBTI调酒师','人格 × 微醺科学','🍸 专属酒谱'],
             workflow: ['🔗 工作流编排器','多工具路由 · 定制流程','📋 路由提示词包'],
@@ -484,7 +484,7 @@ function savePromptLocal() {
 [pRole, pTask, pBg, pReq, pExample].forEach(el => el.addEventListener('input', ()=>{ savePromptLocal(); genPrompt(); }));
 
 // ================================================================
-// 8. 论文生成器
+// 8. 长文写作器
 // ================================================================
 function genPaper() {
     const title = paperTitle.value.trim();
@@ -901,7 +901,7 @@ function loadAll() {
         else if (tab === 'knowledge') renderKB();
         const map = {
             prompt: ['提示词工坊','全局记忆自动注入','📄 提示词预览'],
-            paper: ['📚 论文生成器','文献管理 + 全局风格','📄 论文大纲'],
+            paper: ['📚 长文写作器','文献管理 + 全局风格','📄 写作大纲'],
             strategy: ['📊 策略模板','SWOT / PRD / 复盘','📄 策略文档'],
             mbti: ['🍸 MBTI调酒师','人格 × 微醺科学','🍸 专属酒谱'],
             workflow: ['🔗 工作流编排器','多工具路由 · 定制流程','📋 路由提示词包'],
@@ -916,5 +916,6 @@ function loadAll() {
 // 启动
 loadAll();
 </script>
+<a href="https://hellomind-star.github.io/ymine-validation-hub/" target="_blank" rel="noopener" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(15,17,26,.85);border:1px solid rgba(168,85,247,.4);color:#c4b5fd;font-size:12px;font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;text-decoration:none;backdrop-filter:blur(6px);opacity:.7;transition:opacity .2s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='.7'">🌌 Y.Mine 应用矩阵 · 返回作品集</a>
 </body>
 </html>
