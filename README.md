@@ -103,6 +103,25 @@ Merged automatically on next scan.
 
 Disclaimer: auxiliary reference only, NOT legal advice. Human review required.
 
+
+## 4.2 Business Chart Cards (new)
+
+7th tab: fill data -> get a chart -> export. Pure hand-written SVG,
+zero dependency, no network, no third-party lib.
+
+| Chart | Input | Output |
+|---|---|---|
+| SWOT 2x2 | 4 text areas, one item per line | 4-quadrant board, color coded |
+| Competitor Positioning Map | X/Y axis names + "name,x,y" points | scatter map, 0-10 coords |
+| User Persona Card | name / age / job / goals / pains / quote | profile card, 4 color themes |
+| Conversion Funnel | "stage,value" lines | funnel with step + overall rate |
+
+Export: SVG (editable in Figma/PPT) and PNG (2x resolution).
+Data is saved in localStorage like everything else.
+
+Jump button: Strategy tab -> "Chart Card" auto-maps the current
+framework to a chart type and prefills the project name.
+
 ## 5. Data
 
 - Stored in browser localStorage, key `ym_studio_v1`

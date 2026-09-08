@@ -179,6 +179,15 @@ textarea{resize:vertical;min-height:74px;line-height:1.7;}
 }
 .preview .ph{color:var(--soft);}
 
+/* ============ 图卡 ============ */
+.chartwrap{
+  border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--bg-soft);
+  min-height:320px;display:flex;align-items:center;justify-content:center;overflow:auto;
+}
+.chartph{text-align:center;color:var(--soft);font-size:13px;line-height:1.9;}
+.chartwrap svg{max-width:100%;height:auto;display:block;background:#fff;border-radius:8px;}
+.chartform textarea{min-height:84px;}
+
 /* ============ 内容包 ============ */
 .packs{padding:48px 20px 56px;background:var(--bg-soft);border-top:1px solid var(--line);}
 .packs__inner{max-width:960px;margin:0 auto;}
@@ -269,6 +278,7 @@ textarea{resize:vertical;min-height:74px;line-height:1.7;}
   <button class="tab" data-tab="persona"><span class="tab__name">🍸 品牌人格</span><span class="tab__desc">调性指南 · 彩蛋玩法</span></button>
   <button class="tab" data-tab="flow"><span class="tab__name">🔗 营销工作流</span><span class="tab__desc">6 步编排 · 自动跑通</span></button>
   <button class="tab" data-tab="kb"><span class="tab__name">📚 品牌知识库</span><span class="tab__desc">卖点 · 竞品 · 违禁词</span></button>
+  <button class="tab" data-tab="chart"><span class="tab__name">📊 商业图卡</span><span class="tab__desc">填数据 · 出图导出</span></button>
 </nav>
 
 <!-- ===================== 主体 ===================== -->
@@ -422,6 +432,7 @@ textarea{resize:vertical;min-height:74px;line-height:1.7;}
       <div class="row">
         <button class="btn btn--primary" id="btnGenStrat">🧠 生成文档</button>
         <button class="btn btn--ghost" id="btnCopyAll2">📋 复制</button>
+        <button class="btn btn--ghost" id="btnStratChart">📊 配图卡</button>
       </div>
     </section>
 
@@ -504,9 +515,79 @@ textarea{resize:vertical;min-height:74px;line-height:1.7;}
       </div>
     </section>
 
-  </main>
+    <!-- ===== 商业图卡 ===== -->
+    <section class="panel" data-panel="chart">
+      <h2 class="panel__hd">📊 商业图卡 · 填数据出图</h2>
+      <p class="panel__sub">纯本地渲染，不联网。填完即可预览，支持导出 SVG（可编辑）与 PNG（2 倍图）。</p>
 
-  <!-- ---------- 右栏 ---------- -->
+      <label class="f"><span>选择图卡</span></label>
+      <div class="chips" id="chartChips" style="margin-bottom:14px"></div>
+
+      <!-- SWOT -->
+      <div class="chartform" id="cfSwot">
+        <div class="grid2">
+          <label class="f"><span>💪 优势 S（每行一条）</span><textarea id="sw_s" placeholder="品牌知名度高&#10;供应链成熟"></textarea></label>
+          <label class="f"><span>🔻 劣势 W（每行一条）</span><textarea id="sw_w" placeholder="渠道单一&#10;复购率低"></textarea></label>
+          <label class="f"><span>🌱 机会 O（每行一条）</span><textarea id="sw_o" placeholder="下沉市场增长&#10;品类教育完成"></textarea></label>
+          <label class="f"><span>⚠️ 威胁 T（每行一条）</span><textarea id="sw_t" placeholder="头部品牌降价&#10;替代品涌现"></textarea></label>
+        </div>
+        <label class="f"><span>📌 标题</span><input type="text" id="sw_title" placeholder="例：Y.Mine 2026 SWOT 分析"></label>
+      </div>
+
+      <!-- 定位地图 -->
+      <div class="chartform" id="cfPos" style="display:none">
+        <div class="grid2">
+          <label class="f"><span>↔️ X 轴（向右增强）</span><input type="text" id="pm_x" placeholder="例：价格高端化"></label>
+          <label class="f"><span>↕️ Y 轴（向上增强）</span><input type="text" id="pm_y" placeholder="例：功能专业度"></label>
+        </div>
+        <label class="f"><span>📌 标题</span><input type="text" id="pm_title" placeholder="例：竞品定位地图"></label>
+        <label class="f"><span>📍 品牌点位（每行一个，格式：名称,X,Y）</span>
+          <textarea id="pm_pts" style="min-height:110px" placeholder="Y.Mine,7,8&#10;竞品A,3,6&#10;竞品B,8,3&#10;竞品C,5,5"></textarea>
+        </label>
+        <p class="hint" style="margin-top:-6px">X / Y 取值 0-10，从左下角 (0,0) 算起。</p>
+      </div>
+
+      <!-- 用户画像 -->
+      <div class="chartform" id="cfPersona" style="display:none">
+        <div class="grid2">
+          <label class="f"><span>👤 姓名 / 代称</span><input type="text" id="pe_name" placeholder="例：林晓"></label>
+          <label class="f"><span>🎂 年龄 / 城市</span><input type="text" id="pe_age" placeholder="例：29 岁 · 上海"></label>
+          <label class="f"><span>💼 职业 / 身份</span><input type="text" id="pe_job" placeholder="例：美妆品牌市场经理"></label>
+          <label class="f"><span>🎨 配色</span>
+            <select id="pe_color">
+              <option value="indigo">靛蓝</option><option value="rose">玫红</option>
+              <option value="teal">青绿</option><option value="amber">琥珀</option>
+            </select>
+          </label>
+        </div>
+        <label class="f"><span>🎯 目标（每行一条）</span><textarea id="pe_goal" placeholder="做出能刷屏的种草内容&#10;控制获客成本"></textarea></label>
+        <label class="f"><span>😖 痛点（每行一条）</span><textarea id="pe_pain" placeholder="违禁词拿不准，反复改稿&#10;竞品动态跟不过来"></textarea></label>
+        <label class="f"><span>💬 一句原声（会放大展示）</span><input type="text" id="pe_quote" placeholder="例：我要的是能直接发的稿，不是一堆建议"></label>
+        <label class="f"><span>🛒 常用渠道</span><input type="text" id="pe_ch" placeholder="例：小红书 / 抖音 / 私域社群"></label>
+      </div>
+
+      <!-- 漏斗 -->
+      <div class="chartform" id="cfFunnel" style="display:none">
+        <label class="f"><span>📌 标题</span><input type="text" id="fu_title" placeholder="例：投放转化漏斗"></label>
+        <label class="f"><span>🔻 各环节（每行：名称,数值，从上到下）</span>
+          <textarea id="fu_stages" style="min-height:130px" placeholder="曝光,120000&#10;点击,9600&#10;加购,2400&#10;下单,720&#10;复购,180"></textarea>
+        </label>
+        <p class="hint" style="margin-top:-6px">自动计算各环节转化率与整体转化率。</p>
+      </div>
+
+      <div class="row" style="margin-bottom:14px">
+        <button class="btn btn--primary" id="btnDrawChart">🎨 生成图卡</button>
+        <button class="btn btn--ghost" id="btnChartSvg">⬇️ 导出 SVG</button>
+        <button class="btn btn--ghost" id="btnChartPng">🖼️ 导出 PNG</button>
+        <button class="btn btn--ghost" id="btnChartData">📋 复制数据</button>
+      </div>
+
+      <div class="chartwrap" id="chartWrap">
+        <div class="chartph">👈 填好上方数据，点「🎨 生成图卡」<br><br>图卡纯本地渲染，不经过任何服务器</div>
+      </div>
+    </section>
+
+  </main>
   <aside>
     <div class="card">
       <div class="card__hd">📄 输出预览 <span id="charCount" style="font-weight:400;color:var(--soft);font-size:12px">0 字符</span></div>
@@ -586,6 +667,13 @@ var state = {
   strat:{name:'',bg:'',extra:''},
   persona:{type:'INTJ · 建筑师',flavor:'酸甜/果味',abv:'中高度',occ:''},
   flow:{goal:'',bg:'',steps:[]},
+  chart:{
+    type:'swot',
+    swot:{s:'',w:'',o:'',t:'',title:''},
+    pos:{x:'',y:'',title:'',pts:''},
+    persona:{name:'',age:'',job:'',color:'indigo',goal:'',pain:'',quote:'',ch:''},
+    funnel:{title:'',stages:''}
+  },
   kb:{folders:[
     {name:'品牌资产',docs:[]},{name:'竞品素材',docs:[]},
     {name:'用户原声',docs:[]},
@@ -1092,6 +1180,390 @@ function renderSteps(){
   });
 }
 
+/* ============================================================
+ * 商业图卡引擎 —— 手写 SVG，零依赖，可导出
+ * ============================================================ */
+var CHART_TYPES = [
+  {k:'swot',    n:'🎯 SWOT 四象限', d:'策略分析经典框架'},
+  {k:'pos',     n:'🗺️ 竞品定位地图', d:'二维坐标看竞争格局'},
+  {k:'persona', n:'👤 用户画像卡', d:'调研结论一图说清'},
+  {k:'funnel',  n:'🔻 转化漏斗', d:'自动算各环节转化率'}
+];
+
+/* 工具：转义 SVG 文本 */
+function esc(s){
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+/* 工具：按行拆分并去掉空行 */
+function lines(s){
+  return String(s || '').split('\n').map(function(x){ return x.trim(); })
+    .filter(function(x){ return x.length; });
+}
+/* 工具：SVG 内文本自动换行（按字符数粗暴折行，中文够用） */
+function wrapText(text, per){
+  var out = [], cur = '';
+  for(var i=0;i<text.length;i++){
+    cur += text[i];
+    if(cur.length >= per){ out.push(cur); cur = ''; }
+  }
+  if(cur) out.push(cur);
+  return out.length ? out : [''];
+}
+
+/* ---------- 1. SWOT 四象限 ---------- */
+function svgSwot(d){
+  var W = 880, H = 660, pad = 24, gap = 12;
+  var title = d.title || 'SWOT 分析';
+  var headH = 62;
+  var qW = (W - pad*2 - gap) / 2;
+  var qH = (H - pad*2 - headH - gap) / 2;
+  var quads = [
+    {k:'s', label:'S 优势 Strengths', items:lines(d.s), c:'#10b981', bg:'#ecfdf5', x:pad, y:pad+headH},
+    {k:'w', label:'W 劣势 Weaknesses', items:lines(d.w), c:'#f59e0b', bg:'#fffbeb', x:pad+qW+gap, y:pad+headH},
+    {k:'o', label:'O 机会 Opportunities', items:lines(d.o), c:'#3b82f6', bg:'#eff6ff', x:pad, y:pad+headH+qH+gap},
+    {k:'t', label:'T 威胁 Threats', items:lines(d.t), c:'#ef4444', bg:'#fef2f2', x:pad+qW+gap, y:pad+headH+qH+gap}
+  ];
+  var s = '<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" font-family="PingFang SC,Microsoft YaHei,Hiragino Sans GB,sans-serif">';
+  s += '<rect width="'+W+'" height="'+H+'" fill="#ffffff"/>';
+  s += '<text x="'+pad+'" y="'+(pad+30)+'" font-size="24" font-weight="700" fill="#16161d">'+esc(title)+'</text>';
+  s += '<line x1="'+pad+'" y1="'+(pad+44)+'" x2="'+(W-pad)+'" y2="'+(pad+44)+'" stroke="#e8e8ef" stroke-width="1"/>';
+
+  quads.forEach(function(q){
+    s += '<rect x="'+q.x+'" y="'+q.y+'" width="'+qW+'" height="'+qH+'" rx="12" fill="'+q.bg+'" stroke="'+q.c+'" stroke-opacity="0.35"/>';
+    s += '<rect x="'+q.x+'" y="'+q.y+'" width="6" height="'+qH+'" rx="3" fill="'+q.c+'"/>';
+    s += '<text x="'+(q.x+20)+'" y="'+(q.y+30)+'" font-size="16" font-weight="700" fill="'+q.c+'">'+esc(q.label)+'</text>';
+    var iy = q.y + 62;
+    var maxChars = Math.floor((qW - 44) / 13);
+    q.items.slice(0, 7).forEach(function(it){
+      var rows = wrapText(it, maxChars);
+      rows.forEach(function(r, ri){
+        if(ri === 0){
+          s += '<circle cx="'+(q.x+24)+'" cy="'+(iy-5)+'" r="3" fill="'+q.c+'" fill-opacity="0.7"/>';
+        }
+        s += '<text x="'+(q.x+34)+'" y="'+iy+'" font-size="13" fill="#33333f">'+esc(r)+'</text>';
+        iy += 21;
+      });
+      iy += 5;
+    });
+    if(!q.items.length){
+      s += '<text x="'+(q.x+24)+'" y="'+(q.y+62)+'" font-size="13" fill="#9a9aae">（未填写）</text>';
+    }
+  });
+  s += '</svg>';
+  return s;
+}
+
+/* ---------- 2. 竞品定位地图 ---------- */
+function svgPos(d){
+  var W = 880, H = 700, pad = 70;
+  var title = d.title || '竞品定位地图';
+  var xLabel = d.x || '维度 X', yLabel = d.y || '维度 Y';
+  var pts = [];
+  lines(d.pts).forEach(function(l){
+    var p = l.split(/[,，]/);
+    var name = (p[0]||'').trim();
+    var x = parseFloat(p[1]), y = parseFloat(p[2]);
+    if(!name) return;
+    if(isNaN(x)) x = 5; if(isNaN(y)) y = 5;
+    x = Math.max(0, Math.min(10, x)); y = Math.max(0, Math.min(10, y));
+    pts.push({name:name, x:x, y:y});
+  });
+  var pw = W - pad - 40, ph = H - pad - 60;
+  var X = function(v){ return pad + (v/10) * pw; };
+  var Y = function(v){ return H - pad - (v/10) * ph; };
+  var palette = ['#6366f1','#ef4444','#f59e0b','#10b981','#3b82f6','#a855f7','#ec4899','#14b8a6'];
+
+  var s = '<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" font-family="PingFang SC,Microsoft YaHei,sans-serif">';
+  s += '<rect width="'+W+'" height="'+H+'" fill="#ffffff"/>';
+  s += '<text x="'+pad+'" y="46" font-size="24" font-weight="700" fill="#16161d">'+esc(title)+'</text>';
+
+  // 网格
+  s += '<rect x="'+pad+'" y="'+(H-pad-ph)+'" width="'+pw+'" height="'+ph+'" fill="#fcfcfe" stroke="#e8e8ef"/>';
+  for(var i=1;i<10;i++){
+    s += '<line x1="'+X(i)+'" y1="'+(H-pad-ph)+'" x2="'+X(i)+'" y2="'+(H-pad)+'" stroke="#f0f0f6"/>';
+    s += '<line x1="'+pad+'" y1="'+Y(i)+'" x2="'+(pad+pw)+'" y2="'+Y(i)+'" stroke="#f0f0f6"/>';
+  }
+  // 中位十字
+  s += '<line x1="'+X(5)+'" y1="'+(H-pad-ph)+'" x2="'+X(5)+'" y2="'+(H-pad)+'" stroke="#c7c7d4" stroke-dasharray="5 5"/>';
+  s += '<line x1="'+pad+'" y1="'+Y(5)+'" x2="'+(pad+pw)+'" y2="'+Y(5)+'" stroke="#c7c7d4" stroke-dasharray="5 5"/>';
+  // 轴
+  s += '<line x1="'+pad+'" y1="'+(H-pad)+'" x2="'+(pad+pw+14)+'" y2="'+(H-pad)+'" stroke="#9a9aae" stroke-width="1.5"/>';
+  s += '<line x1="'+pad+'" y1="'+(H-pad)+'" x2="'+pad+'" y2="'+(H-pad-ph-14)+'" stroke="#9a9aae" stroke-width="1.5"/>';
+  s += '<text x="'+(pad+pw/2)+'" y="'+(H-pad+42)+'" font-size="14" font-weight="600" fill="#6b6b7b" text-anchor="middle">'+esc(xLabel)+' →</text>';
+  s += '<text x="'+(pad-46)+'" y="'+(H-pad-ph/2)+'" font-size="14" font-weight="600" fill="#6b6b7b" text-anchor="middle" transform="rotate(-90 '+(pad-46)+' '+(H-pad-ph/2)+')">'+esc(yLabel)+' →</text>';
+
+  // 象限浅标签
+  s += '<text x="'+(pad+14)+'" y="'+(H-pad-12)+'" font-size="11" fill="#c7c7d4">低 / 低</text>';
+  s += '<text x="'+(pad+pw-14)+'" y="'+(H-pad-ph+22)+'" font-size="11" fill="#c7c7d4" text-anchor="end">高 / 高</text>';
+
+  // 点位
+  pts.forEach(function(p, i){
+    var c = palette[i % palette.length];
+    var cx = X(p.x), cy = Y(p.y);
+    s += '<circle cx="'+cx+'" cy="'+cy+'" r="22" fill="'+c+'" fill-opacity="0.15"/>';
+    s += '<circle cx="'+cx+'" cy="'+cy+'" r="9" fill="'+c+'"/>';
+    s += '<text x="'+cx+'" y="'+(cy-32)+'" font-size="14" font-weight="700" fill="'+c+'" text-anchor="middle">'+esc(p.name)+'</text>';
+    s += '<text x="'+cx+'" y="'+(cy+4)+'" font-size="9" fill="#ffffff" text-anchor="middle" font-weight="700">'+(i+1)+'</text>';
+  });
+  if(!pts.length){
+    s += '<text x="'+(pad+pw/2)+'" y="'+(H-pad-ph/2)+'" font-size="14" fill="#9a9aae" text-anchor="middle">（请在左侧填写品牌点位）</text>';
+  }
+  s += '</svg>';
+  return s;
+}
+
+/* ---------- 3. 用户画像卡 ---------- */
+function svgPersona(d){
+  var W = 760, H = 560, pad = 34;
+  var th = {
+    indigo:{c:'#6366f1', bg:'#eef2ff'}, rose:{c:'#f43f5e', bg:'#fff1f2'},
+    teal:{c:'#14b8a6', bg:'#f0fdfa'}, amber:{c:'#f59e0b', bg:'#fffbeb'}
+  }[d.color || 'indigo'];
+  var name = d.name || '用户画像';
+  var initial = name.slice(0, 1);
+
+  var s = '<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" font-family="PingFang SC,Microsoft YaHei,sans-serif">';
+  s += '<rect width="'+W+'" height="'+H+'" fill="#ffffff"/>';
+  s += '<rect x="0" y="0" width="'+W+'" height="8" fill="'+th.c+'"/>';
+
+  // 头部
+  s += '<circle cx="'+(pad+38)+'" cy="'+(pad+40)+'" r="38" fill="'+th.bg+'" stroke="'+th.c+'" stroke-width="2"/>';
+  s += '<text x="'+(pad+38)+'" y="'+(pad+52)+'" font-size="34" font-weight="700" fill="'+th.c+'" text-anchor="middle">'+esc(initial)+'</text>';
+  s += '<text x="'+(pad+92)+'" y="'+(pad+30)+'" font-size="24" font-weight="700" fill="#16161d">'+esc(name)+'</text>';
+  var meta = [d.age, d.job].filter(Boolean).join(' · ');
+  if(meta) s += '<text x="'+(pad+92)+'" y="'+(pad+56)+'" font-size="14" fill="#6b6b7b">'+esc(meta)+'</text>';
+  if(d.ch) s += '<text x="'+(pad+92)+'" y="'+(pad+78)+'" font-size="13" fill="#9a9aae">渠道：'+esc(d.ch)+'</text>';
+
+  var y = pad + 122;
+  // 目标
+  s += '<text x="'+pad+'" y="'+y+'" font-size="14" font-weight="700" fill="#10b981">🎯 目标</text>';
+  y += 26;
+  lines(d.goal).slice(0,4).forEach(function(g){
+    s += '<circle cx="'+(pad+6)+'" cy="'+(y-4)+'" r="3" fill="#10b981"/>';
+    s += '<text x="'+(pad+18)+'" y="'+y+'" font-size="13.5" fill="#33333f">'+esc(g)+'</text>';
+    y += 24;
+  });
+  y += 14;
+  // 痛点
+  s += '<text x="'+pad+'" y="'+y+'" font-size="14" font-weight="700" fill="#ef4444">😖 痛点</text>';
+  y += 26;
+  lines(d.pain).slice(0,4).forEach(function(g){
+    s += '<circle cx="'+(pad+6)+'" cy="'+(y-4)+'" r="3" fill="#ef4444"/>';
+    s += '<text x="'+(pad+18)+'" y="'+y+'" font-size="13.5" fill="#33333f">'+esc(g)+'</text>';
+    y += 24;
+  });
+
+  // 原声
+  if(d.quote){
+    var qy = H - pad - 26;
+    s += '<rect x="'+pad+'" y="'+(qy-52)+'" width="'+(W-pad*2)+'" height="82" rx="10" fill="'+th.bg+'"/>';
+    s += '<rect x="'+pad+'" y="'+(qy-52)+'" width="4" height="82" rx="2" fill="'+th.c+'"/>';
+    var qrows = wrapText('“' + d.quote + '”', Math.floor((W-pad*2-40)/15));
+    qrows.slice(0,3).forEach(function(r, i){
+      s += '<text x="'+(pad+22)+'" y="'+(qy-18+i*24)+'" font-size="14.5" font-style="italic" fill="#16161d">'+esc(r)+'</text>';
+    });
+  }
+  s += '</svg>';
+  return s;
+}
+
+/* ---------- 4. 转化漏斗 ---------- */
+function svgFunnel(d){
+  var st = [];
+  lines(d.stages).forEach(function(l){
+    var p = l.split(/[,，]/);
+    var name = (p[0]||'').trim();
+    var v = parseFloat(String(p[1]||'').replace(/[^\d.]/g,''));
+    if(!name) return;
+    if(isNaN(v)) v = 0;
+    st.push({name:name, v:v});
+  });
+  var W = 760, baseH = 150;
+  var H = Math.max(360, baseH + st.length * 88);
+  var pad = 40;
+  var title = d.title || '转化漏斗';
+  var topW = W - pad*2 - 60;
+
+  var s = '<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" font-family="PingFang SC,Microsoft YaHei,sans-serif">';
+  s += '<rect width="'+W+'" height="'+H+'" fill="#ffffff"/>';
+  s += '<text x="'+pad+'" y="46" font-size="24" font-weight="700" fill="#16161d">'+esc(title)+'</text>';
+
+  if(!st.length){
+    s += '<text x="'+(W/2)+'" y="'+(H/2)+'" font-size="14" fill="#9a9aae" text-anchor="middle">（请在左侧填写环节与数值）</text>';
+    s += '</svg>'; return s;
+  }
+  var maxV = st[0].v || Math.max.apply(null, st.map(function(x){return x.v;})) || 1;
+  var colors = ['#6366f1','#8b5cf6','#a855f7','#c026d3','#ec4899','#f43f5e'];
+  var y0 = 90, lh = 76;
+
+  st.forEach(function(stage, i){
+    var ratio = maxV ? (stage.v / maxV) : 0;
+    ratio = Math.max(0.16, Math.min(1, ratio));
+    var w = topW * ratio;
+    var cx = W / 2;
+    var c = colors[i % colors.length];
+    var top = y0 + i * lh;
+
+    // 梯形：上宽 = 当前，下宽 = 下一层
+    var nextRatio = (i+1 < st.length && maxV) ? Math.max(0.16, Math.min(1, st[i+1].v / maxV)) : ratio * 0.86;
+    var wTop = w, wBot = topW * nextRatio;
+    s += '<path d="M '+(cx-wTop/2)+' '+top+' L '+(cx+wTop/2)+' '+top+' L '+(cx+wBot/2)+' '+(top+lh-10)+' L '+(cx-wBot/2)+' '+(top+lh-10)+' Z" fill="'+c+'" fill-opacity="0.88"/>';
+    s += '<text x="'+cx+'" y="'+(top+30)+'" font-size="15" font-weight="700" fill="#ffffff" text-anchor="middle">'+esc(stage.name)+'</text>';
+    s += '<text x="'+cx+'" y="'+(top+52)+'" font-size="13" fill="#ffffff" fill-opacity="0.9" text-anchor="middle">'+stage.v.toLocaleString('en-US')+'</text>';
+
+    // 转化率标注
+    if(i > 0 && st[i-1].v){
+      var r = (stage.v / st[i-1].v * 100);
+      s += '<rect x="'+(cx+wTop/2+16)+'" y="'+(top+14)+'" width="90" height="26" rx="13" fill="#f1f5f9"/>';
+      s += '<text x="'+(cx+wTop/2+61)+'" y="'+(top+32)+'" font-size="12.5" font-weight="700" fill="'+c+'" text-anchor="middle">'+r.toFixed(1)+'%</text>';
+    }
+  });
+
+  // 整体转化率
+  if(st.length > 1 && st[0].v){
+    var overall = (st[st.length-1].v / st[0].v * 100);
+    s += '<text x="'+(W/2)+'" y="'+(H-24)+'" font-size="14" fill="#6b6b7b" text-anchor="middle">整体转化率 '+overall.toFixed(2)+'%（'+st[0].name+' → '+st[st.length-1].name+'）</text>';
+  }
+  s += '</svg>';
+  return s;
+}
+
+/* ---------- 图卡：读取表单 -> 生成 SVG ---------- */
+var lastSvg = '';
+function readChartData(){
+  var t = state.chart.type;
+  if(t === 'swot'){
+    return {type:'swot', data:{
+      s:$('#sw_s').value, w:$('#sw_w').value, o:$('#sw_o').value,
+      t:$('#sw_t').value, title:$('#sw_title').value
+    }, svg:function(){ return svgSwot(this.data); }};
+  }
+  if(t === 'pos'){
+    return {type:'pos', data:{
+      x:$('#pm_x').value, y:$('#pm_y').value, title:$('#pm_title').value, pts:$('#pm_pts').value
+    }, svg:function(){ return svgPos(this.data); }};
+  }
+  if(t === 'persona'){
+    return {type:'persona', data:{
+      name:$('#pe_name').value, age:$('#pe_age').value, job:$('#pe_job').value,
+      color:$('#pe_color').value, goal:$('#pe_goal').value, pain:$('#pe_pain').value,
+      quote:$('#pe_quote').value, ch:$('#pe_ch').value
+    }, svg:function(){ return svgPersona(this.data); }};
+  }
+  return {type:'funnel', data:{
+    title:$('#fu_title').value, stages:$('#fu_stages').value
+  }, svg:function(){ return svgFunnel(this.data); }};
+}
+function saveChartData(){
+  var t = state.chart.type;
+  if(t==='swot') state.chart.swot = {s:$('#sw_s').value,w:$('#sw_w').value,o:$('#sw_o').value,t:$('#sw_t').value,title:$('#sw_title').value};
+  if(t==='pos') state.chart.pos = {x:$('#pm_x').value,y:$('#pm_y').value,title:$('#pm_title').value,pts:$('#pm_pts').value};
+  if(t==='persona') state.chart.persona = {name:$('#pe_name').value,age:$('#pe_age').value,job:$('#pe_job').value,color:$('#pe_color').value,goal:$('#pe_goal').value,pain:$('#pe_pain').value,quote:$('#pe_quote').value,ch:$('#pe_ch').value};
+  if(t==='funnel') state.chart.funnel = {title:$('#fu_title').value,stages:$('#fu_stages').value};
+  save();
+}
+function drawChart(){
+  var c = readChartData();
+  var svg = c.svg();
+  lastSvg = svg;
+  var wrap = $('#chartWrap');
+  wrap.innerHTML = svg;
+  saveChartData();
+  toast('已生成 ' + (CHART_TYPES.filter(function(x){return x.k===c.type;})[0]||{}).n);
+}
+function showChartForm(){
+  var t = state.chart.type;
+  $('#cfSwot').style.display    = t==='swot' ? '' : 'none';
+  $('#cfPos').style.display     = t==='pos' ? '' : 'none';
+  $('#cfPersona').style.display = t==='persona' ? '' : 'none';
+  $('#cfFunnel').style.display  = t==='funnel' ? '' : 'none';
+}
+function renderChartChips(){
+  var host = $('#chartChips'); if(!host) return;
+  host.innerHTML = '';
+  CHART_TYPES.forEach(function(t){
+    var b = document.createElement('button');
+    b.className = 'chip' + (state.chart.type === t.k ? ' is-on' : '');
+    b.textContent = t.n; b.title = t.d;
+    b.onclick = function(){
+      saveChartData();
+      state.chart.type = t.k;
+      restoreChart();
+      renderChartChips();
+      $('#chartWrap').innerHTML = '<div class="chartph">👈 数据已切换，点「🎨 生成图卡」重新出图</div>';
+      save();
+    };
+    host.appendChild(b);
+  });
+}
+function restoreChart(){
+  var c = state.chart;
+  $('#sw_s').value = c.swot.s||''; $('#sw_w').value = c.swot.w||'';
+  $('#sw_o').value = c.swot.o||''; $('#sw_t').value = c.swot.t||'';
+  $('#sw_title').value = c.swot.title||'';
+  $('#pm_x').value = c.pos.x||''; $('#pm_y').value = c.pos.y||'';
+  $('#pm_title').value = c.pos.title||''; $('#pm_pts').value = c.pos.pts||'';
+  $('#pe_name').value = c.persona.name||''; $('#pe_age').value = c.persona.age||'';
+  $('#pe_job').value = c.persona.job||''; $('#pe_color').value = c.persona.color||'indigo';
+  $('#pe_goal').value = c.persona.goal||''; $('#pe_pain').value = c.persona.pain||'';
+  $('#pe_quote').value = c.persona.quote||''; $('#pe_ch').value = c.persona.ch||'';
+  $('#fu_title').value = c.funnel.title||''; $('#fu_stages').value = c.funnel.stages||'';
+  showChartForm();
+}
+/* 导出 SVG */
+function exportSvg(){
+  if(!lastSvg){ toast('请先生成图卡'); return; }
+  var blob = new Blob([lastSvg], {type:'image/svg+xml;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ym-chart-' + state.chart.type + '-' + Date.now() + '.svg';
+  a.click(); toast('已导出 SVG（可编辑）');
+}
+/* 导出 PNG（2 倍图） */
+function exportPng(){
+  if(!lastSvg){ toast('请先生成图卡'); return; }
+  var m = lastSvg.match(/width="(\d+)"/); var m2 = lastSvg.match(/height="(\d+)"/);
+  var w = m ? parseInt(m[1],10) : 800, h = m2 ? parseInt(m2[1],10) : 600;
+  var blob = new Blob([lastSvg], {type:'image/svg+xml;charset=utf-8'});
+  var url = URL.createObjectURL(blob);
+  var img = new Image();
+  img.onload = function(){
+    var scale = 2;
+    var cv = document.createElement('canvas');
+    cv.width = w * scale; cv.height = h * scale;
+    var ctx = cv.getContext('2d');
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,cv.width,cv.height);
+    ctx.drawImage(img, 0, 0, cv.width, cv.height);
+    URL.revokeObjectURL(url);
+    cv.toBlob(function(b){
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(b);
+      a.download = 'ym-chart-' + state.chart.type + '-' + Date.now() + '.png';
+      a.click(); toast('已导出 PNG（2 倍图）');
+    }, 'image/png');
+  };
+  img.onerror = function(){ URL.revokeObjectURL(url); toast('导出失败，请改用 SVG'); };
+  img.src = url;
+}
+/* 跳转到图卡页（供其他 Tab 调用） */
+function gotoChart(type){
+  saveChartData();
+  if(type){ state.chart.type = type; restoreChart(); renderChartChips(); }
+  $$('.tab').forEach(function(x){ x.classList.toggle('is-on', x.getAttribute('data-tab')==='chart'); });
+  $$('.panel').forEach(function(p){ p.classList.toggle('is-on', p.getAttribute('data-panel')==='chart'); });
+  if(type){
+    // 预填数据后自动出图
+    setTimeout(drawChart, 60);
+  }
+  try{
+    var tabsEl = document.querySelector('.tabs');
+    var top = tabsEl ? (tabsEl.offsetTop - 10) : 0;
+    if(window.scrollTo) window.scrollTo({top:top, behavior:'smooth'});
+  }catch(e){}
+}
+
 /* ================= 渲染：知识库 ================= */
 function renderKb(){
   var fh = $('#kbFolders'); fh.innerHTML = '';
@@ -1502,6 +1974,37 @@ function bind(){
   $('#maskHist').onclick = function(e){ if(e.target === this) this.classList.remove('is-on'); };
   $('#btnClearHist').onclick = function(){ state.history = []; save(); $('#btnHistory').click(); toast('历史已清空'); };
 
+  // 图卡
+  $('#btnStratChart').onclick = function(){
+    // 按当前策略框架映射到对应图卡，并带项目名称过去
+    var map = {'SWOT分析':'swot', '用户画像':'persona', '竞品对比':'pos', '项目复盘':'funnel'};
+    var t = map[state.curStrat] || 'swot';
+    state.chart.type = t;
+    restoreChart();
+    var nm = $('#s_name').value || '';
+    if(t === 'swot' && nm && !$('#sw_title').value) $('#sw_title').value = nm + ' · SWOT 分析';
+    if(t === 'pos' && nm && !$('#pm_title').value) $('#pm_title').value = nm + ' · 竞品定位地图';
+    if(t === 'persona' && nm && !$('#pe_name').value) $('#pe_name').value = nm + ' · 核心用户';
+    if(t === 'funnel' && nm && !$('#fu_title').value) $('#fu_title').value = nm + ' · 转化漏斗';
+    saveChartData();
+    gotoChart(t);
+    toast('已切到图卡页，填数据即可出图');
+  };
+  $('#btnDrawChart').onclick = drawChart;
+  $('#btnChartSvg').onclick = exportSvg;
+  $('#btnChartPng').onclick = exportPng;
+  $('#btnChartData').onclick = function(){
+    var c = readChartData();
+    copy(JSON.stringify(c.data, null, 2));
+  };
+  ['sw_s','sw_w','sw_o','sw_t','sw_title','pm_x','pm_y','pm_title','pm_pts',
+   'pe_name','pe_age','pe_job','pe_goal','pe_pain','pe_quote','pe_ch',
+   'fu_title','fu_stages'].forEach(function(id){
+    var el = $('#' + id);
+    if(el) el.addEventListener('input', function(){ saveChartData(); });
+  });
+  var pc = $('#pe_color'); if(pc) pc.addEventListener('change', function(){ saveChartData(); });
+
   // 知识库
   $('#btnAddFolder').onclick = function(){
     var n = prompt('新文件夹名称');
@@ -1609,6 +2112,12 @@ function restoreAll(){
 
   renderPresets(); renderStratChips(); renderFlowChips(); renderSteps(); renderKb();
   updateKbStat();
+  state.chart = state.chart || {type:'swot',swot:{},pos:{},persona:{color:'indigo'},funnel:{}};
+  state.chart.swot = state.chart.swot || {};
+  state.chart.pos = state.chart.pos || {};
+  state.chart.persona = state.chart.persona || {color:'indigo'};
+  state.chart.funnel = state.chart.funnel || {};
+  restoreChart(); renderChartChips();
 }
 
 /* ================= 启动 ================= */
