@@ -116,6 +116,9 @@ zero dependency, no network, no third-party lib.
 | User Persona Card | name / age / job / goals / pains / quote | profile card, 4 color themes |
 | Conversion Funnel | "stage,value" lines | funnel with step + overall rate |
 
+Visual style: consulting-firm deck (restrained brand navy, hairline rules,
+generous whitespace, English kicker labels + page footer). High-res export.
+
 Export: SVG (editable in Figma/PPT) and PNG (2x resolution).
 Data is saved in localStorage like everything else.
 

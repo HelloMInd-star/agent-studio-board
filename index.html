@@ -1212,43 +1212,80 @@ function wrapText(text, per){
   return out.length ? out : [''];
 }
 
+/* ---------- 咨询公司风配色与版式 ---------- */
+var CX = {
+  ink:'#0f172a', sub:'#475569', mute:'#94a3b8',
+  line:'#e2e8f0', soft:'#f8fafc', paper:'#ffffff',
+  brand:'#1e3a8a', brandSoft:'#eff6ff',
+  s:'#047857', sBg:'#ecfdf5', w:'#b45309', wBg:'#fffbeb',
+  o:'#1d4ed8', oBg:'#eff6ff', t:'#b91c1c', tBg:'#fef2f2'
+};
+/* 统一页面框架：标题区 + 内容区 + 页脚（提案页观感） */
+function cxFrame(W,H,title,sub){
+  var s = '<defs>'
+    + '<filter id="cxShadow" x="-20%" y="-20%" width="140%" height="140%">'
+    + '<feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.06"/>'
+    + '</filter></defs>';
+  s += '<rect width="'+W+'" height="'+H+'" fill="'+CX.paper+'"/>';
+  // 顶部品牌细线
+  s += '<rect x="0" y="0" width="'+W+'" height="3" fill="'+CX.brand+'"/>';
+  // 标题
+  s += '<text x="48" y="56" font-size="25" font-weight="700" fill="'+CX.ink+'" letter-spacing="0.3">'+esc(title)+'</text>';
+  if(sub){
+    s += '<text x="48" y="80" font-size="13" fill="'+CX.mute+'">'+esc(sub)+'</text>';
+  }
+  s += '<line x1="48" y1="98" x2="'+(W-48)+'" y2="98" stroke="'+CX.line+'" stroke-width="1"/>';
+  // 页脚
+  s += '<line x1="48" y1="'+(H-46)+'" x2="'+(W-48)+'" y2="'+(H-46)+'" stroke="'+CX.line+'" stroke-width="1"/>';
+  s += '<text x="48" y="'+(H-24)+'" font-size="10.5" fill="'+CX.mute+'" letter-spacing="0.5">Y.MINE · MARKETING WORKSPACE</text>';
+  s += '<text x="'+(W-48)+'" y="'+(H-24)+'" font-size="10.5" fill="'+CX.mute+'" text-anchor="end">本地生成 · 数据不出浏览器</text>';
+  return s;
+}
+function todayStr(){
+  var d = new Date();
+  return d.getFullYear() + '.' + ('0'+(d.getMonth()+1)).slice(-2) + '.' + ('0'+d.getDate()).slice(-2);
+}
+
 /* ---------- 1. SWOT 四象限 ---------- */
 function svgSwot(d){
-  var W = 880, H = 660, pad = 24, gap = 12;
+  var W = 960, H = 720, pad = 48, gap = 18, top = 122;
   var title = d.title || 'SWOT 分析';
-  var headH = 62;
   var qW = (W - pad*2 - gap) / 2;
-  var qH = (H - pad*2 - headH - gap) / 2;
+  var qH = (H - top - 72 - gap) / 2;
   var quads = [
-    {k:'s', label:'S 优势 Strengths', items:lines(d.s), c:'#10b981', bg:'#ecfdf5', x:pad, y:pad+headH},
-    {k:'w', label:'W 劣势 Weaknesses', items:lines(d.w), c:'#f59e0b', bg:'#fffbeb', x:pad+qW+gap, y:pad+headH},
-    {k:'o', label:'O 机会 Opportunities', items:lines(d.o), c:'#3b82f6', bg:'#eff6ff', x:pad, y:pad+headH+qH+gap},
-    {k:'t', label:'T 威胁 Threats', items:lines(d.t), c:'#ef4444', bg:'#fef2f2', x:pad+qW+gap, y:pad+headH+qH+gap}
+    {label:'S  STRENGTHS', cn:'优势', items:lines(d.s), c:CX.s, bg:CX.sBg, x:pad, y:top},
+    {label:'W  WEAKNESSES', cn:'劣势', items:lines(d.w), c:CX.w, bg:CX.wBg, x:pad+qW+gap, y:top},
+    {label:'O  OPPORTUNITIES', cn:'机会', items:lines(d.o), c:CX.o, bg:CX.oBg, x:pad, y:top+qH+gap},
+    {label:'T  THREATS', cn:'威胁', items:lines(d.t), c:CX.t, bg:CX.tBg, x:pad+qW+gap, y:top+qH+gap}
   ];
   var s = '<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" font-family="PingFang SC,Microsoft YaHei,Hiragino Sans GB,sans-serif">';
-  s += '<rect width="'+W+'" height="'+H+'" fill="#ffffff"/>';
-  s += '<text x="'+pad+'" y="'+(pad+30)+'" font-size="24" font-weight="700" fill="#16161d">'+esc(title)+'</text>';
-  s += '<line x1="'+pad+'" y1="'+(pad+44)+'" x2="'+(W-pad)+'" y2="'+(pad+44)+'" stroke="#e8e8ef" stroke-width="1"/>';
+  s += cxFrame(W,H,title,'SWOT ANALYSIS · '+todayStr());
 
   quads.forEach(function(q){
-    s += '<rect x="'+q.x+'" y="'+q.y+'" width="'+qW+'" height="'+qH+'" rx="12" fill="'+q.bg+'" stroke="'+q.c+'" stroke-opacity="0.35"/>';
-    s += '<rect x="'+q.x+'" y="'+q.y+'" width="6" height="'+qH+'" rx="3" fill="'+q.c+'"/>';
-    s += '<text x="'+(q.x+20)+'" y="'+(q.y+30)+'" font-size="16" font-weight="700" fill="'+q.c+'">'+esc(q.label)+'</text>';
-    var iy = q.y + 62;
-    var maxChars = Math.floor((qW - 44) / 13);
-    q.items.slice(0, 7).forEach(function(it){
-      var rows = wrapText(it, maxChars);
+    // 卡片：白底 + 细描边 + 极浅色底 + 顶部色条
+    s += '<rect x="'+q.x+'" y="'+q.y+'" width="'+qW+'" height="'+qH+'" rx="3" fill="'+CX.paper+'" stroke="'+CX.line+'"/>';
+    s += '<rect x="'+q.x+'" y="'+q.y+'" width="'+qW+'" height="'+qH+'" rx="3" fill="'+q.bg+'" fill-opacity="0.5"/>';
+    s += '<rect x="'+q.x+'" y="'+q.y+'" width="'+qW+'" height="3" fill="'+q.c+'"/>';
+    // 英文小标签 + 中文
+    s += '<text x="'+(q.x+22)+'" y="'+(q.y+32)+'" font-size="10" font-weight="700" fill="'+q.c+'" letter-spacing="1.6">'+esc(q.label)+'</text>';
+    s += '<text x="'+(q.x+22)+'" y="'+(q.y+56)+'" font-size="16" font-weight="700" fill="'+CX.ink+'">'+esc(q.cn)+'</text>';
+    s += '<line x1="'+(q.x+22)+'" y1="'+(q.y+70)+'" x2="'+(q.x+qW-22)+'" y2="'+(q.y+70)+'" stroke="'+q.c+'" stroke-opacity="0.25"/>';
+    // 条目
+    var iy = q.y + 96;
+    var per = Math.floor((qW - 56) / 13.2);
+    q.items.slice(0, 6).forEach(function(it){
+      var rows = wrapText(it, per);
       rows.forEach(function(r, ri){
         if(ri === 0){
-          s += '<circle cx="'+(q.x+24)+'" cy="'+(iy-5)+'" r="3" fill="'+q.c+'" fill-opacity="0.7"/>';
+          s += '<rect x="'+(q.x+22)+'" y="'+(iy-8)+'" width="3" height="3" fill="'+q.c+'"/>';
         }
-        s += '<text x="'+(q.x+34)+'" y="'+iy+'" font-size="13" fill="#33333f">'+esc(r)+'</text>';
-        iy += 21;
+        s += '<text x="'+(q.x+34)+'" y="'+iy+'" font-size="13.5" fill="'+CX.sub+'">'+esc(r)+'</text>';
+        iy += 22;
       });
-      iy += 5;
+      iy += 4;
     });
     if(!q.items.length){
-      s += '<text x="'+(q.x+24)+'" y="'+(q.y+62)+'" font-size="13" fill="#9a9aae">（未填写）</text>';
+      s += '<text x="'+(q.x+22)+'" y="'+(q.y+96)+'" font-size="13" fill="'+CX.mute+'">（未填写）</text>';
     }
   });
   s += '</svg>';
@@ -1257,7 +1294,7 @@ function svgSwot(d){
 
 /* ---------- 2. 竞品定位地图 ---------- */
 function svgPos(d){
-  var W = 880, H = 700, pad = 70;
+  var W = 960, H = 780, pad = 96, top = 122;
   var title = d.title || '竞品定位地图';
   var xLabel = d.x || '维度 X', yLabel = d.y || '维度 Y';
   var pts = [];
@@ -1267,48 +1304,53 @@ function svgPos(d){
     var x = parseFloat(p[1]), y = parseFloat(p[2]);
     if(!name) return;
     if(isNaN(x)) x = 5; if(isNaN(y)) y = 5;
-    x = Math.max(0, Math.min(10, x)); y = Math.max(0, Math.min(10, y));
-    pts.push({name:name, x:x, y:y});
+    pts.push({name:name, x:Math.max(0,Math.min(10,x)), y:Math.max(0,Math.min(10,y))});
   });
-  var pw = W - pad - 40, ph = H - pad - 60;
+  var pw = W - pad - 56, ph = H - top - 108;
   var X = function(v){ return pad + (v/10) * pw; };
-  var Y = function(v){ return H - pad - (v/10) * ph; };
-  var palette = ['#6366f1','#ef4444','#f59e0b','#10b981','#3b82f6','#a855f7','#ec4899','#14b8a6'];
+  var Y = function(v){ return top + ph - (v/10) * ph; };
+  var pal = [CX.brand,'#b45309','#047857','#b91c1c','#7c3aed','#0891b2','#be185d','#4338ca'];
 
   var s = '<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" font-family="PingFang SC,Microsoft YaHei,sans-serif">';
-  s += '<rect width="'+W+'" height="'+H+'" fill="#ffffff"/>';
-  s += '<text x="'+pad+'" y="46" font-size="24" font-weight="700" fill="#16161d">'+esc(title)+'</text>';
+  s += cxFrame(W,H,title,'POSITIONING MAP · '+todayStr());
 
+  // 象限底色（极浅，交替）
+  s += '<rect x="'+X(5)+'" y="'+Y(10)+'" width="'+pw/2+'" height="'+ph/2+'" fill="'+CX.brand+'" fill-opacity="0.025"/>';
+  s += '<rect x="'+pad+'" y="'+Y(5)+'" width="'+pw/2+'" height="'+ph/2+'" fill="'+CX.brand+'" fill-opacity="0.025"/>';
+  // 外框
+  s += '<rect x="'+pad+'" y="'+Y(10)+'" width="'+pw+'" height="'+ph+'" fill="none" stroke="'+CX.line+'" stroke-width="1"/>';
   // 网格
-  s += '<rect x="'+pad+'" y="'+(H-pad-ph)+'" width="'+pw+'" height="'+ph+'" fill="#fcfcfe" stroke="#e8e8ef"/>';
   for(var i=1;i<10;i++){
-    s += '<line x1="'+X(i)+'" y1="'+(H-pad-ph)+'" x2="'+X(i)+'" y2="'+(H-pad)+'" stroke="#f0f0f6"/>';
-    s += '<line x1="'+pad+'" y1="'+Y(i)+'" x2="'+(pad+pw)+'" y2="'+Y(i)+'" stroke="#f0f0f6"/>';
+    s += '<line x1="'+X(i)+'" y1="'+Y(10)+'" x2="'+X(i)+'" y2="'+Y(0)+'" stroke="'+CX.line+'" stroke-opacity="'+(i===5?0.9:0.45)+'"/>';
+    s += '<line x1="'+pad+'" y1="'+Y(i)+'" x2="'+(pad+pw)+'" y2="'+Y(i)+'" stroke="'+CX.line+'" stroke-opacity="'+(i===5?0.9:0.45)+'"/>';
   }
-  // 中位十字
-  s += '<line x1="'+X(5)+'" y1="'+(H-pad-ph)+'" x2="'+X(5)+'" y2="'+(H-pad)+'" stroke="#c7c7d4" stroke-dasharray="5 5"/>';
-  s += '<line x1="'+pad+'" y1="'+Y(5)+'" x2="'+(pad+pw)+'" y2="'+Y(5)+'" stroke="#c7c7d4" stroke-dasharray="5 5"/>';
-  // 轴
-  s += '<line x1="'+pad+'" y1="'+(H-pad)+'" x2="'+(pad+pw+14)+'" y2="'+(H-pad)+'" stroke="#9a9aae" stroke-width="1.5"/>';
-  s += '<line x1="'+pad+'" y1="'+(H-pad)+'" x2="'+pad+'" y2="'+(H-pad-ph-14)+'" stroke="#9a9aae" stroke-width="1.5"/>';
-  s += '<text x="'+(pad+pw/2)+'" y="'+(H-pad+42)+'" font-size="14" font-weight="600" fill="#6b6b7b" text-anchor="middle">'+esc(xLabel)+' →</text>';
-  s += '<text x="'+(pad-46)+'" y="'+(H-pad-ph/2)+'" font-size="14" font-weight="600" fill="#6b6b7b" text-anchor="middle" transform="rotate(-90 '+(pad-46)+' '+(H-pad-ph/2)+')">'+esc(yLabel)+' →</text>';
-
-  // 象限浅标签
-  s += '<text x="'+(pad+14)+'" y="'+(H-pad-12)+'" font-size="11" fill="#c7c7d4">低 / 低</text>';
-  s += '<text x="'+(pad+pw-14)+'" y="'+(H-pad-ph+22)+'" font-size="11" fill="#c7c7d4" text-anchor="end">高 / 高</text>';
+  // 坐标轴
+  s += '<line x1="'+pad+'" y1="'+Y(0)+'" x2="'+(pad+pw+16)+'" y2="'+Y(0)+'" stroke="'+CX.sub+'" stroke-width="1.2"/>';
+  s += '<line x1="'+pad+'" y1="'+Y(0)+'" x2="'+pad+'" y2="'+(Y(10)-16)+'" stroke="'+CX.sub+'" stroke-width="1.2"/>';
+  s += '<polygon points="'+(pad+pw+16)+','+Y(0)+' '+(pad+pw+8)+','+(Y(0)-4)+' '+(pad+pw+8)+','+(Y(0)+4)+'" fill="'+CX.sub+'"/>';
+  s += '<polygon points="'+pad+','+(Y(10)-16)+' '+(pad-4)+','+(Y(10)-8)+' '+(pad+4)+','+(Y(10)-8)+'" fill="'+CX.sub+'"/>';
+  // 轴名
+  s += '<text x="'+(pad+pw/2)+'" y="'+(Y(0)+40)+'" font-size="13.5" font-weight="600" fill="'+CX.sub+'" text-anchor="middle">'+esc(xLabel)+'  →</text>';
+  s += '<text x="'+(pad-52)+'" y="'+(Y(5))+'" font-size="13.5" font-weight="600" fill="'+CX.sub+'" text-anchor="middle" transform="rotate(-90 '+(pad-52)+' '+Y(5)+')">'+esc(yLabel)+'  →</text>';
+  // 象限角标
+  s += '<text x="'+(pad+12)+'" y="'+(Y(0)-12)+'" font-size="10" fill="'+CX.mute+'" letter-spacing="1">LOW / LOW</text>';
+  s += '<text x="'+(pad+pw-12)+'" y="'+(Y(10)+22)+'" font-size="10" fill="'+CX.mute+'" text-anchor="end" letter-spacing="1">HIGH / HIGH</text>';
 
   // 点位
   pts.forEach(function(p, i){
-    var c = palette[i % palette.length];
+    var c = pal[i % pal.length];
     var cx = X(p.x), cy = Y(p.y);
-    s += '<circle cx="'+cx+'" cy="'+cy+'" r="22" fill="'+c+'" fill-opacity="0.15"/>';
-    s += '<circle cx="'+cx+'" cy="'+cy+'" r="9" fill="'+c+'"/>';
-    s += '<text x="'+cx+'" y="'+(cy-32)+'" font-size="14" font-weight="700" fill="'+c+'" text-anchor="middle">'+esc(p.name)+'</text>';
-    s += '<text x="'+cx+'" y="'+(cy+4)+'" font-size="9" fill="#ffffff" text-anchor="middle" font-weight="700">'+(i+1)+'</text>';
+    // 引线到标签（避免遮挡，标签放右上）
+    var lx = cx + 26, ly = cy - 20;
+    s += '<line x1="'+cx+'" y1="'+cy+'" x2="'+lx+'" y2="'+ly+'" stroke="'+c+'" stroke-opacity="0.4" stroke-width="1"/>';
+    s += '<circle cx="'+cx+'" cy="'+cy+'" r="18" fill="'+c+'" fill-opacity="0.10"/>';
+    s += '<circle cx="'+cx+'" cy="'+cy+'" r="7.5" fill="'+c+'"/>';
+    s += '<circle cx="'+cx+'" cy="'+cy+'" r="7.5" fill="none" stroke="#ffffff" stroke-width="2"/>';
+    s += '<text x="'+(lx+5)+'" y="'+(ly+4)+'" font-size="14" font-weight="700" fill="'+CX.ink+'">'+esc(p.name)+'</text>';
+    s += '<text x="'+(lx+5)+'" y="'+(ly+20)+'" font-size="10.5" fill="'+CX.mute+'">('+p.x+', '+p.y+')</text>';
   });
   if(!pts.length){
-    s += '<text x="'+(pad+pw/2)+'" y="'+(H-pad-ph/2)+'" font-size="14" fill="#9a9aae" text-anchor="middle">（请在左侧填写品牌点位）</text>';
+    s += '<text x="'+(pad+pw/2)+'" y="'+Y(5)+'" font-size="14" fill="'+CX.mute+'" text-anchor="middle">（请在左侧填写品牌点位，格式：名称,X,Y）</text>';
   }
   s += '</svg>';
   return s;
@@ -1316,53 +1358,63 @@ function svgPos(d){
 
 /* ---------- 3. 用户画像卡 ---------- */
 function svgPersona(d){
-  var W = 760, H = 560, pad = 34;
-  var th = {
-    indigo:{c:'#6366f1', bg:'#eef2ff'}, rose:{c:'#f43f5e', bg:'#fff1f2'},
-    teal:{c:'#14b8a6', bg:'#f0fdfa'}, amber:{c:'#f59e0b', bg:'#fffbeb'}
-  }[d.color || 'indigo'];
+  var W = 860, H = 620, pad = 48, top = 122;
+  var th = { indigo:{c:'#1e3a8a', bg:'#eff6ff'}, rose:{c:'#9f1239', bg:'#fff1f2'},
+    teal:{c:'#0f766e', bg:'#f0fdfa'}, amber:{c:'#b45309', bg:'#fffbeb'} }[d.color || 'indigo'];
   var name = d.name || '用户画像';
-  var initial = name.slice(0, 1);
+  var initial = name.slice(0,1);
 
   var s = '<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" font-family="PingFang SC,Microsoft YaHei,sans-serif">';
-  s += '<rect width="'+W+'" height="'+H+'" fill="#ffffff"/>';
-  s += '<rect x="0" y="0" width="'+W+'" height="8" fill="'+th.c+'"/>';
+  s += cxFrame(W,H,name,'USER PERSONA · '+todayStr());
 
-  // 头部
-  s += '<circle cx="'+(pad+38)+'" cy="'+(pad+40)+'" r="38" fill="'+th.bg+'" stroke="'+th.c+'" stroke-width="2"/>';
-  s += '<text x="'+(pad+38)+'" y="'+(pad+52)+'" font-size="34" font-weight="700" fill="'+th.c+'" text-anchor="middle">'+esc(initial)+'</text>';
-  s += '<text x="'+(pad+92)+'" y="'+(pad+30)+'" font-size="24" font-weight="700" fill="#16161d">'+esc(name)+'</text>';
-  var meta = [d.age, d.job].filter(Boolean).join(' · ');
-  if(meta) s += '<text x="'+(pad+92)+'" y="'+(pad+56)+'" font-size="14" fill="#6b6b7b">'+esc(meta)+'</text>';
-  if(d.ch) s += '<text x="'+(pad+92)+'" y="'+(pad+78)+'" font-size="13" fill="#9a9aae">渠道：'+esc(d.ch)+'</text>';
+  // 头部：头像 + 元信息
+  s += '<circle cx="'+(pad+34)+'" cy="'+(top+42)+'" r="34" fill="'+th.bg+'" stroke="'+th.c+'" stroke-opacity="0.3" stroke-width="1.5"/>';
+  s += '<text x="'+(pad+34)+'" y="'+(top+55)+'" font-size="32" font-weight="700" fill="'+th.c+'" text-anchor="middle">'+esc(initial)+'</text>';
+  var meta = [d.age, d.job].filter(Boolean).join('   ·   ');
+  if(meta) s += '<text x="'+(pad+86)+'" y="'+(top+38)+'" font-size="15.5" fill="'+CX.sub+'">'+esc(meta)+'</text>';
+  if(d.ch) s += '<text x="'+(pad+86)+'" y="'+(top+64)+'" font-size="12.5" fill="'+CX.mute+'">常用渠道：'+esc(d.ch)+'</text>';
 
-  var y = pad + 122;
-  // 目标
-  s += '<text x="'+pad+'" y="'+y+'" font-size="14" font-weight="700" fill="#10b981">🎯 目标</text>';
-  y += 26;
+  s += '<line x1="'+pad+'" y1="'+(top+94)+'" x2="'+(W-pad)+'" y2="'+(top+94)+'" stroke="'+CX.line+'"/>';
+
+  // 目标 / 痛点 两栏
+  var colW = (W - pad*2 - 32) / 2;
+  var y0 = top + 128;
+  // 左：目标
+  s += '<text x="'+pad+'" y="'+y0+'" font-size="10" font-weight="700" fill="'+CX.s+'" letter-spacing="1.4">GOALS</text>';
+  s += '<text x="'+(pad+52)+'" y="'+y0+'" font-size="15" font-weight="700" fill="'+CX.ink+'">目标</text>';
+  var gy = y0 + 30;
   lines(d.goal).slice(0,4).forEach(function(g){
-    s += '<circle cx="'+(pad+6)+'" cy="'+(y-4)+'" r="3" fill="#10b981"/>';
-    s += '<text x="'+(pad+18)+'" y="'+y+'" font-size="13.5" fill="#33333f">'+esc(g)+'</text>';
-    y += 24;
+    var rows = wrapText(g, Math.floor((colW-24)/13));
+    rows.forEach(function(r, ri){
+      if(ri===0) s += '<rect x="'+pad+'" y="'+(gy-8)+'" width="3" height="3" fill="'+CX.s+'"/>';
+      s += '<text x="'+(pad+14)+'" y="'+gy+'" font-size="13" fill="'+CX.sub+'">'+esc(r)+'</text>';
+      gy += 22;
+    });
+    gy += 4;
   });
-  y += 14;
-  // 痛点
-  s += '<text x="'+pad+'" y="'+y+'" font-size="14" font-weight="700" fill="#ef4444">😖 痛点</text>';
-  y += 26;
+  // 右：痛点
+  var rx = pad + colW + 32;
+  s += '<text x="'+rx+'" y="'+y0+'" font-size="10" font-weight="700" fill="'+CX.t+'" letter-spacing="1.4">PAINS</text>';
+  s += '<text x="'+(rx+46)+'" y="'+y0+'" font-size="15" font-weight="700" fill="'+CX.ink+'">痛点</text>';
+  var py = y0 + 30;
   lines(d.pain).slice(0,4).forEach(function(g){
-    s += '<circle cx="'+(pad+6)+'" cy="'+(y-4)+'" r="3" fill="#ef4444"/>';
-    s += '<text x="'+(pad+18)+'" y="'+y+'" font-size="13.5" fill="#33333f">'+esc(g)+'</text>';
-    y += 24;
+    var rows = wrapText(g, Math.floor((colW-24)/13));
+    rows.forEach(function(r, ri){
+      if(ri===0) s += '<rect x="'+rx+'" y="'+(py-8)+'" width="3" height="3" fill="'+CX.t+'"/>';
+      s += '<text x="'+(rx+14)+'" y="'+py+'" font-size="13" fill="'+CX.sub+'">'+esc(r)+'</text>';
+      py += 22;
+    });
+    py += 4;
   });
 
-  // 原声
+  // 底部原声
   if(d.quote){
-    var qy = H - pad - 26;
-    s += '<rect x="'+pad+'" y="'+(qy-52)+'" width="'+(W-pad*2)+'" height="82" rx="10" fill="'+th.bg+'"/>';
-    s += '<rect x="'+pad+'" y="'+(qy-52)+'" width="4" height="82" rx="2" fill="'+th.c+'"/>';
-    var qrows = wrapText('“' + d.quote + '”', Math.floor((W-pad*2-40)/15));
-    qrows.slice(0,3).forEach(function(r, i){
-      s += '<text x="'+(pad+22)+'" y="'+(qy-18+i*24)+'" font-size="14.5" font-style="italic" fill="#16161d">'+esc(r)+'</text>';
+    var qy = H - 92;
+    s += '<rect x="'+pad+'" y="'+(qy-34)+'" width="'+(W-pad*2)+'" height="76" rx="2" fill="'+th.bg+'" fill-opacity="0.7"/>';
+    s += '<rect x="'+pad+'" y="'+(qy-34)+'" width="3" height="76" fill="'+th.c+'"/>';
+    var qrows = wrapText('“'+d.quote+'”', Math.floor((W-pad*2-56)/15));
+    qrows.slice(0,2).forEach(function(r,i){
+      s += '<text x="'+(pad+26)+'" y="'+(qy-4+i*26)+'" font-size="16" font-weight="600" fill="'+CX.ink+'">'+esc(r)+'</text>';
     });
   }
   s += '</svg>';
@@ -1377,58 +1429,59 @@ function svgFunnel(d){
     var name = (p[0]||'').trim();
     var v = parseFloat(String(p[1]||'').replace(/[^\d.]/g,''));
     if(!name) return;
-    if(isNaN(v)) v = 0;
-    st.push({name:name, v:v});
+    st.push({name:name, v:isNaN(v)?0:v});
   });
-  var W = 760, baseH = 150;
-  var H = Math.max(360, baseH + st.length * 88);
-  var pad = 40;
+  var W = 900, top = 122;
+  var H = Math.max(520, top + 130 + st.length * 82);
+  var pad = 48;
   var title = d.title || '转化漏斗';
-  var topW = W - pad*2 - 60;
 
   var s = '<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" font-family="PingFang SC,Microsoft YaHei,sans-serif">';
-  s += '<rect width="'+W+'" height="'+H+'" fill="#ffffff"/>';
-  s += '<text x="'+pad+'" y="46" font-size="24" font-weight="700" fill="#16161d">'+esc(title)+'</text>';
+  s += cxFrame(W,H,title,'CONVERSION FUNNEL · '+todayStr());
 
   if(!st.length){
-    s += '<text x="'+(W/2)+'" y="'+(H/2)+'" font-size="14" fill="#9a9aae" text-anchor="middle">（请在左侧填写环节与数值）</text>';
+    s += '<text x="'+(W/2)+'" y="'+(H/2)+'" font-size="14" fill="'+CX.mute+'" text-anchor="middle">（请在左侧填写环节与数值，格式：环节名,数值）</text>';
     s += '</svg>'; return s;
   }
   var maxV = st[0].v || Math.max.apply(null, st.map(function(x){return x.v;})) || 1;
-  var colors = ['#6366f1','#8b5cf6','#a855f7','#c026d3','#ec4899','#f43f5e'];
-  var y0 = 90, lh = 76;
+  var topW = W - pad*2 - 150;
+  var lh = 74, y0 = top + 30;
 
   st.forEach(function(stage, i){
-    var ratio = maxV ? (stage.v / maxV) : 0;
-    ratio = Math.max(0.16, Math.min(1, ratio));
-    var w = topW * ratio;
-    var cx = W / 2;
-    var c = colors[i % colors.length];
-    var top = y0 + i * lh;
+    var ratio = maxV ? Math.max(0.20, Math.min(1, stage.v/maxV)) : 0.2;
+    var nextRatio = (i+1 < st.length && maxV) ? Math.max(0.20, Math.min(1, st[i+1].v/maxV)) : ratio*0.9;
+    var wTop = topW*ratio, wBot = topW*nextRatio;
+    var cx = pad + 40 + topW/2;
+    var topY = y0 + i*lh;
+    // 咨询风：品牌色系递浅 + 细描边
+    var op = 1 - i*0.13; if(op < 0.35) op = 0.35;
+    s += '<path d="M '+(cx-wTop/2)+' '+topY+' L '+(cx+wTop/2)+' '+topY+' L '+(cx+wBot/2)+' '+(topY+lh-8)+' L '+(cx-wBot/2)+' '+(topY+lh-8)+' Z" fill="'+CX.brand+'" fill-opacity="'+op.toFixed(2)+'"/>';
+    s += '<text x="'+cx+'" y="'+(topY+32)+'" font-size="14.5" font-weight="700" fill="#ffffff" text-anchor="middle">'+esc(stage.name)+'</text>';
+    s += '<text x="'+cx+'" y="'+(topY+52)+'" font-size="12.5" fill="#ffffff" fill-opacity="0.85" text-anchor="middle">'+stage.v.toLocaleString('en-US')+'</text>';
 
-    // 梯形：上宽 = 当前，下宽 = 下一层
-    var nextRatio = (i+1 < st.length && maxV) ? Math.max(0.16, Math.min(1, st[i+1].v / maxV)) : ratio * 0.86;
-    var wTop = w, wBot = topW * nextRatio;
-    s += '<path d="M '+(cx-wTop/2)+' '+top+' L '+(cx+wTop/2)+' '+top+' L '+(cx+wBot/2)+' '+(top+lh-10)+' L '+(cx-wBot/2)+' '+(top+lh-10)+' Z" fill="'+c+'" fill-opacity="0.88"/>';
-    s += '<text x="'+cx+'" y="'+(top+30)+'" font-size="15" font-weight="700" fill="#ffffff" text-anchor="middle">'+esc(stage.name)+'</text>';
-    s += '<text x="'+cx+'" y="'+(top+52)+'" font-size="13" fill="#ffffff" fill-opacity="0.9" text-anchor="middle">'+stage.v.toLocaleString('en-US')+'</text>';
-
-    // 转化率标注
+    // 右侧转化率（细线连接 + 浅底标签）
     if(i > 0 && st[i-1].v){
       var r = (stage.v / st[i-1].v * 100);
-      s += '<rect x="'+(cx+wTop/2+16)+'" y="'+(top+14)+'" width="90" height="26" rx="13" fill="#f1f5f9"/>';
-      s += '<text x="'+(cx+wTop/2+61)+'" y="'+(top+32)+'" font-size="12.5" font-weight="700" fill="'+c+'" text-anchor="middle">'+r.toFixed(1)+'%</text>';
+      var bx = cx + wTop/2 + 22;
+      s += '<line x1="'+(cx+wTop/2)+'" y1="'+(topY+30)+'" x2="'+bx+'" y2="'+(topY+30)+'" stroke="'+CX.line+'" stroke-width="1"/>';
+      s += '<rect x="'+bx+'" y="'+(topY+16)+'" width="86" height="28" rx="2" fill="'+CX.soft+'" stroke="'+CX.line+'"/>';
+      s += '<text x="'+(bx+43)+'" y="'+(topY+35)+'" font-size="12.5" font-weight="700" fill="'+CX.ink+'" text-anchor="middle">'+r.toFixed(1)+'%</text>';
     }
   });
 
   // 整体转化率
   if(st.length > 1 && st[0].v){
     var overall = (st[st.length-1].v / st[0].v * 100);
-    s += '<text x="'+(W/2)+'" y="'+(H-24)+'" font-size="14" fill="#6b6b7b" text-anchor="middle">整体转化率 '+overall.toFixed(2)+'%（'+st[0].name+' → '+st[st.length-1].name+'）</text>';
+    var by = H - 78;
+    s += '<line x1="'+pad+'" y1="'+(by-26)+'" x2="'+(W-pad)+'" y2="'+(by-26)+'" stroke="'+CX.line+'"/>';
+    s += '<text x="'+pad+'" y="'+by+'" font-size="11" font-weight="700" fill="'+CX.mute+'" letter-spacing="1.2">OVERALL</text>';
+    s += '<text x="'+(pad+96)+'" y="'+by+'" font-size="15" font-weight="700" fill="'+CX.brand+'">'+overall.toFixed(2)+'%</text>';
+    s += '<text x="'+(pad+200)+'" y="'+by+'" font-size="12.5" fill="'+CX.mute+'">'+esc(st[0].name)+' → '+esc(st[st.length-1].name)+'</text>';
   }
   s += '</svg>';
   return s;
 }
+
 
 /* ---------- 图卡：读取表单 -> 生成 SVG ---------- */
 var lastSvg = '';
