@@ -547,7 +547,27 @@ var state = {
   flow:{goal:'',bg:'',steps:[]},
   kb:{folders:[
     {name:'品牌资产',docs:[]},{name:'竞品素材',docs:[]},
-    {name:'用户原声',docs:[]},{name:'违禁词库',docs:[]},{name:'爆款素材',docs:[]}
+    {name:'用户原声',docs:[]},
+    {name:'违禁词库',docs:[
+      {title:'自定义词库（可编辑）',
+       body:'# 自定义违禁词库\n\n在这里增删词条，扫描时会自动与内置词库合并。\n' +
+            '每行一个词，用 `##` 分节。**改完记得点「💾 保存」**\n\n' +
+            '## 红线词\n\n' +
+            '- 例：全网最低\n' +
+            '- 例：永久有效\n\n' +
+            '## 风险词\n\n' +
+            '- 例：顶级工艺\n\n' +
+            '## 平台敏感词\n\n' +
+            '- 例：私聊\n\n' +
+            '---\n\n' +
+            '提示：\n' +
+            '- 🔴 红线词 = 广告法明文禁止，建议直接用\n' +
+            '- 🟡 风险词 = 有证据就能用，不必删除\n' +
+            '- 🔵 平台敏感词 = 法律未必禁止，但可能限流\n' +
+            '- 不确定放哪级？先放「风险词」，宁可提示也不要误报',
+       tags:'合规,词库', link:''}
+    ]},
+    {name:'爆款素材',docs:[]}
   ],curFolder:0,curDoc:-1},
   history:[]
 };
@@ -638,11 +658,117 @@ var FLOW_PRESETS = [
   ]}
 ];
 
-/* 违禁词库（示例，可自行扩充） */
-var BAN_WORDS = ['最好','最佳','最优','最强','第一','首个','唯一','独家','国家级','世界级','顶级','极品',
-'绝无仅有','史无前例','万能','永久','永远','彻底','根治','特效','奇效','神效','包治','保证','承诺',
-'100%','百分百','零风险','无副作用','不反弹','免费送','限时','最后一天','即将涨价','疯抢','秒杀',
-'驰名商标','特供','专供','原装进口','纯天然','无添加','绿色食品','有机'];
+/* ============================================================
+ * 违禁词规则库 v2.0 —— 三级分类 + 可溯源 + 用户可编辑
+ *
+ * 设计原则（重要）：
+ *   1. 这是「审核决策库」，不是关键词黑名单。命中 ≠ 违法。
+ *   2. red   红线词：广告法明文禁止，默认应删除或改为可证限定
+ *   3. yellow 风险词：语义本身不违法，证据决定合法性（有机/限时/100% 等）
+ *   4. blue  平台敏感词：各平台社区规范不同，法律上未必禁止
+ *   5. 每条规则必须可追溯到依据，无法溯源的不进入法律强规则
+ *
+ * 数据来源：《广告法》《广告绝对化用语执法指南》(2023)
+ *          《化妆品标签管理办法》《药品广告审查发布标准》
+ * 免责：本库为辅助参考，不构成法律意见。发布前请人工复核。
+ * ============================================================ */
+var WORD_RULES = [
+  /* ---------- 🔴 红线词 ---------- */
+  {t:'国家级', lv:'red', why:'第九条第三项明确列举的绝对化用语', fix:'按国家标准分级为 X 级', law:'广告法第9条'},
+  {t:'最高级', lv:'red', why:'第九条第三项明确列举', fix:'达到 X 标准', law:'广告法第9条'},
+  {t:'最佳', lv:'red', why:'第九条第三项明确列举', fix:'更适合 X 场景', law:'广告法第9条'},
+  {t:'顶级', lv:'red', why:'与「最高级/最佳」含义近似', fix:'高性能；经测试表现较好', law:'执法指南第2条'},
+  {t:'极品', lv:'red', why:'与「最高级」含义近似', fix:'精选；优质', law:'执法指南第2条'},
+  {t:'顶尖', lv:'red', why:'与「最高级」含义近似', fix:'行业领先（需证据）', law:'执法指南第2条'},
+  {t:'第一品牌', lv:'red', why:'强烈横向竞争含义，易贬低他人或无法证伪', fix:'受消费者欢迎的品牌', law:'广告法第9、12条'},
+  {t:'销量冠军', lv:'red', why:'无时间、地域、统计口径的排名断言', fix:'X 年度 X 渠道销量领先（附来源）', law:'广告法第9条'},
+  {t:'全国第一', lv:'red', why:'范围越大，证明与误导风险越高', fix:'在 X 市场表现良好', law:'广告法第9条'},
+  {t:'全网第一', lv:'red', why:'无法证伪的全网范围断言', fix:'X 平台 X 时段销量第一（需证据）', law:'广告法第9条'},
+  {t:'世界级', lv:'red', why:'绝对化用语，无法验证', fix:'面向全球市场', law:'广告法第9条'},
+  {t:'独一无二', lv:'red', why:'绝对化用语', fix:'差异化设计', law:'广告法第9条'},
+  {t:'绝无仅有', lv:'red', why:'绝对化用语', fix:'较为少见', law:'广告法第9条'},
+  {t:'史无前例', lv:'red', why:'绝对化用语，无法验证', fix:'首次推出', law:'广告法第9条'},
+  {t:'驰名商标', lv:'red', why:'不得作为广告宣传', fix:'曾获 X 奖项（真实、有授权）', law:'商标法第14条'},
+  {t:'特供', lv:'red', why:'易暗示国家机关背书', fix:'专属款；定制款', law:'广告法第9条'},
+  {t:'专供', lv:'red', why:'易暗示国家机关背书', fix:'定制款；合作款', law:'广告法第9条'},
+  {t:'国宴专用', lv:'red', why:'暗示国家机关背书', fix:'宴会选用款（需真实）', law:'广告法第9条'},
+  {t:'国家免检', lv:'red', why:'缺乏合法依据的质量断言', fix:'经第三方检测，符合 X 标准', law:'广告法第4、28条'},
+  {t:'质量免检', lv:'red', why:'缺乏合法依据的质量断言', fix:'经 X 机构检测合格', law:'广告法第4、28条'},
+  {t:'最便宜', lv:'red', why:'最高级价格比较', fix:'低至 X 元', law:'广告法第9、28条'},
+  {t:'最低价', lv:'red', why:'最高级价格比较', fix:'低至 X 元', law:'广告法第9、28条'},
+  {t:'史上最低', lv:'red', why:'无时间点与范围的绝对比较', fix:'较常规价低 X%', law:'广告法第9、28条'},
+  {t:'根治', lv:'red', why:'普通商品涉嫌医疗功效断言', fix:'有助于改善', law:'广告法第9条；药品标准第10条'},
+  {t:'包治百病', lv:'red', why:'涉嫌医疗功效断言', fix:'按说明书用于 X', law:'药品标准第10条'},
+  {t:'特效', lv:'red', why:'暗示疗效，通常不可验证', fix:'依据 X 研究支持', law:'广告法第28条'},
+  {t:'神效', lv:'red', why:'暗示疗效，通常不可验证', fix:'效果因人而异', law:'广告法第28条'},
+  {t:'奇效', lv:'red', why:'暗示疗效，通常不可验证', fix:'具体说明作用机理', law:'广告法第28条'},
+  {t:'100%有效', lv:'red', why:'普遍性结果绝对保证，证据边界不清', fix:'X 试验中 X% 受试者观察到 Y', law:'广告法第28条'},
+  {t:'100%安全', lv:'red', why:'安全性绝对保证', fix:'按说明书使用', law:'广告法第28条'},
+  {t:'永不复发', lv:'red', why:'普遍性结果绝对保证', fix:'结论有观察期限', law:'广告法第28条'},
+  {t:'无副作用', lv:'red', why:'药品广告明确禁止的安全性断言', fix:'不良反应见说明书', law:'药品标准第10条'},
+  {t:'安全无毒副作用', lv:'red', why:'药品广告明确禁止', fix:'按说明书使用', law:'药品标准第10条'},
+  {t:'最新技术', lv:'red', why:'不科学功效断言/绝对化高风险', fix:'采用 X 技术', law:'药品标准第10条'},
+  {t:'最先进', lv:'red', why:'绝对化高风险，除非有标准分级或限定事实', fix:'采用 X 标准；较上一代提高 X', law:'执法指南第5-7条'},
+  {t:'祖传秘方', lv:'red', why:'通常不可验证', fix:'传统工艺', law:'广告法第28条'},
+  {t:'万能', lv:'red', why:'不可验证的绝对效果断言', fix:'适用于 X 场景', law:'广告法第28条'},
+  {t:'无敌', lv:'red', why:'绝对化用语', fix:'表现突出（需证据）', law:'广告法第9条'},
+
+  /* ---------- 🟡 风险词：证据决定合法性 ---------- */
+  {t:'有机', lv:'yellow', why:'有认证且在许可范围内可用，不得泛化', fix:'有机认证产品（附证书编号）', law:'待认证规则复核'},
+  {t:'绿色食品', lv:'yellow', why:'有标志许可且按规范使用即可', fix:'获绿色食品标志许可（附许可）', law:'待标志管理办法复核'},
+  {t:'纯天然', lv:'yellow', why:'需可证明且不暗示绝对安全/功效', fix:'含 X% 天然来源成分', law:'化妆品办法第19条'},
+  {t:'无添加', lv:'yellow', why:'需明确「未添加什么」及检测标准', fix:'本配方未添加 X', law:'广告法第28条'},
+  {t:'零添加', lv:'yellow', why:'需明确「未添加什么」及检测标准', fix:'本配方未添加 X', law:'广告法第28条'},
+  {t:'限时', lv:'yellow', why:'有真实起止时间与库存规则则合法', fix:'2026-09-15 23:59 截止；限量 200 件', law:'广告法第28条'},
+  {t:'秒杀', lv:'yellow', why:'价格、库存、订单机制真实则不违法', fix:'限时直降；开售提醒', law:'广告法第28条'},
+  {t:'最后一天', lv:'yellow', why:'有确定日历且能证明则可用，虚构紧迫感才违法', fix:'活动最后一天：X 日', law:'执法指南第6条'},
+  {t:'仅此一次', lv:'yellow', why:'需能证明批次或时间唯一性', fix:'本季末批次', law:'执法指南第6条'},
+  {t:'100%', lv:'yellow', why:'明确对象、样本、检测方法则可降级', fix:'纯度 100%（HPLC 检测/批次 X）', law:'执法指南第7条'},
+  {t:'百分百', lv:'yellow', why:'同上，需明确检测边界', fix:'有效率 X%（附研究）', law:'执法指南第7条'},
+  {t:'销量第一', lv:'yellow', why:'限定时间、地域、品类、数据源则可用', fix:'2026年1-6月 X 渠道销量第一（来源 X）', law:'执法指南第6条'},
+  {t:'市场份额第一', lv:'yellow', why:'需具体统计口径与来源', fix:'X 年度 X 区域市占率 X%（来源 X）', law:'执法指南第6条'},
+  {t:'第一', lv:'yellow', why:'企业内部比较或商标/专利指代时可分流', fix:'本品牌三款中容量最大', law:'执法指南第6条'},
+  {t:'唯一', lv:'yellow', why:'同上，需证据充分', fix:'本系列唯一 X 配置', law:'执法指南第6条'},
+  {t:'首个', lv:'yellow', why:'需能证明首创性', fix:'本品牌首款', law:'执法指南第6条'},
+  {t:'专利', lv:'yellow', why:'需标明专利号和专利种类', fix:'中国发明专利，专利号 ZL…', law:'广告法第11条'},
+  {t:'老字号', lv:'yellow', why:'需依法评定称号且可说明依据', fix:'获 X 年度 X 奖（授予主体/范围）', law:'执法指南第6条'},
+  {t:'专家研发', lv:'yellow', why:'需真实合作关系与资质，不暗示医疗证明', fix:'由 X 团队研发', law:'广告法第28条'},
+  {t:'专业', lv:'yellow', why:'需明确资质与适用边界', fix:'由 X 资质团队开发', law:'广告法第28条'},
+  {t:'可降解', lv:'yellow', why:'需明确条件与标准', fix:'在 X 条件下可降解', law:'广告法第28条'},
+  {t:'低脂', lv:'yellow', why:'食品标签符合标准且有检测依据时可用', fix:'每 100g 含脂肪 X g', law:'广告法第28条'},
+  {t:'高钙', lv:'yellow', why:'营养成分符合标准且有检测依据', fix:'每 100g 含钙 X mg', law:'广告法第28条'},
+  {t:'升值', lv:'yellow', why:'涉投资回报断言，普通消费品应避免', fix:'收藏价值因人而异', law:'广告法第28条'},
+  {t:'保值', lv:'yellow', why:'涉投资回报断言', fix:'不作收益承诺', law:'广告法第28条'},
+
+  /* ---------- 🔵 平台敏感词：按渠道分别管理 ---------- */
+  {t:'加微信', lv:'blue', why:'小红书等平台禁止站外交易导流', fix:'通过官方留资组件或商城成交', law:'小红书交易导流规则（公开报道）'},
+  {t:'私信我', lv:'blue', why:'站外导流风险', fix:'请通过平台内官方渠道联系', law:'小红书交易导流规则'},
+  {t:'扫二维码', lv:'blue', why:'站外导流风险', fix:'平台内官方组件', law:'小红书交易导流规则'},
+  {t:'薇信', lv:'blue', why:'变体写法，同样构成导流', fix:'删除或改为官方组件', law:'小红书交易导流规则'},
+  {t:'V信', lv:'blue', why:'变体写法，同样构成导流', fix:'删除或改为官方组件', law:'小红书交易导流规则'},
+  {t:'进群', lv:'blue', why:'私域导流风险', fix:'平台内官方社群', law:'小红书交易导流规则'},
+  {t:'私聊成交', lv:'blue', why:'站外成交风险', fix:'通过平台商城成交', law:'小红书交易导流规则'},
+  {t:'转发领红包', lv:'blue', why:'微信明令禁止以利诱分享', fix:'删除利诱机制', law:'微信公众平台规则'},
+  {t:'集赞', lv:'blue', why:'以利诱分享，违反微信规则', fix:'改为无奖励的内容互动', law:'微信公众平台规则'},
+  {t:'助力', lv:'blue', why:'以利诱分享', fix:'删除助力机制', law:'微信公众平台规则'},
+  {t:'分享可得', lv:'blue', why:'以利诱分享', fix:'删除奖励承诺', law:'微信公众平台规则'},
+  {t:'不转不是', lv:'blue', why:'胁迫煽动分享', fix:'删除', law:'微信公众平台规则'},
+  {t:'点击有惊喜', lv:'blue', why:'抖音列为诱导点击高频表达', fix:'明确说明点击后的实际内容', law:'抖音电商规则'},
+  {t:'再不抢就没了', lv:'blue', why:'制造虚假紧迫感', fix:'说明真实库存与时间', law:'抖音电商规则'},
+  {t:'点击下方', lv:'blue', why:'需与实际实现一致，避免诱导', fix:'说明链接实际内容', law:'抖音电商规则'},
+  {t:'好评返现', lv:'blue', why:'淘宝/天猫禁止以利益诱导评价', fix:'删除返现机制', law:'淘宝规则'},
+  {t:'全五星返现', lv:'blue', why:'诱导评价', fix:'删除', law:'淘宝规则'},
+  {t:'免单返现', lv:'blue', why:'诱导评价', fix:'删除', law:'淘宝规则'}
+];
+
+/* 常见误判提醒：命中这些时提示用户「可能是误判」 */
+var FALSE_POSITIVE_HINT = [
+  {t:'最', msg:'「最」本身不等于违法，关键看是否指向商品性能、质量及竞争排序'},
+  {t:'第一', msg:'同一品牌内部比较、商品名或专利指代时，依指南第6条可分流'},
+  {t:'有机', msg:'取得有效有机认证且在许可范围内时可用'},
+  {t:'限时', msg:'有真实起止时间和库存规则时合法，虚构紧迫感才违法'},
+  {t:'100%', msg:'针对可验证对象（如特定批次纯度）且有方法/范围时可降级'}
+];
 
 /* ================= 读写 ================= */
 function save(){
@@ -656,7 +782,10 @@ function load(){
   if(!state.flow.steps || !state.flow.steps.length) state.flow.steps = defaultSteps();
   if(!state.kb || !state.kb.folders || !state.kb.folders.length){
     state.kb = {folders:[{name:'品牌资产',docs:[]},{name:'竞品素材',docs:[]},{name:'用户原声',docs:[]},
-      {name:'违禁词库',docs:[]},{name:'爆款素材',docs:[]}],curFolder:0,curDoc:-1};
+      {name:'违禁词库',docs:[{title:'自定义词库（可编辑）',
+        body:'# 自定义违禁词库\n\n在这里增删词条，扫描时会自动与内置词库合并。\n每行一个词，用 `##` 分节。**改完记得点「💾 保存」**\n\n## 红线词\n\n- 例：全网最低\n\n## 风险词\n\n- 例：顶级工艺\n\n## 平台敏感词\n\n- 例：私聊\n',
+        tags:'合规,词库', link:''}]},
+      {name:'爆款素材',docs:[]}],curFolder:0,curDoc:-1};
   }
 }
 function defaultSteps(){
@@ -668,8 +797,20 @@ function toast(m){
   var t = $('#toast'); t.textContent = m; t.classList.add('is-on');
   setTimeout(function(){ t.classList.remove('is-on'); }, 1800);
 }
+/* 预览区轻量 Markdown 渲染：先转义再渲染，避免 XSS */
+function mdLite(s){
+  if(!s) return '';
+  var h = s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  h = h.replace(/^### (.*)$/gm,'<b style="color:var(--brand)">$1</b>')
+       .replace(/^## (.*)$/gm,'<b style="font-size:14.5px">$1</b>')
+       .replace(/^# (.*)$/gm,'<b style="font-size:15.5px">$1</b>')
+       .replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>');
+  return h.replace(/\n/g,'<br>');
+}
 function setPreview(txt){
-  $('#preview').textContent = txt || '⚠️ 请填写字段或选择预设。';
+  var el = $('#preview');
+  if(!txt){ el.textContent = '⚠️ 请填写字段或选择预设。'; }
+  else { el.innerHTML = mdLite(txt); }
   $('#charCount').textContent = (txt||'').length + ' 字符';
 }
 function copy(txt){
@@ -940,24 +1081,106 @@ function genFlow(){
   setPreview(txt); pushHistory('工作流 · ' + (state.flow.goal || '未命名'), txt); save();
 }
 
+/* 读取用户在知识库「违禁词库」中自定义的词，支持 ## 红线词 / ## 风险词 / ## 平台敏感词 分节 */
+function userWords(){
+  var res = {red:[], yellow:[], blue:[]};
+  var lv = 'red';
+  var folder = null;
+  for(var i=0;i<state.kb.folders.length;i++){
+    if(state.kb.folders[i].name.indexOf('违禁词') > -1){ folder = state.kb.folders[i]; break; }
+  }
+  if(!folder) return res;
+  folder.docs.forEach(function(doc){
+    (doc.body || '').split('\n').forEach(function(line){
+      line = line.trim();
+      if(line.indexOf('## ') === 0){
+        var h = line.replace(/^#+\s*/,'');
+        if(h.indexOf('红线') > -1) lv = 'red';
+        else if(h.indexOf('风险') > -1) lv = 'yellow';
+        else if(h.indexOf('平台') > -1) lv = 'blue';
+        return;
+      }
+      if(!line || line.indexOf('#') === 0) return;
+      var w = line.replace(/^[-*·\d.\s]+/,'').split(/[，,（(]/)[0].trim();
+      if(w && w.length < 20) res[lv].push({t:w, lv:lv, why:'用户自定义', fix:'—', law:'自定义词库'});
+    });
+  });
+  return res;
+}
+
 function scanWords(){
   var txt = $('#preview').textContent;
   if(!txt || txt.indexOf('请填写字段') > -1){ toast('请先生成内容再做体检'); return; }
-  var hits = [];
-  BAN_WORDS.forEach(function(w){ if(txt.indexOf(w) > -1) hits.push(w); });
+
+  var uw = userWords();
+  var all = WORD_RULES.concat(uw.red, uw.yellow, uw.blue);
+  var seen = {}, hits = {red:[], yellow:[], blue:[]};
+  all.forEach(function(r){
+    if(seen[r.t]) return;
+    if(txt.indexOf(r.t) > -1){ seen[r.t] = 1; hits[r.lv].push(r); }
+  });
+
+  var total = hits.red.length + hits.yellow.length + hits.blue.length;
   var out = '## 违禁词体检报告\n\n';
-  if(!hits.length){
-    out += '✅ 未命中内置词库中的风险词。\n\n';
+
+  if(!total){
+    out += '✅ 未命中词库中的风险词。\n\n';
   } else {
-    out += '⚠️ 命中 ' + hits.length + ' 个风险词：\n\n';
-    hits.forEach(function(w){
-      out += '- **' + w + '** —— 涉嫌《广告法》极限用语或平台敏感词，建议替换为客观表述并提供依据。\n';
+    out += '共命中 ' + total + ' 处（🔴 红线 ' + hits.red.length +
+           ' · 🟡 风险 ' + hits.yellow.length + ' · 🔵 平台 ' + hits.blue.length + '）\n\n';
+
+    if(hits.red.length){
+      out += '### 🔴 红线词（建议删除或改为可证限定）\n\n';
+      hits.red.forEach(function(r){
+        out += '- **' + r.t + '**\n';
+        out += '  - 风险：' + r.why + '\n';
+        out += '  - 建议改为：' + r.fix + '\n';
+        out += '  - 依据：' + r.law + '\n';
+      });
+      out += '\n';
+    }
+    if(hits.yellow.length){
+      out += '### 🟡 风险词（有真实依据则可用，无需删除）\n\n';
+      hits.yellow.forEach(function(r){
+        out += '- **' + r.t + '** —— ' + r.why + '\n';
+        out += '  - 合规写法：' + r.fix + '\n';
+      });
+      out += '\n';
+    }
+    if(hits.blue.length){
+      out += '### 🔵 平台敏感词（法律上未必禁止，但可能限流/下架）\n\n';
+      hits.blue.forEach(function(r){
+        out += '- **' + r.t + '** —— ' + r.why + '\n';
+        out += '  - 建议：' + r.fix + '\n';
+      });
+      out += '\n';
+    }
+
+    // 误判提醒
+    var fp = [];
+    FALSE_POSITIVE_HINT.forEach(function(f){
+      if(txt.indexOf(f.t) > -1) fp.push(f);
     });
-    out += '\n';
+    if(fp.length){
+      out += '### ⚠️ 避免过度拦截\n\n以下词可能是误判，请结合语境判断：\n\n';
+      fp.forEach(function(f){ out += '- 「' + f.t + '」：' + f.msg + '\n'; });
+      out += '\n';
+    }
   }
-  out += '---\n说明：本词库为内置示例（' + BAN_WORDS.length + ' 词），覆盖广告法极限词与常见平台敏感词。\n';
-  out += '正式发布前请以最新法规与各平台规则为准，建议人工复核。';
-  setPreview(out); toast(hits.length ? '命中 ' + hits.length + ' 个风险词' : '未发现风险词 ✅');
+
+  out += '---\n\n';
+  out += '**重要说明**\n\n';
+  out += '1. 本工具是「审核决策库」，不是黑名单。**命中 ≠ 违法**。\n';
+  out += '2. 🟡 风险词的合法性取决于证据：有机要有认证、限时要有真实起止时间、100% 要说明检测对象与方法。\n';
+  out += '3. 依据 2023 年《广告绝对化用语执法指南》，企业内部比较、表达经营理念、有明确限定的销量事实等情形可分流处理。\n';
+  out += '4. 内置词库 ' + WORD_RULES.length + ' 条，来源为《广告法》《广告绝对化用语执法指南》《化妆品标签管理办法》《药品广告审查发布标准》及平台公开规则。\n';
+  out += '5. 平台规则更新频繁，发布前请以各平台最新规则中心为准。\n\n';
+  out += '> ⚠️ 本工具仅作辅助参考，不构成法律意见。正式发布前请人工复核。\n\n';
+  out += '💡 想增删词条？去「📚 品牌知识库 → 违禁词库」，用 `## 红线词` / `## 风险词` / `## 平台敏感词` 分节编辑即可，扫描时会自动合并。';
+
+  setPreview(out);
+  toast(total ? '命中 ' + total + ' 处（🔴' + hits.red.length + ' 🟡' + hits.yellow.length + ' 🔵' + hits.blue.length + '）' : '未发现风险词 ✅');
+  pushHistory('违禁词体检 · 命中 ' + total + ' 处', out);
 }
 
 function expand(){

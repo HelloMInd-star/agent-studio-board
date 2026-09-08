@@ -61,6 +61,29 @@ Pick ONE of the two. Do not use both.
 - **Autosave**: all inputs in localStorage, survives refresh
 - **Import / Export**: one-click JSON config
 
+
+## 4.1 Banned Word Scanner (v2)
+
+Three-level rule engine, NOT a keyword blacklist. A hit does NOT mean illegal.
+
+| Level | Meaning | Action |
+|---|---|---|
+| RED | Banned by Advertising Law, near no exception | delete or rewrite with verifiable limits |
+| YELLOW | Legal depends on evidence (organic / limited-time / 100%) | keep if you have proof |
+| BLUE | Platform community rules only | may cause throttling, not illegal |
+
+Built-in: 81 rules (38 red / 25 yellow / 18 blue), each with risk note,
+suggested replacement, and legal basis.
+
+Sources: Advertising Law, 2023 SAMR Guidelines on Absolute Terms Enforcement,
+Cosmetic Labeling Measures, Drug Advertising Review Standards, platform public rules.
+
+**Custom words**: go to Knowledge -> Banned Words folder. Edit with
+`## RED` / `## YELLOW` / `## BLUE` sections, one word per line.
+Merged automatically on next scan.
+
+Disclaimer: auxiliary reference only, NOT legal advice. Human review required.
+
 ## 5. Data
 
 - Stored in browser localStorage, key `ym_studio_v1`
