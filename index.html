@@ -115,6 +115,12 @@ textarea{resize:vertical;min-height:74px;line-height:1.7;}
 }
 .memory__hd{font-size:13px;font-weight:700;margin-bottom:5px;}
 .memory__tip{font-size:11.5px;color:var(--soft);line-height:1.65;}
+.memform{margin-top:10px;}
+.memform label.f{margin-bottom:8px;}
+.memform input[type=text]{
+  padding:6px 9px;font-size:12.5px;border-radius:7px;background:var(--card);
+}
+.memform label.f > span{font-size:11.5px;margin-bottom:3px;}
 
 /* ============ 预设 chip ============ */
 .chips{display:flex;flex-wrap:wrap;gap:6px;}
@@ -283,20 +289,40 @@ textarea{resize:vertical;min-height:74px;line-height:1.7;}
     <div class="memory">
       <div class="memory__hd">🎯 品牌记忆（核心资产）</div>
       <div class="memory__tip">
-        填写一次，之后每次生成都会自动带上品牌语境。<br>
-        建议：品牌名 / 品类 / 目标人群 / 核心卖点 / 品牌语气 / 禁用词
+        填写一次，之后<b>每次生成自动注入</b>。禁用词会同步进违禁词体检。
+      </div>
+      <div class="memform">
+        <label class="f"><span>🏷️ 品牌名</span><input type="text" id="m_brand" placeholder="例：Y.Mine"></label>
+        <label class="f"><span>📦 品类</span><input type="text" id="m_cat" placeholder="例：AI 效率工具 / SaaS"></label>
+        <label class="f"><span>👥 目标人群</span><input type="text" id="m_aud" placeholder="例：25-35 岁品牌经理"></label>
+        <label class="f"><span>💎 核心卖点</span><input type="text" id="m_usp" placeholder="例：本地运行，数据不出浏览器"></label>
+        <label class="f"><span>🎭 专家角色</span><input type="text" id="defRole" placeholder="例：资深品牌策略师"></label>
+        <label class="f"><span>🎨 语气/风格</span><input type="text" id="defTone" placeholder="例：专业但不端着，直接给结论"></label>
+        <label class="f"><span>🚫 禁用词（逗号分隔）</span><input type="text" id="m_ban" placeholder="例：竞品名A, 内部代号, 打折"></label>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button class="btn btn--sm btn--ghost" id="btnMemPeek">👀 预览注入效果</button>
       </div>
     </div>
 
     <div class="card">
-      <div class="card__hd">🎭 默认专家角色</div>
-      <input type="text" id="defRole" placeholder="例：资深品牌策略师">
-    </div>
-
-    <div class="card">
-      <div class="card__hd">🎨 默认语气/风格</div>
-      <input type="text" id="defTone" placeholder="例：专业但不端着，直接给结论">
-      <p class="hint" style="margin-top:8px">💡 设置后，每次生成都会自动带上这些偏好。</p>
+      <div class="card__hd">📚 知识库引用</div>
+      <label style="font-size:12.5px;display:flex;align-items:center;gap:6px;cursor:pointer;margin-bottom:6px">
+        <input type="checkbox" id="kbUse" checked> 生成时自动带上知识库内容
+      </label>
+      <label class="f" style="margin-bottom:6px"><span>引用范围</span>
+        <select id="kbScope">
+          <option value="all">全部文件夹</option>
+          <option value="cur">仅当前选中文件夹</option>
+          <option value="off">不引用</option>
+        </select>
+      </label>
+      <label class="f" style="margin-bottom:6px"><span>最多引用文档数</span>
+        <select id="kbMax">
+          <option>3</option><option selected>5</option><option>10</option><option>20</option>
+        </select>
+      </label>
+      <p class="hint" id="kbStat">当前可引用 0 篇文档</p>
     </div>
 
     <div class="card">
@@ -553,6 +579,8 @@ var KEY = 'ym_studio_v1';
 /* ================= 状态 ================= */
 var state = {
   theme:'light', memOn:true, defRole:'', defTone:'', curPreset:'', curStrat:'SWOT分析',
+  brand:{name:'', cat:'', aud:'', usp:'', ban:''},
+  kbUse:true, kbScope:'all', kbMax:'5',
   role:{role:'',task:'',bg:'',req:'',ex:''},
   content:{title:'',kw:'',platform:'小红书',len:'800 字',style:'专业干货型',aud:'',ref:'',extra:''},
   strat:{name:'',bg:'',extra:''},
@@ -889,18 +917,94 @@ function pushHistory(title, txt){
   save();
 }
 
-/* 品牌记忆注入 */
+/* ============ 品牌记忆 ============ */
+/* 生成时从输入框实时读取，避免粘贴 / 自动填充不触发 oninput 导致漏注入 */
+function readBrand(){
+  var g = function(id, k){
+    var el = $('#' + id);
+    var v = el && el.value ? el.value.trim() : (state.brand[k] || '');
+    return v;
+  };
+  state.brand.name = g('m_brand','name');
+  state.brand.cat  = g('m_cat','cat');
+  state.brand.aud  = g('m_aud','aud');
+  state.brand.usp  = g('m_usp','usp');
+  state.brand.ban  = g('m_ban','ban');
+  var rEl = $('#defRole'), tEl = $('#defTone');
+  state.defRole = (rEl && rEl.value) ? rEl.value.trim() : (state.defRole || '');
+  state.defTone = (tEl && tEl.value) ? tEl.value.trim() : (state.defTone || '');
+  return state.brand;
+}
+
 function brandCtx(){
   if(!state.memOn) return [];
-  // 生成时直接从输入框读取，避免粘贴 / 自动填充不触发 oninput 导致漏注入
-  var rEl = $('#defRole'), tEl = $('#defTone');
-  var r = (rEl && rEl.value) || state.defRole || '';
-  var t = (tEl && tEl.value) || state.defTone || '';
-  state.defRole = r; state.defTone = t;
+  var b = readBrand();
   var out = [];
-  if(r) out.push('默认专家角色：' + r);
-  if(t) out.push('语气/风格：' + t);
+  if(b.name) out.push('品牌名：' + b.name);
+  if(b.cat)  out.push('品类：' + b.cat);
+  if(b.aud)  out.push('目标人群：' + b.aud);
+  if(b.usp)  out.push('核心卖点：' + b.usp);
+  if(state.defRole) out.push('专家角色：' + state.defRole);
+  if(state.defTone) out.push('语气/风格：' + state.defTone);
+  if(b.ban)  out.push('禁用词（严禁出现）：' + b.ban);
   return out;
+}
+
+/* 品牌禁用词 -> 供违禁词扫描使用 */
+function brandBanList(){
+  var b = readBrand();
+  if(!b.ban) return [];
+  return b.ban.split(/[,，、;；\s]+/).filter(function(w){ return w && w.length < 20; })
+    .map(function(w){ return {t:w, lv:'red', why:'品牌自定义禁用词', fix:'删除或替换为品牌允许的表述', law:'品牌记忆 · 禁用词'}; });
+}
+
+/* ============ 知识库引用 ============ */
+/* 收集可引用的文档：scope=all 全部 / cur 仅当前文件夹 */
+function collectKbDocs(){
+  var sel = $('#kbScope');
+  var scope = sel ? sel.value : (state.kbScope || 'all');
+  var maxEl = $('#kbMax');
+  var max = parseInt((maxEl && maxEl.value) || state.kbMax || '5', 10);
+  var useEl = $('#kbUse');
+  var use = useEl ? useEl.checked : state.kbUse;
+  if(!use || scope === 'off') return {docs:[], total:0, folder:''};
+
+  var out = [];
+  if(scope === 'cur'){
+    var f = state.kb.folders[state.kb.curFolder];
+    if(f) f.docs.forEach(function(d){ out.push({folder:f.name, doc:d}); });
+  } else {
+    state.kb.folders.forEach(function(f){
+      f.docs.forEach(function(d){ out.push({folder:f.name, doc:d}); });
+    });
+  }
+  // 排除词库本身（那是规则库，不是内容素材）
+  out = out.filter(function(x){ return x.folder.indexOf('违禁词') === -1; });
+  return {docs: out.slice(0, max), total: out.length, folder: scope === 'cur' ? (state.kb.folders[state.kb.curFolder]||{}).name || '' : '全部'};
+}
+
+/* 把知识库内容渲染成可注入的文本块 */
+function kbContext(){
+  var c = collectKbDocs();
+  if(!c.docs.length) return '';
+  var s = '## 参考资料（来自品牌知识库 · ' + c.folder + '，共引用 ' + c.docs.length + ' 篇）\n\n';
+  c.docs.forEach(function(x, i){
+    var d = x.doc;
+    s += '### [' + x.folder + '] ' + (d.title || '未命名') + '\n';
+    if(d.tags) s += '（标签：' + d.tags + '）\n';
+    s += '\n' + (d.body || '').slice(0, 1200) + '\n\n';
+  });
+  s += '---\n请优先基于以上真实资料创作，不要编造与资料冲突的信息。资料未覆盖的部分可以合理补充并标注。\n';
+  return s;
+}
+
+/* 更新左栏「可引用文档数」提示 */
+function updateKbStat(){
+  var el = $('#kbStat'); if(!el) return;
+  var c = collectKbDocs();
+  el.textContent = c.docs.length
+    ? '当前可引用 ' + c.docs.length + ' 篇' + (c.total > c.docs.length ? '（共 ' + c.total + ' 篇，超出部分未引用）' : '')
+    : '当前可引用 0 篇 —— 去「📚 品牌知识库」添加内容';
 }
 function wrapWithBrand(body, title){
   var ctx = brandCtx();
@@ -909,6 +1013,9 @@ function wrapWithBrand(body, title){
     head += '## 全局品牌语境（自动注入）\n' + ctx.map(function(c){ return '- ' + c; }).join('\n') + '\n\n';
   }
   head += '---\n\n';
+  // 知识库资料排在正文之前，作为 AI 的创作依据
+  var kb = kbContext();
+  if(kb) head += kb + '\n';
   return head + body;
 }
 
@@ -992,7 +1099,7 @@ function renderKb(){
     var d = document.createElement('div');
     d.className = 'kb__folder' + (state.kb.curFolder === i ? ' is-on' : '');
     d.innerHTML = '<span>📁 ' + f.name + '</span><span>' + f.docs.length + '</span>';
-    d.onclick = function(){ state.kb.curFolder = i; state.kb.curDoc = -1; renderKb(); save(); };
+    d.onclick = function(){ state.kb.curFolder = i; state.kb.curDoc = -1; renderKb(); updateKbStat(); save(); };
     fh.appendChild(d);
   });
   var dh = $('#kbDocs'); dh.innerHTML = '';
@@ -1188,7 +1295,8 @@ function scanWords(){
   }
 
   var uw = userWords();
-  var all = WORD_RULES.concat(uw.red, uw.yellow, uw.blue);
+  var bb = brandBanList();
+  var all = WORD_RULES.concat(uw.red, uw.yellow, uw.blue, bb);
   var seen = {}, hits = {red:[], yellow:[], blue:[]};
   var skipped = 0;
   all.forEach(function(r){
@@ -1304,6 +1412,37 @@ function bind(){
   $('#defRole').oninput = function(){ state.defRole = this.value; $('#curAgent').textContent = this.value || '提示词工坊'; save(); };
   $('#defTone').oninput = function(){ state.defTone = this.value; save(); };
 
+  // 品牌记忆 6 字段（输入即存）
+  ['m_brand','m_cat','m_aud','m_usp','m_ban'].forEach(function(id){
+    var key = {m_brand:'name', m_cat:'cat', m_aud:'aud', m_usp:'usp', m_ban:'ban'}[id];
+    var el = $('#' + id);
+    if(el) el.addEventListener('input', function(){ readBrand(); save(); });
+  });
+
+  // 预览品牌记忆注入效果
+  $('#btnMemPeek').onclick = function(){
+    var ctx = brandCtx();
+    var out = '# 品牌记忆 · 注入预览\n\n';
+    if(!ctx.length){
+      out += '（尚未填写任何品牌记忆）\n\n填好左栏 7 个字段后，这里会显示每次生成时自动注入的内容。';
+    } else {
+      out += '以下内容会在**每次生成时自动加到提示词开头**：\n\n';
+      out += '## 全局品牌语境（自动注入）\n' + ctx.map(function(c){ return '- ' + c; }).join('\n') + '\n\n';
+      var bb = brandBanList();
+      if(bb.length){
+        out += '## 品牌禁用词（已同步进违禁词体检）\n';
+        out += bb.map(function(b){ return '- ' + b.t; }).join('\n') + '\n\n';
+      }
+      out += '---\n\n💡 这些字段存在浏览器本地，不会上传。';
+    }
+    setPreview(out); toast('已生成品牌记忆预览');
+  };
+
+  // 知识库引用
+  $('#kbUse').onchange = function(){ state.kbUse = this.checked; updateKbStat(); save(); };
+  $('#kbScope').onchange = function(){ state.kbScope = this.value; updateKbStat(); save(); };
+  $('#kbMax').onchange = function(){ state.kbMax = this.value; updateKbStat(); save(); };
+
   // 清空
   $('#btnClear').onclick = function(){
     ['#r_role','#r_task','#r_bg','#r_req','#r_ex'].forEach(function(s){ $(s).value=''; });
@@ -1366,7 +1505,7 @@ function bind(){
   // 知识库
   $('#btnAddFolder').onclick = function(){
     var n = prompt('新文件夹名称');
-    if(n){ state.kb.folders.push({name:n, docs:[]}); state.kb.curFolder = state.kb.folders.length-1; renderKb(); save(); }
+    if(n){ state.kb.folders.push({name:n, docs:[]}); state.kb.curFolder = state.kb.folders.length-1; renderKb(); updateKbStat(); save(); }
   };
   $('#btnDelFolder').onclick = function(){
     if(state.kb.folders.length <= 1){ toast('至少保留一个文件夹'); return; }
@@ -1385,7 +1524,7 @@ function bind(){
                tags:$('#d_tags').value, link:$('#d_link').value};
     if(!doc.title && !doc.body){ toast('标题或正文至少填一项'); return; }
     if(state.kb.curDoc >= 0) f.docs[state.kb.curDoc] = doc; else { f.docs.push(doc); state.kb.curDoc = f.docs.length-1; }
-    renderKb(); save(); toast('已保存');
+    renderKb(); updateKbStat(); save(); toast('已保存');
   };
   $('#btnDelDoc').onclick = function(){
     var f = state.kb.folders[state.kb.curFolder];
@@ -1432,6 +1571,16 @@ function restoreAll(){
   $('#defTone').value = state.defTone || '';
   $('#curAgent').textContent = state.defRole || '提示词工坊';
 
+  state.brand = state.brand || {name:'',cat:'',aud:'',usp:'',ban:''};
+  $('#m_brand').value = state.brand.name || '';
+  $('#m_cat').value   = state.brand.cat || '';
+  $('#m_aud').value   = state.brand.aud || '';
+  $('#m_usp').value   = state.brand.usp || '';
+  $('#m_ban').value   = state.brand.ban || '';
+  $('#kbUse').checked = state.kbUse !== false;
+  $('#kbScope').value = state.kbScope || 'all';
+  $('#kbMax').value   = state.kbMax || '5';
+
   $('#r_role').value = state.role.role || ''; $('#r_task').value = state.role.task || '';
   $('#r_bg').value = state.role.bg || '';     $('#r_req').value = state.role.req || '';
   $('#r_ex').value = state.role.ex || '';
@@ -1459,6 +1608,7 @@ function restoreAll(){
   $('#f_bg').value = state.flow.bg || '';
 
   renderPresets(); renderStratChips(); renderFlowChips(); renderSteps(); renderKb();
+  updateKbStat();
 }
 
 /* ================= 启动 ================= */
