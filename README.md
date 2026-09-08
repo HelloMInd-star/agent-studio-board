@@ -78,6 +78,25 @@ suggested replacement, and legal basis.
 Sources: Advertising Law, 2023 SAMR Guidelines on Absolute Terms Enforcement,
 Cosmetic Labeling Measures, Drug Advertising Review Standards, platform public rules.
 
+
+### 4.1.1 Platform-aware filtering
+
+The scanner separates legal rules from platform rules:
+
+- RED / YELLOW (legal) apply on all platforms
+- BLUE (platform) only apply to the selected channel
+
+Pick the target channel in Content Factory -> "Scan Platform":
+`Xiaohongshu / Douyin / WeChat / Taobao / Bilibili / Zhihu / Weibo`,
+or `All platforms` for the strictest pass, or `Follow channel above`
+to reuse the platform selected for generation.
+
+Same text, different channel, different result:
+
+```
+"加微信，点击有惊喜，好评返现"  -> XHS: 1 blue | Taobao: 2 blue | All: 3 blue
+```
+
 **Custom words**: go to Knowledge -> Banned Words folder. Edit with
 `## RED` / `## YELLOW` / `## BLUE` sections, one word per line.
 Merged automatically on next scan.

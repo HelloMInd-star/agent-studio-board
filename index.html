@@ -361,6 +361,19 @@ textarea{resize:vertical;min-height:74px;line-height:1.7;}
       </div>
       <label class="f"><span>📚 参考素材（每行一条）</span><textarea id="c_ref" placeholder="竞品爆款标题 / 用户真实评论 / 产品资料"></textarea></label>
       <label class="f"><span>📌 额外要求</span><textarea id="c_extra" placeholder="例：开头 3 秒必须有钩子；结尾带 CTA"></textarea></label>
+      <label class="f"><span>⚖️ 体检平台（决定叠加哪套平台规则）</span>
+        <select id="c_scanpf">
+          <option value="__follow__">跟随上方「投放平台」</option>
+          <option value="__all__">全部平台（最严格）</option>
+          <option value="xhs">小红书</option>
+          <option value="dy">抖音</option>
+          <option value="wx">微信 / 公众号</option>
+          <option value="tb">淘宝 / 天猫</option>
+          <option value="bili">B站</option>
+          <option value="zhihu">知乎</option>
+          <option value="weibo">微博</option>
+        </select>
+      </label>
       <div class="row">
         <button class="btn btn--primary" id="btnGenContent">🚀 生成文稿</button>
         <button class="btn btn--ghost" id="btnCopyAll">📋 复制</button>
@@ -740,26 +753,63 @@ var WORD_RULES = [
   {t:'升值', lv:'yellow', why:'涉投资回报断言，普通消费品应避免', fix:'收藏价值因人而异', law:'广告法第28条'},
   {t:'保值', lv:'yellow', why:'涉投资回报断言', fix:'不作收益承诺', law:'广告法第28条'},
 
-  /* ---------- 🔵 平台敏感词：按渠道分别管理 ---------- */
-  {t:'加微信', lv:'blue', why:'小红书等平台禁止站外交易导流', fix:'通过官方留资组件或商城成交', law:'小红书交易导流规则（公开报道）'},
-  {t:'私信我', lv:'blue', why:'站外导流风险', fix:'请通过平台内官方渠道联系', law:'小红书交易导流规则'},
-  {t:'扫二维码', lv:'blue', why:'站外导流风险', fix:'平台内官方组件', law:'小红书交易导流规则'},
-  {t:'薇信', lv:'blue', why:'变体写法，同样构成导流', fix:'删除或改为官方组件', law:'小红书交易导流规则'},
-  {t:'V信', lv:'blue', why:'变体写法，同样构成导流', fix:'删除或改为官方组件', law:'小红书交易导流规则'},
-  {t:'进群', lv:'blue', why:'私域导流风险', fix:'平台内官方社群', law:'小红书交易导流规则'},
-  {t:'私聊成交', lv:'blue', why:'站外成交风险', fix:'通过平台商城成交', law:'小红书交易导流规则'},
-  {t:'转发领红包', lv:'blue', why:'微信明令禁止以利诱分享', fix:'删除利诱机制', law:'微信公众平台规则'},
-  {t:'集赞', lv:'blue', why:'以利诱分享，违反微信规则', fix:'改为无奖励的内容互动', law:'微信公众平台规则'},
-  {t:'助力', lv:'blue', why:'以利诱分享', fix:'删除助力机制', law:'微信公众平台规则'},
-  {t:'分享可得', lv:'blue', why:'以利诱分享', fix:'删除奖励承诺', law:'微信公众平台规则'},
-  {t:'不转不是', lv:'blue', why:'胁迫煽动分享', fix:'删除', law:'微信公众平台规则'},
-  {t:'点击有惊喜', lv:'blue', why:'抖音列为诱导点击高频表达', fix:'明确说明点击后的实际内容', law:'抖音电商规则'},
-  {t:'再不抢就没了', lv:'blue', why:'制造虚假紧迫感', fix:'说明真实库存与时间', law:'抖音电商规则'},
-  {t:'点击下方', lv:'blue', why:'需与实际实现一致，避免诱导', fix:'说明链接实际内容', law:'抖音电商规则'},
-  {t:'好评返现', lv:'blue', why:'淘宝/天猫禁止以利益诱导评价', fix:'删除返现机制', law:'淘宝规则'},
-  {t:'全五星返现', lv:'blue', why:'诱导评价', fix:'删除', law:'淘宝规则'},
-  {t:'免单返现', lv:'blue', why:'诱导评价', fix:'删除', law:'淘宝规则'}
+  /* ---------- 🔵 平台敏感词：按渠道分别叠加（pf = 生效平台） ---------- */
+  /* 小红书 */
+  {t:'加微信', lv:'blue', pf:['xhs','dy','tb','bili','zhihu','weibo'], why:'站外交易导流', fix:'用平台官方留资组件或商城成交', law:'小红书交易导流规则'},
+  {t:'薇信', lv:'blue', pf:['xhs','dy','tb'], why:'变体写法同样构成导流', fix:'删除', law:'小红书交易导流规则'},
+  {t:'V信', lv:'blue', pf:['xhs','dy','tb'], why:'变体写法同样构成导流', fix:'删除', law:'小红书交易导流规则'},
+  {t:'私信我', lv:'blue', pf:['xhs'], why:'站外导流风险', fix:'引导至平台内官方渠道', law:'小红书交易导流规则'},
+  {t:'扫二维码', lv:'blue', pf:['xhs','dy','tb','weibo'], why:'站外导流风险', fix:'删除或用官方组件', law:'小红书交易导流规则'},
+  {t:'进群', lv:'blue', pf:['xhs','tb'], why:'私域导流风险', fix:'平台内官方社群', law:'小红书交易导流规则'},
+  {t:'私聊成交', lv:'blue', pf:['xhs','tb'], why:'站外成交，绕过平台交易', fix:'通过平台商城成交', law:'小红书交易导流规则'},
+  {t:'站外下单', lv:'blue', pf:['xhs','dy','tb'], why:'站外成交风险', fix:'平台内成交', law:'平台交易规则'},
+  {t:'联系方式', lv:'blue', pf:['xhs'], why:'留联系方式属常见导流形式', fix:'删除或用官方留资组件', law:'小红书交易导流规则'},
+  {t:'代购', lv:'blue', pf:['xhs'], why:'可能涉及未备案交易行为', fix:'通过平台合规渠道', law:'小红书交易导流规则'},
+  /* 抖音 */
+  {t:'点击有惊喜', lv:'blue', pf:['dy'], why:'诱导点击高频表达', fix:'明确说明点击后的实际内容', law:'抖音电商规则'},
+  {t:'再不抢就没了', lv:'blue', pf:['dy','tb'], why:'制造虚假紧迫感', fix:'说明真实库存与时间', law:'抖音电商规则'},
+  {t:'手慢无', lv:'blue', pf:['dy','tb'], why:'制造虚假紧迫感', fix:'说明真实库存', law:'抖音电商规则'},
+  {t:'点击下方', lv:'blue', pf:['dy'], why:'需与实际实现一致，避免诱导', fix:'说明链接实际内容', law:'抖音电商规则'},
+  {t:'点小黄车', lv:'blue', pf:['dy'], why:'直播场景需与商品一致', fix:'正常引导即可，确保商品与描述一致', law:'抖音电商规则'},
+  {t:'专家推荐', lv:'blue', pf:['dy','tb'], why:'需真实授权，否则属虚假权威', fix:'出示专家姓名与授权', law:'抖音电商规则'},
+  {t:'明星同款', lv:'blue', pf:['dy','tb','xhs'], why:'需真实授权或可证明来源', fix:'说明来源或取得授权', law:'平台规则'},
+  {t:'医院同款', lv:'blue', pf:['dy','tb'], why:'暗示医疗背书，普通商品不可用', fix:'删除', law:'抖音电商规则'},
+  /* 微信 / 公众号 */
+  {t:'转发领红包', lv:'blue', pf:['wx'], why:'微信明令禁止以利诱分享', fix:'删除利诱机制', law:'微信公众平台规则'},
+  {t:'集赞', lv:'blue', pf:['wx'], why:'以利诱分享', fix:'改为无奖励的内容互动', law:'微信公众平台规则'},
+  {t:'助力', lv:'blue', pf:['wx'], why:'以利诱分享', fix:'删除助力机制', law:'微信公众平台规则'},
+  {t:'分享可得', lv:'blue', pf:['wx'], why:'以利诱分享', fix:'删除奖励承诺', law:'微信公众平台规则'},
+  {t:'不转不是', lv:'blue', pf:['wx','weibo'], why:'胁迫煽动分享', fix:'删除', law:'微信公众平台规则'},
+  {t:'分享到3个群', lv:'blue', pf:['wx'], why:'强制分享', fix:'删除', law:'微信公众平台规则'},
+  {t:'砍价', lv:'blue', pf:['wx'], why:'诱导分享类活动需谨慎', fix:'确认活动规则合规', law:'微信公众平台规则'},
+  {t:'关注领红包', lv:'blue', pf:['wx','weibo'], why:'以利益诱导关注', fix:'删除奖励机制', law:'微信公众平台规则'},
+  /* 淘宝 / 天猫 / 电商 */
+  {t:'好评返现', lv:'blue', pf:['tb'], why:'禁止以利益诱导评价', fix:'删除返现机制', law:'淘宝规则'},
+  {t:'全五星返现', lv:'blue', pf:['tb'], why:'诱导评价', fix:'删除', law:'淘宝规则'},
+  {t:'免单返现', lv:'blue', pf:['tb'], why:'诱导评价', fix:'删除', law:'淘宝规则'},
+  {t:'五星好评', lv:'blue', pf:['tb'], why:'索要指定好评', fix:'删除', law:'淘宝规则'},
+  {t:'全网最高', lv:'blue', pf:['tb','dy'], why:'夸大描述', fix:'说明比较范围与依据', law:'淘宝规则'},
+  {t:'全网最低', lv:'blue', pf:['tb','dy'], why:'夸大描述', fix:'说明比较范围与依据', law:'淘宝规则'},
+  {t:'外贸原单', lv:'blue', pf:['tb'], why:'可能涉及虚假来源描述', fix:'如实说明商品来源', law:'淘宝规则'},
+  {t:'专柜同款', lv:'blue', pf:['tb','xhs'], why:'需可证明，否则属引人误解', fix:'说明具体来源', law:'淘宝规则'},
+  /* B站 / 知乎 / 微博 */
+  {t:'刷播放', lv:'blue', pf:['bili','dy'], why:'数据造假', fix:'删除', law:'平台反作弊规则'},
+  {t:'买粉', lv:'blue', pf:['bili','weibo','dy'], why:'数据造假', fix:'删除', law:'平台反作弊规则'},
+  {t:'刷赞', lv:'blue', pf:['zhihu','weibo'], why:'数据造假', fix:'删除', law:'平台反作弊规则'},
+  {t:'私下联系', lv:'blue', pf:['zhihu','bili'], why:'站外导流', fix:'通过平台官方渠道', law:'平台规则'},
+  {t:'加微信详聊', lv:'blue', pf:['zhihu','bili','xhs'], why:'站外导流', fix:'删除', law:'平台规则'}
 ];
+
+/* 平台标识映射：内容工厂的平台名 → 内部平台 key */
+var PLATFORM_MAP = {
+  '小红书':'xhs', '抖音口播':'dy', '公众号':'wx', '视频号':'wx',
+  'B站':'bili', '知乎':'zhihu', '微博':'weibo',
+  '电商详情页':'tb', '朋友圈':'wx'
+};
+var PLATFORM_LABEL = {
+  xhs:'小红书', dy:'抖音', wx:'微信/公众号', tb:'淘宝/天猫',
+  bili:'B站', zhihu:'知乎', weibo:'微博'
+};
 
 /* 常见误判提醒：命中这些时提示用户「可能是误判」 */
 var FALSE_POSITIVE_HINT = [
@@ -807,10 +857,16 @@ function mdLite(s){
        .replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>');
   return h.replace(/\n/g,'<br>');
 }
+/* 记住「待检原文」：体检报告本身含免责声明里的敏感词，避免重复扫描时自我命中
+   注意：mdLite 会把「## 」渲染掉，所以标记必须取渲染后仍存在的文字 */
+var SCAN_MARK = '违禁词体检报告';
+var lastScanSrc = '';
 function setPreview(txt){
   var el = $('#preview');
   if(!txt){ el.textContent = '⚠️ 请填写字段或选择预设。'; }
   else { el.innerHTML = mdLite(txt); }
+  // 注意 out 原文以「## 」开头，需先剥掉 # 再比对，否则会被报告覆盖
+  if(txt && txt.replace(/^[#\s]+/,'').indexOf(SCAN_MARK) !== 0) lastScanSrc = txt;
   $('#charCount').textContent = (txt||'').length + ' 字符';
 }
 function copy(txt){
@@ -1110,18 +1166,44 @@ function userWords(){
 
 function scanWords(){
   var txt = $('#preview').textContent;
+  // 如果当前预览已经是体检报告，则回到原始文本重新扫，避免扫描报告自身
+  if(txt && txt.indexOf(SCAN_MARK) === 0){
+    if(lastScanSrc){ txt = lastScanSrc; } else { toast('请先生成内容再做体检'); return; }
+  }
   if(!txt || txt.indexOf('请填写字段') > -1){ toast('请先生成内容再做体检'); return; }
+  lastScanSrc = txt;   // 记住原文，使重复扫描 / 切换平台重扫结果稳定
+
+  /* 平台维度过滤：决定叠加哪一套 🔵 平台规则 */
+  var sel = $('#c_scanpf');
+  var pfSel = sel ? sel.value : '__all__';
+  var pfKey, pfName;
+  if(pfSel === '__follow__'){
+    var pEl = $('#c_platform');
+    pfKey = PLATFORM_MAP[pEl ? pEl.value : ''] || null;
+    pfName = (pEl ? pEl.value : '') || '未指定';
+  } else if(pfSel === '__all__'){
+    pfKey = null; pfName = '全部平台';
+  } else {
+    pfKey = pfSel; pfName = PLATFORM_LABEL[pfSel] || pfSel;
+  }
 
   var uw = userWords();
   var all = WORD_RULES.concat(uw.red, uw.yellow, uw.blue);
   var seen = {}, hits = {red:[], yellow:[], blue:[]};
+  var skipped = 0;
   all.forEach(function(r){
+    // 🔴🟡 法律类规则全平台生效；🔵 平台规则只在命中当前平台时叠加
+    if(r.lv === 'blue' && r.pf && pfKey && r.pf.indexOf(pfKey) === -1){ skipped++; return; }
     if(seen[r.t]) return;
     if(txt.indexOf(r.t) > -1){ seen[r.t] = 1; hits[r.lv].push(r); }
   });
 
   var total = hits.red.length + hits.yellow.length + hits.blue.length;
   var out = '## 违禁词体检报告\n\n';
+  out += '**体检平台：' + pfName + '** ｜ 🔴🟡 法律规则全平台生效，🔵 平台规则按渠道叠加\n';
+  out += pfKey ? '（仅叠加「' + (PLATFORM_LABEL[pfKey]||pfKey) + '」的平台敏感词）\n'
+               : '（已叠加全部平台的敏感词，最严格）\n';
+  out += '\n';
 
   if(!total){
     out += '✅ 未命中词库中的风险词。\n\n';
@@ -1174,9 +1256,11 @@ function scanWords(){
   out += '2. 🟡 风险词的合法性取决于证据：有机要有认证、限时要有真实起止时间、100% 要说明检测对象与方法。\n';
   out += '3. 依据 2023 年《广告绝对化用语执法指南》，企业内部比较、表达经营理念、有明确限定的销量事实等情形可分流处理。\n';
   out += '4. 内置词库 ' + WORD_RULES.length + ' 条，来源为《广告法》《广告绝对化用语执法指南》《化妆品标签管理办法》《药品广告审查发布标准》及平台公开规则。\n';
-  out += '5. 平台规则更新频繁，发布前请以各平台最新规则中心为准。\n\n';
+  out += '5. 平台规则更新频繁，发布前请以各平台最新规则中心为准。\n';
+  out += '6. 🔵 平台敏感词仅为「运营风险提示」，不代表违法；不同平台规则差异大，切换「体检平台」结果会不同。\n\n';
   out += '> ⚠️ 本工具仅作辅助参考，不构成法律意见。正式发布前请人工复核。\n\n';
-  out += '💡 想增删词条？去「📚 品牌知识库 → 违禁词库」，用 `## 红线词` / `## 风险词` / `## 平台敏感词` 分节编辑即可，扫描时会自动合并。';
+  out += '💡 想增删词条？去「📚 品牌知识库 → 违禁词库」，用 `## 红线词` / `## 风险词` / `## 平台敏感词` 分节编辑即可，扫描时会自动合并。\n\n';
+  out += '💡 想看别的平台结果？改上面「体检平台」再扫一次。';
 
   setPreview(out);
   toast(total ? '命中 ' + total + ' 处（🔴' + hits.red.length + ' 🟡' + hits.yellow.length + ' 🔵' + hits.blue.length + '）' : '未发现风险词 ✅');
