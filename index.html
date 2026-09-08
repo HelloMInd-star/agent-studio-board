@@ -1,921 +1,1164 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚙️ 智能工坊 · Y.Mine Agent Studio</title>
-    <style>
-        /* ========== CSS 变量（深色/浅色） ========== */
-        :root {
-            --bg-body: #f1f5f9; --bg-card: #ffffff; --bg-card-hover: #f8fafc; --bg-input: #fafcff; --bg-memory: #f8fafc;
-            --bg-block: #f8fafc; --bg-agent: #0f172a; --text-primary: #0f172a; --text-secondary: #334155; --text-muted: #94a3b8;
-            --text-white: #ffffff; --border-light: #e2e8f0; --border-focus: #3b82f6; --shadow-card: 0 4px 16px rgba(0,0,0,0.04);
-            --shadow-btn: 0 8px 20px rgba(15,23,42,0.15); --tag-bg: #eef2ff; --tag-text: #4338ca; --toolbar-bg: #ffffff;
-            --badge-bg: #f1f5f9; --block-border: #d1d9e6; --wf-step-bg: #f8fafc; --wf-step-border: #e2e8f0;
-            --modal-overlay: rgba(0,0,0,0.5); --history-item-bg: #f8fafc;
-        }
-        [data-theme="dark"] {
-            --bg-body: #0f172a; --bg-card: #1e293b; --bg-card-hover: #2d3a4f; --bg-input: #2d3a4f; --bg-memory: #2d3a4f;
-            --bg-block: #2d3a4f; --bg-agent: #0f172a; --text-primary: #f1f5f9; --text-secondary: #cbd5e1; --text-muted: #94a3b8;
-            --text-white: #ffffff; --border-light: #334155; --border-focus: #3b82f6; --shadow-card: 0 4px 16px rgba(0,0,0,0.3);
-            --shadow-btn: 0 8px 20px rgba(0,0,0,0.5); --tag-bg: #1e293b; --tag-text: #93c5fd; --toolbar-bg: #1e293b;
-            --badge-bg: #334155; --block-border: #475569; --wf-step-bg: #2d3a4f; --wf-step-border: #475569;
-            --modal-overlay: rgba(0,0,0,0.7); --history-item-bg: #2d3a4f;
-        }
-        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',system-ui,sans-serif; }
-        body { background:var(--bg-body); min-height:100vh; padding:20px; display:flex; justify-content:center; transition:background 0.3s,color 0.3s; color:var(--text-primary); }
-        .container { max-width:1460px; width:100%; }
-        .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px; }
-        .header h1 { font-size:26px; font-weight:700; background:linear-gradient(135deg,#0f172a,#3b82f6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-        .header-actions { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-        .btn-sm { padding:5px 14px; font-size:13px; border-radius:30px; background:var(--badge-bg); border:1px solid var(--border-light); cursor:pointer; transition:0.15s; color:var(--text-secondary); }
-        .btn-sm:hover { background:var(--bg-card-hover); }
-        .btn-sm.primary-sm { background:#0f172a; color:white; border-color:#0f172a; }
-        .btn-sm.danger { background:#fee2e2; color:#dc2626; border-color:#fecaca; }
-        .btn-primary { background:#0f172a; color:white; border:none; padding:11px 26px; border-radius:40px; font-weight:600; font-size:15px; cursor:pointer; transition:0.15s; display:inline-flex; align-items:center; justify-content:center; gap:8px; }
-        .btn-primary:hover { background:#1e293b; transform:scale(1.01); box-shadow:var(--shadow-btn); }
-        .btn-secondary { background:var(--bg-card); color:var(--text-primary); border:1.5px solid var(--border-light); padding:11px 22px; border-radius:40px; font-weight:600; font-size:15px; cursor:pointer; transition:0.15s; }
-        .btn-secondary:hover { background:var(--bg-card-hover); border-color:var(--text-muted); }
-        .tabs { display:flex; gap:4px; background:var(--toolbar-bg); padding:4px; border-radius:40px; border:1px solid var(--border-light); flex-wrap:wrap; }
-        .tab-btn { border:none; background:transparent; padding:8px 18px; border-radius:30px; font-size:13px; font-weight:600; color:var(--text-muted); cursor:pointer; transition:0.15s; }
-        .tab-btn.active-tab { background:#0f172a; color:white; }
-        .tab-btn:hover:not(.active-tab) { background:var(--bg-card-hover); }
-        .badge-save { font-size:12px; color:var(--text-muted); background:var(--badge-bg); padding:4px 14px; border-radius:30px; }
-        .memory-collapse { background:var(--bg-memory); border-radius:16px; border:1px solid var(--border-light); margin-bottom:18px; padding:0 16px; }
-        .memory-collapse summary { padding:12px 0; font-weight:600; font-size:14px; color:var(--text-primary); cursor:pointer; display:flex; align-items:center; gap:8px; }
-        .memory-collapse .form-group { margin-bottom:12px; }
-        .memory-collapse .form-group:last-child { margin-bottom:16px; }
-        .memory-collapse input, .memory-collapse textarea { width:100%; padding:8px 12px; border:1.5px solid var(--border-light); border-radius:10px; font-size:13px; background:var(--bg-input); color:var(--text-primary); }
-        .memory-collapse input:focus, .memory-collapse textarea:focus { outline:none; border-color:var(--border-focus); }
-        .grid { display:grid; grid-template-columns:1.2fr 0.8fr; gap:26px; align-items:start; }
-        .card { background:var(--bg-card); border-radius:24px; padding:26px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-light); transition:background 0.3s,border 0.3s; }
-        .card-title { font-size:16px; font-weight:600; color:var(--text-primary); margin-bottom:16px; border-bottom:2px solid var(--border-light); padding-bottom:12px; display:flex; align-items:center; gap:8px; }
-        .form-group { margin-bottom:14px; }
-        .form-group label { display:block; font-size:13px; font-weight:600; color:var(--text-secondary); margin-bottom:3px; }
-        .form-group label small { font-weight:400; color:var(--text-muted); font-size:12px; }
-        .form-group input, .form-group textarea, .form-group select { width:100%; padding:10px 14px; border:1.5px solid var(--border-light); border-radius:12px; font-size:14px; background:var(--bg-input); transition:0.2s; color:var(--text-primary); }
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline:none; border-color:var(--border-focus); background:var(--bg-card); box-shadow:0 0 0 4px rgba(59,130,246,0.08); }
-        .form-group textarea { min-height:56px; resize:vertical; }
-        .form-group textarea.small { min-height:40px; }
-        .row-2col { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-        .action-row { display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; }
-        .action-row .btn-primary { flex:1; min-width:120px; }
-        .agent-card { background:var(--bg-agent); border-radius:18px; padding:16px 22px; color:#e2e8f0; margin-bottom:20px; border:1px solid #334155; }
-        .agent-card .label { font-size:11px; text-transform:uppercase; letter-spacing:1px; color:#94a3b8; font-weight:600; }
-        .agent-identity { font-size:20px; font-weight:700; color:white; margin:3px 0 2px; }
-        .agent-desc { color:#94a3b8; font-size:14px; border-top:1px solid #1e293b; padding-top:8px; margin-top:5px; }
-        .output-box { background:var(--bg-card); border-radius:18px; border:1px solid var(--border-light); overflow:hidden; }
-        .output-header { display:flex; justify-content:space-between; align-items:center; padding:12px 22px; border-bottom:1px solid var(--border-light); flex-wrap:wrap; gap:8px; }
-        .output-header h3 { font-size:14px; color:var(--text-primary); }
-        .output-tools { display:flex; gap:6px; flex-wrap:wrap; }
-        #promptDisplay { padding:22px; font-size:14px; line-height:1.8; white-space:pre-wrap; word-break:break-word; max-height:460px; overflow-y:auto; color:var(--text-primary); background:var(--bg-input); transition:background 0.3s; }
-        #promptDisplay:empty::before { content:'👆 填写左侧参数，点击生成'; color:var(--text-muted); font-style:italic; }
-        .char-counter { padding:6px 22px 12px; text-align:right; font-size:12px; color:var(--text-muted); border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; }
-        .tab-panel { display:none; }
-        .tab-panel.active-panel { display:block; }
-        .strategy-grid { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
-        .strategy-grid .btn-sm { background:var(--bg-card-hover); border-color:var(--border-light); }
-        .strategy-grid .btn-sm.active-strategy { background:#0f172a; color:white; border-color:#0f172a; }
-        .wf-step-container { display:flex; flex-direction:column; gap:8px; margin-top:10px; }
-        .wf-step-item { display:flex; gap:10px; align-items:stretch; background:var(--wf-step-bg); padding:10px 14px; border-radius:12px; border:1px solid var(--wf-step-border); flex-wrap:wrap; }
-        .wf-step-item .step-main { flex:3; display:flex; flex-direction:column; gap:4px; min-width:180px; }
-        .wf-step-item .step-main input, .wf-step-item .step-main textarea { width:100%; padding:6px 10px; border:1.5px solid var(--border-light); border-radius:8px; font-size:13px; background:var(--bg-input); color:var(--text-primary); font-family:inherit; }
-        .wf-step-item .step-main textarea { min-height:44px; resize:vertical; }
-        .wf-step-item .step-tool-select { flex:1; min-width:130px; padding:6px 10px; border:1.5px solid var(--border-light); border-radius:8px; font-size:13px; background:var(--bg-input); color:var(--text-primary); }
-        .wf-mindmap { display:flex; flex-direction:column; gap:12px; margin-top:16px; padding:10px 0; }
-        .wf-mindmap .mm-node { display:flex; align-items:center; gap:16px; background:var(--bg-card); border-radius:12px; padding:12px 18px; border:2px solid var(--border-light); box-shadow:var(--shadow-card); cursor:pointer; transition:0.15s; }
-        .wf-mindmap .mm-node:hover { border-color:var(--border-focus); transform:translateX(4px); }
-        .wf-mindmap .mm-node .mm-index { font-weight:700; font-size:16px; color:var(--text-muted); min-width:30px; }
-        .wf-mindmap .mm-node .mm-content { flex:1; }
-        .wf-mindmap .mm-node .mm-content .mm-name { font-weight:600; font-size:15px; color:var(--text-primary); }
-        .wf-mindmap .mm-node .mm-content .mm-tool { font-size:13px; color:var(--text-muted); }
-        .wf-mindmap .mm-node .mm-arrow { font-size:20px; color:var(--text-muted); }
-        .wf-mindmap .mm-connector { width:2px; height:20px; background:var(--text-muted); margin:0 auto; opacity:0.5; }
-        .kb-container { display:flex; gap:20px; min-height:300px; }
-        .kb-folders { width:200px; border-right:1px solid var(--border-light); padding-right:16px; flex-shrink:0; }
-        .kb-folders .folder-item { padding:8px 12px; border-radius:8px; cursor:pointer; margin-bottom:4px; display:flex; justify-content:space-between; align-items:center; background:var(--bg-card-hover); border:1px solid transparent; }
-        .kb-folders .folder-item.active { border-color:var(--border-focus); background:var(--bg-input); }
-        .kb-folders .folder-item:hover { background:var(--bg-input); }
-        .kb-docs { flex:1; min-width:0; }
-        .kb-doc-item { padding:10px 14px; border-radius:8px; background:var(--bg-card-hover); margin-bottom:8px; border:1px solid var(--border-light); cursor:pointer; transition:0.1s; }
-        .kb-doc-item:hover { border-color:var(--border-focus); }
-        .kb-doc-item .doc-title { font-weight:600; color:var(--text-primary); }
-        .kb-doc-item .doc-meta { font-size:12px; color:var(--text-muted); margin-top:4px; }
-        .kb-editor { margin-top:16px; border-top:1px solid var(--border-light); padding-top:16px; }
-        .history-modal { display:none; position:fixed; inset:0; background:var(--modal-overlay); backdrop-filter:blur(4px); z-index:999; justify-content:center; align-items:center; }
-        .history-modal.open { display:flex; }
-        .history-panel { background:var(--bg-card); border-radius:24px; max-width:600px; width:90%; max-height:80vh; padding:24px; box-shadow:0 30px 60px rgba(0,0,0,0.3); display:flex; flex-direction:column; }
-        .history-panel h3 { font-size:18px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; color:var(--text-primary); }
-        .history-panel h3 button { background:none; border:none; font-size:22px; cursor:pointer; color:var(--text-muted); }
-        .history-list { overflow-y:auto; flex:1; }
-        .history-item { padding:12px 16px; background:var(--history-item-bg); border-radius:12px; margin-bottom:8px; border-left:4px solid var(--border-focus); cursor:pointer; transition:0.1s; color:var(--text-primary); }
-        .history-item:hover { background:var(--bg-card-hover); }
-        .history-item .h-time { font-size:11px; color:var(--text-muted); }
-        .history-item .h-preview { font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-        .history-empty { color:var(--text-muted); text-align:center; padding:40px 0; }
-        .hidden-file-input { display:none; }
-        @media (max-width:1000px) { .grid { grid-template-columns:1fr; } .row-2col { grid-template-columns:1fr; } .kb-container { flex-direction:column; } .kb-folders { width:100%; border-right:none; padding-right:0; display:flex; flex-wrap:wrap; gap:8px; } .kb-folders .folder-item { flex:0 0 auto; margin-bottom:0; } }
-        @media (max-width:480px) { .card { padding:16px; } .action-row { flex-direction:column; } .action-row .btn-primary { width:100%; } .tabs { width:100%; justify-content:center; } .tab-btn { padding:5px 12px; font-size:12px; } .wf-step-item { flex-direction:column; } .wf-step-item .step-tool-select { width:100%; } .header h1 { font-size:20px; } }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>营销 AI 工作台 · Y.Mine Agent Studio</title>
+<style>
+:root{
+  --brand:#6366f1; --brand2:#a855f7;
+  --bg:#ffffff; --bg-soft:#f7f7fb; --card:#ffffff;
+  --text:#16161d; --soft:#6b6b7b; --line:#e8e8ef;
+  --ok:#10b981; --warn:#f59e0b;
+}
+html[data-theme="dark"]{
+  --bg:#0e0e14; --bg-soft:#15151f; --card:#171722;
+  --text:#ececf3; --soft:#9a9aae; --line:#282833;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+  font-size:14px;line-height:1.6;
+}
+button,input,textarea,select{font-family:inherit;font-size:inherit;color:inherit;}
+button{cursor:pointer;}
+a{color:var(--brand);text-decoration:none;}
+
+/* ============ Hero ============ */
+.hero{
+  background:
+    radial-gradient(1200px 420px at 15% -10%, rgba(99,102,241,.16), transparent 60%),
+    radial-gradient(900px 380px at 88% 0%, rgba(168,85,247,.14), transparent 60%),
+    var(--bg-soft);
+  border-bottom:1px solid var(--line);padding:50px 20px 38px;text-align:center;
+}
+.hero__badge{
+  display:inline-flex;align-items:center;gap:6px;font-size:12px;letter-spacing:.4px;color:var(--soft);
+  border:1px solid var(--line);background:var(--card);padding:6px 14px;border-radius:999px;margin-bottom:18px;
+}
+.hero__badge::before{content:"\1F30C";}
+.hero__title{
+  margin:0 0 14px;font-size:clamp(28px,5vw,44px);line-height:1.18;font-weight:800;
+  background:linear-gradient(100deg,var(--brand),var(--brand2));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero__sub{margin:0 auto 20px;max-width:660px;font-size:15px;line-height:1.9;color:var(--soft);}
+.hero__sub b{color:var(--text);font-weight:600;}
+.hero__trust{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:24px;}
+.hero__trust span{
+  font-size:12.5px;color:var(--soft);background:var(--card);
+  border:1px solid var(--line);padding:7px 13px;border-radius:8px;
+}
+.hero__cta{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;}
+.btn{
+  display:inline-block;padding:11px 24px;border-radius:10px;font-size:14.5px;font-weight:600;
+  transition:.18s;border:1px solid transparent;
+}
+.btn--primary{background:linear-gradient(100deg,var(--brand),var(--brand2));color:#fff;box-shadow:0 6px 20px rgba(99,102,241,.26);}
+.btn--primary:hover{transform:translateY(-1px);box-shadow:0 10px 26px rgba(99,102,241,.34);}
+.btn--ghost{background:var(--card);color:var(--text);border-color:var(--line);}
+.btn--ghost:hover{border-color:var(--brand);color:var(--brand);}
+.btn--sm{padding:7px 14px;font-size:13px;border-radius:8px;font-weight:500;}
+
+/* ============ 顶栏 ============ */
+.topbar{
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;
+  padding:10px 20px;border-bottom:1px solid var(--line);background:var(--bg);
+  position:sticky;top:0;z-index:100;
+}
+.topbar .spacer{flex:1;}
+
+/* ============ Tabs ============ */
+.tabs{
+  display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
+  padding:14px 20px;border-bottom:1px solid var(--line);background:var(--bg);
+  position:sticky;top:47px;z-index:99;
+}
+.tab{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  padding:8px 15px;border-radius:10px;border:1px solid var(--line);background:var(--card);
+  transition:.18s;min-width:106px;
+}
+.tab:hover{border-color:var(--brand);transform:translateY(-1px);}
+.tab.is-active{border-color:transparent;color:#fff;background:linear-gradient(100deg,var(--brand),var(--brand2));}
+.tab__name{font-size:14px;font-weight:600;line-height:1.3;}
+.tab__desc{font-size:11px;opacity:.72;line-height:1.3;font-weight:400;white-space:nowrap;}
+
+/* ============ 布局 ============ */
+.wrap{
+  display:grid;grid-template-columns:270px minmax(0,1fr) 330px;gap:16px;
+  max-width:1560px;margin:0 auto;padding:18px 20px 40px;align-items:start;
+}
+@media (max-width:1180px){ .wrap{grid-template-columns:1fr;} }
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px;
+}
+.card__hd{font-size:14px;font-weight:700;margin:0 0 12px;display:flex;align-items:center;gap:6px;}
+.hint{font-size:11.5px;color:var(--soft);line-height:1.65;}
+
+/* ============ 表单 ============ */
+label.f{display:block;margin-bottom:12px;}
+label.f > span{display:block;font-size:12.5px;font-weight:600;margin-bottom:5px;color:var(--soft);}
+input[type=text],textarea,select{
+  width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;
+  background:var(--bg-soft);outline:none;transition:.15s;
+}
+input[type=text]:focus,textarea:focus,select:focus{border-color:var(--brand);background:var(--card);}
+textarea{resize:vertical;min-height:74px;line-height:1.7;}
+.row{display:flex;gap:8px;flex-wrap:wrap;}
+
+/* ============ 品牌记忆卡 ============ */
+.memory{
+  background:linear-gradient(160deg,rgba(99,102,241,.09),rgba(168,85,247,.06));
+  border:1px solid var(--line);border-radius:12px;padding:13px;margin-bottom:14px;
+}
+.memory__hd{font-size:13px;font-weight:700;margin-bottom:5px;}
+.memory__tip{font-size:11.5px;color:var(--soft);line-height:1.65;}
+
+/* ============ 预设 chip ============ */
+.chips{display:flex;flex-wrap:wrap;gap:6px;}
+.chip{
+  padding:6px 11px;border-radius:8px;border:1px solid var(--line);background:var(--bg-soft);
+  font-size:12.5px;transition:.15s;
+}
+.chip:hover{border-color:var(--brand);color:var(--brand);transform:translateY(-1px);}
+.chip.is-on{background:linear-gradient(100deg,var(--brand),var(--brand2));color:#fff;border-color:transparent;}
+
+/* ============ 主面板 ============ */
+.panel{display:none;}
+.panel.is-on{display:block;}
+.panel__hd{font-size:16px;font-weight:800;margin:0 0 4px;}
+.panel__sub{font-size:12.5px;color:var(--soft);margin:0 0 16px;}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0 14px;}
+
+/* ============ 工作流步骤 ============ */
+.step{
+  border:1px solid var(--line);border-radius:11px;padding:11px;margin-bottom:10px;background:var(--bg-soft);
+}
+.step__hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
+.step__no{font-size:12px;font-weight:700;color:var(--brand);}
+.step__del{border:none;background:transparent;color:var(--soft);font-size:14px;padding:0 4px;}
+.step__del:hover{color:#ef4444;}
+.tools{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+.tool{
+  padding:4px 9px;border-radius:7px;border:1px solid var(--line);background:var(--card);
+  font-size:11.5px;transition:.15s;
+}
+.tool:hover{border-color:var(--brand);}
+.tool.is-on{background:var(--brand);color:#fff;border-color:transparent;}
+
+/* ============ 知识库 ============ */
+.kb{display:grid;grid-template-columns:190px minmax(0,1fr);gap:12px;}
+@media (max-width:760px){ .kb{grid-template-columns:1fr;} }
+.kb__list{border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+.kb__folder{
+  padding:9px 12px;border-bottom:1px solid var(--line);cursor:pointer;display:flex;
+  align-items:center;justify-content:space-between;font-size:13px;
+}
+.kb__folder:hover{background:var(--bg-soft);}
+.kb__folder.is-on{background:linear-gradient(100deg,var(--brand),var(--brand2));color:#fff;}
+.kb__doc{
+  padding:8px 12px 8px 22px;border-bottom:1px solid var(--line);cursor:pointer;
+  font-size:12.5px;display:flex;align-items:center;justify-content:space-between;
+}
+.kb__doc:hover{background:var(--bg-soft);}
+.kb__doc.is-on{color:var(--brand);font-weight:600;}
+
+/* ============ 预览 ============ */
+.preview{
+  background:var(--bg-soft);border:1px solid var(--line);border-radius:11px;padding:12px;
+  min-height:280px;max-height:560px;overflow:auto;white-space:pre-wrap;word-break:break-word;
+  font-size:13px;line-height:1.85;
+}
+.preview .ph{color:var(--soft);}
+
+/* ============ 内容包 ============ */
+.packs{padding:48px 20px 56px;background:var(--bg-soft);border-top:1px solid var(--line);}
+.packs__inner{max-width:960px;margin:0 auto;}
+.packs__hd{text-align:center;margin-bottom:26px;}
+.packs__hd h2{margin:0 0 8px;font-size:23px;font-weight:800;}
+.packs__hd p{margin:0;font-size:14px;color:var(--soft);}
+.packs__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
+.pack{
+  border:1px solid var(--line);border-radius:14px;padding:20px;background:var(--card);
+  position:relative;transition:.18s;
+}
+.pack:hover{transform:translateY(-3px);border-color:var(--brand);}
+.pack__tag{
+  position:absolute;top:-9px;right:14px;font-size:11px;font-weight:700;color:#fff;
+  background:linear-gradient(100deg,var(--brand),var(--brand2));padding:3px 10px;border-radius:999px;
+}
+.pack__ico{font-size:26px;margin-bottom:8px;}
+.pack__name{font-size:15px;font-weight:700;margin-bottom:6px;}
+.pack__desc{font-size:12.5px;color:var(--soft);line-height:1.75;margin-bottom:12px;}
+.pack__price{font-size:20px;font-weight:800;color:var(--brand);}
+.pack__price small{font-size:12px;font-weight:500;color:var(--soft);margin-left:4px;}
+.packs__note{text-align:center;margin-top:20px;font-size:12.5px;color:var(--soft);}
+
+/* ============ Footer ============ */
+.foot{padding:28px 20px 40px;text-align:center;color:var(--soft);font-size:13px;border-top:1px solid var(--line);}
+
+/* ============ 弹层 ============ */
+.mask{
+  position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;
+  align-items:center;justify-content:center;z-index:200;padding:20px;
+}
+.mask.is-on{display:flex;}
+.modal{
+  background:var(--card);border-radius:14px;padding:18px;width:100%;max-width:600px;
+  max-height:82vh;overflow:auto;
+}
+.modal__hd{font-size:15px;font-weight:700;margin:0 0 12px;display:flex;justify-content:space-between;}
+.hist-item{
+  border:1px solid var(--line);border-radius:9px;padding:10px;margin-bottom:8px;cursor:pointer;
+}
+.hist-item:hover{border-color:var(--brand);}
+.hist-item__t{font-size:12.5px;font-weight:600;margin-bottom:3px;}
+.hist-item__p{font-size:12px;color:var(--soft);max-height:56px;overflow:hidden;}
+.toast{
+  position:fixed;left:50%;bottom:34px;transform:translateX(-50%);
+  background:var(--text);color:var(--bg);padding:9px 18px;border-radius:9px;
+  font-size:13px;z-index:300;opacity:0;pointer-events:none;transition:.25s;
+}
+.toast.is-on{opacity:1;bottom:44px;}
+</style>
 </head>
 <body>
-<div class="container">
-    <div class="header">
-        <h1>⚙️ 智能工坊 · Y.Mine Agent Studio</h1>
-        <div class="header-actions">
-            <button class="btn-sm" onclick="toggleTheme()" id="themeToggle">🌙 深色</button>
-            <button class="btn-sm" onclick="exportData()">📤 导出配置</button>
-            <button class="btn-sm" onclick="document.getElementById('importFileInput').click()">📥 导入配置</button>
-            <input type="file" id="importFileInput" class="hidden-file-input" accept=".json" onchange="importData(event)">
-            <div class="tabs">
-                <button class="tab-btn active-tab" data-tab="prompt">🧠 提示词</button>
-                <button class="tab-btn" data-tab="paper">📚 长文写作</button>
-                <button class="tab-btn" data-tab="strategy">📊 策略</button>
-                <button class="tab-btn" data-tab="mbti">🍸 MBTI</button>
-                <button class="tab-btn" data-tab="workflow">🔗 工作流</button>
-                <button class="tab-btn" data-tab="knowledge">📚 知识库</button>
-            </div>
-            <span class="badge-save">💾 自动记忆</span>
-        </div>
+
+<!-- ===================== Hero ===================== -->
+<header class="hero">
+  <div class="hero__badge">Y.Mine 应用矩阵 · 营销专用</div>
+  <h1 class="hero__title">营销人的 AI 工作台</h1>
+  <p class="hero__sub">
+    策略 · 文案 · 竞品 · 投放 —— <b>40+ 营销模板与可编排工作流</b><br>
+    全部在你自己的浏览器里跑完，不登录、不上传、不联网
+  </p>
+  <div class="hero__trust">
+    <span>🔒 数据不出浏览器</span>
+    <span>⚡ 打开即用 · 零配置</span>
+    <span>🎁 核心功能永久免费</span>
+    <span>🧩 配置可导入导出</span>
+  </div>
+  <div class="hero__cta">
+    <a class="btn btn--primary" href="#studio">免费开始使用</a>
+    <a class="btn btn--ghost" href="#packs">查看付费内容包 →</a>
+  </div>
+</header>
+
+<!-- ===================== 顶栏 ===================== -->
+<nav class="topbar">
+  <span class="spacer"></span>
+  <button class="btn btn--sm btn--ghost" id="btnTheme">🌙 深色</button>
+  <button class="btn btn--sm btn--ghost" id="btnExport">📤 导出配置</button>
+  <button class="btn btn--sm btn--ghost" id="btnImport">📥 导入配置</button>
+  <input type="file" id="fileImport" accept=".json" style="display:none">
+</nav>
+
+<!-- ===================== Tabs ===================== -->
+<nav class="tabs" id="studio">
+  <button class="tab is-on" data-tab="role"><span class="tab__name">🧠 营销角色</span><span class="tab__desc">12 位专家 · 一键生成</span></button>
+  <button class="tab" data-tab="content"><span class="tab__name">✍️ 内容工厂</span><span class="tab__desc">多平台 · 批量出稿</span></button>
+  <button class="tab" data-tab="strategy"><span class="tab__name">📊 策略模板</span><span class="tab__desc">STP · 竞品 · GTM</span></button>
+  <button class="tab" data-tab="persona"><span class="tab__name">🍸 品牌人格</span><span class="tab__desc">调性指南 · 彩蛋玩法</span></button>
+  <button class="tab" data-tab="flow"><span class="tab__name">🔗 营销工作流</span><span class="tab__desc">6 步编排 · 自动跑通</span></button>
+  <button class="tab" data-tab="kb"><span class="tab__name">📚 品牌知识库</span><span class="tab__desc">卖点 · 竞品 · 违禁词</span></button>
+</nav>
+
+<!-- ===================== 主体 ===================== -->
+<div class="wrap">
+
+  <!-- ---------- 左栏 ---------- -->
+  <aside>
+    <div class="card" style="padding:13px">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <strong style="font-size:13px">💾 自动记忆</strong>
+        <label style="font-size:12px;display:flex;align-items:center;gap:5px;cursor:pointer">
+          <input type="checkbox" id="memOn" checked> 启用
+        </label>
+      </div>
+      <p class="hint" style="margin:6px 0 0">所有填写内容自动保存在本地浏览器。</p>
     </div>
-    <details class="memory-collapse" id="globalMemoryToggle">
-        <summary>🧠 全局记忆设置（默认角色 / 风格偏好）</summary>
-        <div class="form-group"><label>🎭 默认专家角色</label><input type="text" id="globalRole" placeholder="例：资深产品经理" /></div>
-        <div class="form-group"><label>🎨 默认语气/风格</label><textarea id="globalTone" placeholder="例：专业、数据驱动"></textarea></div>
-        <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">💡 设置后，每次生成都会自动带上这些偏好。</div>
-    </details>
-    <div class="grid">
-        <div class="card">
-            <!-- 提示词 -->
-            <div id="panel-prompt" class="tab-panel active-panel">
-                <div class="card-title">📋 配置智能体</div>
-                <div style="margin-bottom:14px; display:flex; flex-wrap:wrap; gap:6px;">
-                    <button class="btn-sm" data-preset="xiaohongshu">📕小红书</button>
-                    <button class="btn-sm" data-preset="wechat">📰公众号</button>
-                    <button class="btn-sm" data-preset="python">🐍Python</button>
-                    <button class="btn-sm" data-preset="report">📊周报</button>
-                    <button class="btn-sm" onclick="clearPromptForm()" style="color:#ef4444;">✕清空</button>
-                </div>
-                <div class="form-group"><label>🎭 角色设定</label><input type="text" id="pRole" placeholder="例：资深美妆博主" /></div>
-                <div class="form-group"><label>🎯 核心任务</label><textarea id="pTask" class="small" placeholder="例：写一篇推荐入门护肤品的笔记"></textarea></div>
-                <div class="form-group"><label>📌 背景信息</label><textarea id="pBg" placeholder="例：受众20-25岁学生党"></textarea></div>
-                <div class="form-group"><label>⚙️ 具体要求</label><textarea id="pReq" placeholder="例：活泼风格，300字"></textarea></div>
-                <div class="form-group"><label>📎 参考示例</label><textarea id="pExample" class="small" placeholder="可选"></textarea></div>
-                <div class="action-row"><button class="btn-primary" onclick="genPrompt()">✨ 生成提示词</button><button class="btn-secondary" onclick="copyOutput()">📋 复制</button></div>
-            </div>
-            <!-- 论文 -->
-            <div id="panel-paper" class="tab-panel">
-                <div class="card-title">📚 长文写作 + 文献管理</div>
-                <div class="form-group"><label>📝 文章题目</label><input type="text" id="paperTitle" placeholder="例：人工智能对高等教育的变革研究" /></div>
-                <div class="row-2col">
-                    <div class="form-group"><label>🏷️ 关键词</label><input type="text" id="paperKeywords" placeholder="AI, 教育" /></div>
-                    <div class="form-group"><label>🏛️ 院系</label><input type="text" id="paperDept" placeholder="计算机学院" /></div>
-                </div>
-                <div class="row-2col">
-                    <div class="form-group"><label>📏 字数</label><select id="paperWords"><option value="3000">3000字</option><option value="5000" selected>5000字</option><option value="8000">8000字</option></select></div>
-                    <div class="form-group"><label>🎯 风格</label><select id="paperStyle"><option value="academic">严谨学术型</option><option value="applied" selected>应用实证型</option></select></div>
-                </div>
-                <div class="form-group"><label>📚 参考文献 (每行一条)</label><textarea id="paperRefs" class="small" placeholder="Smith, J. (2020). AI in Education."></textarea></div>
-                <div class="form-group"><label>📌 额外要求</label><textarea id="paperExtra" class="small" placeholder="可选"></textarea></div>
-                <div class="action-row"><button class="btn-primary" onclick="genPaper()">🚀 生成文稿</button><button class="btn-secondary" onclick="copyOutput()">📋 复制</button><button class="btn-secondary" onclick="exportMarkdown()">⬇️ 导出MD</button></div>
-            </div>
-            <!-- 策略 -->
-            <div id="panel-strategy" class="tab-panel">
-                <div class="card-title">📊 商业与策略模板</div>
-                <div class="strategy-grid">
-                    <button class="btn-sm active-strategy" data-strategy="swot">📈 SWOT分析</button>
-                    <button class="btn-sm" data-strategy="prd">📋 PRD</button>
-                    <button class="btn-sm" data-strategy="retro">🔄 项目复盘</button>
-                </div>
-                <div class="form-group"><label>🎯 项目名称</label><input type="text" id="sTitle" placeholder="例：在线协作白板" /></div>
-                <div class="form-group"><label>📌 背景/痛点</label><textarea id="sBg" class="small" placeholder="例：竞品有Miro，我们的优势是集成飞书"></textarea></div>
-                <div class="form-group"><label>📎 额外备注</label><textarea id="sExtra" class="small" placeholder="可选"></textarea></div>
-                <div class="action-row"><button class="btn-primary" onclick="genStrategy()">🧠 生成文档</button><button class="btn-secondary" onclick="copyOutput()">📋 复制</button></div>
-            </div>
-            <!-- MBTI -->
-            <div id="panel-mbti" class="tab-panel">
-                <div class="card-title">🍸 MBTI人格调酒 · 专属特调</div>
-                <div class="form-group"><label>🧬 人格类型</label>
-                    <select id="mbtiType">
-                        <option value="INTJ">INTJ · 建筑师</option><option value="INTP">INTP · 逻辑学家</option>
-                        <option value="ENTJ">ENTJ · 指挥官</option><option value="ENTP">ENTP · 辩论家</option>
-                        <option value="INFJ">INFJ · 提倡者</option><option value="INFP">INFP · 调停者</option>
-                        <option value="ENFJ">ENFJ · 主人公</option><option value="ENFP">ENFP · 竞选者</option>
-                        <option value="ISTJ">ISTJ · 物流师</option><option value="ISFJ">ISFJ · 守卫者</option>
-                        <option value="ESTJ">ESTJ · 总经理</option><option value="ESFJ">ESFJ · 执政官</option>
-                        <option value="ISTP">ISTP · 鉴赏家</option><option value="ISFP">ISFP · 探险家</option>
-                        <option value="ESTP">ESTP · 企业家</option><option value="ESFP">ESFP · 表演者</option>
-                    </select>
-                </div>
-                <div class="row-2col">
-                    <div class="form-group"><label>🍭 口味偏好</label><select id="mbtiFlavor"><option value="sweet">酸甜/果味</option><option value="bitter" selected>苦烈/干型</option><option value="fresh">清爽/草本</option><option value="spicy">辛辣/烟熏</option></select></div>
-                    <div class="form-group"><label>🍷 酒精度</label><select id="mbtiAbv"><option value="low">低度数</option><option value="medium" selected>中高度</option><option value="high">高度数</option></select></div>
-                </div>
-                <div class="form-group"><label>📝 场合/心情</label><input type="text" id="mbtiOccasion" placeholder="例：深夜独处、朋友派对..." /></div>
-                <div class="action-row"><button class="btn-primary" onclick="genMBTI()">🍸 生成酒谱</button><button class="btn-secondary" onclick="copyOutput()">📋 复制</button></div>
-            </div>
-            <!-- 工作流 -->
-            <div id="panel-workflow" class="tab-panel">
-                <div class="card-title">🔗 工作流编排 · 详细指令版</div>
-                <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
-                    <button class="btn-sm" onclick="loadWorkflowTemplate('app')">📱 App开发</button>
-                    <button class="btn-sm" onclick="loadWorkflowTemplate('music')">🎵 音乐项目</button>
-                    <button class="btn-sm" onclick="loadWorkflowTemplate('paper')">📚 长文写作</button>
-                    <button class="btn-sm" onclick="toggleWorkflowView()">📊 导图视图</button>
-                </div>
-                <div class="form-group"><label>🎯 项目目标</label><input type="text" id="wfGoal" placeholder="例：做一个AI音乐生成器" /></div>
-                <div class="form-group"><label>📌 全局背景</label><textarea id="wfContext" class="small" placeholder="例：风格是电子音乐，输出WAV"></textarea></div>
-                <div style="font-weight:600; font-size:14px; color:var(--text-primary); margin:8px 0 6px;">⚙️ 工作流步骤 (含详细指令)</div>
-                <div id="wfStepsContainer" class="wf-step-container"></div>
-                <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
-                    <button class="btn-sm" onclick="addWorkflowStep()">➕ 添加步骤</button>
-                    <button class="btn-sm" onclick="clearWorkflowSteps()" style="color:#ef4444;">🗑️ 重置步骤</button>
-                </div>
-                <div class="action-row"><button class="btn-primary" onclick="genWorkflow()">🚀 生成路由包</button><button class="btn-secondary" onclick="copyOutput()">📋 复制全部</button></div>
-                <div id="wfMindmapContainer" style="display:none; margin-top:16px;"></div>
-            </div>
-            <!-- 知识库 -->
-            <div id="panel-knowledge" class="tab-panel">
-                <div class="card-title">📚 知识库 · 飞书风格</div>
-                <div class="kb-container">
-                    <div class="kb-folders">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                            <span style="font-weight:600; font-size:14px;">📁 文件夹</span>
-                            <button class="btn-sm" onclick="addFolder()">+</button>
-                        </div>
-                        <div id="kbFolderList"></div>
-                    </div>
-                    <div class="kb-docs">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                            <span style="font-weight:600; font-size:14px;">📄 文档</span>
-                            <button class="btn-sm" onclick="addDoc()">+ 新建</button>
-                        </div>
-                        <div id="kbDocList"></div>
-                        <div class="kb-editor" id="kbEditor" style="display:none;">
-                            <div class="form-group"><label>文档标题</label><input type="text" id="kbDocTitle" /></div>
-                            <div class="form-group"><label>正文 (Markdown)</label><textarea id="kbDocContent" rows="4"></textarea></div>
-                            <div class="row-2col">
-                                <div class="form-group"><label>标签 (逗号分隔)</label><input type="text" id="kbDocTags" /></div>
-                                <div class="form-group"><label>外部链接</label><input type="text" id="kbDocLink" placeholder="https://..." /></div>
-                            </div>
-                            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                                <button class="btn-sm primary-sm" onclick="saveDoc()">💾 保存</button>
-                                <button class="btn-sm danger" onclick="deleteDoc()">🗑️ 删除</button>
-                                <button class="btn-sm" onclick="cancelDocEdit()">取消</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- 右侧输出 -->
+
+    <div class="memory">
+      <div class="memory__hd">🎯 品牌记忆（核心资产）</div>
+      <div class="memory__tip">
+        填写一次，之后每次生成都会自动带上品牌语境。<br>
+        建议：品牌名 / 品类 / 目标人群 / 核心卖点 / 品牌语气 / 禁用词
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__hd">🎭 默认专家角色</div>
+      <input type="text" id="defRole" placeholder="例：资深品牌策略师">
+    </div>
+
+    <div class="card">
+      <div class="card__hd">🎨 默认语气/风格</div>
+      <input type="text" id="defTone" placeholder="例：专业但不端着，直接给结论">
+      <p class="hint" style="margin-top:8px">💡 设置后，每次生成都会自动带上这些偏好。</p>
+    </div>
+
+    <div class="card">
+      <div class="card__hd">📋 配置智能体</div>
+      <div class="chips" id="presetChips"></div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn btn--sm btn--ghost" id="btnClear">✕ 清空</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__hd">🤖 当前智能体</div>
+      <div style="font-size:13px" id="curAgent">提示词工坊</div>
+      <p class="hint" style="margin:6px 0 0">全局记忆自动注入</p>
+    </div>
+  </aside>
+
+  <!-- ---------- 中栏 ---------- -->
+  <main>
+
+    <!-- ===== 营销角色（提示词工坊） ===== -->
+    <section class="panel is-on" data-panel="role">
+      <h2 class="panel__hd">🧠 营销角色 · 提示词工坊</h2>
+      <p class="panel__sub">按结构化字段拼装高质量提示词，复制后粘贴到任意 AI 平台即可使用。</p>
+      <div class="grid2">
+        <label class="f"><span>🎭 角色设定</span><textarea id="r_role" placeholder="例：你是一位有 8 年经验的小红书内容操盘手"></textarea></label>
+        <label class="f"><span>🎯 核心任务</span><textarea id="r_task" placeholder="例：为新产品写 10 个爆款标题"></textarea></label>
+        <label class="f"><span>📌 背景信息</span><textarea id="r_bg" placeholder="产品、人群、渠道、时机等"></textarea></label>
+        <label class="f"><span>⚙️ 具体要求</span><textarea id="r_req" placeholder="字数、格式、条数、禁忌等"></textarea></label>
+      </div>
+      <label class="f"><span>📎 参考示例</span><textarea id="r_ex" placeholder="粘贴一条你认可的样例（可选）"></textarea></label>
+      <div class="row">
+        <button class="btn btn--primary" id="btnGenRole">✨ 生成提示词</button>
+        <button class="btn btn--ghost" id="btnCopyRole">📋 复制</button>
+      </div>
+    </section>
+
+    <!-- ===== 内容工厂 ===== -->
+    <section class="panel" data-panel="content">
+      <h2 class="panel__hd">✍️ 内容工厂</h2>
+      <p class="panel__sub">多平台调性切换，一次输入批量出稿。生成后可一键做违禁词体检。</p>
+      <div class="grid2">
+        <label class="f"><span>📝 内容题目</span><input type="text" id="c_title" placeholder="例：夏季防晒新品上市种草"></label>
+        <label class="f"><span>🏷️ 关键词（逗号分隔）</span><input type="text" id="c_kw" placeholder="防晒, 轻薄, 通勤"></label>
+        <label class="f"><span>📱 投放平台</span>
+          <select id="c_platform">
+            <option>小红书</option><option>公众号</option><option>抖音口播</option>
+            <option>视频号</option><option>B站</option><option>知乎</option>
+            <option>微博</option><option>电商详情页</option><option>朋友圈</option>
+          </select>
+        </label>
+        <label class="f"><span>📏 字数</span>
+          <select id="c_len"><option>300 字</option><option selected>800 字</option><option>1500 字</option><option>3000 字</option></select>
+        </label>
+        <label class="f"><span>🎯 风格</span>
+          <select id="c_style">
+            <option>种草安利型</option><option selected>专业干货型</option>
+            <option>故事叙事型</option><option>情绪共鸣型</option><option>硬广转化型</option>
+          </select>
+        </label>
+        <label class="f"><span>👥 目标人群</span><input type="text" id="c_aud" placeholder="例：25-32 岁都市职场女性"></label>
+      </div>
+      <label class="f"><span>📚 参考素材（每行一条）</span><textarea id="c_ref" placeholder="竞品爆款标题 / 用户真实评论 / 产品资料"></textarea></label>
+      <label class="f"><span>📌 额外要求</span><textarea id="c_extra" placeholder="例：开头 3 秒必须有钩子；结尾带 CTA"></textarea></label>
+      <div class="row">
+        <button class="btn btn--primary" id="btnGenContent">🚀 生成文稿</button>
+        <button class="btn btn--ghost" id="btnCopyAll">📋 复制</button>
+        <button class="btn btn--ghost" id="btnExportMd">⬇️ 导出 MD</button>
+        <button class="btn btn--ghost" id="btnScan">⚖️ 违禁词体检</button>
+      </div>
+    </section>
+
+    <!-- ===== 策略模板 ===== -->
+    <section class="panel" data-panel="strategy">
+      <h2 class="panel__hd">📊 营销策略模板</h2>
+      <p class="panel__sub">选好框架、填三个字段，直接产出可交付的策略文档。</p>
+      <label class="f"><span>选择框架</span></label>
+      <div class="chips" id="stratChips" style="margin-bottom:14px"></div>
+      <div class="grid2">
+        <label class="f"><span>🎯 项目名称</span><input type="text" id="s_name" placeholder="例：Y.Mine 2026 Q4 上市"></label>
+        <label class="f"><span>📌 背景 / 痛点</span><input type="text" id="s_bg" placeholder="当前问题或机会是什么"></label>
+      </div>
+      <label class="f"><span>📎 额外备注</span><textarea id="s_extra" placeholder="约束条件、预算、时间节点等"></textarea></label>
+      <div class="row">
+        <button class="btn btn--primary" id="btnGenStrat">🧠 生成文档</button>
+        <button class="btn btn--ghost" id="btnCopyAll2">📋 复制</button>
+      </div>
+    </section>
+
+    <!-- ===== 品牌人格 ===== -->
+    <section class="panel" data-panel="persona">
+      <h2 class="panel__hd">🍸 品牌人格 · 调性指南</h2>
+      <p class="panel__sub">用 MBTI 给品牌定人设，输出可直接写进品牌手册的 Tone of Voice 指南（附彩蛋特调）。</p>
+      <label class="f"><span>🧬 人格类型</span>
+        <select id="p_type"></select>
+      </label>
+      <div class="grid2">
+        <label class="f"><span>🍭 口味偏好</span>
+          <select id="p_flavor"><option>酸甜/果味</option><option>苦烈/干型</option><option>清爽/草本</option><option>辛辣/烟熏</option></select>
+        </label>
+        <label class="f"><span>🍷 酒精度</span>
+          <select id="p_abv"><option>低度数</option><option selected>中高度</option><option>高度数</option></select>
+        </label>
+      </div>
+      <label class="f"><span>📝 品牌 / 场合</span><input type="text" id="p_occ" placeholder="例：Y.Mine · 新品发布会 after party"></label>
+      <div class="row">
+        <button class="btn btn--primary" id="btnGenPersona">🍸 生成调性指南</button>
+        <button class="btn btn--ghost" id="btnCopyAll3">📋 复制</button>
+      </div>
+    </section>
+
+    <!-- ===== 营销工作流 ===== -->
+    <section class="panel" data-panel="flow">
+      <h2 class="panel__hd">🔗 工作流编排 · 详细指令版</h2>
+      <p class="panel__sub">每一步写清「做什么 + 用什么工具」，生成完整路由包。</p>
+      <label class="f"><span>预设链路</span></label>
+      <div class="chips" id="flowChips" style="margin-bottom:14px"></div>
+      <div class="grid2">
+        <label class="f"><span>🎯 项目目标</span><input type="text" id="f_goal" placeholder="例：产出本周竞品情报周报"></label>
+        <label class="f"><span>📌 全局背景</span><input type="text" id="f_bg" placeholder="品牌 / 品类 / 周期"></label>
+      </div>
+      <label class="f"><span>⚙️ 工作流步骤（含详细指令）</span></label>
+      <div id="steps"></div>
+      <div class="row" style="margin-bottom:14px">
+        <button class="btn btn--sm btn--ghost" id="btnAddStep">➕ 添加步骤</button>
+        <button class="btn btn--sm btn--ghost" id="btnResetStep">🗑️ 重置步骤</button>
+      </div>
+      <div class="row">
+        <button class="btn btn--primary" id="btnGenFlow">🚀 生成路由包</button>
+        <button class="btn btn--ghost" id="btnCopyAll4">📋 复制全部</button>
+      </div>
+    </section>
+
+    <!-- ===== 品牌知识库 ===== -->
+    <section class="panel" data-panel="kb">
+      <h2 class="panel__hd">📚 品牌知识库 · 飞书风格</h2>
+      <p class="panel__sub">沉淀品牌资产、竞品素材、用户原声与违禁词，供生成时调用。</p>
+      <div class="kb">
         <div>
-            <div class="agent-card">
-                <div class="label">🤖 当前智能体</div>
-                <div class="agent-identity" id="agentIdentity">提示词工坊</div>
-                <div class="agent-desc" id="agentDesc">配置左侧参数，生成标准提示词</div>
-            </div>
-            <div class="output-box">
-                <div class="output-header">
-                    <h3 id="outputTitle">📄 输出预览</h3>
-                    <div class="output-tools">
-                        <button class="btn-sm primary-sm" onclick="expandCurrent()">✍️ 扩写</button>
-                        <button class="btn-sm" onclick="openHistory()">📜 历史</button>
-                        <button class="btn-sm" onclick="copyOutput()">📋 复制</button>
-                    </div>
-                </div>
-                <div id="promptDisplay"></div>
-                <div class="char-counter"><span id="charCount">0 字符</span><span style="font-size:11px; color:var(--text-muted);">点击「历史」查看存档</span></div>
-            </div>
+          <div class="kb__list" id="kbFolders"></div>
+          <div class="row" style="margin-top:8px">
+            <button class="btn btn--sm btn--ghost" id="btnAddFolder">📁 +</button>
+            <button class="btn btn--sm btn--ghost" id="btnDelFolder">🗑️</button>
+          </div>
         </div>
+        <div>
+          <div class="kb__list" id="kbDocs"></div>
+          <div class="row" style="margin-top:8px;margin-bottom:12px">
+            <button class="btn btn--sm btn--ghost" id="btnAddDoc">📄 + 新建</button>
+          </div>
+          <div id="docForm" style="display:none">
+            <label class="f"><span>文档标题</span><input type="text" id="d_title"></label>
+            <label class="f"><span>正文（Markdown）</span><textarea id="d_body" style="min-height:130px"></textarea></label>
+            <div class="grid2">
+              <label class="f"><span>标签（逗号分隔）</span><input type="text" id="d_tags"></label>
+              <label class="f"><span>外部链接</span><input type="text" id="d_link" placeholder="https://"></label>
+            </div>
+            <div class="row">
+              <button class="btn btn--sm btn--primary" id="btnSaveDoc">💾 保存</button>
+              <button class="btn btn--sm btn--ghost" id="btnDelDoc">🗑️ 删除</button>
+              <button class="btn btn--sm btn--ghost" id="btnCancelDoc">取消</button>
+            </div>
+          </div>
+          <div id="docView" style="display:none"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ---------- 右栏 ---------- -->
+  <aside>
+    <div class="card">
+      <div class="card__hd">📄 输出预览 <span id="charCount" style="font-weight:400;color:var(--soft);font-size:12px">0 字符</span></div>
+      <div class="preview" id="preview">⚠️ 请填写字段或选择预设。</div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn btn--sm btn--ghost" id="btnExpand">✍️ 扩写</button>
+        <button class="btn btn--sm btn--ghost" id="btnHistory">📜 历史</button>
+        <button class="btn btn--sm btn--ghost" id="btnCopyPreview">📋 复制</button>
+      </div>
     </div>
-</div>
-<div class="history-modal" id="historyModal">
-    <div class="history-panel">
-        <h3>📜 生成历史记录 <button onclick="closeHistory()">✕</button></h3>
-        <div class="history-list" id="historyList"><div class="history-empty">暂无历史记录。</div></div>
-        <div style="margin-top:12px; text-align:right;"><button class="btn-sm danger" onclick="clearHistory()">🗑️ 清空历史</button></div>
+    <div class="card">
+      <div class="card__hd">🔌 可路由节点</div>
+      <p class="hint">
+        🧠 豆包（创意）· 💻 DeepSeek（逻辑/代码）· 📝 通义千问（润色长文）·
+        🖥️ Ollama（本地）· 🤖 扣子 Coze · ⚡ Trae · 🌿 Claude ·
+        🐙 GitHub · ▲ Vercel · 🚂 Railway · ✋ 手动
+      </p>
     </div>
+  </aside>
 </div>
+
+<!-- ===================== 内容包 ===================== -->
+<section class="packs" id="packs">
+  <div class="packs__inner">
+    <div class="packs__hd">
+      <h2>内容包 · 让模板变成可交付的产出</h2>
+      <p>引擎永久免费。内容包提供完整工作流、种子素材库与实战案例。</p>
+    </div>
+    <div class="packs__grid">
+      <div class="pack"><div class="pack__tag">最受欢迎</div><div class="pack__ico">📕</div>
+        <div class="pack__name">小红书增长包</div>
+        <div class="pack__desc">选题挖掘 → 标题公式 → 正文生成 → 违禁词体检 → 发布排期，含 500+ 爆款标题库</div>
+        <div class="pack__price">¥99<small>买断 · 永久更新</small></div></div>
+      <div class="pack"><div class="pack__tag">专业向</div><div class="pack__ico">⚔️</div>
+        <div class="pack__name">竞品情报包</div>
+        <div class="pack__desc">竞品识别 → 监测维度 → 对比矩阵 → 周报自动化，含 6 大行业竞品维度表</div>
+        <div class="pack__price">¥129<small>买断 · 永久更新</small></div></div>
+      <div class="pack"><div class="pack__tag">投放向</div><div class="pack__ico">📈</div>
+        <div class="pack__name">投放复盘包</div>
+        <div class="pack__desc">数据清洗 → 漏斗诊断 → 素材归因 → 预算重分配建议</div>
+        <div class="pack__price">¥129<small>买断 · 永久更新</small></div></div>
+      <div class="pack"><div class="pack__tag">超值</div><div class="pack__ico">💎</div>
+        <div class="pack__name">年度通行证</div>
+        <div class="pack__desc">全部内容包 + 一年持续更新 + 专属答疑社群</div>
+        <div class="pack__price">¥399<small>/ 年</small></div></div>
+    </div>
+    <div class="packs__note">💡 所有配置与知识库均支持 JSON 导入导出 · 数据始终保存在你本地浏览器</div>
+  </div>
+</section>
+
+<footer class="foot">🌌 Y.Mine 应用矩阵 · 返回作品集</footer>
+
+<!-- ===================== 弹层 ===================== -->
+<div class="mask" id="maskHist">
+  <div class="modal">
+    <div class="modal__hd"><span>📜 生成历史记录</span><button class="btn btn--sm btn--ghost" id="btnCloseHist">✕</button></div>
+    <div id="histList"></div>
+    <button class="btn btn--sm btn--ghost" id="btnClearHist">🗑️ 清空历史</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
 
 <script>
-// ================================================================
-// 1. 预设数据
-// ================================================================
-const PRESETS = {
-    xiaohongshu:{role:'资深美妆博主',task:'推荐“早C晚A”入门护肤品的小红书笔记',bg:'受众20-25岁学生党，卖点性价比',req:'活泼多Emoji，300字，含标题标签',ex:''},
-    wechat:{role:'财经科技主编',task:'写AI工具改变普通人工作流的公众号长文',bg:'受众25-40岁职场白领',req:'深度干货，分3小标题，1800字',ex:''},
-    python:{role:'Python工程师',task:'爬取新闻标题的脚本',bg:'公开新闻门户，抓标题+时间',req:'requests+BeautifulSoup，中文注释，输出CSV',ex:''},
-    report:{role:'项目经理',task:'润色工作周报',bg:'需求评审、联调、修复3个Bug',req:'正式专业，按项目推进/风险/计划三板块',ex:''}
+(function(){
+'use strict';
+var $ = function(s){ return document.querySelector(s); };
+var $$ = function(s){ return Array.prototype.slice.call(document.querySelectorAll(s)); };
+var KEY = 'ym_studio_v1';
+
+/* ================= 状态 ================= */
+var state = {
+  theme:'light', memOn:true, defRole:'', defTone:'', curPreset:'', curStrat:'SWOT分析',
+  role:{role:'',task:'',bg:'',req:'',ex:''},
+  content:{title:'',kw:'',platform:'小红书',len:'800 字',style:'专业干货型',aud:'',ref:'',extra:''},
+  strat:{name:'',bg:'',extra:''},
+  persona:{type:'INTJ · 建筑师',flavor:'酸甜/果味',abv:'中高度',occ:''},
+  flow:{goal:'',bg:'',steps:[]},
+  kb:{folders:[
+    {name:'品牌资产',docs:[]},{name:'竞品素材',docs:[]},
+    {name:'用户原声',docs:[]},{name:'违禁词库',docs:[]},{name:'爆款素材',docs:[]}
+  ],curFolder:0,curDoc:-1},
+  history:[]
 };
-const STRATEGIES = { swot:'SWOT分析', prd:'产品需求文档 (PRD)', retro:'项目复盘报告' };
-const TOOL_OPTIONS = [
-    {value:'豆包',label:'🧠 豆包 (创意)'},{value:'DeepSeek',label:'💻 DeepSeek (代码/逻辑)'},
-    {value:'通义千问',label:'📝 通义千问 (润色/长文本)'},{value:'Ollama',label:'🖥️ Ollama (本地)'},
-    {value:'扣子(Coze)',label:'🤖 扣子 Coze'},{value:'Trae',label:'⚡ Trae'},
-    {value:'Claude',label:'🌿 Claude'},{value:'GitHub',label:'🐙 GitHub'},
-    {value:'Vercel',label:'▲ Vercel'},{value:'Railway',label:'🚂 Railway'},{value:'手动',label:'✋ 手动'}
+
+/* ================= 预设数据 ================= */
+var PRESETS = [
+  {n:'🎯品牌策略', role:'你是一位有 10 年经验的品牌策略师，服务过快消与互联网品牌，擅长从市场结构中找差异化机会。',
+   task:'为品牌制定清晰的定位策略与核心信息屋。', req:'先给结论再给论证；每条判断必须有依据；避免空话。', ex:'定位：为 X 人群提供 Y 差异价值的 Z 品类'},
+  {n:'👥用户画像', role:'你是一位用户研究专家，擅长从定性数据中提炼行为模式与购买动机。',
+   task:'输出 3 个核心用户画像 Persona。', req:'每个画像含：基本信息、目标、痛点、决策路径、触达渠道、抗拒点。', ex:''},
+  {n:'⚔️竞品拆解', role:'你是一位竞品分析专家，擅长结构化拆解对手的打法并找出破绽。',
+   task:'拆解指定竞品，输出对比矩阵与可乘之机。', req:'维度含：定位、卖点、价格、渠道、内容打法、用户口碑、明显弱点。', ex:''},
+  {n:'✍️小红书', role:'你是一位小红书内容操盘手，操盘过多个万赞笔记，深谙平台流量逻辑。',
+   task:'产出 10 个爆款标题 + 3 篇完整正文。', req:'标题必须含钩子；正文口语化、多换行、带 emoji；结尾有互动引导。', ex:''},
+  {n:'📰公众号', role:'你是一位资深新媒体主编，擅长长文叙事与观点输出。',
+   task:'写一篇结构完整的公众号推文。', req:'开头 100 字内给出阅读理由；小标题清晰；结尾有行动号召。', ex:''},
+  {n:'🎬短视频', role:'你是一位短视频脚本策划，熟悉抖音/视频号的完播率逻辑。',
+   task:'写一个 60 秒短视频脚本。', req:'前 3 秒必须有强钩子；按秒标注画面与口播；结尾引导转化。', ex:''},
+  {n:'📊投放复盘', role:'你是一位效果营销专家，熟悉巨量引擎、腾讯广告等投放后台。',
+   task:'基于投放数据做复盘并给出下一周期优化方案。', req:'先算指标再归因；区分素材/人群/出价问题；建议要可执行。', ex:''},
+  {n:'⚖️合规审核', role:'你是一位熟悉《广告法》与各大平台内容规范的合规审核员。',
+   task:'扫描文案中的违规风险并给出修改建议。', req:'标出风险等级、原文位置、违规原因、修改方案。', ex:''}
 ];
-const MBTI_DRINKS = {
-    INTJ:{name:'干马天尼 · 逻辑秩序',base:'金酒 60ml，干味美思 10ml',ingredients:'橄榄 1颗，柠檬皮油',steps:'1. 搅拌杯加冰，倒入金酒与干味美思。\n2. 搅拌至充分冰镇（约30秒）。\n3. 滤入冰镇马天尼杯。\n4. 柠檬皮挤油擦拭杯口，投入橄榄。',philosophy:'INTJ 崇尚简洁、精准与结构。'},
-    INTP:{name:'金汤力 · 理性气泡',base:'金酒 45ml，汤力水 120ml',ingredients:'青柠角 1个，杜松子',steps:'1. 高球杯加满冰块。\n2. 倒入金酒，注入汤力水。\n3. 轻轻提拉搅拌，放入青柠角。',philosophy:'INTP 的脑内永远在冒泡。'},
-    ENTJ:{name:'古典鸡尾酒 · 权力架构',base:'波本威士忌 60ml，方糖 1颗',ingredients:'安高天娜苦精 2滴，橙皮',steps:'1. 古典杯中苦精浸透方糖捣碎。\n2. 加威士忌与冰块搅拌。\n3. 橙皮挤油装饰。',philosophy:'ENTJ 是天然的架构师。'},
-    ENTP:{name:'内格罗尼 · 辩证之红',base:'金酒 30ml，金巴利 30ml，红味美思 30ml',ingredients:'橙皮 1片',steps:'1. 老式杯加冰等量注入三种酒。\n2. 搅拌融合，橙皮挤油。',philosophy:'ENTP 是思想的角斗场。'},
-    INFJ:{name:'大都会 · 静谧星辰',base:'伏特加 45ml，君度 15ml，蔓越莓汁 30ml，青柠汁 15ml',ingredients:'橙皮 1条',steps:'1. 摇酒壶加冰混合。\n2. 用力摇匀。\n3. 双重过滤入杯，橙皮装饰。',philosophy:'INFJ 是深邃的星空。'},
-    INFP:{name:'薰衣草金菲士 · 梦幻之雾',base:'金酒 45ml，薰衣草糖浆 15ml，青柠汁 20ml，苏打水',ingredients:'可食用薰衣草花',steps:'1. 摇酒壶加冰混合。\n2. 摇匀滤入高球杯，加满苏打水。\n3. 撒上薰衣草花。',philosophy:'INFP 活在理想主义的花园里。'},
-    ENFJ:{name:'墨西哥骡子 · 热烈鼓舞',base:'龙舌兰 45ml，姜汁啤酒 120ml，青柠汁 20ml',ingredients:'姜片，薄荷',steps:'1. 铜杯加冰，倒入龙舌兰与青柠汁。\n2. 注满姜汁啤酒，轻搅。\n3. 姜片与薄荷装饰。',philosophy:'ENFJ 是人群中的太阳。'},
-    ENFP:{name:'椰林飘香 · 无拘狂欢',base:'白朗姆 45ml，菠萝汁 90ml，椰浆 30ml',ingredients:'菠萝角，樱桃',steps:'1. 搅拌机加冰打至冰沙状。\n2. 倒入冰镇飓风杯，装饰。',philosophy:'ENFP 是永不枯竭的灵感喷泉。'},
-    ISTJ:{name:'威士忌酸 · 稳重之酸',base:'波本威士忌 50ml，柠檬汁 25ml，糖浆 15ml',ingredients:'蛋清 1个（可选），樱桃',steps:'1. 干摇10秒。\n2. 加冰再摇12秒。\n3. 滤入古典杯，樱桃装饰。',philosophy:'ISTJ 是值得信赖的基石。'},
-    ISFJ:{name:'贝里尼 · 温柔暖光',base:'白桃果泥 30ml，普洛赛克起泡酒 90ml',ingredients:'白桃切片',steps:'1. 笛形杯倒入果泥。\n2. 缓慢注入起泡酒，轻搅。\n3. 白桃片装饰。',philosophy:'ISFJ 的关怀如贝里尼的绵密果香。'},
-    ESTJ:{name:'教父 · 教条之威',base:'苏格兰威士忌 45ml，杏仁利口酒 15ml',ingredients:'橙皮',steps:'1. 老式杯加冰。\n2. 注入威士忌与杏仁利口酒。\n3. 搅拌，橙皮挤油。',philosophy:'ESTJ 是秩序的基石。'},
-    ESFJ:{name:'莫吉托 · 欢乐节拍',base:'白朗姆 45ml，青柠 半个，薄荷叶 10片，苏打水',ingredients:'蔗糖 2勺，薄荷枝',steps:'1. 高球杯中薄荷与青柠、蔗糖捣碎。\n2. 加冰，注入朗姆，加满苏打水。\n3. 搅匀，薄荷枝装饰。',philosophy:'ESFJ 是社交的核心。'},
-    ISTP:{name:'血腥玛丽 · 冒险之血',base:'伏特加 45ml，番茄汁 90ml，柠檬汁 15ml',ingredients:'辣酱 2滴，伍斯特酱，芹菜杆',steps:'1. 高球杯加冰混合。\n2. 加入调味酱。\n3. 芹菜杆与柠檬角装饰。',philosophy:'ISTP 是冷静的冒险家。'},
-    ISFP:{name:'水蜜桃贝里尼 · 感官极简',base:'白桃利口酒 30ml，普洛赛克 90ml',ingredients:'薄荷叶',steps:'1. 笛形杯倒入利口酒。\n2. 缓慢注满起泡酒。\n3. 薄荷叶装饰。',philosophy:'ISFP 用五感拥抱世界。'},
-    ESTP:{name:'长岛冰茶 · 混乱伪装',base:'金酒、朗姆、伏特加、龙舌兰、君度 各15ml，柠檬汁 25ml，糖浆 20ml，可乐',ingredients:'柠檬角',steps:'1. 高球杯加冰混合。\n2. 加满可乐，柠檬角装饰。',philosophy:'ESTP 是精明的伪装者。'},
-    ESFP:{name:'激情海岸 · 多巴胺浪潮',base:'伏特加 30ml，桃子利口酒 30ml，蔓越莓汁 60ml，菠萝汁 60ml',ingredients:'橙片，樱桃',steps:'1. 摇酒壶加冰混合。\n2. 摇匀滤入冰镇高球杯。\n3. 橙片与樱桃装饰。',philosophy:'ESFP 是行走的多巴胺。'}
-};
 
-// ================================================================
-// 2. DOM 引用
-// ================================================================
-const display = document.getElementById('promptDisplay');
-const charCount = document.getElementById('charCount');
-const agentIdentity = document.getElementById('agentIdentity');
-const agentDesc = document.getElementById('agentDesc');
-const outputTitle = document.getElementById('outputTitle');
+var STRATS = [
+  {k:'SWOT分析', d:'优势 / 劣势 / 机会 / 威胁 四象限 + 交叉策略'},
+  {k:'STP定位', d:'市场细分 → 目标市场 → 差异化定位'},
+  {k:'用户画像', d:'3 个 Persona：目标、痛点、决策路径、触达渠道'},
+  {k:'竞品对比', d:'多维度竞品矩阵 + 空白机会点识别'},
+  {k:'GTM上市', d:'上市节奏、渠道组合、预算分配、关键里程碑'},
+  {k:'信息屋', d:'Message House：核心主张 + 支撑点 + 用户利益'},
+  {k:'营销日历', d:'全年节点排期与主题规划'},
+  {k:'4P策略', d:'产品 / 价格 / 渠道 / 推广 组合策略'},
+  {k:'PRD', d:'产品需求文档：目标、范围、功能、验收标准'},
+  {k:'项目复盘', d:'目标回顾 → 结果评估 → 原因分析 → 经验沉淀'}
+];
 
-const globalRole = document.getElementById('globalRole');
-const globalTone = document.getElementById('globalTone');
+var MBTI = [
+  'INTJ · 建筑师','INTP · 逻辑学家','ENTJ · 指挥官','ENTP · 辩论家',
+  'INFJ · 提倡者','INFP · 调停者','ENFJ · 主人公','ENFP · 竞选者',
+  'ISTJ · 物流师','ISFJ · 守卫者','ESTJ · 总经理','ESFJ · 执政官',
+  'ISTP · 鉴赏家','ISFP · 探险家','ESTP · 企业家','ESFP · 表演者'
+];
 
-const pRole = document.getElementById('pRole'), pTask = document.getElementById('pTask'), pBg = document.getElementById('pBg'), pReq = document.getElementById('pReq'), pExample = document.getElementById('pExample');
-const paperTitle = document.getElementById('paperTitle'), paperKeywords = document.getElementById('paperKeywords'), paperDept = document.getElementById('paperDept'), paperWords = document.getElementById('paperWords'), paperStyle = document.getElementById('paperStyle'), paperRefs = document.getElementById('paperRefs'), paperExtra = document.getElementById('paperExtra');
-const sTitle = document.getElementById('sTitle'), sBg = document.getElementById('sBg'), sExtra = document.getElementById('sExtra');
-const mbtiType = document.getElementById('mbtiType'), mbtiFlavor = document.getElementById('mbtiFlavor'), mbtiAbv = document.getElementById('mbtiAbv'), mbtiOccasion = document.getElementById('mbtiOccasion');
-const wfGoal = document.getElementById('wfGoal'), wfContext = document.getElementById('wfContext'), wfStepsContainer = document.getElementById('wfStepsContainer');
+var TOOLS = ['🧠 豆包 (创意)','💻 DeepSeek (代码/逻辑)','📝 通义千问 (润色/长文本)','🖥️ Ollama (本地)',
+  '🤖 扣子 Coze','⚡ Trae','🌿 Claude','🐙 GitHub','▲ Vercel','🚂 Railway','✋ 手动'];
 
-let currentMode = 'prompt', currentOutput = '', historyData = [], workflowSteps = [];
-let currentStrategy = 'swot';
-let wfViewMode = 'list';
-let kbData = { folders: [], docs: [] };
-let selectedFolderId = null;
-let editingDocId = null;
+var FLOW_PRESETS = [
+  {n:'📕 小红书爆款', goal:'产出 10 条可发布的小红书笔记', steps:[
+    {t:'检索该品类近 30 天 Top20 笔记，提炼标题公式与钩子结构，输出 5 条公式。', tool:1},
+    {t:'基于公式，围绕产品卖点生成 20 个标题候选。', tool:0},
+    {t:'筛选 10 个最优标题，逐个扩写正文，套用平台调性与 emoji 排版。', tool:2},
+    {t:'合规扫描：违禁词 + 广告法极限词，标出风险并给出修改方案。', tool:1},
+    {t:'为 10 篇笔记生成 9 图分镜文案与话题标签。', tool:0},
+    {t:'输出 7 天发布排期表，标注最佳发布时间。', tool:10}
+  ]},
+  {n:'⚔️ 竞品情报', goal:'生成本周竞品情报周报', steps:[
+    {t:'确定监测竞品清单与维度（定位/价格/卖点/渠道/内容/口碑）。', tool:10},
+    {t:'检索各竞品近 7 天动态：上新、调价、活动、融资、舆情。', tool:1},
+    {t:'抓取竞品小红书/抖音近 30 天爆款内容，提取选题与结构。', tool:4},
+    {t:'汇总成对比矩阵，标注威胁等级与趋势变化。', tool:1},
+    {t:'输出 3 条可行动建议，附我方应对方案与优先级。', tool:1},
+    {t:'润色成周报格式，写入知识库「竞品素材」。', tool:2}
+  ]},
+  {n:'📈 投放复盘', goal:'输出下一周期投放优化方案', steps:[
+    {t:'导入投放后台导出的数据表，说明字段与统计周期。', tool:10},
+    {t:'计算 CTR / CVR / CPA / ROAS，按计划、素材、人群分层。', tool:1},
+    {t:'识别跑量素材与衰退素材，标注生命周期阶段。', tool:1},
+    {t:'归因分析：判断是素材、人群还是出价问题，给出依据。', tool:1},
+    {t:'输出预算重分配方案与素材迭代方向。', tool:1},
+    {t:'沉淀结论进知识库，供下期策略调用。', tool:10}
+  ]},
+  {n:'🎵 音乐项目', goal:'生成一首完整的电子氛围音乐', steps:[
+    {t:'确定电子/氛围/实验风格，制定情绪基调与 BPM 范围。', tool:0},
+    {t:'初始化 AudioContext，编写振荡器 + 滤波器基础播放示例。', tool:1},
+    {t:'拉取参考歌单元数据，提取 BPM 与调性。', tool:1},
+    {t:'基于和弦走向生成 4 小节 MIDI，导出 JSON。', tool:0},
+    {t:'初始化 Git 仓库并推送到 GitHub，用 Issues 管理任务。', tool:7},
+    {t:'连接 Vercel 配置环境变量，部署到生产环境。', tool:8}
+  ]},
+  {n:'📱 App开发', goal:'从 0 到 1 上线一个应用', steps:[
+    {t:'明确目标用户与核心场景，输出功能清单与优先级。', tool:0},
+    {t:'设计数据模型与接口结构，输出 schema。', tool:1},
+    {t:'搭建项目骨架，实现核心页面与交互。', tool:5},
+    {t:'编写测试用例，跑通主流程。', tool:1},
+    {t:'推送 GitHub，配置 CI。', tool:7},
+    {t:'部署 Vercel，配置域名与环境变量。', tool:8}
+  ]}
+];
 
-// ================================================================
-// 3. 主题切换
-// ================================================================
-function toggleTheme() {
-    const html = document.documentElement;
-    const current = html.getAttribute('data-theme');
-    const next = current === 'dark' ? 'light' : 'dark';
-    html.setAttribute('data-theme', next);
-    document.getElementById('themeToggle').textContent = next === 'dark' ? '☀️ 亮色' : '🌙 深色';
-    localStorage.setItem('theme', next);
-}
-function loadTheme() {
-    const saved = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', saved);
-    document.getElementById('themeToggle').textContent = saved === 'dark' ? '☀️ 亮色' : '🌙 深色';
-}
-loadTheme();
+/* 违禁词库（示例，可自行扩充） */
+var BAN_WORDS = ['最好','最佳','最优','最强','第一','首个','唯一','独家','国家级','世界级','顶级','极品',
+'绝无仅有','史无前例','万能','永久','永远','彻底','根治','特效','奇效','神效','包治','保证','承诺',
+'100%','百分百','零风险','无副作用','不反弹','免费送','限时','最后一天','即将涨价','疯抢','秒杀',
+'驰名商标','特供','专供','原装进口','纯天然','无添加','绿色食品','有机'];
 
-// ================================================================
-// 4. 历史记录
-// ================================================================
-function loadHistory() {
-    const raw = localStorage.getItem('genHistory');
-    if (raw) { try { historyData = JSON.parse(raw); } catch(e) { historyData = []; } } else historyData = [];
+/* ================= 读写 ================= */
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
 }
-function saveHistory(content, mode) {
-    if (!content || content.length < 10) return;
-    const preview = content.replace(/\n/g,' ').substring(0,120);
-    historyData.unshift({ id:Date.now(), mode, preview, fullText:content, time:new Date().toLocaleString() });
-    if (historyData.length > 50) historyData = historyData.slice(0,50);
-    localStorage.setItem('genHistory', JSON.stringify(historyData));
+function load(){
+  try{
+    var s = localStorage.getItem(KEY);
+    if(s){ var o = JSON.parse(s); for(var k in o){ state[k]=o[k]; } }
+  }catch(e){}
+  if(!state.flow.steps || !state.flow.steps.length) state.flow.steps = defaultSteps();
+  if(!state.kb || !state.kb.folders || !state.kb.folders.length){
+    state.kb = {folders:[{name:'品牌资产',docs:[]},{name:'竞品素材',docs:[]},{name:'用户原声',docs:[]},
+      {name:'违禁词库',docs:[]},{name:'爆款素材',docs:[]}],curFolder:0,curDoc:-1};
+  }
 }
-function openHistory() {
-    const modal = document.getElementById('historyModal');
-    const list = document.getElementById('historyList');
-    if (historyData.length===0) list.innerHTML='<div class="history-empty">暂无历史记录。</div>';
-    else list.innerHTML = historyData.map((item,idx)=>`
-        <div class="history-item" onclick="restoreHistory(${idx})">
-            <div class="h-time">${item.time} · ${item.mode}</div>
-            <div class="h-preview">${item.preview}</div>
-        </div>
-    `).join('');
-    modal.classList.add('open');
-}
-function closeHistory() { document.getElementById('historyModal').classList.remove('open'); }
-function restoreHistory(index) {
-    const item = historyData[index];
-    if (item) { display.innerHTML = item.fullText; currentOutput = item.fullText; charCount.textContent = item.fullText.length+' 字符'; closeHistory(); }
-}
-function clearHistory() { if(confirm('确定清空所有历史记录吗？')){ historyData=[]; localStorage.removeItem('genHistory'); openHistory(); } }
-document.getElementById('historyModal').addEventListener('click', function(e){ if(e.target===this) closeHistory(); });
-
-// ================================================================
-// 5. 全局记忆
-// ================================================================
-function loadGlobalMemory() {
-    const raw = localStorage.getItem('globalMemory');
-    if (raw) { try { const d=JSON.parse(raw); globalRole.value=d.role||''; globalTone.value=d.tone||''; } catch(e){} }
-}
-function saveGlobalMemory() { localStorage.setItem('globalMemory', JSON.stringify({role:globalRole.value, tone:globalTone.value})); }
-globalRole.addEventListener('input', saveGlobalMemory);
-globalTone.addEventListener('input', saveGlobalMemory);
-
-// ================================================================
-// 6. Tab切换
-// ================================================================
-document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active-tab'));
-        this.classList.add('active-tab');
-        const tab = this.dataset.tab;
-        document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active-panel'));
-        document.getElementById('panel-'+tab).classList.add('active-panel');
-        currentMode = tab;
-        const map = {
-            prompt: ['提示词工坊','全局记忆自动注入','📄 提示词预览'],
-            paper: ['📚 长文写作器','文献管理 + 全局风格','📄 写作大纲'],
-            strategy: ['📊 策略模板','SWOT / PRD / 复盘','📄 策略文档'],
-            mbti: ['🍸 MBTI调酒师','人格 × 微醺科学','🍸 专属酒谱'],
-            workflow: ['🔗 工作流编排器','多工具路由 · 定制流程','📋 路由提示词包'],
-            knowledge: ['📚 知识库','文档管理 + 标签/链接','📄 知识文档']
-        };
-        const m = map[tab];
-        if (m) { agentIdentity.textContent = m[0]; agentDesc.textContent = m[1]; outputTitle.textContent = m[2]; }
-        if (tab === 'prompt') genPrompt();
-        else if (tab === 'paper') genPaper();
-        else if (tab === 'strategy') genStrategy();
-        else if (tab === 'mbti') genMBTI();
-        else if (tab === 'workflow') genWorkflow();
-        else if (tab === 'knowledge') renderKB();
-    });
-});
-
-// ================================================================
-// 7. 提示词工坊
-// ================================================================
-document.querySelectorAll('[data-preset]').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const d = PRESETS[this.dataset.preset];
-        if (!d) return;
-        pRole.value = d.role||''; pTask.value = d.task||''; pBg.value = d.bg||''; pReq.value = d.req||''; pExample.value = d.ex||'';
-        savePromptLocal(); genPrompt();
-    });
-});
-function clearPromptForm() { ['pRole','pTask','pBg','pReq','pExample'].forEach(id=>document.getElementById(id).value=''); savePromptLocal(); genPrompt(); }
-function genPrompt() {
-    let r = '';
-    const finalRole = pRole.value.trim() || globalRole.value.trim();
-    if (finalRole) r += `> **角色设定**：${finalRole}\n\n`;
-    if (pTask.value.trim()) r += `> **核心任务**：${pTask.value.trim()}\n\n`;
-    if (pBg.value.trim()) r += `> **背景信息**：${pBg.value.trim()}\n\n`;
-    if (pReq.value.trim()) r += `> **具体要求**：${pReq.value.trim()}\n\n`;
-    if (pExample.value.trim()) r += `> **参考示例**：${pExample.value.trim()}`;
-    if (globalTone.value.trim() && r) r += `\n\n> **全局风格**：${globalTone.value.trim()}`;
-    if (!r) { display.innerHTML = '⚠️ 请填写字段或选择预设。'; charCount.textContent = '0 字符'; currentOutput = ''; return; }
-    display.innerHTML = r; currentOutput = r; charCount.textContent = r.length+' 字符';
-    savePromptLocal(); saveHistory(r, '提示词');
-}
-function savePromptLocal() {
-    localStorage.setItem('promptForm', JSON.stringify({role:pRole.value, task:pTask.value, bg:pBg.value, req:pReq.value, ex:pExample.value}));
-}
-[pRole, pTask, pBg, pReq, pExample].forEach(el => el.addEventListener('input', ()=>{ savePromptLocal(); genPrompt(); }));
-
-// ================================================================
-// 8. 长文写作器
-// ================================================================
-function genPaper() {
-    const title = paperTitle.value.trim();
-    if (!title) { display.innerHTML = '⚠️ 请输入论文题目。'; charCount.textContent = '0 字符'; currentOutput = ''; return; }
-    const refsRaw = paperRefs.value.trim().split('\n').filter(r=>r.trim());
-    const style = paperStyle.value;
-    const tone = globalTone.value.trim();
-    let full = `# ${title}\n\n**摘要**：聚焦“${title}”。\n\n## 1. 引言\n## 2. 文献综述\n`;
-    if (refsRaw.length > 0) full += refsRaw.map((r,i)=>`${i+1}. ${r}`).join('\n');
-    full += `\n\n## 3. 方法论 (${style})\n## 4. 讨论\n## 5. 结论\n\n## 参考文献\n`;
-    if (tone) full = `🎨 风格：${tone}\n\n` + full;
-    full += `\n\n> 当前约 ${full.length} 字符。`;
-    display.innerHTML = full; currentOutput = full; charCount.textContent = full.length+' 字符';
-    savePaperLocal(); saveHistory(full, '论文');
-}
-function savePaperLocal() {
-    localStorage.setItem('paperForm', JSON.stringify({title:paperTitle.value, keywords:paperKeywords.value, dept:paperDept.value, words:paperWords.value, style:paperStyle.value, refs:paperRefs.value, extra:paperExtra.value}));
-}
-[paperTitle, paperKeywords, paperDept, paperWords, paperStyle, paperRefs, paperExtra].forEach(el => {
-    el.addEventListener('input', savePaperLocal);
-    el.addEventListener('change', savePaperLocal);
-});
-function exportMarkdown() {
-    const text = display.innerText;
-    if (!text || text.includes('请填写')) { alert('没有可导出的内容。'); return; }
-    const blob = new Blob([text], {type:'text/markdown;charset=utf-8'});
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    const t = paperTitle.value.trim() || '文档';
-    link.download = `${t}.md`;
-    document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href);
+function defaultSteps(){
+  return FLOW_PRESETS[0].steps.map(function(s){ return {t:s.t, tool:s.tool}; });
 }
 
-// ================================================================
-// 9. 策略模板
-// ================================================================
-document.querySelectorAll('[data-strategy]').forEach(btn => {
-    btn.addEventListener('click', function() {
-        document.querySelectorAll('[data-strategy]').forEach(b=>b.classList.remove('active-strategy'));
-        this.classList.add('active-strategy');
-        currentStrategy = this.dataset.strategy;
-        genStrategy();
-    });
-});
-function genStrategy() {
-    const title = sTitle.value.trim() || '未命名项目';
-    const bg = sBg.value.trim() || '（补充背景）';
-    const extra = sExtra.value.trim();
-    const role = globalRole.value.trim();
-    let content = `# ${STRATEGIES[currentStrategy] || '策略'}：${title}\n\n`;
-    if (role) content += `🎭 角色：${role}\n\n`;
-    content += `**背景**：${bg}\n\n`;
-    if (currentStrategy === 'swot') content += `## SWOT矩阵\n|优势|劣势|\n|技术壁垒|品牌认知|\n|机会|威胁|\n|市场增速|巨头竞争|`;
-    else if (currentStrategy === 'prd') content += `## PRD\nP0 核心A，P1 辅助B。`;
-    else if (currentStrategy === 'retro') content += `## 复盘\n亮点：协作高效。不足：需求变更。`;
-    if (extra) content += `\n\n### 备注\n${extra}`;
-    display.innerHTML = content; currentOutput = content; charCount.textContent = content.length+' 字符';
-    saveStrategyLocal(); saveHistory(content, '策略');
+/* ================= UI 工具 ================= */
+function toast(m){
+  var t = $('#toast'); t.textContent = m; t.classList.add('is-on');
+  setTimeout(function(){ t.classList.remove('is-on'); }, 1800);
 }
-function saveStrategyLocal() {
-    localStorage.setItem('strategyForm', JSON.stringify({title:sTitle.value, bg:sBg.value, extra:sExtra.value, type:currentStrategy}));
+function setPreview(txt){
+  $('#preview').textContent = txt || '⚠️ 请填写字段或选择预设。';
+  $('#charCount').textContent = (txt||'').length + ' 字符';
 }
-[sTitle, sBg, sExtra].forEach(el => {
-    el.addEventListener('input', saveStrategyLocal);
-    el.addEventListener('change', saveStrategyLocal);
-});
-
-// ================================================================
-// 10. MBTI调酒
-// ================================================================
-function genMBTI() {
-    const type = mbtiType.value;
-    const drink = MBTI_DRINKS[type];
-    if (!drink) { display.innerHTML = '⚠️ 未找到该人格的酒谱。'; return; }
-    const flavor = mbtiFlavor.value, abv = mbtiAbv.value, occasion = mbtiOccasion.value.trim();
-    const flavorMap = { sweet:'酸甜果香', bitter:'苦烈干型', fresh:'清爽草本', spicy:'辛辣烟熏' };
-    const abvMap = { low:'微醺低度', medium:'中度舒适', high:'浓烈高度' };
-    let output = `### 🍸 ${drink.name}\n\n🧬 **${type}**\n🍭 ${flavorMap[flavor]} · ${abvMap[abv]}\n`;
-    if (occasion) output += `📝 ${occasion}\n`;
-    output += `\n**基酒**：${drink.base}\n**配料**：${drink.ingredients}\n\n**步骤**：\n${drink.steps}\n\n**哲学**：${drink.philosophy}`;
-    display.innerHTML = output; currentOutput = output; charCount.textContent = output.length+' 字符';
-    saveHistory(output, 'MBTI调酒');
+function copy(txt){
+  if(!txt){ toast('没有可复制的内容'); return; }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(function(){ toast('已复制 ✅'); },
+      function(){ fallbackCopy(txt); });
+  } else fallbackCopy(txt);
+}
+function fallbackCopy(txt){
+  var ta = document.createElement('textarea');
+  ta.value = txt; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); toast('已复制 ✅'); }catch(e){ toast('复制失败，请手动选择'); }
+  document.body.removeChild(ta);
+}
+function pushHistory(title, txt){
+  state.history.unshift({t:title, p:txt, d:new Date().toLocaleString('zh-CN')});
+  if(state.history.length > 50) state.history.length = 50;
+  save();
 }
 
-// ================================================================
-// 11. 工作流编排（含导图）
-// ================================================================
-function loadWorkflowTemplate(type) {
-    let steps = [];
-    if (type === 'app') {
-        steps = [
-            {name:'需求分析与创意', tool:'豆包', detail:'描述核心功能、用户故事、差异化亮点。'},
-            {name:'技术架构设计', tool:'DeepSeek', detail:'选择前端框架、后端语言、数据库，画出架构图。'},
-            {name:'核心代码实现', tool:'DeepSeek', detail:'实现主要API接口和UI交互逻辑，附带单元测试。'},
-            {name:'UI交互打磨', tool:'通义千问', detail:'优化页面样式、动效、响应式适配。'},
-            {name:'本地功能验证', tool:'Ollama', detail:'运行Ollama模型进行功能验证和性能调优。'},
-            {name:'部署上线', tool:'Railway', detail:'配置环境变量，执行 railway up 部署。'}
-        ];
-        wfGoal.value = '做一个MBTI人格调酒Web应用';
-        wfContext.value = '目标用户Z世代，数据本地存储，界面活泼。';
-    } else if (type === 'music') {
-        steps = [
-            {name:'音乐风格与概念', tool:'豆包', detail:'确定电子/氛围/实验风格，制定情绪基调与BPM范围。'},
-            {name:'Web Audio 引擎搭建', tool:'DeepSeek', detail:'1. 安装依赖：npm install web-audio-api-ts\n2. 初始化 AudioContext：const ctx = new AudioContext()\n3. 编写振荡器+滤波器基础播放示例。'},
-            {name:'网易云歌单导入', tool:'手动', detail:'1. 登录网易云获取歌单ID\n2. 使用 NeteaseCloudMusicApi 拉取歌曲列表\n3. 提取BPM和调性元数据。'},
-            {name:'AI 旋律生成', tool:'通义千问', detail:'输入和弦走向（如 Am-F-C-G），使用AI生成4小节MIDI，导出为JSON格式。'},
-            {name:'版本管理与协作', tool:'GitHub', detail:'1. 初始化 Git 仓库\n2. 创建 GitHub 远程仓库并推送代码\n3. 使用 Issues 和 Projects 管理任务。'},
-            {name:'部署上线', tool:'Vercel', detail:'1. 将项目连接到 Vercel\n2. 配置环境变量\n3. 执行 vercel deploy 发布到生产环境。'}
-        ];
-        wfGoal.value = 'AI音乐生成器（电子风格）';
-        wfContext.value = '输出格式WAV，BPM 128，调性C大调。';
-    } else if (type === 'paper') {
-        steps = [
-            {name:'选题与文献检索', tool:'豆包', detail:'查找10篇核心文献，提炼研究空白和切入点。'},
-            {name:'论文框架构建', tool:'DeepSeek', detail:'制定详细大纲，包括引言、文献综述、方法、结果、讨论。'},
-            {name:'初稿扩写', tool:'通义千问', detail:'根据框架逐段扩写，每段不少于300字，插入数据图表占位。'},
-            {name:'润色与降重', tool:'Claude', detail:'优化句式，提升学术性，使用同义替换降低重复率。'},
-            {name:'格式校验', tool:'手动', detail:'检查引用格式（APA/GB）、图表编号、页眉页脚。'}
-        ];
-        wfGoal.value = 'AI对教育影响的实证研究';
-        wfContext.value = '目标期刊：CSSCI，需量化数据支撑。';
-    }
-    renderWorkflowSteps(steps);
-    saveWorkflowLocal();
+/* 品牌记忆注入 */
+function brandCtx(){
+  if(!state.memOn) return [];
+  // 生成时直接从输入框读取，避免粘贴 / 自动填充不触发 oninput 导致漏注入
+  var rEl = $('#defRole'), tEl = $('#defTone');
+  var r = (rEl && rEl.value) || state.defRole || '';
+  var t = (tEl && tEl.value) || state.defTone || '';
+  state.defRole = r; state.defTone = t;
+  var out = [];
+  if(r) out.push('默认专家角色：' + r);
+  if(t) out.push('语气/风格：' + t);
+  return out;
 }
-function renderWorkflowSteps(steps) {
-    workflowSteps = steps || [];
-    wfStepsContainer.innerHTML = '';
-    workflowSteps.forEach((step, index) => {
-        const div = document.createElement('div');
-        div.className = 'wf-step-item';
-        div.innerHTML = `
-            <span style="font-weight:700;font-size:14px;min-width:30px;align-self:center;">${index+1}.</span>
-            <div class="step-main">
-                <input type="text" class="wf-step-name" value="${step.name}" placeholder="步骤名称" />
-                <textarea class="wf-step-detail" placeholder="详细操作指令（安装/调用/部署等）" rows="2">${step.detail || ''}</textarea>
-            </div>
-            <select class="step-tool-select">
-                ${TOOL_OPTIONS.map(t => `<option value="${t.value}" ${t.value===step.tool?'selected':''}>${t.label}</option>`).join('')}
-            </select>
-            <button class="btn-sm danger" onclick="removeWorkflowStep(${index})">✕</button>
-        `;
-        wfStepsContainer.appendChild(div);
-    });
-    wfStepsContainer.querySelectorAll('.wf-step-name, .wf-step-detail, .step-tool-select').forEach(el => {
-        el.addEventListener('change', saveWorkflowLocal);
-        el.addEventListener('input', saveWorkflowLocal);
-    });
-}
-function addWorkflowStep() { workflowSteps.push({name:'新步骤', tool:'DeepSeek', detail:''}); renderWorkflowSteps(workflowSteps); saveWorkflowLocal(); }
-function removeWorkflowStep(index) { workflowSteps.splice(index,1); renderWorkflowSteps(workflowSteps); saveWorkflowLocal(); }
-function clearWorkflowSteps() { if(confirm('重置所有步骤吗？')){ workflowSteps=[]; renderWorkflowSteps(workflowSteps); saveWorkflowLocal(); } }
-function collectWorkflowFromUI() {
-    const items = wfStepsContainer.querySelectorAll('.wf-step-item');
-    const steps = [];
-    items.forEach(item => {
-        const name = item.querySelector('.wf-step-name').value.trim() || '未命名';
-        const tool = item.querySelector('.step-tool-select').value;
-        const detail = item.querySelector('.wf-step-detail').value.trim();
-        steps.push({name, tool, detail});
-    });
-    return steps;
-}
-function saveWorkflowLocal() {
-    const steps = collectWorkflowFromUI();
-    localStorage.setItem('workflowData', JSON.stringify({goal:wfGoal.value, context:wfContext.value, steps}));
-}
-function loadWorkflowLocal() {
-    const raw = localStorage.getItem('workflowData');
-    if (raw) {
-        try { const d = JSON.parse(raw); wfGoal.value = d.goal||''; wfContext.value = d.context||''; if (d.steps && d.steps.length>0) { renderWorkflowSteps(d.steps); return; } } catch(e) {}
-    }
-    loadWorkflowTemplate('music');
-}
-function toggleWorkflowView() {
-    if (wfViewMode === 'list') {
-        wfViewMode = 'mindmap';
-        renderMindmap();
-    } else {
-        wfViewMode = 'list';
-        document.getElementById('wfMindmapContainer').style.display = 'none';
-        document.querySelector('.wf-step-container').style.display = 'flex';
-        document.querySelector('[onclick="toggleWorkflowView()"]').textContent = '📊 导图视图';
-    }
-}
-function renderMindmap() {
-    const steps = collectWorkflowFromUI();
-    if (steps.length === 0) { alert('请先添加步骤。'); wfViewMode = 'list'; return; }
-    const container = document.getElementById('wfMindmapContainer');
-    container.style.display = 'block';
-    document.querySelector('.wf-step-container').style.display = 'none';
-    document.querySelector('[onclick="toggleWorkflowView()"]').textContent = '📋 列表视图';
-    let html = '<div class="wf-mindmap">';
-    steps.forEach((step, idx) => {
-        const toolLabel = TOOL_OPTIONS.find(t=>t.value===step.tool)?.label || step.tool;
-        html += `
-            <div class="mm-node" onclick="editStepFromMindmap(${idx})">
-                <div class="mm-index">${idx+1}</div>
-                <div class="mm-content"><div class="mm-name">${step.name}</div><div class="mm-tool">${toolLabel}</div></div>
-                <div class="mm-arrow">${idx < steps.length-1 ? '↓' : ''}</div>
-            </div>
-            ${idx < steps.length-1 ? '<div class="mm-connector"></div>' : ''}
-        `;
-    });
-    html += '</div>';
-    container.innerHTML = html;
-}
-function editStepFromMindmap(index) {
-    wfViewMode = 'list';
-    document.getElementById('wfMindmapContainer').style.display = 'none';
-    document.querySelector('.wf-step-container').style.display = 'flex';
-    document.querySelector('[onclick="toggleWorkflowView()"]').textContent = '📊 导图视图';
-    const items = document.querySelectorAll('.wf-step-item');
-    if (items[index]) {
-        items[index].scrollIntoView({behavior:'smooth', block:'center'});
-        items[index].style.border = '2px solid var(--border-focus)';
-        setTimeout(()=>{ items[index].style.border = ''; }, 2000);
-    }
-}
-function genWorkflow() {
-    const goal = wfGoal.value.trim() || '未命名项目';
-    const context = wfContext.value.trim();
-    const steps = collectWorkflowFromUI();
-    if (steps.length === 0) { display.innerHTML = '⚠️ 请至少添加一个步骤。'; charCount.textContent = '0 字符'; currentOutput = ''; return; }
-    let htmlOutput = `<div style="margin-bottom:16px; font-weight:700; font-size:18px;">🔗 工作流路由包：${goal}</div>`;
-    if (context) htmlOutput += `<div style="margin-bottom:14px; padding:8px 16px; background:var(--tag-bg); border-radius:10px;">📌 全局上下文：${context}</div>`;
-    steps.forEach((step, idx) => {
-        const toolLabel = TOOL_OPTIONS.find(t=>t.value===step.tool)?.label || step.tool;
-        htmlOutput += `
-            <div class="wf-block" style="background:var(--bg-block); border-left:5px solid var(--border-focus); border-radius:12px; padding:16px 18px; margin-bottom:14px;">
-                <div style="display:inline-block; background:var(--bg-agent); color:white; padding:2px 16px; border-radius:30px; font-size:12px; font-weight:700; margin-bottom:8px;">${toolLabel}</div>
-                <div style="font-size:13px; line-height:1.6; white-space:pre-wrap;">
-                    <strong>🎯 任务：</strong>【步骤 ${idx+1}】${step.name}<br>
-                    <strong>📝 操作指令：</strong><br>${(step.detail || '（无详细指令）').replace(/\n/g, '<br>')}
-                </div>
-                <button class="btn-sm" style="float:right; margin-top:4px; background:white; border:1px solid var(--border-light);" onclick="copyStepContent(this)">📋 复制此步骤</button>
-            </div>
-        `;
-    });
-    display.innerHTML = htmlOutput; currentOutput = htmlOutput; charCount.textContent = htmlOutput.length+' 字符';
-    saveHistory(htmlOutput, '工作流'); saveWorkflowLocal();
-}
-function copyStepContent(btn) {
-    const block = btn.closest('.wf-block');
-    const text = block.querySelector('div:nth-child(2)').innerText;
-    navigator.clipboard.writeText(text).then(()=>{ const orig=btn.textContent; btn.textContent='✅ 已复制!'; setTimeout(()=>btn.textContent=orig,1500); }).catch(()=>{
-        const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); alert('复制成功！');
-    });
+function wrapWithBrand(body, title){
+  var ctx = brandCtx();
+  var head = '# ' + title + '\n\n';
+  if(ctx.length){
+    head += '## 全局品牌语境（自动注入）\n' + ctx.map(function(c){ return '- ' + c; }).join('\n') + '\n\n';
+  }
+  head += '---\n\n';
+  return head + body;
 }
 
-// ================================================================
-// 12. 知识库
-// ================================================================
-function loadKB() {
-    const raw = localStorage.getItem('knowledgeBase');
-    if (raw) { try { kbData = JSON.parse(raw); } catch(e) { kbData = { folders:[], docs:[] }; } } else { kbData = { folders:[], docs:[] }; }
-    if (!kbData.folders) kbData.folders = [];
-    if (!kbData.docs) kbData.docs = [];
-    if (kbData.folders.length === 0) kbData.folders.push({ id:'default', name:'默认' });
-    selectedFolderId = kbData.folders[0].id;
-    renderKB();
-}
-function saveKB() { localStorage.setItem('knowledgeBase', JSON.stringify(kbData)); }
-function renderKB() {
-    const folderList = document.getElementById('kbFolderList');
-    folderList.innerHTML = kbData.folders.map(f => `
-        <div class="folder-item ${f.id === selectedFolderId ? 'active' : ''}" onclick="selectFolder('${f.id}')">
-            <span>📁 ${f.name}</span>
-            <span style="cursor:pointer; color:var(--text-muted);" onclick="event.stopPropagation(); deleteFolder('${f.id}')">✕</span>
-        </div>
-    `).join('');
-    const docs = kbData.docs.filter(d => d.folderId === selectedFolderId);
-    const docList = document.getElementById('kbDocList');
-    if (docs.length === 0) docList.innerHTML = '<div style="color:var(--text-muted); padding:20px 0; text-align:center;">此文件夹暂无文档</div>';
-    else {
-        docList.innerHTML = docs.map(d => `
-            <div class="kb-doc-item" onclick="editDoc('${d.id}')">
-                <div class="doc-title">${d.title || '无标题'}</div>
-                <div class="doc-meta">${d.tags ? '🏷️ '+d.tags : ''} ${d.link ? '🔗 '+d.link : ''}</div>
-            </div>
-        `).join('');
-    }
-    if (editingDocId) {
-        const doc = kbData.docs.find(d => d.id === editingDocId);
-        if (doc) {
-            document.getElementById('kbDocTitle').value = doc.title || '';
-            document.getElementById('kbDocContent').value = doc.content || '';
-            document.getElementById('kbDocTags').value = doc.tags || '';
-            document.getElementById('kbDocLink').value = doc.link || '';
-            document.getElementById('kbEditor').style.display = 'block';
-        } else cancelDocEdit();
-    } else document.getElementById('kbEditor').style.display = 'none';
-}
-function selectFolder(id) { selectedFolderId = id; cancelDocEdit(); renderKB(); }
-function addFolder() {
-    const name = prompt('请输入文件夹名称：');
-    if (name && name.trim()) { kbData.folders.push({ id:Date.now()+'_'+Math.random().toString(36).slice(2,6), name:name.trim() }); saveKB(); renderKB(); }
-}
-function deleteFolder(id) {
-    if (confirm('确定删除此文件夹及其所有文档吗？')) {
-        kbData.folders = kbData.folders.filter(f=>f.id!==id);
-        kbData.docs = kbData.docs.filter(d=>d.folderId!==id);
-        if (selectedFolderId === id) selectedFolderId = kbData.folders.length>0 ? kbData.folders[0].id : null;
-        saveKB(); renderKB();
-    }
-}
-function addDoc() {
-    if (!selectedFolderId) { alert('请先选择一个文件夹。'); return; }
-    const newDoc = { id:Date.now()+'_'+Math.random().toString(36).slice(2,6), folderId:selectedFolderId, title:'新文档', content:'', tags:'', link:'', createdAt:new Date().toISOString() };
-    kbData.docs.push(newDoc); saveKB(); editDoc(newDoc.id);
-}
-function editDoc(id) { editingDocId = id; renderKB(); }
-function saveDoc() {
-    if (!editingDocId) return;
-    const doc = kbData.docs.find(d=>d.id===editingDocId);
-    if (doc) {
-        doc.title = document.getElementById('kbDocTitle').value.trim() || '无标题';
-        doc.content = document.getElementById('kbDocContent').value;
-        doc.tags = document.getElementById('kbDocTags').value.trim();
-        doc.link = document.getElementById('kbDocLink').value.trim();
-        saveKB(); renderKB();
-    }
-}
-function deleteDoc() {
-    if (!editingDocId) return;
-    if (confirm('确定删除此文档吗？')) { kbData.docs = kbData.docs.filter(d=>d.id!==editingDocId); editingDocId = null; saveKB(); renderKB(); }
-}
-function cancelDocEdit() { editingDocId = null; renderKB(); }
-
-// ================================================================
-// 13. 数据导入/导出
-// ================================================================
-function exportData() {
-    const keys = ['promptForm','paperForm','strategyForm','workflowData','genHistory','globalMemory','knowledgeBase','theme'];
-    const data = {};
-    keys.forEach(k => { const val = localStorage.getItem(k); if (val !== null) data[k] = val; });
-    const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `agent_workbench_backup_${new Date().toISOString().slice(0,10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-}
-function importData(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        try {
-            const data = JSON.parse(e.target.result);
-            for (const [key, value] of Object.entries(data)) localStorage.setItem(key, value);
-            alert('✅ 导入成功！页面将刷新以应用新数据。');
-            location.reload();
-        } catch(err) { alert('❌ 导入失败：文件格式错误。'); }
+/* ================= 渲染：预设 chips ================= */
+function renderPresets(){
+  var host = $('#presetChips'); host.innerHTML = '';
+  PRESETS.forEach(function(p){
+    var b = document.createElement('button');
+    b.className = 'chip' + (state.curPreset === p.n ? ' is-on' : '');
+    b.textContent = p.n;
+    b.onclick = function(){
+      state.curPreset = p.n;
+      $('#r_role').value = p.role; $('#r_task').value = p.task;
+      $('#r_req').value = p.req;   $('#r_ex').value = p.ex;
+      state.role = {role:p.role,task:p.task,bg:$('#r_bg').value,req:p.req,ex:p.ex};
+      $('#curAgent').textContent = p.n;
+      renderPresets(); save();
+      toast('已载入预设：' + p.n);
     };
-    reader.readAsText(file);
-    event.target.value = '';
+    host.appendChild(b);
+  });
+}
+function renderStratChips(){
+  var host = $('#stratChips'); host.innerHTML = '';
+  STRATS.forEach(function(s){
+    var b = document.createElement('button');
+    b.className = 'chip' + (state.curStrat === s.k ? ' is-on' : '');
+    b.textContent = s.k; b.title = s.d;
+    b.onclick = function(){ state.curStrat = s.k; renderStratChips(); save(); };
+    host.appendChild(b);
+  });
+}
+function renderFlowChips(){
+  var host = $('#flowChips'); host.innerHTML = '';
+  FLOW_PRESETS.forEach(function(f){
+    var b = document.createElement('button');
+    b.className = 'chip';
+    b.textContent = f.n;
+    b.onclick = function(){
+      state.flow.goal = f.goal; $('#f_goal').value = f.goal;
+      state.flow.steps = f.steps.map(function(s){ return {t:s.t, tool:s.tool}; });
+      renderSteps(); save(); toast('已载入链路：' + f.n);
+    };
+    host.appendChild(b);
+  });
 }
 
-// ================================================================
-// 14. 通用工具
-// ================================================================
-function expandCurrent() {
-    const text = display.innerText;
-    if (!text || text.includes('请填写')) { alert('请先生成有效内容。'); return; }
-    const preview = text.substring(0, 600);
-    const prompt = `请将以下内容扩写到500字以上，保持逻辑与风格：\n\n---\n${preview}\n---\n\n要求：丰富论据，深化分析。`;
-    navigator.clipboard.writeText(prompt).then(()=>alert('✅ 扩写提示词已复制！')).catch(()=>{
-        const ta=document.createElement('textarea'); ta.value=prompt; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); alert('扩写提示词已复制！');
+/* ================= 渲染：工作流步骤 ================= */
+function renderSteps(){
+  var host = $('#steps'); host.innerHTML = '';
+  state.flow.steps.forEach(function(s, i){
+    var d = document.createElement('div'); d.className = 'step';
+    var hd = document.createElement('div'); hd.className = 'step__hd';
+    var no = document.createElement('span'); no.className = 'step__no'; no.textContent = (i+1) + '.';
+    var del = document.createElement('button'); del.className = 'step__del'; del.textContent = '✕';
+    del.onclick = function(){ state.flow.steps.splice(i,1); renderSteps(); save(); };
+    hd.appendChild(no); hd.appendChild(del);
+
+    var ta = document.createElement('textarea');
+    ta.value = s.t; ta.placeholder = '这一步具体做什么（越具体，AI 执行越准）';
+    ta.oninput = function(){ s.t = ta.value; save(); };
+
+    var tools = document.createElement('div'); tools.className = 'tools';
+    TOOLS.forEach(function(t, ti){
+      var b = document.createElement('button');
+      b.className = 'tool' + (s.tool === ti ? ' is-on' : '');
+      b.textContent = t;
+      b.onclick = function(){ s.tool = ti; renderSteps(); save(); };
+      tools.appendChild(b);
     });
+
+    d.appendChild(hd); d.appendChild(ta); d.appendChild(tools);
+    host.appendChild(d);
+  });
 }
-function copyOutput() {
-    const text = display.innerText;
-    if (!text || text.includes('请填写')) { alert('没有可复制的内容。'); return; }
-    navigator.clipboard.writeText(text).then(()=>alert('✅ 已复制！')).catch(()=>{
-        const range = document.createRange();
-        range.selectNode(display);
-        window.getSelection().removeAllRanges();
-        window.getSelection().addRange(range);
-        document.execCommand('copy');
-        alert('复制成功！');
+
+/* ================= 渲染：知识库 ================= */
+function renderKb(){
+  var fh = $('#kbFolders'); fh.innerHTML = '';
+  state.kb.folders.forEach(function(f, i){
+    var d = document.createElement('div');
+    d.className = 'kb__folder' + (state.kb.curFolder === i ? ' is-on' : '');
+    d.innerHTML = '<span>📁 ' + f.name + '</span><span>' + f.docs.length + '</span>';
+    d.onclick = function(){ state.kb.curFolder = i; state.kb.curDoc = -1; renderKb(); save(); };
+    fh.appendChild(d);
+  });
+  var dh = $('#kbDocs'); dh.innerHTML = '';
+  var f = state.kb.folders[state.kb.curFolder];
+  if(!f) return;
+  if(!f.docs.length){
+    dh.innerHTML = '<div style="padding:14px;color:var(--soft);font-size:12.5px">此文件夹暂无文档</div>';
+  }
+  f.docs.forEach(function(doc, i){
+    var d = document.createElement('div');
+    d.className = 'kb__doc' + (state.kb.curDoc === i ? ' is-on' : '');
+    d.innerHTML = '<span>📄 ' + (doc.title || '未命名') + '</span>';
+    d.onclick = function(){
+      state.kb.curDoc = i;
+      $('#d_title').value = doc.title || '';
+      $('#d_body').value = doc.body || '';
+      $('#d_tags').value = doc.tags || '';
+      $('#d_link').value = doc.link || '';
+      $('#docForm').style.display = 'block';
+      $('#docView').style.display = 'none';
+      renderKb(); save();
+    };
+    dh.appendChild(d);
+  });
+}
+
+/* ================= 生成逻辑 ================= */
+function genRole(){
+  var r = {role:$('#r_role').value, task:$('#r_task').value, bg:$('#r_bg').value,
+           req:$('#r_req').value, ex:$('#r_ex').value};
+  state.role = r;
+  if(!r.role && !r.task){ toast('至少填写角色设定或核心任务'); return; }
+  var out = '你是一位' + (r.role || '资深营销专家') + '。\n\n';
+  out += '## 任务\n' + (r.task || '（请补充任务）') + '\n\n';
+  if(r.bg)  out += '## 背景信息\n' + r.bg + '\n\n';
+  if(r.req) out += '## 具体要求\n' + r.req + '\n\n';
+  if(r.ex)  out += '## 参考示例\n' + r.ex + '\n\n';
+  var ctx = brandCtx();
+  if(ctx.length) out += '## 全局约束\n' + ctx.map(function(c){ return '- ' + c; }).join('\n') + '\n\n';
+  out += '## 输出要求\n先给结论，再给论证。如果信息不足，明确指出缺什么，不要编造。';
+  var txt = wrapWithBrand(out, '提示词 · ' + (state.curPreset || '营销角色'));
+  setPreview(txt); pushHistory('营销角色 · ' + (state.curPreset || '自定义'), txt); save();
+}
+
+function genContent(){
+  var c = {
+    title:$('#c_title').value, kw:$('#c_kw').value, platform:$('#c_platform').value,
+    len:$('#c_len').value, style:$('#c_style').value, aud:$('#c_aud').value,
+    ref:$('#c_ref').value, extra:$('#c_extra').value
+  };
+  state.content = c;
+  if(!c.title){ toast('请先填写内容题目'); return; }
+  var out = '你是一位深耕「' + c.platform + '」的内容操盘手。\n\n';
+  out += '## 任务\n围绕主题《' + c.title + '》创作一篇' + c.len + '左右的' + c.style + '内容。\n\n';
+  out += '## 硬性要求\n';
+  out += '- 平台：' + c.platform + '（严格遵守该平台的调性、排版习惯与禁忌）\n';
+  out += '- 篇幅：' + c.len + '\n';
+  out += '- 风格：' + c.style + '\n';
+  if(c.aud)  out += '- 目标人群：' + c.aud + '\n';
+  if(c.kw)   out += '- 必须自然融入关键词：' + c.kw + '\n';
+  if(c.extra) out += '- 额外要求：' + c.extra + '\n';
+  out += '\n## 结构建议\n';
+  out += '1. 开头 3 秒内给出强钩子（痛点 / 反常识 / 利益点）\n';
+  out += '2. 中段给出可信证据或具体场景，不要空讲概念\n';
+  out += '3. 结尾给出明确的行动号召或互动引导\n\n';
+  if(c.ref){
+    out += '## 参考素材\n' + c.ref.split('\n').filter(Boolean).map(function(l){ return '- ' + l; }).join('\n') + '\n\n';
+  }
+  out += '## 输出格式\n直接输出成品正文（含标题），并额外给出 5 个备选标题。';
+  var txt = wrapWithBrand(out, '内容工厂 · ' + c.title);
+  setPreview(txt); pushHistory('内容工厂 · ' + c.title, txt); save();
+}
+
+function genStrat(){
+  var s = {name:$('#s_name').value, bg:$('#s_bg').value, extra:$('#s_extra').value};
+  state.strat = s;
+  var k = state.curStrat;
+  var out = '你是一位资深营销策略顾问。\n\n';
+  out += '## 任务\n使用「' + k + '」框架，为以下项目产出一份可直接交付的策略文档。\n\n';
+  out += '## 项目信息\n';
+  out += '- 项目名称：' + (s.name || '（未填写）') + '\n';
+  out += '- 背景/痛点：' + (s.bg || '（未填写）') + '\n';
+  if(s.extra) out += '- 额外备注：' + s.extra + '\n';
+  out += '\n## 输出结构\n' + stratOutline(k) + '\n';
+  out += '\n## 要求\n每条判断都要有依据或数据支撑，避免正确的废话。信息不足时明确标注「需补充」。';
+  var txt = wrapWithBrand(out, k + ' · ' + (s.name || '未命名'));
+  setPreview(txt); pushHistory('策略 · ' + k, txt); save();
+}
+
+function stratOutline(k){
+  var m = {
+    'SWOT分析':'1. 优势 Strengths\n2. 劣势 Weaknesses\n3. 机会 Opportunities\n4. 威胁 Threats\n5. SO/ST/WO/WT 交叉策略\n6. 优先级建议',
+    'STP定位':'1. 市场细分 Segmentation（维度与子市场）\n2. 目标市场 Targeting（评估与选择）\n3. 差异化定位 Positioning（定位陈述）\n4. 定位验证与风险',
+    '用户画像':'输出 3 个 Persona，每个包含：\n- 基本信息与典型场景\n- 核心目标\n- 关键痛点\n- 决策路径与影响因素\n- 触达渠道\n- 主要抗拒点',
+    '竞品对比':'1. 竞品识别与分层（核心/次要/替代）\n2. 对比维度矩阵\n3. 各竞品打法拆解\n4. 市场空白点识别\n5. 我方切入建议',
+    'GTM上市':'1. 上市目标与成功标准\n2. 目标人群与核心信息\n3. 渠道组合与节奏\n4. 预算分配建议\n5. 关键里程碑与责任人\n6. 风险预案',
+    '信息屋':'1. 核心主张（一句话）\n2. 三大支撑点\n3. 每个支撑点对应的用户利益\n4. 信任状（证据）\n5. 不同触点的表达变体',
+    '营销日历':'1. 全年关键节点清单\n2. 每个节点的主题与主打产品\n3. 渠道与内容形式\n4. 筹备倒排期\n5. 预算节奏',
+    '4P策略':'1. Product 产品策略\n2. Price 价格策略\n3. Place 渠道策略\n4. Promotion 推广策略\n5. 四者协同性检查',
+    'PRD':'1. 背景与目标\n2. 范围与不做的事\n3. 用户故事\n4. 功能详述\n5. 数据需求\n6. 验收标准',
+    '项目复盘':'1. 目标回顾（原本要什么）\n2. 结果评估（实际达成）\n3. 差异分析（为什么）\n4. 经验沉淀（下次怎么做）'
+  };
+  return m[k] || '按该框架的标准结构展开。';
+}
+
+function genPersona(){
+  var p = {type:$('#p_type').value, flavor:$('#p_flavor').value, abv:$('#p_abv').value, occ:$('#p_occ').value};
+  state.persona = p;
+  var t = p.type.split(' · ')[0];
+  var name = p.type.split(' · ')[1] || '';
+  var out = '你是一位品牌调性顾问。\n\n';
+  out += '## 任务\n为一个具有「' + p.type + '」人格特质的品牌，输出完整的 Tone of Voice 调性指南。\n\n';
+  out += '## 品牌场合\n' + (p.occ || '（未填写）') + '\n\n';
+  out += '## 输出结构\n';
+  out += '1. 人格速写：这个品牌"像什么样的人"（3-5 个特质词）\n';
+  out += '2. 语气三要素：句式偏好 / 词汇偏好 / 情绪浓度\n';
+  out += '3. 该说 vs 不该说（各 5 条对照）\n';
+  out += '4. 分触点表达示例：社媒 / 官网 / 客服 / 广告 / 危机声明\n';
+  out += '5. 一句品牌 Slogan 与三条核心文案\n';
+  out += '6. 彩蛋：基于「' + p.flavor + ' · ' + p.abv + '」为这个人格调一杯专属特调，给出配方、步骤与命名寓意\n\n';
+  out += '## 要求\n调性要能直接写进品牌手册，具体到可执行的程度，不要停留在形容词。';
+  var txt = wrapWithBrand(out, '品牌人格 · ' + t + ' ' + name);
+  setPreview(txt); pushHistory('品牌人格 · ' + t, txt); save();
+}
+
+function genFlow(){
+  state.flow.goal = $('#f_goal').value;
+  state.flow.bg = $('#f_bg').value;
+  var out = '## 项目目标\n' + (state.flow.goal || '（未填写）') + '\n\n';
+  out += '## 全局背景\n' + (state.flow.bg || '（未填写）') + '\n\n';
+  out += '## 执行链路\n\n';
+  state.flow.steps.forEach(function(s, i){
+    if(!s.t.trim()) return;
+    out += '### 步骤 ' + (i+1) + ' ｜ 工具：' + TOOLS[s.tool] + '\n';
+    out += s.t.trim() + '\n\n';
+    out += '> 产出物：（请填写本步交付什么）\n\n';
+  });
+  var ctx = brandCtx();
+  if(ctx.length) out += '## 全局约束\n' + ctx.map(function(c){ return '- ' + c; }).join('\n') + '\n\n';
+  out += '## 执行说明\n按顺序执行，每步完成后确认产出物再进入下一步。任一步失败时，说明原因并给出替代方案。';
+  var txt = wrapWithBrand(out, '工作流 · ' + (state.flow.goal || '未命名'));
+  setPreview(txt); pushHistory('工作流 · ' + (state.flow.goal || '未命名'), txt); save();
+}
+
+function scanWords(){
+  var txt = $('#preview').textContent;
+  if(!txt || txt.indexOf('请填写字段') > -1){ toast('请先生成内容再做体检'); return; }
+  var hits = [];
+  BAN_WORDS.forEach(function(w){ if(txt.indexOf(w) > -1) hits.push(w); });
+  var out = '## 违禁词体检报告\n\n';
+  if(!hits.length){
+    out += '✅ 未命中内置词库中的风险词。\n\n';
+  } else {
+    out += '⚠️ 命中 ' + hits.length + ' 个风险词：\n\n';
+    hits.forEach(function(w){
+      out += '- **' + w + '** —— 涉嫌《广告法》极限用语或平台敏感词，建议替换为客观表述并提供依据。\n';
     });
+    out += '\n';
+  }
+  out += '---\n说明：本词库为内置示例（' + BAN_WORDS.length + ' 词），覆盖广告法极限词与常见平台敏感词。\n';
+  out += '正式发布前请以最新法规与各平台规则为准，建议人工复核。';
+  setPreview(out); toast(hits.length ? '命中 ' + hits.length + ' 个风险词' : '未发现风险词 ✅');
 }
 
-// ================================================================
-// 15. 启动加载
-// ================================================================
-function loadAll() {
-    console.log('🔧 智能工坊加载中...');
-    loadHistory();
-    loadGlobalMemory();
-    // 各模块数据
-    const pRaw = localStorage.getItem('promptForm');
-    if (pRaw) { try { const d=JSON.parse(pRaw); pRole.value=d.role||''; pTask.value=d.task||''; pBg.value=d.bg||''; pReq.value=d.req||''; pExample.value=d.ex||''; } catch(e){} }
-    const ppRaw = localStorage.getItem('paperForm');
-    if (ppRaw) { try { const d=JSON.parse(ppRaw); paperTitle.value=d.title||''; paperKeywords.value=d.keywords||''; paperDept.value=d.dept||''; if(d.words) paperWords.value=d.words; if(d.style) paperStyle.value=d.style; paperRefs.value=d.refs||''; paperExtra.value=d.extra||''; } catch(e){} }
-    const sRaw = localStorage.getItem('strategyForm');
-    if (sRaw) { try { const d=JSON.parse(sRaw); sTitle.value=d.title||''; sBg.value=d.bg||''; sExtra.value=d.extra||''; if(d.type){ currentStrategy=d.type; document.querySelectorAll('[data-strategy]').forEach(b=>{ b.classList.toggle('active-strategy', b.dataset.strategy===d.type); }); } } catch(e){} }
-    loadWorkflowLocal();
-    loadKB();
-
-    // 激活默认 tab（prompt）
-    const activeTab = document.querySelector('.tab-btn.active-tab');
-    if (activeTab) {
-        const tab = activeTab.dataset.tab;
-        document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active-panel'));
-        document.getElementById('panel-'+tab).classList.add('active-panel');
-        if (tab === 'prompt') genPrompt();
-        else if (tab === 'paper') genPaper();
-        else if (tab === 'strategy') genStrategy();
-        else if (tab === 'mbti') genMBTI();
-        else if (tab === 'workflow') genWorkflow();
-        else if (tab === 'knowledge') renderKB();
-        const map = {
-            prompt: ['提示词工坊','全局记忆自动注入','📄 提示词预览'],
-            paper: ['📚 长文写作器','文献管理 + 全局风格','📄 写作大纲'],
-            strategy: ['📊 策略模板','SWOT / PRD / 复盘','📄 策略文档'],
-            mbti: ['🍸 MBTI调酒师','人格 × 微醺科学','🍸 专属酒谱'],
-            workflow: ['🔗 工作流编排器','多工具路由 · 定制流程','📋 路由提示词包'],
-            knowledge: ['📚 知识库','文档管理 + 标签/链接','📄 知识文档']
-        };
-        const m = map[tab];
-        if (m) { agentIdentity.textContent = m[0]; agentDesc.textContent = m[1]; outputTitle.textContent = m[2]; }
-    } else { genPrompt(); }
-    console.log('✅ 加载完成，所有功能已就绪。');
+function expand(){
+  var txt = $('#preview').textContent;
+  if(!txt || txt.indexOf('请填写字段') > -1){ toast('请先生成内容再扩写'); return; }
+  var out = '以下是一份待优化的营销内容，请你从三个维度改进它：\n\n';
+  out += '1. **更有钩子**：重写开头，让前 3 秒抓住注意力\n';
+  out += '2. **更可信**：补充具体数据、场景或证据，替换空泛表述\n';
+  out += '3. **更能转化**：强化行动号召，降低用户决策成本\n\n';
+  out += '---\n\n原文：\n\n' + txt + '\n\n---\n\n';
+  out += '请输出改进后的完整版本，并在末尾用表格列出你做了哪些修改及原因。';
+  setPreview(out); toast('已生成扩写指令');
 }
 
-// 启动
-loadAll();
+/* ================= 事件绑定 ================= */
+function bind(){
+  // Tab
+  $$('.tab').forEach(function(b){
+    b.onclick = function(){
+      $$('.tab').forEach(function(x){ x.classList.remove('is-on'); });
+      b.classList.add('is-on');
+      var k = b.getAttribute('data-tab');
+      $$('.panel').forEach(function(p){ p.classList.toggle('is-on', p.getAttribute('data-panel') === k); });
+    };
+  });
+
+  // 主题
+  $('#btnTheme').onclick = function(){
+    state.theme = state.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', state.theme);
+    this.textContent = state.theme === 'dark' ? '☀️ 浅色' : '🌙 深色';
+    save();
+  };
+
+  // 记忆
+  $('#memOn').onchange = function(){ state.memOn = this.checked; save(); };
+  $('#defRole').oninput = function(){ state.defRole = this.value; $('#curAgent').textContent = this.value || '提示词工坊'; save(); };
+  $('#defTone').oninput = function(){ state.defTone = this.value; save(); };
+
+  // 清空
+  $('#btnClear').onclick = function(){
+    ['#r_role','#r_task','#r_bg','#r_req','#r_ex'].forEach(function(s){ $(s).value=''; });
+    state.curPreset = ''; state.role = {role:'',task:'',bg:'',req:'',ex:''};
+    $('#curAgent').textContent = '提示词工坊';
+    renderPresets(); setPreview(''); save(); toast('已清空');
+  };
+
+  // 生成
+  $('#btnGenRole').onclick = genRole;
+  $('#btnGenContent').onclick = genContent;
+  $('#btnGenStrat').onclick = genStrat;
+  $('#btnGenPersona').onclick = genPersona;
+  $('#btnGenFlow').onclick = genFlow;
+  $('#btnScan').onclick = scanWords;
+  $('#btnExpand').onclick = expand;
+
+  // 复制
+  $('#btnCopyRole').onclick = function(){ copy($('#preview').textContent); };
+  $('#btnCopyAll').onclick = function(){ copy($('#preview').textContent); };
+  $('#btnCopyAll2').onclick = function(){ copy($('#preview').textContent); };
+  $('#btnCopyAll3').onclick = function(){ copy($('#preview').textContent); };
+  $('#btnCopyAll4').onclick = function(){ copy($('#preview').textContent); };
+  $('#btnCopyPreview').onclick = function(){ copy($('#preview').textContent); };
+
+  // 导出 MD
+  $('#btnExportMd').onclick = function(){
+    var txt = $('#preview').textContent;
+    if(!txt || txt.indexOf('请填写字段') > -1){ toast('请先生成内容'); return; }
+    var blob = new Blob([txt], {type:'text/markdown;charset=utf-8'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'ym-' + Date.now() + '.md';
+    a.click(); toast('已导出 MD');
+  };
+
+  // 步骤
+  $('#btnAddStep').onclick = function(){ state.flow.steps.push({t:'', tool:10}); renderSteps(); save(); };
+  $('#btnResetStep').onclick = function(){ state.flow.steps = [{t:'', tool:10}]; renderSteps(); save(); };
+
+  // 历史
+  $('#btnHistory').onclick = function(){
+    var host = $('#histList'); host.innerHTML = '';
+    if(!state.history.length){ host.innerHTML = '<p class="hint">暂无历史记录。</p>'; }
+    state.history.forEach(function(h){
+      var d = document.createElement('div'); d.className = 'hist-item';
+      d.innerHTML = '<div class="hist-item__t">·</div>' +
+                    '<div class="hist-item__p">'+'</div>';
+      d.querySelector('.hist-item__t').textContent = h.t + ' · ' + h.d;
+      d.querySelector('.hist-item__p').textContent = (h.p||'').slice(0,120);
+      d.onclick = function(){ setPreview(h.p); $('#maskHist').classList.remove('is-on'); };
+      host.appendChild(d);
+    });
+    $('#maskHist').classList.add('is-on');
+  };
+  $('#btnCloseHist').onclick = function(){ $('#maskHist').classList.remove('is-on'); };
+  $('#maskHist').onclick = function(e){ if(e.target === this) this.classList.remove('is-on'); };
+  $('#btnClearHist').onclick = function(){ state.history = []; save(); $('#btnHistory').click(); toast('历史已清空'); };
+
+  // 知识库
+  $('#btnAddFolder').onclick = function(){
+    var n = prompt('新文件夹名称');
+    if(n){ state.kb.folders.push({name:n, docs:[]}); state.kb.curFolder = state.kb.folders.length-1; renderKb(); save(); }
+  };
+  $('#btnDelFolder').onclick = function(){
+    if(state.kb.folders.length <= 1){ toast('至少保留一个文件夹'); return; }
+    if(!confirm('删除当前文件夹？')) return;
+    state.kb.folders.splice(state.kb.curFolder,1); state.kb.curFolder = 0; state.kb.curDoc = -1;
+    renderKb(); save();
+  };
+  $('#btnAddDoc').onclick = function(){
+    state.kb.curDoc = -1;
+    ['#d_title','#d_body','#d_tags','#d_link'].forEach(function(s){ $(s).value=''; });
+    $('#docForm').style.display = 'block'; $('#docView').style.display = 'none';
+  };
+  $('#btnSaveDoc').onclick = function(){
+    var f = state.kb.folders[state.kb.curFolder];
+    var doc = {title:$('#d_title').value, body:$('#d_body').value,
+               tags:$('#d_tags').value, link:$('#d_link').value};
+    if(!doc.title && !doc.body){ toast('标题或正文至少填一项'); return; }
+    if(state.kb.curDoc >= 0) f.docs[state.kb.curDoc] = doc; else { f.docs.push(doc); state.kb.curDoc = f.docs.length-1; }
+    renderKb(); save(); toast('已保存');
+  };
+  $('#btnDelDoc').onclick = function(){
+    var f = state.kb.folders[state.kb.curFolder];
+    if(state.kb.curDoc < 0){ toast('请先选择文档'); return; }
+    if(!confirm('删除该文档？')) return;
+    f.docs.splice(state.kb.curDoc,1); state.kb.curDoc = -1;
+    ['#d_title','#d_body','#d_tags','#d_link'].forEach(function(s){ $(s).value=''; });
+    renderKb(); save();
+  };
+  $('#btnCancelDoc').onclick = function(){
+    $('#docForm').style.display = 'none'; state.kb.curDoc = -1; renderKb();
+  };
+
+  // 导入导出
+  $('#btnExport').onclick = function(){
+    var blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'ym-studio-config.json';
+    a.click(); toast('配置已导出');
+  };
+  $('#btnImport').onclick = function(){ $('#fileImport').click(); };
+  $('#fileImport').onchange = function(){
+    var file = this.files[0]; if(!file) return;
+    var fr = new FileReader();
+    fr.onload = function(){
+      try{
+        var o = JSON.parse(fr.result);
+        for(var k in o){ state[k] = o[k]; }
+        restoreAll(); save(); toast('配置已导入 ✅');
+      }catch(e){ toast('文件格式错误'); }
+    };
+    fr.readAsText(file);
+    this.value = '';
+  };
+}
+
+/* ================= 回填 ================= */
+function restoreAll(){
+  document.documentElement.setAttribute('data-theme', state.theme);
+  $('#btnTheme').textContent = state.theme === 'dark' ? '☀️ 浅色' : '🌙 深色';
+  $('#memOn').checked = state.memOn;
+  $('#defRole').value = state.defRole || '';
+  $('#defTone').value = state.defTone || '';
+  $('#curAgent').textContent = state.defRole || '提示词工坊';
+
+  $('#r_role').value = state.role.role || ''; $('#r_task').value = state.role.task || '';
+  $('#r_bg').value = state.role.bg || '';     $('#r_req').value = state.role.req || '';
+  $('#r_ex').value = state.role.ex || '';
+
+  var c = state.content;
+  $('#c_title').value = c.title || ''; $('#c_kw').value = c.kw || '';
+  $('#c_platform').value = c.platform || '小红书'; $('#c_len').value = c.len || '800 字';
+  $('#c_style').value = c.style || '专业干货型'; $('#c_aud').value = c.aud || '';
+  $('#c_ref').value = c.ref || ''; $('#c_extra').value = c.extra || '';
+
+  $('#s_name').value = state.strat.name || ''; $('#s_bg').value = state.strat.bg || '';
+  $('#s_extra').value = state.strat.extra || '';
+
+  var sel = $('#p_type'); sel.innerHTML = '';
+  MBTI.forEach(function(m){
+    var o = document.createElement('option'); o.textContent = m;
+    if(m === state.persona.type) o.selected = true;
+    sel.appendChild(o);
+  });
+  $('#p_flavor').value = state.persona.flavor || '酸甜/果味';
+  $('#p_abv').value = state.persona.abv || '中高度';
+  $('#p_occ').value = state.persona.occ || '';
+
+  $('#f_goal').value = state.flow.goal || '';
+  $('#f_bg').value = state.flow.bg || '';
+
+  renderPresets(); renderStratChips(); renderFlowChips(); renderSteps(); renderKb();
+}
+
+/* ================= 启动 ================= */
+load();
+bind();
+restoreAll();
+})();
 </script>
-<a href="https://hellomind-star.github.io/ymine-validation-hub/" target="_blank" rel="noopener" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(15,17,26,.85);border:1px solid rgba(168,85,247,.4);color:#c4b5fd;font-size:12px;font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;text-decoration:none;backdrop-filter:blur(6px);opacity:.7;transition:opacity .2s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='.7'">🌌 Y.Mine 应用矩阵 · 返回作品集</a>
 </body>
 </html>
