@@ -125,6 +125,29 @@ Data is saved in localStorage like everything else.
 Jump button: Strategy tab -> "Chart Card" auto-maps the current
 framework to a chart type and prefills the project name.
 
+
+## 4.3 Content Health Check (6-dimension scoring)
+
+Upgraded from a plain banned-word scan to a 6-dimension score card.
+Pure rules, no AI, no network.
+
+| Dimension | Weight | What it checks |
+|---|---|---|
+| Compliance | 30 | red / yellow / blue word hits |
+| Platform fit | 15 | per-platform features (emoji, hashtags, structure) |
+| Opening hook | 15 | numbers / question / hook words in first 40 chars |
+| CTA | 10 | presence and position of call-to-action |
+| Readability | 15 | sentence length, paragraphing, list structure |
+| Brand consistency | 15 | USP / audience / brand name present, banned words absent |
+
+Total 0-100, grade A-E. Weak dims (<70%) are listed as prioritized
+fix items with concrete suggestions.
+
+**Score history (memory)**: every check is recorded with timestamp,
+platform and per-dimension breakdown. Right panel shows a 12-run sparkline
+plus delta vs last run. "History" button prints the full log with an
+overall first -> latest progression. Stored in localStorage.
+
 ## 5. Data
 
 - Stored in browser localStorage, key `ym_studio_v1`
