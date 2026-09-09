@@ -272,6 +272,19 @@ function bind(){
     switchTab('cal');
   };
 
+  // ===== 区域市场 + 竞品档案 =====
+  $('#btnRgCalc').onclick = renderRegion;
+  $('#btnRgDemo').onclick = demoRegion;
+  $('#btnRgSvg').onclick  = exportRegionSvg;
+  $('#btnRvAdd').onclick  = addRival;
+  $('#btnRvDemo').onclick = demoRivals;
+  $('#btnRvExp').onclick  = exportRivals;
+  var rgEl = $('#rg_rows');
+  if(rgEl){
+    rgEl.addEventListener('input', function(){ state.region.rows = rgEl.value; save(); });
+    rgEl.addEventListener('change', function(){ if(lastRegion) renderRegion(); });
+  }
+
   // ===== 定价策略 =====
   $('#btnPrCalc').onclick = renderPricing;
   $('#btnPrDemo').onclick = demoPricing;

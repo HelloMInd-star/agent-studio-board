@@ -53,6 +53,7 @@
   <button class="tab" data-tab="cal"><span class="tab__name">📅 营销日历</span><span class="tab__desc">排期 · 追踪 · 提醒</span></button>
   <button class="tab" data-tab="synth"><span class="tab__name">📋 方案合成</span><span class="tab__desc">跨模块 · 一键聚合</span></button>
   <button class="tab" data-tab="pricing"><span class="tab__name">💰 定价策略</span><span class="tab__desc">5 法 · 折扣 · 价格带</span></button>
+  <button class="tab" data-tab="market"><span class="tab__name">🌏 市场与竞品</span><span class="tab__desc">区域 · 档案 · 追踪</span></button>
 </nav>
 
 <!-- ===================== 主体 ===================== -->
@@ -613,6 +614,37 @@
       <div class="card">
         <div class="card__hd">📄 定价分析报告</div>
         <div class="preview" id="prPreview"><span class="ph">这里会显示五种定价法对比、建议区间与折扣保本测算</span></div>
+      </div>
+    </section>
+
+
+    <!-- ===== 区域市场 + 竞品档案 ===== -->
+    <section class="panel" data-panel="market">
+      <h2 class="panel__hd">🌏 市场与竞品</h2>
+      <p class="panel__sub">区域市场优先级（复用 GE 矩阵判定）+ 竞品档案与动态追踪。</p>
+
+      <div class="card">
+        <div class="card__hd">🌏 区域市场优先级 <span class="eyebrow" id="rgStat" style="margin-left:auto"></span></div>
+        <label class="f"><span>区域数据（每行一个：区域名,市场体量,吸引力1-5,竞争力1-5,备注）</span>
+          <textarea id="rg_rows" style="min-height:150px" placeholder="华东,1000,5,4,消费力强&#10;华南,820,5,3,内容生态活跃&#10;东南亚,900,5,2,出海首选"></textarea></label>
+        <div class="row" style="margin-top:10px">
+          <button class="btn btn--primary btn--sm" id="btnRgCalc">⚡ 分析区域</button>
+          <button class="btn btn--ghost btn--sm" id="btnRgDemo">📋 填入 11 个预置区域</button>
+          <button class="btn btn--ghost btn--sm" id="btnRgSvg">⬇️ 导出矩阵图</button>
+        </div>
+        <div class="chartwrap" id="rgChart" style="margin-top:12px"><span class="ph">点「⚡ 分析区域」生成优先级矩阵</span></div>
+        <div class="preview" id="rgPreview"><span class="ph">这里会显示各区域优先级排序与分层结论</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">🕵️ 竞品档案与动态追踪 <span class="eyebrow" id="rvCount" style="margin-left:auto"></span></div>
+        <p class="hint">💡 竞品动态为<b>人工录入</b>，不是自动抓取（浏览器无法跨域抓取竞品网站）。定位是「情报台账」，不是监测工具。</p>
+        <div class="row" style="margin:10px 0">
+          <button class="btn btn--ghost btn--sm" id="btnRvAdd">➕ 新建档案</button>
+          <button class="btn btn--ghost btn--sm" id="btnRvDemo">📋 填入示例</button>
+          <button class="btn btn--ghost btn--sm" id="btnRvExp">⬇️ 导出情报台账</button>
+        </div>
+        <div class="rvlist" id="rvList"></div>
       </div>
     </section>
 

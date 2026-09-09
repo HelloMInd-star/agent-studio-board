@@ -165,9 +165,11 @@ execute deterministically instead of asking an LLM:
 - `generate_mind_map`
 - `synthesize_marketing_plan`
 - `calculate_pricing_strategy`
+- `evaluate_regional_markets`
 - `generate_mind_map`
 - `synthesize_marketing_plan`
 - `calculate_pricing_strategy`
+- `evaluate_regional_markets`
 
 **Trace**: record each step's real output with status and notes, export as
 Markdown. Shows a workflow was executed, not just designed.

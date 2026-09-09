@@ -222,13 +222,16 @@ function stpReport(c){
   return out;
 }
 
-function svgGE(rows, maxSize){
-  var W = 900, H = 700, pad = 96, top = 122;
+function svgGE(rows, maxSize, opt){
+  opt = opt || {};
+  var TITLE = opt.title || 'STP 市场选择矩阵';
+  var SUB   = opt.sub   || ('GE MATRIX · ' + todayStr());
+  var W = opt.w || 900, H = opt.h || 700, pad = 96, top = 122;
   var pw = W - pad - 56, ph = H - top - 110;
   var X = function(v){ return pad + (v/5) * pw; };
   var Y = function(v){ return top + ph - (v/5) * ph; };
   var s = '<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" font-family="PingFang SC,Microsoft YaHei,sans-serif">';
-  s += cxFrame(W,H,'STP 市场选择矩阵','GE MATRIX · '+todayStr());
+  s += cxFrame(W,H,TITLE,SUB);
 
   // 象限底纹
   s += '<rect x="'+X(3)+'" y="'+Y(5)+'" width="'+(X(5)-X(3))+'" height="'+(Y(3)-Y(5))+'" fill="#047857" fill-opacity="0.06"/>';

@@ -58,6 +58,13 @@ function toolManifest(){
      description:'把缩进文本解析为树状结构，生成思维导图 SVG。第一行是中心主题，子项用空格或 Tab 缩进表示层级。确定性计算。',
      parameters:{type:'object', properties:{
        title:{type:'string'}, body:{type:'string'}}, required:['body']}},
+    {name:'evaluate_regional_markets', label:'区域市场优先级',
+     description:'输入各区域的市场体量/吸引力/竞争力，输出优先级排序与 GE 四象限分层建议（重点投入/提升能力/维持收割/放弃）。与 STP 同一套判定规则。确定性计算。',
+     parameters:{type:'object', properties:{
+       regions:{type:'array', items:{type:'object', properties:{
+         n:{type:'string'}, size:{type:'number'}, at:{type:'number'},
+         cp:{type:'number'}, note:{type:'string'}}, required:['n','size','at','cp']}}},
+       required:['regions']}},
     {name:'calculate_pricing_strategy', label:'定价策略',
      description:'输入成本/目标毛利率/竞品价格带/感知价值等，输出五种定价法（成本加成/竞品锚定/价值定价/渗透/撇脂）的建议价格、毛利率、盈亏平衡销量，以及促销折扣的保本销量倍数。确定性计算。',
      parameters:{type:'object', properties:{

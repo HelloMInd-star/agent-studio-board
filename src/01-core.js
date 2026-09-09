@@ -59,5 +59,7 @@ var state = {
   history:[],
   cal:{y:new Date().getFullYear(), m:new Date().getMonth(), events:[]},
   pricing:{cost:'', gm:'55', fixed:'', qty:'', rlo:'', rhi:'', value:'',
-           cap:'60', pos:'mid', base:'', varc:'', disc:'80'}
+           cap:'60', pos:'mid', base:'', varc:'', disc:'80'},
+  rivals:[],
+  region:{rows:''}
 };

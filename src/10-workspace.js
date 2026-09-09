@@ -140,6 +140,22 @@ function runLocalStep(s, wrapEl){
         }
       }
     }
+    else if(s.local.key === 'region'){
+      var rd = calcRegion();
+      if(!rd){ out = '（请先在「🌏 市场与竞品」填写至少 2 个区域）'; }
+      else {
+        out = '# 🌏 区域市场优先级\n\n';
+        out += '| 排名 | 区域 | 体量 | 吸引力 | 竞争力 | 优先级 | 建议 |\n|---|---|---|---|---|---|---|\n';
+        rd.ranked.forEach(function(x, i){
+          out += '| ' + (i+1) + ' | ' + x.n + ' | ' + x.size + ' | ' + x.at + ' | ' +
+                 x.cp + ' | ' + x.score + ' | ' + x.act + ' |\n';
+        });
+        out += '\n**重点投入**：' + (rd.tier.go.join('、') || '暂无') + '\n';
+        out += '**提升能力**：' + (rd.tier.build.join('、') || '暂无') + '\n';
+        out += '**维持收割**：' + (rd.tier.harvest.join('、') || '暂无') + '\n';
+        out += '**谨慎/放弃**：' + (rd.tier.drop.join('、') || '暂无') + '\n';
+      }
+    }
   }catch(e){ out = '执行出错：' + e.message; }
   var ta = wrapEl.querySelector('.traceOut');
   if(ta){ ta.value = out; }

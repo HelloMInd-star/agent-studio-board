@@ -95,6 +95,13 @@ function restoreAll(){
     renderPricing();
   }
 
+  /* 区域市场 + 竞品档案：回填 */
+  state.region = state.region || {rows:''};
+  if($('#rg_rows')) $('#rg_rows').value = state.region.rows || '';
+  state.rivals = state.rivals || [];
+  renderRivals();
+  if(state.region.rows) renderRegion();
+
   /* sticky 偏移同步：topbar 换行后高度变化，Tab 栏要跟着下移 */
   function syncSticky(){
     var tb = document.querySelector('.topbar');
