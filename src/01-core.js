@@ -26,7 +26,11 @@ var state = {
     swot:{s:'',w:'',o:'',t:'',title:''},
     pos:{x:'',y:'',title:'',pts:''},
     persona:{name:'',age:'',job:'',color:'indigo',goal:'',pain:'',quote:'',ch:''},
-    funnel:{title:'',stages:''}
+    funnel:{title:'',stages:''},
+    mind:{
+      title:'618 大促营销策略',
+      body:'618 大促营销策略\n  目标拆解\n    GMV 目标 500 万\n    新客占比 40%\n    ROI 不低于 2.5\n  渠道组合\n    小红书种草\n      达人 30 位\n      笔记 120 篇\n    抖音投放\n      信息流\n      直播间\n    私域承接\n      社群\n      企微 1v1\n  节奏排期\n    D-30 选题锁定\n    D-14 内容制作\n    D-7 预热蓄水\n    D 日 正式开售\n  风险与预案\n    竞品提前开打\n    素材审核不过\n    库存不足'
+    }
   },
   kb:{folders:[
     {name:'品牌资产',docs:[]},{name:'竞品素材',docs:[]},

@@ -5,7 +5,8 @@ var CHART_TYPES = [
   {k:'swot',    n:'🎯 SWOT 四象限', d:'策略分析经典框架'},
   {k:'pos',     n:'🗺️ 竞品定位地图', d:'二维坐标看竞争格局'},
   {k:'persona', n:'👤 用户画像卡', d:'调研结论一图说清'},
-  {k:'funnel',  n:'🔻 转化漏斗', d:'自动算各环节转化率'}
+  {k:'funnel',  n:'🔻 转化漏斗', d:'自动算各环节转化率'},
+  {k:'mind',    n:'🧠 思维导图', d:'缩进即层级的发散结构'}
 ];
 
 /* 工具：转义 SVG 文本 */
@@ -301,6 +302,112 @@ function svgFunnel(d){
 }
 
 
+/* ---------- 5. 思维导图 ---------- */
+var MINDC = ['#1e3a8a','#1d4ed8','#047857','#b45309','#b91c1c'];
+/* 估算文本宽度：中文按 1em，西文按 0.55em */
+function mindMeasure(t, size){
+  size = size || 12.5;
+  var w = 0;
+  for(var i=0;i<t.length;i++) w += size * (t.charCodeAt(i) > 0x2E80 ? 1.0 : 0.55);
+  return w;
+}
+/* 解析缩进文本为树：第一行是中心主题，后续用空格/Tab 缩进表示层级 */
+function parseMind(text){
+  var raw = String(text||'').split('\n').filter(function(l){ return l.trim(); });
+  if(!raw.length) return null;
+  var root = {t: raw[0].trim().replace(/^[-*·]\s*/,''), c: []};
+  var stack = [{ind:-1, node:root}];
+  for(var i=1;i<raw.length;i++){
+    var line = raw[i];
+    var lead = line.match(/^[\s\u3000]*/)[0];
+    var ind = lead.replace(/\t/g,'  ').length;
+    var t = line.trim().replace(/^[-*·]\s*/,'');
+    if(!t) continue;
+    var node = {t:t, c:[]};
+    while(stack.length > 1 && ind <= stack[stack.length-1].ind) stack.pop();
+    stack[stack.length-1].node.c.push(node);
+    stack.push({ind:ind, node:node});
+  }
+  return root;
+}
+/* 后序布局：父节点垂直居中于其子节点 */
+function layoutMind(root){
+  var nodes = [], edges = [], cursor = [0];
+  var X_STEP = 222, Y_GAP = 18, H = 34;
+  function walk(n, d, parent){
+    var me = {t:n.t, x:d*X_STEP, y:0, d:d,
+              w:Math.min(204, mindMeasure(n.t)+30), h:H};
+    nodes.push(me);
+    if(parent) edges.push({a:parent, b:me});
+    var cs = n.c || [];
+    if(cs.length){
+      var ys = [];
+      cs.forEach(function(c){ ys.push(walk(c, d+1, me).y); });
+      me.y = ys.reduce(function(a,b){ return a+b; }, 0) / ys.length;
+    } else {
+      me.y = cursor[0]; cursor[0] += H + Y_GAP;
+    }
+    return me;
+  }
+  walk(root, 0, null);
+  return {nodes:nodes, edges:edges};
+}
+function svgMindmap(d){
+  var title = d.title || '思维导图';
+  var root = parseMind(d.body);
+  var top = 122, padX = 48;
+
+  if(!root){
+    var W0 = 900, H0 = 430;
+    var e = '<svg xmlns="http://www.w3.org/2000/svg" width="'+W0+'" height="'+H0+'" viewBox="0 0 '+W0+' '+H0+'" font-family="PingFang SC,Microsoft YaHei,sans-serif">';
+    e += cxFrame(W0,H0,title,'MIND MAP · '+todayStr());
+    e += '<text x="'+(W0/2)+'" y="'+(H0/2)+'" font-size="14" fill="'+CX.mute+'" text-anchor="middle">（请用缩进填写：第一行是中心主题，子项用 2 个空格或 Tab 缩进）</text>';
+    e += '</svg>'; return e;
+  }
+
+  var L = layoutMind(root);
+  var maxX = 0, maxY = 0;
+  L.nodes.forEach(function(n){
+    if(n.x + n.w > maxX) maxX = n.x + n.w;
+    if(n.y > maxY) maxY = n.y;
+  });
+  var W = Math.max(780, Math.round(maxX + padX + 60));
+  var H = Math.max(430, Math.round(top + maxY + 108));
+
+  var s = '<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" font-family="PingFang SC,Microsoft YaHei,sans-serif">';
+  s += cxFrame(W,H,title,'MIND MAP · '+todayStr());
+
+  // 连线（先画线，后画节点，避免压住文字）
+  L.edges.forEach(function(e){
+    var x1 = e.a.x + e.a.w + padX, y1 = e.a.y + top;
+    var x2 = e.b.x + padX,         y2 = e.b.y + top;
+    var mx = (x1 + x2) / 2;
+    var c = MINDC[e.b.d % MINDC.length];
+    s += '<path d="M'+x1.toFixed(0)+','+y1.toFixed(0)+' C'+mx.toFixed(0)+','+y1.toFixed(0)+' '+mx.toFixed(0)+','+y2.toFixed(0)+' '+x2.toFixed(0)+','+y2.toFixed(0)+'" fill="none" stroke="'+c+'" stroke-width="1.6" stroke-opacity="0.5"/>';
+  });
+
+  // 节点
+  L.nodes.forEach(function(n){
+    var c = MINDC[n.d % MINDC.length];
+    var x = n.x + padX, y = n.y + top - n.h/2;
+    if(n.d === 0){
+      s += '<rect x="'+x+'" y="'+y.toFixed(0)+'" width="'+n.w+'" height="'+n.h+'" rx="8" fill="'+c+'"/>';
+      s += '<text x="'+(x+14)+'" y="'+(n.y+top+5)+'" font-size="13.5" font-weight="700" fill="#ffffff">'+esc(n.t)+'</text>';
+    } else {
+      s += '<rect x="'+x+'" y="'+y.toFixed(0)+'" width="'+n.w+'" height="'+n.h+'" rx="6" fill="'+CX.paper+'" stroke="'+c+'" stroke-width="1.3"/>';
+      s += '<rect x="'+x+'" y="'+y.toFixed(0)+'" width="3.5" height="'+n.h+'" rx="2" fill="'+c+'"/>';
+      s += '<text x="'+(x+13)+'" y="'+(n.y+top+5)+'" font-size="12.5" fill="'+CX.ink+'">'+esc(n.t)+'</text>';
+    }
+  });
+
+  // 统计角标：节点数与层级
+  var lv = 1;
+  L.nodes.forEach(function(n){ if(n.d+1 > lv) lv = n.d+1; });
+  s += '<text x="'+(W-48)+'" y="'+(H-46)+'" font-size="11" fill="'+CX.mute+'" text-anchor="end">'+L.nodes.length+' 节点 · '+lv+' 层</text>';
+  s += '</svg>';
+  return s;
+}
+
 /* ---------- 图卡：读取表单 -> 生成 SVG ---------- */
 var lastSvg = '';
 function readChartData(){
@@ -323,6 +430,11 @@ function readChartData(){
       quote:$('#pe_quote').value, ch:$('#pe_ch').value
     }, svg:function(){ return svgPersona(this.data); }};
   }
+  if(t === 'mind'){
+    return {type:'mind', data:{
+      title:$('#md_title').value, body:$('#md_body').value
+    }, svg:function(){ return svgMindmap(this.data); }};
+  }
   return {type:'funnel', data:{
     title:$('#fu_title').value, stages:$('#fu_stages').value
   }, svg:function(){ return svgFunnel(this.data); }};
@@ -333,6 +445,7 @@ function saveChartData(){
   if(t==='pos') state.chart.pos = {x:$('#pm_x').value,y:$('#pm_y').value,title:$('#pm_title').value,pts:$('#pm_pts').value};
   if(t==='persona') state.chart.persona = {name:$('#pe_name').value,age:$('#pe_age').value,job:$('#pe_job').value,color:$('#pe_color').value,goal:$('#pe_goal').value,pain:$('#pe_pain').value,quote:$('#pe_quote').value,ch:$('#pe_ch').value};
   if(t==='funnel') state.chart.funnel = {title:$('#fu_title').value,stages:$('#fu_stages').value};
+  if(t==='mind')   state.chart.mind   = {title:$('#md_title').value, body:$('#md_body').value};
   save();
 }
 function drawChart(){
@@ -350,6 +463,7 @@ function showChartForm(){
   $('#cfPos').style.display     = t==='pos' ? '' : 'none';
   $('#cfPersona').style.display = t==='persona' ? '' : 'none';
   $('#cfFunnel').style.display  = t==='funnel' ? '' : 'none';
+  var cfm = $('#cfMind'); if(cfm) cfm.style.display = t==='mind' ? '' : 'none';
 }
 function renderChartChips(){
   var host = $('#chartChips'); if(!host) return;
@@ -371,6 +485,7 @@ function renderChartChips(){
 }
 function restoreChart(){
   var c = state.chart;
+  if(!c.mind) c.mind = {title:'', body:''};   // 兼容旧版存档
   $('#sw_s').value = c.swot.s||''; $('#sw_w').value = c.swot.w||'';
   $('#sw_o').value = c.swot.o||''; $('#sw_t').value = c.swot.t||'';
   $('#sw_title').value = c.swot.title||'';
@@ -381,6 +496,7 @@ function restoreChart(){
   $('#pe_goal').value = c.persona.goal||''; $('#pe_pain').value = c.persona.pain||'';
   $('#pe_quote').value = c.persona.quote||''; $('#pe_ch').value = c.persona.ch||'';
   $('#fu_title').value = c.funnel.title||''; $('#fu_stages').value = c.funnel.stages||'';
+  $('#md_title').value = c.mind.title||'';   $('#md_body').value   = c.mind.body||'';
   showChartForm();
 }
 /* 导出 SVG */

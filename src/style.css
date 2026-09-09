@@ -137,6 +137,23 @@ a{color:var(--brand);text-decoration:none;}
 .tab__name{font-family:var(--font-disp);font-size:13.5px;font-weight:600;line-height:1.35;letter-spacing:-.005em;}
 .tab__desc{font-size:10.5px;opacity:.78;line-height:1.3;font-weight:400;white-space:nowrap;letter-spacing:.01em;}
 
+/* Tab 栏响应式：中等屏收副标题，小屏横向滚动 */
+@media (max-width:1120px){
+  .tabs{gap:6px;padding:10px 14px;}
+  .tab{min-width:auto;padding:6px 11px;flex-direction:row;gap:5px;}
+  .tab__name{font-size:13px;}
+  .tab__desc{display:none;}
+}
+@media (max-width:820px){
+  .tabs{
+    justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{flex:0 0 auto;}
+  .tab__name{white-space:nowrap;}
+}
+
 /* ============ 布局 ============ */
 .wrap{
   display:grid;grid-template-columns:270px minmax(0,1fr) 330px;gap:16px;
@@ -498,3 +515,33 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
 }
 .evrow__ops button:hover{border-color:var(--brand);color:var(--brand);}
 .calempty{text-align:center;color:var(--text-3);font-size:12.5px;padding:26px 10px;line-height:1.9;}
+
+
+/* ============ 窄屏通用优化 ============ */
+@media (max-width:720px){
+  .hero{padding:38px 16px 30px;}
+  .hero__sub{font-size:14px;}
+  .hero__trust span{font-size:12px;padding:6px 11px;}
+  .topbar{gap:6px;padding:8px 12px;}
+  .topbar .btn--sm{padding:6px 10px;font-size:12px;}
+  .wrap{padding:14px 12px 32px;gap:12px;}
+  .card{padding:14px;}
+  .panel__hd{font-size:20px;}
+  .grid2{grid-template-columns:1fr;}
+  .chartwrap{padding:8px;min-height:220px;}
+  .preview{max-height:400px;}
+  .packs{padding:34px 14px 40px;}
+  .foot{padding:22px 14px 32px;}
+  .modal{padding:15px;max-height:88vh;}
+  .agentchat__log{height:280px;}
+  .agentdoc__body{min-height:280px;max-height:400px;}
+  .calcell{min-height:74px;padding:4px;}
+  .calev{font-size:10px;padding:2px 4px;}
+}
+@media (max-width:480px){
+  .hero__title{font-size:26px;}
+  .hero__cta .btn{padding:10px 18px;font-size:13.5px;}
+  .btn{padding:10px 18px;font-size:13.5px;}
+  .calcell{min-height:60px;}
+  .calev{font-size:9.5px;}
+}

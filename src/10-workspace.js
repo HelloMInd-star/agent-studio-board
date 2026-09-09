@@ -87,6 +87,29 @@ function runLocalStep(s, wrapEl){
         sc.dims.forEach(function(d){ out += '- ' + d.icon + ' ' + d.n + '：' + d.s + '/' + d.max + '　' + d.tip + '\n'; });
       }
     }
+    else if(s.local.key === 'mind'){
+      var mTitle = $('#md_title') ? $('#md_title').value : '';
+      var mBody  = $('#md_body')  ? $('#md_body').value  : '';
+      if(!mBody || !mBody.trim()){
+        out = '（请先在「📊 商业图卡 → 🧠 思维导图」填写分支结构）';
+      } else {
+        var mr = parseMind(mBody);
+        if(!mr){ out = '（解析失败：第一行是中心主题，子项用空格或 Tab 缩进）'; }
+        else {
+          var mL = layoutMind(mr);
+          var mLv = 1;
+          mL.nodes.forEach(function(nd){ if(nd.d + 1 > mLv) mLv = nd.d + 1; });
+          out = '# 🧠 思维导图 · ' + (mTitle || '未命名') + '\n\n';
+          out += '**节点数**：' + mL.nodes.length + '　**层级**：' + mLv + '\n\n**结构**：\n\n';
+          (function walk(n, d){
+            var pad2 = ''; for(var q=0;q<d;q++) pad2 += '  ';
+            out += pad2 + '- ' + n.t + '\n';
+            (n.c || []).forEach(function(c){ walk(c, d + 1); });
+          })(mr, 0);
+          out += '\n💡 完整 SVG 图卡见「📊 商业图卡 → 🧠 思维导图」，可导出 SVG / PNG。';
+        }
+      }
+    }
   }catch(e){ out = '执行出错：' + e.message; }
   var ta = wrapEl.querySelector('.traceOut');
   if(ta){ ta.value = out; }
@@ -171,6 +194,8 @@ var INTENTS = [
    tool:'render_chart', label:'用户画像卡'},
   {k:'chart_funnel', kw:['漏斗','funnel','转化漏斗'],
    tool:'render_chart', label:'转化漏斗'},
+  {k:'chart_mind', kw:['思维导图','导图','脑图','mindmap','结构拆解','发散'],
+   tool:'render_chart', label:'思维导图'},
   {k:'write', kw:['写','文案','小红书','公众号','标题','种草','脚本','生成内容'],
    tool:'prompt', label:'内容创作'}
 ];
@@ -283,7 +308,7 @@ function runLocalTool(kind, ctxText){
   }
   else if(kind.indexOf('chart_') === 0){
     var ct = kind.replace('chart_','');
-    var names = {swot:'SWOT 四象限', pos:'竞品定位地图', persona:'用户画像卡', funnel:'转化漏斗'};
+    var names = {swot:'SWOT 四象限', pos:'竞品定位地图', persona:'用户画像卡', funnel:'转化漏斗', mind:'思维导图'};
     var r = demoChart(ct);
     if(!r || !r.svg) return {text:'该图卡需要数据，请到「📊 商业图卡」填写。', demo:false, kind:'chart'};
     demoUsed = !!r.isDemo;
@@ -343,6 +368,12 @@ function demoChart(ct){
     d = {title:($('#fu_title').value||'转化漏斗'),
          stages:$('#fu_stages').value||'曝光,120000\n点击,9600\n加购,2400\n下单,720\n复购,180'};
     return {svg:svgFunnel(d), isDemo:isDemo};
+  }
+  if(ct === 'mind'){
+    if(!$('#md_body').value) isDemo = true;
+    d = {title:$('#md_title').value||'思维导图',
+         body:$('#md_body').value||'策略主题\n  目标拆解\n    GMV 目标\n    新客占比\n  渠道组合\n    小红书\n    抖音\n  风险预案'};
+    return {svg:svgMindmap(d), isDemo:isDemo};
   }
   return null;
 }

@@ -53,7 +53,11 @@ function toolManifest(){
     {name:'check_content_health', label:'内容体检评分',
      description:'对文案做六维评分（合规/平台适配/钩子/CTA/可读性/品牌一致性），输出总分与改进建议。确定性计算。',
      parameters:{type:'object', properties:{
-       text:{type:'string'}, platform:{type:'string', enum:['xhs','dy','wx','tb','bili','zhihu','weibo']}}, required:['text']}}
+       text:{type:'string'}, platform:{type:'string', enum:['xhs','dy','wx','tb','bili','zhihu','weibo']}}, required:['text']}},
+    {name:'generate_mind_map', label:'思维导图',
+     description:'把缩进文本解析为树状结构，生成思维导图 SVG。第一行是中心主题，子项用空格或 Tab 缩进表示层级。确定性计算。',
+     parameters:{type:'object', properties:{
+       title:{type:'string'}, body:{type:'string'}}, required:['body']}}
   ];
 }
 

@@ -127,6 +127,20 @@ Hand-written SVG — no Chart.js, no CDN, nothing loaded at runtime.
 Consulting-deck visual style: restrained navy, hairline rules, English
 kicker labels, page footer. Export SVG (editable) or PNG (2x).
 
+Five chart types:
+
+| Type | Input |
+|---|---|
+| SWOT | four text boxes |
+| Positioning map | `name,x,y` per line |
+| Persona card | structured fields |
+| Funnel | `stage,value` per line |
+| Mind map | indented text — first line is the root, children by indent |
+
+The mind map parses indentation into a tree (no JSON, no drag-and-drop),
+lays it out with post-order x-positioning so parents center on their
+children, and renders with the same frame as the other four.
+
 ### 3.7 Workflow orchestration
 
 Steps carry: instruction, executor, input refs (`{{var}}`), output var,
@@ -141,13 +155,14 @@ Export to three formats:
 | Coze workflow | start/llm/plugin/end nodes + edges |
 | Dify DSL | `type:tool` vs `type:llm`, `error_strategy` mapping |
 
-Four local functions are registered as callable tools, so a step can
+Five local functions are registered as callable tools, so a step can
 execute deterministically instead of asking an LLM:
 
 - `analyze_competitor_matrix`
 - `evaluate_market_segments`
 - `plan_marketing_calendar`
 - `check_content_health`
+- `generate_mind_map`
 
 **Trace**: record each step's real output with status and notes, export as
 Markdown. Shows a workflow was executed, not just designed.

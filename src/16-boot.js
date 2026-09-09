@@ -67,6 +67,15 @@ function restoreAll(){
   state.cal = state.cal || {y:new Date().getFullYear(), m:new Date().getMonth(), events:[]};
   state.cal.events = state.cal.events || [];
   renderCal();
+
+  /* sticky 偏移同步：topbar 换行后高度变化，Tab 栏要跟着下移 */
+  function syncSticky(){
+    var tb = document.querySelector('.topbar');
+    var tabs = document.querySelector('.tabs');
+    if(tb && tabs) tabs.style.top = tb.offsetHeight + 'px';
+  }
+  syncSticky();
+  window.addEventListener('resize', syncSticky);
   state.scores = state.scores || [];
   renderScoreTrend();
 }

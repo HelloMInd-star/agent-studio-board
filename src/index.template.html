@@ -431,6 +431,20 @@
         <p class="hint" style="margin-top:-6px">自动计算各环节转化率与整体转化率。</p>
       </div>
 
+        <div id="cfMind" style="display:none">
+          <label class="f"><span>中心主题</span><input type="text" id="md_title" placeholder="例：618 大促营销策略"></label>
+          <label class="f"><span>分支结构（第一行是中心主题，子项用 2 个空格或 Tab 缩进）</span>
+            <textarea id="md_body" style="min-height:190px" placeholder="618 大促营销策略
+  目标拆解
+    GMV 500 万
+    新客占比 40%
+  渠道组合
+    小红书种草
+    抖音投放
+  风险预案"></textarea></label>
+          <p class="hint">💡 缩进决定层级：同一缩进 = 同级，多缩进一级 = 子项。最多支持 5 层配色循环。</p>
+        </div>
+
       <div class="row" style="margin-bottom:14px">
         <button class="btn btn--primary" id="btnDrawChart">🎨 生成图卡</button>
         <button class="btn btn--ghost" id="btnChartSvg">⬇️ 导出 SVG</button>
