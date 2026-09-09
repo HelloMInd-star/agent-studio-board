@@ -194,6 +194,28 @@ function runLocalStep(s, wrapEl){
       out += '**市场空白格**：' + gapsN + ' 个\n\n';
       out += rep.slice(0, 2000) + (rep.length > 2000 ? '\n\n…（完整内容见「📐 调研方案」Tab）' : '');
     }
+    else if(s.local.key === 'mx'){
+      var M = sm();
+      var tw = calcTows();
+      var bb = calcBcg();
+      out = '**项目**：' + (M.name || '未命名') + '\n\n';
+      if(tw.length){
+        out += '### TOWS 交叉策略\n\n';
+        tw.forEach(function(x){
+          out += '- **' + x.k + ' ' + x.n + '**：' + x.head + '\n  ' + x.elems + '\n';
+        });
+        out += '\n';
+      }
+      if(bb){
+        out += '### BCG 象限\n\n';
+        out += '| 业务线 | 增长率 | 份额 | 象限 | 预算 |\n|---|---|---|---|---|\n';
+        bb.ranked.forEach(function(r){
+          out += '| ' + r.n + ' | ' + r.growth + '% | ' + r.share + ' | ' +
+                 BCG_QUAD[r.q].icon + BCG_QUAD[r.q].n + ' | ' + BCG_QUAD[r.q].budget + ' |\n';
+        });
+      }
+      if(!tw.length && !bb) out += '（请先在「🎯 战略矩阵」填写 SWOT 或 BCG 数据）';
+    }
   }catch(e){ out = '执行出错：' + e.message; }
   var ta = wrapEl.querySelector('.traceOut');
   if(ta){ ta.value = out; }

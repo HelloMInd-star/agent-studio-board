@@ -9,6 +9,8 @@ function bind(){
       $$('.panel').forEach(function(p){ p.classList.toggle('is-on', p.getAttribute('data-panel') === k); });
       // 切到方案合成时实时重采数据源（各模块数据可能刚填完）
       if(k === 'synth') renderSynthSources();
+      // 切到日历时重渲染（其他模块可能刚推送了任务进来）
+      if(k === 'cal') renderCal();
     };
   });
 
@@ -271,6 +273,16 @@ function bind(){
     importPlanToCal(lastCalRes.nodes);
     switchTab('cal');
   };
+
+  // ===== 战略矩阵 =====
+  $('#btnSmDemo').onclick = demoStrategy;
+  $('#btnSmExp').onclick  = exportStrategy;
+  $('#btnBcgAdd').onclick = addBcgRow;
+  $('#btnSnapAdd').onclick = saveSnap;
+  var bm = $('#smBcgMode');
+  if(bm) bm.addEventListener('change', function(){ sm().bcgMode = bm.value; save(); calcBcg(); });
+  var snm = $('#smName');
+  if(snm) snm.addEventListener('input', function(){ sm().name = snm.value; save(); });
 
   // ===== 调研方案 =====
   $('#btnAsAdd').onclick = addAssump;

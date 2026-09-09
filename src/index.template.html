@@ -56,6 +56,7 @@
   <button class="tab" data-tab="market"><span class="tab__name">🌏 市场与竞品</span><span class="tab__desc">区域 · 档案 · 追踪</span></button>
   <button class="tab" data-tab="hotspot"><span class="tab__name">📡 热点决策</span><span class="tab__desc">该不该跟 · 风险预警</span></button>
   <button class="tab" data-tab="research"><span class="tab__name">📐 调研方案</span><span class="tab__desc">模板 · 假设 · 验证</span></button>
+  <button class="tab" data-tab="strat"><span class="tab__name">🎯 战略矩阵</span><span class="tab__desc">SWOT · TOWS · BCG</span></button>
 </nav>
 
 <!-- ===================== 主体 ===================== -->
@@ -787,6 +788,55 @@
           <button class="btn btn--ghost btn--sm" id="btnRsExp">⬇️ 导出 Markdown</button>
         </div>
         <div class="preview" id="rsReport"><span class="ph">点「🔄 生成报告」汇总全部内容</span></div>
+      </div>
+    </section>
+
+
+    <!-- ===== 战略矩阵 ===== -->
+    <section class="panel" data-panel="strat">
+      <h2 class="panel__hd">🎯 战略矩阵</h2>
+      <p class="panel__sub">解决传统 SWOT / BCG 的三大问题：<b>静态</b>（做一次管一年）、<b>主观</b>（全靠拍脑袋）、<b>孤岛</b>（分析完就存档）。</p>
+
+      <div class="card">
+        <div class="card__hd">📝 项目信息</div>
+        <div class="row">
+          <input type="text" id="smName" placeholder="项目名称（如：新消费美妆品牌）" style="flex:1;min-width:200px">
+          <button class="btn btn--ghost btn--sm" id="btnSmDemo">📋 填入示例</button>
+          <button class="btn btn--primary btn--sm" id="btnSmExp">⬇️ 导出战略报告</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">1️⃣ SWOT 分析（每条可绑定数据指标）</div>
+        <p class="hint">💡 每条后面可填<b>数值</b>、<b>变化率</b>、<b>来源</b>——把"品牌认知度高"变成"品牌认知度 87%（+5%，来自 Q1 调研）"，告别拍脑袋。</p>
+        <div class="swgrid" id="smSwot"></div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">2️⃣ TOWS 交叉策略（自动生成）</div>
+        <p class="hint">💡 四象限交叉推导，每条策略都会<b>列出参与要素</b>与<b>判断依据</b>，不是模板话术。点「📅 推到日历」可变成待执行任务。</p>
+        <div class="towslist" id="smTows"></div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">3️⃣ BCG 业务组合矩阵</div>
+        <label class="f"><span>相对份额口径</span>
+          <select id="smBcgMode">
+            <option value="ratio" selected>相对份额（相对最大竞对，&gt;1 为领先）</option>
+            <option value="pct">百分制（0-100，≥50 为高）</option>
+          </select></label>
+        <div class="bcglist" id="smBcgRows"></div>
+        <button class="btn btn--ghost btn--sm" id="btnBcgAdd" style="margin-top:8px">➕ 添加业务线</button>
+        <div class="chartwrap" id="smBcgChart" style="margin-top:12px"><span class="ph">—</span></div>
+        <div class="preview" id="smBcgOut"><span class="ph">添加业务线后自动判定象限</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">4️⃣ 版本快照与迁移对比 <span class="eyebrow" id="smSnapCount" style="margin-left:auto"></span></div>
+        <p class="hint">💡 保存快照后点「对比当前」，可看到业务线在四个象限间的迁移（如"小红书从❓问题儿童进入⭐明星，说明投入有效"）。</p>
+        <button class="btn btn--ghost btn--sm" id="btnSnapAdd">💾 保存当前为快照</button>
+        <div class="snaplist" id="smSnaps"></div>
+        <div class="preview" id="smSnapOut"></div>
       </div>
     </section>
 

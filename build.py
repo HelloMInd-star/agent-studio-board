@@ -45,6 +45,7 @@ MODULES = [
     '20-market.js',     # 区域市场 + 竞品档案（须在 boot 前）
     '21-hotspot.js',    # 热点决策（五维打分 + 风险预警，须在 boot 前）
     '22-research.js',   # 调研方案模板库（假设/市场/交叉/定价，须在 boot 前）
+    '23-strategy.js',   # 战略矩阵（SWOT/TOWS/BCG，须在 boot 前）
     '16-boot.js',       # 回填 + 启动（最后，含 })();）
 ]
 

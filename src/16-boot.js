@@ -159,6 +159,9 @@ function restoreAll(){
   bindUnit();
   calcTAM(); calcWTP();
 
+  /* 战略矩阵：回填 */
+  renderStratAll();
+
   /* sticky 偏移同步：topbar 换行后高度变化，Tab 栏要跟着下移 */
   function syncSticky(){
     var tb = document.querySelector('.topbar');

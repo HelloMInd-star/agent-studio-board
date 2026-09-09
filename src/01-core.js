@@ -63,5 +63,6 @@ var state = {
   rivals:[],
   region:{rows:''},
   hotspot:{topic:'', way:'', rel:3, time:3, risk:3, fit:3, value:3},
-  research:null
+  research:null,
+  mx:null
 };

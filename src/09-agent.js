@@ -58,6 +58,18 @@ function toolManifest(){
      description:'把缩进文本解析为树状结构，生成思维导图 SVG。第一行是中心主题，子项用空格或 Tab 缩进表示层级。确定性计算。',
      parameters:{type:'object', properties:{
        title:{type:'string'}, body:{type:'string'}}, required:['body']}},
+    {name:'analyze_strategy_matrix', label:'战略矩阵分析',
+     description:'增强版 SWOT（每条可绑定数值/变化率/来源）+ TOWS 四象限交叉策略自动推导（SO进攻/WO补强/ST防御/WT转型，每条列出参与要素与判断依据）+ BCG 业务组合（气泡矩阵、象限判定、预算建议、组合健康度诊断）+ 版本快照迁移对比。确定性计算。',
+     parameters:{type:'object', properties:{
+       swot:{type:'object', properties:{
+         s:{type:'array', items:{type:'object', properties:{t:{type:'string'},v:{type:'string'},d:{type:'string'},src:{type:'string'}}}},
+         w:{type:'array', items:{type:'object'}}, o:{type:'array', items:{type:'object'}}, t:{type:'array', items:{type:'object'}}}},
+       bcg:{type:'array', items:{type:'object', properties:{
+         n:{type:'string'}, sales:{type:'number'}, growth:{type:'number'},
+         share:{type:'number'}, profit:{type:'number'}}}},
+       bcgMode:{type:'string', enum:['ratio','pct']}}, required:[]},
+     returns:{type:'object', properties:{
+       tows:{type:'array'}, quads:{type:'object'}, diagnosis:{type:'array'}}}},
     {name:'build_research_plan', label:'调研方案生成',
      description:'引导式营销调研：待验证假设清单 + TAM/SAM/SOM 测算 + 竞品×画像交叉矩阵（找市场空白格）+ 用户分层 + 定价验证（WTP 曲线/标准 Van Westendorp）。输出完整调研方案 Markdown。确定性聚合与计算。',
      parameters:{type:'object', properties:{
