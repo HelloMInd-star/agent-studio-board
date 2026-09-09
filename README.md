@@ -167,6 +167,29 @@ while still collecting the signal that matters most.
 
 Also works without a prior scan, for reporting missed words.
 
+
+## 4.5 Strategy analysis tools (actually compute, not prompt)
+
+The Strategy tab has two modes:
+
+- **Prompt mode** - pick a framework, generate a prompt for your AI
+- **Calc mode** - fill data, get a computed conclusion + chart locally
+
+Three calculators, all deterministic (same input = same output, no LLM):
+
+| Tool | Input | Computation | Output |
+|---|---|---|---|
+| Competitor matrix | dimensions w/ weights + per-competitor scores 1-5 | weighted total, ranking | ranking table, radar SVG, opportunity & threat detection |
+| STP / GE matrix | segments: attractiveness, competitiveness, size | priority = base x log-scale size weight | bubble chart, 4-quadrant action advice |
+| Marketing calendar | nodes + lead time | date math, countdown | timeline SVG, backward-scheduled task list |
+
+Opportunity rule: our score >= 4 AND rival average <= 3.
+Threat rule: our score <= 2 AND strongest rival >= 4.
+
+Each tool exposes a **Function Schema** button that prints a JSON
+function definition - the same computation callable by an agent as a
+tool. This is the bridge between "a calculator" and "an agent skill".
+
 ## 5. Data
 
 - Stored in browser localStorage, key `ym_studio_v1`
