@@ -211,6 +211,39 @@ as a step's executor, so a step runs locally instead of via an LLM.
 or paste results manually) with status and notes. Export as Markdown —
 this shows a workflow was actually executed, not just designed.
 
+
+## 4.7 Agent workspace (chat + document)
+
+8th tab. Two panes: conversation on the left, editable document on the right.
+
+**Intent routing** - free text is matched to a tool and actually executed:
+
+| You say | Routes to | Result |
+|---|---|---|
+| "competitor analysis" | `analyze_competitor_matrix` | real weighted ranking |
+| "which market" / "STP" | `evaluate_market_segments` | real GE matrix |
+| "how to schedule 618" | `plan_marketing_calendar` | real countdown |
+| "score this copy" | `check_content_health` | real 6-dim score |
+| "draw a SWOT" | chart engine | real SVG |
+| "write xiaohongshu copy" | prompt generator | prompt to copy out |
+
+Each reply is tagged: `executed local function` vs `prompt (needs an AI)`
+vs `network`. No pretending.
+
+If data is missing, it runs on **sample data** and marks the result
+explicitly, so you see the output shape first, then swap in real numbers.
+
+**Document blocks** (Feishu-style): every result lands as an editable
+block — rename, edit inline, reorder, delete, export. Any block can be
+referenced into the chat as context (the "quote into conversation" flow).
+Export whole workspace as Markdown or JSON.
+
+**Network is opt-in and off by default.** A `network settings` dialog
+lets you paste your own API key (DeepSeek / Moonshot / GLM / custom).
+Key stays in localStorage; requests go browser -> vendor directly, never
+through this site. Browsers are subject to vendor CORS policy, so this
+may fail — the UI says so instead of faking success.
+
 ## 5. Data
 
 - Stored in browser localStorage, key `ym_studio_v1`

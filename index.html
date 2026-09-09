@@ -195,6 +195,64 @@ textarea{resize:vertical;min-height:74px;line-height:1.7;}
 }
 .preview .ph{color:var(--soft);}
 
+/* ============ Agent 工作台 ============ */
+.agentwrap{display:grid;grid-template-columns:minmax(320px,1fr) minmax(340px,1.1fr);gap:16px;align-items:start;}
+@media(max-width:900px){.agentwrap{grid-template-columns:1fr;}}
+.agentchat,.agentdoc{border:1px solid var(--line);border-radius:12px;background:var(--card);overflow:hidden;}
+.agentchat__hd,.agentdoc__hd{
+  display:flex;align-items:center;gap:8px;padding:10px 12px;
+  border-bottom:1px solid var(--line);font-size:13px;font-weight:700;background:var(--bg-soft);
+}
+.netbadge{font-size:11.5px;padding:3px 9px;border-radius:20px;font-weight:600;}
+.netbadge--off{background:#ecfdf5;color:#047857;}
+.netbadge--on{background:#eff6ff;color:#1d4ed8;}
+.agentchat__log{padding:12px;height:340px;overflow:auto;display:flex;flex-direction:column;gap:10px;}
+.msg{max-width:88%;padding:9px 12px;border-radius:10px;font-size:13px;line-height:1.7;white-space:pre-wrap;word-break:break-word;}
+.msg--me{align-self:flex-end;background:var(--brand);color:#fff;}
+.msg--ai{align-self:flex-start;background:var(--bg-soft);border:1px solid var(--line);}
+.msg--sys{align-self:center;background:transparent;color:var(--soft);font-size:11.5px;text-align:center;max-width:100%;}
+.msg__tag{display:inline-block;font-size:10.5px;padding:2px 7px;border-radius:20px;margin-bottom:5px;font-weight:700;}
+.tag--run{background:#ecfdf5;color:#047857;}
+.tag--prompt{background:#fffbeb;color:#b45309;}
+.tag--net{background:#eff6ff;color:#1d4ed8;}
+.tag--demo{background:#fef2f2;color:#b91c1c;}
+.agentquick{display:flex;flex-wrap:wrap;gap:5px;padding:0 12px 8px;}
+.agentquick .chip{font-size:11.5px;padding:4px 9px;}
+.agentchat__ref{
+  margin:0 12px 8px;padding:7px 10px;border-radius:8px;font-size:11.5px;
+  background:var(--brand-soft,#eff6ff);border:1px dashed var(--brand);color:var(--soft);
+  display:flex;align-items:center;gap:6px;
+}
+.agentchat__ref b{color:var(--brand);}
+.agentchat__in{padding:10px 12px;border-top:1px solid var(--line);}
+.agentchat__in textarea{min-height:64px;}
+.agentdoc__body{padding:12px;min-height:340px;max-height:520px;overflow:auto;display:flex;flex-direction:column;gap:10px;}
+.docblock{border:1px solid var(--line);border-radius:9px;background:var(--bg-soft);overflow:hidden;}
+.docblock__hd{
+  display:flex;align-items:center;gap:7px;padding:7px 10px;font-size:12px;font-weight:700;
+  border-bottom:1px solid var(--line);background:var(--card);
+}
+.docblock__kind{font-size:10.5px;padding:2px 7px;border-radius:20px;font-weight:700;}
+.kind--analysis{background:#eff6ff;color:#1d4ed8;}
+.kind--chart{background:#f5f3ff;color:#7c3aed;}
+.kind--note{background:#f0fdfa;color:#0f766e;}
+.kind--prompt{background:#fffbeb;color:#b45309;}
+.kind--chat{background:#f1f5f9;color:#475569;}
+.docblock__ops{margin-left:auto;display:flex;gap:3px;}
+.docblock__ops button{
+  border:none;background:transparent;cursor:pointer;font-size:12px;padding:2px 5px;
+  border-radius:5px;color:var(--soft);
+}
+.docblock__ops button:hover{background:var(--bg-soft);color:var(--ink);}
+.docblock__body{padding:9px 11px;font-size:12.5px;line-height:1.7;white-space:pre-wrap;word-break:break-word;}
+.docblock__body textarea{
+  width:100%;min-height:110px;font-size:12.5px;line-height:1.7;
+  border:1px solid var(--line);border-radius:7px;padding:8px;background:var(--card);
+}
+.docblock svg{max-width:100%;height:auto;background:#fff;border-radius:6px;}
+.agentdoc__ft{padding:10px 12px;border-top:1px solid var(--line);background:var(--bg-soft);}
+.docempty{color:var(--soft);font-size:12.5px;text-align:center;padding:40px 10px;line-height:1.9;}
+
 /* ============ 评分趋势 ============ */
 .trendrow{display:flex;align-items:flex-end;gap:4px;height:56px;margin:8px 0 6px;}
 .trendbar{
@@ -312,6 +370,7 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
   <button class="tab" data-tab="flow"><span class="tab__name">🔗 营销工作流</span><span class="tab__desc">6 步编排 · 自动跑通</span></button>
   <button class="tab" data-tab="kb"><span class="tab__name">📚 品牌知识库</span><span class="tab__desc">卖点 · 竞品 · 违禁词</span></button>
   <button class="tab" data-tab="chart"><span class="tab__name">📊 商业图卡</span><span class="tab__desc">填数据 · 出图导出</span></button>
+  <button class="tab" data-tab="agent"><span class="tab__name">💬 Agent 工作台</span><span class="tab__desc">对话 · 文档 · 工具</span></button>
 </nav>
 
 <!-- ===================== 主体 ===================== -->
@@ -703,6 +762,50 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
       </div>
     </section>
 
+
+    <!-- ===== Agent 工作台 ===== -->
+    <section class="panel" data-panel="agent">
+      <h2 class="panel__hd">💬 Agent 工作台</h2>
+      <p class="panel__sub">左边对话下达任务，右边文档沉淀产出。本地工具直接执行，创作类生成提示词。</p>
+
+      <div class="agentwrap">
+        <!-- 左：对话 -->
+        <div class="agentchat">
+          <div class="agentchat__hd">
+            <span id="netBadge" class="netbadge netbadge--off">🔒 本地模式</span>
+            <button class="btn btn--sm btn--ghost" id="btnNetCfg">⚙️ 联网设置</button>
+            <button class="btn btn--sm btn--ghost" id="btnChatClear">🗑️ 清空</button>
+          </div>
+          <div class="agentchat__log" id="chatLog"></div>
+          <div class="agentquick" id="chatQuick"></div>
+          <div class="agentchat__ref" id="chatRef" style="display:none"></div>
+          <div class="agentchat__in">
+            <textarea id="chatInput" placeholder="说句话试试：做个竞品分析 / 618 怎么排期 / 这段文案几分 / 画个 SWOT"></textarea>
+            <div class="row">
+              <button class="btn btn--primary btn--sm" id="btnChatSend">发送</button>
+              <button class="btn btn--ghost btn--sm" id="btnChatDoc">📄 存为文档块</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右：文档 -->
+        <div class="agentdoc">
+          <div class="agentdoc__hd">
+            <span>📄 工作台文档</span>
+            <span id="docStat" style="font-weight:400;color:var(--soft);font-size:12px">0 个块</span>
+          </div>
+          <div class="agentdoc__body" id="docBlocks"></div>
+          <div class="agentdoc__ft">
+            <div class="row">
+              <button class="btn btn--sm btn--ghost" id="btnAddNote">➕ 新建笔记</button>
+              <button class="btn btn--sm btn--ghost" id="btnDocMd">⬇️ 导出 MD</button>
+              <button class="btn btn--sm btn--ghost" id="btnDocJson">📦 导出 JSON</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
   <aside>
     <div class="card" id="scoreTrendCard">
@@ -775,6 +878,43 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
     <button class="btn btn--sm btn--ghost" id="btnClearHist">🗑️ 清空历史</button>
   </div>
 </div>
+<div class="mask" id="maskNet">
+  <div class="modal">
+    <div class="modal__hd"><span>⚙️ 联网设置</span><button class="btn btn--sm btn--ghost" id="btnCloseNet">✕</button></div>
+    <p class="hint" style="margin-bottom:12px">
+      <b>默认关闭</b>：所有计算在本地完成，数据不出浏览器。<br>
+      开启后：对话会调用你选择的 AI 厂商，<b>数据会发送到该厂商，不经过本站服务器</b>。
+    </p>
+    <div class="row" style="margin-bottom:10px">
+      <button class="btn btn--sm btn--ghost" id="btnNetOff">🔒 关闭联网</button>
+      <button class="btn btn--sm btn--primary" id="btnNetOn">🌐 开启联网</button>
+    </div>
+    <label class="f"><span>服务商</span>
+      <select id="netProvider">
+        <option value="deepseek">DeepSeek</option>
+        <option value="moonshot">Moonshot / Kimi</option>
+        <option value="zhipu">智谱 GLM</option>
+        <option value="custom">自定义（OpenAI 兼容）</option>
+      </select>
+    </label>
+    <label class="f"><span>API Key（仅存本地 localStorage）</span>
+      <input type="password" id="netKey" placeholder="sk-...">
+    </label>
+    <label class="f"><span>自定义 Base URL（选「自定义」时填）</span>
+      <input type="text" id="netBase" placeholder="https://api.example.com/v1">
+    </label>
+    <div class="row">
+      <button class="btn btn--primary btn--sm" id="btnNetSave">💾 保存</button>
+      <button class="btn btn--ghost btn--sm" id="btnNetTest">🔌 测试连接</button>
+    </div>
+    <p class="hint" id="netMsg" style="margin-top:10px"></p>
+    <p class="hint" style="margin-top:10px">
+      ⚠️ 浏览器直连受厂商 CORS 策略限制。若连接失败，说明该厂商不允许浏览器端调用，
+      需要自建代理——本站不提供，也不经手你的数据。
+    </p>
+  </div>
+</div>
+
 <div class="mask" id="maskTrace">
   <div class="modal">
     <div class="modal__hd"><span>🧾 填写执行结果 · Trace</span><button class="btn btn--sm btn--ghost" id="btnCloseTrace">✕</button></div>
@@ -841,6 +981,8 @@ var state = {
   scores:[],
   stratMode:'prompt',
   trace:{},
+  chat:[], blocks:[], chatRef:null,
+  net:{on:false, provider:'deepseek', key:'', base:''},
   tool:{type:'comp', comp:{dims:'',rows:''}, stp:{rows:''}, cal:{picked:[],custom:'',lead:'30'}},
   role:{role:'',task:'',bg:'',req:'',ex:''},
   content:{title:'',kw:'',platform:'小红书',len:'800 字',style:'专业干货型',aud:'',ref:'',extra:''},
@@ -2787,6 +2929,414 @@ function buildTraceReport(){
   return out;
 }
 
+/* ============================================================
+ * Agent 工作台 —— 对话路由 + 飞书式可编辑文档块
+ * 左：自然语言 -> 意图识别 -> 调本地确定性工具（或生成提示词）
+ * 右：产出沉淀为文档块，可编辑/删除/排序/引用回对话
+ * ============================================================ */
+
+/* ---------- 意图路由表 ---------- */
+var INTENTS = [
+  {k:'comp', kw:['竞品','竞品分析','竞品对比','竞品矩阵','对手分析','competitor'],
+   tool:'analyze_competitor_matrix', label:'竞品对比矩阵'},
+  {k:'stp', kw:['市场选择','stp','细分市场','选市场','ge矩阵','目标市场'],
+   tool:'evaluate_market_segments', label:'STP 市场选择'},
+  {k:'cal', kw:['排期','日历','倒排','节点','618','双11','双12','大促','节日','营销日历'],
+   tool:'plan_marketing_calendar', label:'营销日历倒排'},
+  {k:'scan', kw:['体检','评分','几分','打分','检测','违禁词','合规','检查'],
+   tool:'check_content_health', label:'内容体检'},
+  {k:'chart_swot', kw:['swot','四象限','优势劣势'],
+   tool:'render_chart', label:'SWOT 四象限'},
+  {k:'chart_pos', kw:['定位地图','定位图','positioning'],
+   tool:'render_chart', label:'竞品定位地图'},
+  {k:'chart_persona', kw:['画像','persona','用户画像卡'],
+   tool:'render_chart', label:'用户画像卡'},
+  {k:'chart_funnel', kw:['漏斗','funnel','转化漏斗'],
+   tool:'render_chart', label:'转化漏斗'},
+  {k:'write', kw:['写','文案','小红书','公众号','标题','种草','脚本','生成内容'],
+   tool:'prompt', label:'内容创作'}
+];
+
+function matchIntent(text){
+  var t = String(text||'').toLowerCase();
+  var best = null, bestScore = 0;
+  INTENTS.forEach(function(it){
+    it.kw.forEach(function(w){
+      if(t.indexOf(w.toLowerCase()) > -1 && w.length > bestScore){ bestScore = w.length; best = it; }
+    });
+  });
+  return best;
+}
+
+/* ---------- 对话 ---------- */
+function pushMsg(role, text, tag){
+  state.chat = state.chat || [];
+  state.chat.push({role:role, text:text, tag:tag||'', at:new Date().toLocaleTimeString('zh-CN')});
+  if(state.chat.length > 60) state.chat = state.chat.slice(-60);
+  renderChat(); save();
+}
+function renderChat(){
+  var host = $('#chatLog'); if(!host) return;
+  host.innerHTML = '';
+  var msgs = state.chat || [];
+  if(!msgs.length){
+    host.innerHTML = '<div class="msg msg--sys">👋 说句话开始。<br>本地工具会<b>直接执行</b>并给出真实结果，<br>创作类任务会生成提示词供你带走。</div>';
+    return;
+  }
+  msgs.forEach(function(m){
+    var d = document.createElement('div');
+    if(m.role === 'sys'){ d.className = 'msg msg--sys'; d.textContent = m.text; }
+    else{
+      d.className = 'msg msg--' + (m.role === 'me' ? 'me' : 'ai');
+      var h = '';
+      if(m.tag){
+        var cls = m.tag.indexOf('⚡')>-1 ? 'tag--run' : m.tag.indexOf('📋')>-1 ? 'tag--prompt'
+                : m.tag.indexOf('🌐')>-1 ? 'tag--net' : m.tag.indexOf('示例')>-1 ? 'tag--demo' : 'tag--run';
+        h += '<span class="msg__tag ' + cls + '">' + esc(m.tag) + '</span><br>';
+      }
+      d.innerHTML = h + esc(m.text).replace(/\n/g,'<br>');
+    }
+    host.appendChild(d);
+  });
+  host.scrollTop = host.scrollHeight;
+}
+
+/* 执行本地工具：数据不足则用示例数据跑一遍并标注 */
+function runLocalTool(kind, ctxText){
+  var demoUsed = false, out = '', kindLabel = '', blockKind = 'analysis';
+
+  if(kind === 'comp'){
+    var c = calcComp();
+    if(!c){
+      $('#cp_dims').value = TOOL_DEMO.comp.dims;
+      $('#cp_rows').value = TOOL_DEMO.comp.rows;
+      saveToolData();
+      c = calcComp(); demoUsed = true;
+    }
+    if(!c) return {text:'无法运行竞品分析，请先填写数据。', demo:false, kind:'analysis'};
+    out = compReport(c); kindLabel = '竞品对比矩阵';
+    out = summarize(out, '竞品对比矩阵');
+    addBlock('analysis', '竞品对比矩阵' + (demoUsed ? '（示例数据）' : ''), out, demoUsed ? '示例数据' : '');
+  }
+  else if(kind === 'stp'){
+    var g = calcStp();
+    if(!g){
+      $('#st_rows').value = TOOL_DEMO.stp.rows; saveToolData();
+      g = calcStp(); demoUsed = true;
+    }
+    if(!g) return {text:'无法运行 STP 分析，请先填写数据。', demo:false, kind:'analysis'};
+    out = stpReport(g); kindLabel = 'STP 市场选择';
+    out = summarize(out, 'STP 市场选择');
+    addBlock('analysis', 'STP 市场选择' + (demoUsed ? '（示例数据）' : ''), out, demoUsed ? '示例数据' : '');
+  }
+  else if(kind === 'cal'){
+    var k = calcCal();
+    if(!k){
+      // 默认选 618 与双 11
+      var sel = $('#cal_pick');
+      if(sel){ [].forEach.call(sel.options, function(o){ if(o.value.indexOf('618')>-1 || o.value.indexOf('双 11')>-1) o.selected = true; }); }
+      saveToolData(); k = calcCal(); demoUsed = true;
+    }
+    if(!k) return {text:'无法生成排期，请先选择节点。', demo:false, kind:'analysis'};
+    out = calReport(k); kindLabel = '营销日历倒排';
+    out = summarize(out, '营销日历');
+    addBlock('analysis', '营销日历倒排' + (demoUsed ? '（示例节点）' : ''), out, demoUsed ? '示例数据' : '');
+  }
+  else if(kind === 'scan'){
+    // 优先用引用块的正文，其次用预览区，最后用示例
+    var refBody = state.chatRef ? (state.chatRef.body || '') : '';
+    var txt = refBody || ctxText || ($('#preview') ? $('#preview').textContent : '');
+    if(!txt || txt.length < 10 || txt.indexOf('请填写字段') > -1){
+      txt = '姐妹们！这款防晒竟然只要89元✨ 三周实测不搓泥，质地清爽不油腻。\n\n#防晒推荐\n\n你最在意防晒哪一点？评论区聊聊，记得收藏备用～';
+      demoUsed = true;
+    }
+    var pfEl = $('#c_platform');
+    var pfKey = pfEl ? (PLATFORM_MAP[pfEl.value] || null) : null;
+    var sc = scoreContent(txt, pfKey, {red:[],yellow:[],blue:[]});
+    out = '**综合得分 ' + sc.total + '/100（' + sc.grade + ' 级 · ' + sc.gradeMsg + '）**\n\n';
+    sc.dims.forEach(function(d){ out += '- ' + d.icon + ' ' + d.n + '：' + d.s + '/' + d.max + '　' + d.tip + '\n'; });
+    var weak = sc.dims.filter(function(d){ return d.s/d.max < 0.7; });
+    if(weak.length){
+      out += '\n⚡ 优先改进：\n';
+      weak.forEach(function(d){ out += '  · ' + d.n + ' —— ' + (d.detail && d.detail[0] ? d.detail[0] : d.tip) + '\n'; });
+    }
+    kindLabel = '内容体检';
+    addBlock('analysis', '内容体检 ' + sc.total + ' 分' + (demoUsed ? '（示例文案）' : ''), out, demoUsed ? '示例数据' : '');
+  }
+  else if(kind.indexOf('chart_') === 0){
+    var ct = kind.replace('chart_','');
+    var names = {swot:'SWOT 四象限', pos:'竞品定位地图', persona:'用户画像卡', funnel:'转化漏斗'};
+    var r = demoChart(ct);
+    if(!r || !r.svg) return {text:'该图卡需要数据，请到「📊 商业图卡」填写。', demo:false, kind:'chart'};
+    demoUsed = !!r.isDemo;
+    addBlock('chart', names[ct] + (demoUsed ? '（示例数据）' : ''), '', demoUsed ? '示例数据' : '', r.svg);
+    return {text:'已生成「' + names[ct] + '」图卡，右侧工作台可查看并导出。\n\n'
+      + (demoUsed ? '⚠️ 用的是示例数据——去「📊 商业图卡」填你自己的数据，或告诉我具体内容。' : ''),
+      demo:demoUsed, kind:'chart'};
+  }
+  else {
+    return {text:'暂不支持该任务。', demo:false, kind:'note'};
+  }
+
+  var tail = demoUsed ? '\n\n⚠️ 以上是**示例数据**跑出的结果，让你先看到输出长什么样。改成你的数据：策略 Tab → 🧮 计算模式。' : '';
+  return {text: out + tail, demo: demoUsed, kind: blockKind, label: kindLabel};
+}
+
+/* 把长报告压缩成对话里适合展示的摘要 */
+function summarize(out, label){
+  var lines = out.split('\n');
+  var keep = [], n = 0;
+  for(var i=0;i<lines.length && n<14;i++){
+    var l = lines[i];
+    if(!l.trim()) continue;
+    keep.push(l); n++;
+  }
+  var s = keep.join('\n');
+  if(out.length > keep.join('\n').length + 60) s += '\n\n（完整报告已存入右侧工作台文档）';
+  return s;
+}
+
+/* 生成图卡（数据不足用示例） */
+function demoChart(ct){
+  var d, isDemo = false;
+  if(ct === 'swot'){
+    if(!$('#sw_s').value && !$('#sw_w').value) isDemo = true;
+    d = {title:($('#sw_title').value||'SWOT 分析'), s:$('#sw_s').value||'品牌口碑积累\n本地运行差异化\n零部署成本',
+         w:$('#sw_w').value||'知名度尚低\n渠道单一', o:$('#sw_o').value||'隐私合规需求上升\n付费习惯养成',
+         t:$('#sw_t').value||'大厂免费工具挤压\n同质化竞品出现'};
+    return {svg:svgSwot(d), isDemo:isDemo};
+  }
+  if(ct === 'pos'){
+    if(!$('#pm_pts').value) isDemo = true;
+    d = {title:($('#pm_title').value||'竞品定位地图'), x:$('#pm_x').value||'价格高端化',
+         y:$('#pm_y').value||'功能专业度', pts:$('#pm_pts').value||'我方,6.5,8\n竞品A,3,5\n竞品B,8,6\n竞品C,7,4'};
+    return {svg:svgPos(d), isDemo:isDemo};
+  }
+  if(ct === 'persona'){
+    if(!$('#pe_name').value) isDemo = true;
+    d = {name:$('#pe_name').value||'核心用户', age:$('#pe_age').value||'29 岁 · 上海',
+         job:$('#pe_job').value||'品牌市场经理', color:$('#pe_color').value||'indigo',
+         goal:$('#pe_goal').value||'做出能刷屏的内容\n控制获客成本', pain:$('#pe_pain').value||'违禁词拿不准，反复改稿\n竞品动态跟不过来',
+         quote:$('#pe_quote').value||'我要能直接发的稿，不是一堆建议', ch:$('#pe_ch').value||'小红书 / 抖音 / 私域'};
+    return {svg:svgPersona(d), isDemo:isDemo};
+  }
+  if(ct === 'funnel'){
+    if(!$('#fu_stages').value) isDemo = true;
+    d = {title:($('#fu_title').value||'转化漏斗'),
+         stages:$('#fu_stages').value||'曝光,120000\n点击,9600\n加购,2400\n下单,720\n复购,180'};
+    return {svg:svgFunnel(d), isDemo:isDemo};
+  }
+  return null;
+}
+
+/* 创作类：生成提示词（本地做不了） */
+function genPromptReply(text){
+  var b = readBrand();
+  var p = '你是一位资深营销内容专家。\n\n## 任务\n' + text + '\n\n';
+  if(b.name || b.cat || b.aud || b.usp){
+    p += '## 品牌语境\n';
+    if(b.name) p += '- 品牌：' + b.name + '\n';
+    if(b.cat)  p += '- 品类：' + b.cat + '\n';
+    if(b.aud)  p += '- 目标人群：' + b.aud + '\n';
+    if(b.usp)  p += '- 核心卖点：' + b.usp + '\n';
+    p += '\n';
+  }
+  p += '## 要求\n- 给出 3 个不同角度的版本\n- 标注每个版本的适用场景\n- 避免夸大与绝对化用语';
+  addBlock('prompt', '创作提示词 · ' + text.slice(0, 18), p);
+  return '这是创作类任务，本地无法凭空生成可靠内容（那需要真实模型）。\n\n已为你生成一段**结构化提示词**，复制到豆包 / DeepSeek / Kimi 执行：\n\n' + p.slice(0, 260) + '\n\n…完整版已存入右侧工作台。';
+}
+
+/* ---------- 对话主入口 ---------- */
+function handleChat(text){
+  text = String(text||'').trim();
+  if(!text) return;
+  pushMsg('me', text);
+  $('#chatInput').value = '';
+
+  // 有引用上下文则带入
+  var ref = state.chatRef;
+  var ctx = ref ? ('\n\n[引用文档块：' + ref.title + ']\n' + (ref.body||'').slice(0, 800)) : '';
+  if(ref){ clearChatRef(); }
+
+  var it = matchIntent(text);
+  if(!it){
+    if(state.net.on){
+      callRemote(text + ctx);
+    } else {
+      pushMsg('ai', '没匹配到可执行的本地任务。\n\n我能直接跑的有：竞品分析 / 市场选择 / 排期日历 / 内容体检 / 四种图卡。\n创作类任务我可以生成提示词。\n\n也可以开启联网（右上角 ⚙️）用真实模型自由对话。', '📋 未匹配');
+    }
+    return;
+  }
+
+  if(it.tool === 'prompt'){
+    var r = genPromptReply(text + ctx);
+    pushMsg('ai', r, '📋 提示词');
+    return;
+  }
+
+  // 确定性工具：直接执行
+  var res = runLocalTool(it.k, text + ctx);
+  var tag = res.demo ? '⚡ 已执行 · 示例数据' : '⚡ 已执行本地函数';
+  pushMsg('ai', res.text, tag);
+  toast(res.demo ? '已用示例数据运行' : '已执行 ' + it.label);
+}
+
+/* ---------- 联网（可选） ---------- */
+function callRemote(text){
+  pushMsg('ai', '正在调用「' + (state.net.provider||'') + '」…', '🌐 联网');
+  var cfg = getNetCfg();
+  if(!cfg.key){
+    pushMsg('ai', '未填写 API Key。点右上角 ⚙️ 联网设置填写。', '🌐 联网');
+    return;
+  }
+  fetch(cfg.url, {
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer ' + cfg.key},
+    body: JSON.stringify({model: cfg.model, messages:[{role:'user', content:text}], stream:false})
+  }).then(function(r){ return r.json(); })
+  .then(function(j){
+    var reply = (j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content)
+      || j.error && (j.error.message || JSON.stringify(j.error)) || JSON.stringify(j).slice(0,300);
+    pushMsg('ai', reply, '🌐 联网');
+    addBlock('chat', '联网对话', reply);
+  }).catch(function(e){
+    pushMsg('ai', '调用失败：' + e.message + '\n\n大概率是厂商 CORS 策略不允许浏览器直连。\n本站不提供代理，也不经手你的数据。', '🌐 联网');
+  });
+}
+function getNetCfg(){
+  var prov = state.net.provider || 'deepseek';
+  var map = {
+    deepseek:{url:'https://api.deepseek.com/chat/completions', model:'deepseek-chat'},
+    moonshot:{url:'https://api.moonshot.cn/v1/chat/completions', model:'moonshot-v1-8k'},
+    zhipu:{url:'https://open.bigmodel.cn/api/paas/v4/chat/completions', model:'glm-4'},
+    custom:{url: state.net.base || '', model:'gpt-3.5-turbo'}
+  };
+  var c = map[prov] || map.deepseek;
+  return {url:c.url, model:c.model, key:state.net.key || ''};
+}
+
+/* ---------- 文档块 ---------- */
+function addBlock(kind, title, body, demo, svg){
+  state.blocks = state.blocks || [];
+  state.blocks.push({
+    id: 'b' + Date.now() + Math.floor(Math.random()*100),
+    kind: kind || 'note',
+    title: title || '未命名',
+    body: body || '',
+    svg: svg || '',
+    demo: demo || '',
+    at: new Date().toLocaleString('zh-CN')
+  });
+  renderBlocks(); save();
+  return state.blocks[state.blocks.length-1];
+}
+function renderBlocks(){
+  var host = $('#docBlocks'); if(!host) return;
+  var bs = state.blocks || [];
+  var st = $('#docStat'); if(st) st.textContent = bs.length + ' 个块';
+  if(!bs.length){
+    host.innerHTML = '<div class="docempty">还没有内容<br><br>左侧对话产出的结果会自动追加到这里<br>也可以点「➕ 新建笔记」手动记录</div>';
+    return;
+  }
+  host.innerHTML = '';
+  bs.forEach(function(b, i){
+    var d = document.createElement('div');
+    d.className = 'docblock';
+    var kindName = {analysis:'分析', chart:'图卡', note:'笔记', prompt:'提示词', chat:'对话'}[b.kind] || '块';
+    var hd = '<div class="docblock__hd">'
+      + '<span class="docblock__kind kind--' + b.kind + '">' + kindName + '</span>'
+      + '<span>' + esc(b.title) + '</span>'
+      + (b.demo ? '<span class="docblock__kind kind--prompt" style="margin-left:4px">' + esc(b.demo) + '</span>' : '')
+      + '<span class="docblock__ops">'
+        + '<button data-op="ref" data-i="' + i + '" title="引用到对话">💬</button>'
+        + '<button data-op="up" data-i="' + i + '" title="上移">↑</button>'
+        + '<button data-op="down" data-i="' + i + '" title="下移">↓</button>'
+        + '<button data-op="edit" data-i="' + i + '" title="编辑">✎</button>'
+        + '<button data-op="del" data-i="' + i + '" title="删除">🗑</button>'
+      + '</span></div>';
+    d.innerHTML = hd;
+    var bodyEl = document.createElement('div');
+    bodyEl.className = 'docblock__body';
+    if(b.svg){
+      bodyEl.innerHTML = b.svg;
+    } else {
+      bodyEl.textContent = (b.body || '').slice(0, 400) + ((b.body||'').length > 400 ? '\n\n…（已折叠，导出可见全文）' : '');
+    }
+    d.appendChild(bodyEl);
+    host.appendChild(d);
+  });
+  // 事件委托
+  host.onclick = function(e){
+    var btn = e.target.closest('button[data-op]');
+    if(!btn) return;
+    var op = btn.getAttribute('data-op'), i = parseInt(btn.getAttribute('data-i'),10);
+    var bs2 = state.blocks || [];
+    if(op === 'del'){ if(confirm('删除这个块？')) { bs2.splice(i,1); renderBlocks(); save(); } }
+    else if(op === 'up' && i > 0){ var t = bs2[i]; bs2[i] = bs2[i-1]; bs2[i-1] = t; renderBlocks(); save(); }
+    else if(op === 'down' && i < bs2.length-1){ var t2 = bs2[i]; bs2[i] = bs2[i+1]; bs2[i+1] = t2; renderBlocks(); save(); }
+    else if(op === 'edit'){ editBlock(i); }
+    else if(op === 'ref'){ setChatRef(bs2[i]); }
+  };
+}
+function editBlock(i){
+  var b = (state.blocks||[])[i]; if(!b) return;
+  var host = $('#docBlocks'); if(!host) return;
+  var el = host.children[i]; if(!el) return;
+  var bodyEl = el.querySelector('.docblock__body');
+  if(!bodyEl) return;
+  if(bodyEl.querySelector('textarea')) return;
+  var ta = document.createElement('textarea');
+  ta.value = b.body || '';
+  bodyEl.innerHTML = '';
+  bodyEl.appendChild(ta);
+  var row = document.createElement('div');
+  row.className = 'row'; row.style.marginTop = '6px';
+  var ok = document.createElement('button');
+  ok.className = 'btn btn--sm btn--primary'; ok.textContent = '💾 保存';
+  ok.onclick = function(){ b.body = ta.value; save(); renderBlocks(); toast('已保存'); };
+  var cc = document.createElement('button');
+  cc.className = 'btn btn--sm btn--ghost'; cc.textContent = '取消';
+  cc.onclick = function(){ renderBlocks(); };
+  row.appendChild(ok); row.appendChild(cc);
+  bodyEl.appendChild(row);
+  ta.focus();
+}
+/* 引用文档块到对话 */
+function setChatRef(b){
+  state.chatRef = {title:b.title, body:b.body || (b.svg ? '[图卡：' + b.title + ']' : '')};
+  var el = $('#chatRef'); if(!el) return;
+  el.style.display = '';
+  el.innerHTML = '💬 已引用 <b>' + esc(b.title) + '</b>　<span style="margin-left:auto;cursor:pointer" id="refX">✕</span>';
+  var x = $('#refX'); if(x) x.onclick = clearChatRef;
+  toast('已引用，输入你的问题');
+}
+function clearChatRef(){
+  state.chatRef = null;
+  var el = $('#chatRef'); if(el) el.style.display = 'none';
+}
+/* 导出文档 */
+function buildDocMd(){
+  var bs = state.blocks || [];
+  var out = '# ' + ((state.brand && state.brand.name) ? state.brand.name + ' · ' : '') + '工作台文档\n\n';
+  out += '生成时间：' + new Date().toLocaleString('zh-CN') + '\n\n---\n\n';
+  bs.forEach(function(b, i){
+    out += '## ' + (i+1) + '. ' + b.title + (b.demo ? '　`' + b.demo + '`' : '') + '\n\n';
+    if(b.svg) out += '（图卡内容，见 SVG 导出）\n\n';
+    if(b.body) out += b.body + '\n\n';
+  });
+  if(!bs.length) out += '（暂无内容）\n';
+  return out;
+}
+function exportDocJson(){
+  var data = {
+    brand: state.brand || {},
+    blocks: state.blocks || [],
+    chat: state.chat || [],
+    exported_at: new Date().toISOString()
+  };
+  downloadFile('workspace-' + Date.now() + '.json', JSON.stringify(data, null, 2));
+}
+
 /* ================= 渲染：知识库 ================= */
 function renderKb(){
   var fh = $('#kbFolders'); fh.innerHTML = '';
@@ -3598,6 +4148,83 @@ function bind(){
   var cl = $('#cal_lead'); if(cl) cl.addEventListener('change', saveToolData);
   var cps = $('#cal_pick'); if(cps) cps.addEventListener('change', saveToolData);
 
+  // ===== Agent 工作台（对话 + 文档） =====
+  var QUICK = ['做个竞品分析','帮我选市场','618 怎么排期','这段文案几分','画个 SWOT','写个小红书文案'];
+  function renderQuick(){
+    var h = $('#chatQuick'); if(!h) return;
+    h.innerHTML = '';
+    QUICK.forEach(function(q){
+      var b = document.createElement('button');
+      b.className = 'chip'; b.textContent = q;
+      b.onclick = function(){ $('#chatInput').value = q; handleChat(q); };
+      h.appendChild(b);
+    });
+  }
+  renderQuick();
+  $('#btnChatSend').onclick = function(){ handleChat($('#chatInput').value); };
+  $('#chatInput').onkeydown = function(e){
+    if(e.key === 'Enter' && (e.ctrlKey || e.metaKey)){ e.preventDefault(); handleChat(this.value); }
+  };
+  $('#btnChatClear').onclick = function(){
+    if(!confirm('清空对话记录？文档块会保留。')) return;
+    state.chat = []; renderChat(); save(); toast('已清空对话');
+  };
+  $('#btnChatDoc').onclick = function(){
+    var v = ($('#chatInput').value || '').trim();
+    if(!v){ toast('输入框是空的'); return; }
+    addBlock('note', '笔记', v);
+    $('#chatInput').value = '';
+    toast('已存为文档块');
+  };
+  $('#btnAddNote').onclick = function(){
+    var b = addBlock('note', '新笔记', '');
+    setTimeout(function(){ editBlock((state.blocks||[]).length - 1); }, 50);
+  };
+  $('#btnDocMd').onclick = function(){
+    var md = buildDocMd();
+    downloadFile('workspace-' + Date.now() + '.md', md, 'text/markdown;charset=utf-8');
+    setPreview(md); toast('已导出 MD');
+  };
+  $('#btnDocJson').onclick = function(){
+    exportDocJson(); toast('已导出 JSON');
+  };
+
+  // 联网设置
+  function syncNetBadge(){
+    var b = $('#netBadge'); if(!b) return;
+    if(state.net.on){ b.className = 'netbadge netbadge--on'; b.textContent = '🌐 联网已开'; }
+    else { b.className = 'netbadge netbadge--off'; b.textContent = '🔒 本地模式'; }
+  }
+  syncNetBadge();
+  $('#btnNetCfg').onclick = function(){
+    $('#netProvider').value = state.net.provider || 'deepseek';
+    $('#netKey').value = state.net.key || '';
+    $('#netBase').value = state.net.base || '';
+    $('#maskNet').classList.add('is-on');
+  };
+  $('#btnCloseNet').onclick = function(){ $('#maskNet').classList.remove('is-on'); };
+  $('#maskNet').onclick = function(e){ if(e.target === this) this.classList.remove('is-on'); };
+  $('#btnNetOn').onclick = function(){ state.net.on = true; save(); syncNetBadge(); $('#netMsg').textContent = '已开启。未匹配到本地工具时，会用真实模型回答。'; };
+  $('#btnNetOff').onclick = function(){ state.net.on = false; save(); syncNetBadge(); $('#netMsg').textContent = '已关闭。全部计算在本地完成。'; };
+  $('#btnNetSave').onclick = function(){
+    state.net.provider = $('#netProvider').value;
+    state.net.key = $('#netKey').value.trim();
+    state.net.base = $('#netBase').value.trim();
+    save(); $('#netMsg').textContent = '已保存（Key 仅存在本机 localStorage）'; toast('已保存');
+  };
+  $('#btnNetTest').onclick = function(){
+    var cfg = getNetCfg();
+    var msg = $('#netMsg');
+    if(!cfg.key){ msg.textContent = '请先填 Key'; return; }
+    msg.textContent = '测试中…实际连接受厂商 CORS 限制，失败不代表 Key 无效。';
+    fetch(cfg.url, {method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer ' + cfg.key},
+      body: JSON.stringify({model:cfg.model, messages:[{role:'user',content:'ping'}], max_tokens:5})
+    }).then(function(r){ return r.json(); })
+      .then(function(j){ msg.textContent = j.error ? ('厂商返回：' + (j.error.message||JSON.stringify(j.error))) : '✅ 连接成功'; })
+      .catch(function(e){ msg.textContent = '❌ 连接失败：' + e.message + '（多半是 CORS 限制）'; });
+  };
+
   // ===== Agent 导出 =====
   $('#btnExpStd').onclick = function(){
     var r = exportStd(); if(!r) return;
@@ -3819,6 +4446,9 @@ function restoreAll(){
   renderStratMode(); restoreTool(); renderToolChips();
   state.trace = state.trace || {};
   updateTraceStat();
+  state.chat = state.chat || []; state.blocks = state.blocks || [];
+  state.net = state.net || {on:false, provider:'deepseek', key:'', base:''};
+  renderChat(); renderBlocks();
   state.scores = state.scores || [];
   renderScoreTrend();
 }
