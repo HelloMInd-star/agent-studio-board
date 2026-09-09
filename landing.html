@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Y.Mine 营销 AI 工作台 · 本地运行的营销分析与内容工具</title>
+<meta name="description" content="营销策略、竞品分析、内容体检、商业图卡的本地 AI 工作台。不登录、不上传、不联网，数据只留在你自己的浏览器里。">
+<style>
+:root{
+  --brand:#4f46e5; --brand2:#7c3aed;
+  --brand-soft:rgba(79,70,229,.08);
+  --ok:#047857; --warn:#b45309; --alert:#b91c1c; --signal:#0369a1;
+  --bg:#fbfbfd; --bg-soft:#f4f5f9; --bg-elev:#ffffff;
+  --card:#ffffff;
+  --line:#e9eaf0; --line-strong:#d6d8e3;
+  --text:#14151a; --text-2:#5a5c6b; --text-3:#8b8d9c; --soft:#6b6d7c;
+  --font-disp:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --font-body:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;
+  --font-mono:"SF Mono",ui-monospace,"Menlo","Consolas",monospace;
+  --r-sm:8px; --r-md:12px; --r-lg:16px; --r-xl:22px;
+  --t-fast:160ms cubic-bezier(.2,.7,.2,1);
+  --shadow-sm:0 1px 2px rgba(16,17,26,.04), 0 1px 3px rgba(16,17,26,.03);
+  --shadow-md:0 4px 14px rgba(16,17,26,.06);
+  --shadow-lg:0 12px 32px rgba(16,17,26,.10);
+  --glass:rgba(255,255,255,.78);
+  --glass-line:rgba(20,21,26,.07);
+}
+html[data-theme="dark"]{
+  --brand:#8b85f7; --brand2:#a78bfa;
+  --brand-soft:rgba(139,133,247,.14);
+  --ok:#34d399; --warn:#fbbf24; --alert:#f87171; --signal:#60a5fa;
+  --bg:#0b0c10; --bg-soft:#12131a; --bg-elev:#16171f;
+  --card:#14151d;
+  --line:#23242f; --line-strong:#333545;
+  --text:#f0f0f4; --text-2:#a2a4b4; --text-3:#6e7080; --soft:#9a9caa;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.4);
+  --shadow-md:0 4px 16px rgba(0,0,0,.45);
+  --shadow-lg:0 12px 34px rgba(0,0,0,.55);
+  --glass:rgba(16,17,25,.76);
+  --glass-line:rgba(255,255,255,.09);
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:var(--font-body);font-size:15px;line-height:1.7;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+}
+h1,h2,h3,h4{margin:0;}
+a{color:inherit;text-decoration:none;}
+::selection{background:rgba(79,70,229,.18);}
+
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px;}
+.eyebrow{
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;
+  color:var(--text-3);text-transform:uppercase;
+}
+.eyebrow--dot::before{
+  content:"";display:inline-block;width:5px;height:5px;border-radius:100px;
+  background:var(--brand);margin-right:7px;vertical-align:middle;transform:translateY(-1px);
+}
+.btn{
+  display:inline-block;padding:11px 24px;border-radius:var(--r-md);
+  font-size:14.5px;font-weight:600;transition:var(--t-fast);border:1px solid transparent;
+}
+.btn--primary{background:linear-gradient(100deg,var(--brand),var(--brand2));color:#fff;box-shadow:0 6px 20px rgba(79,70,229,.26);}
+.btn--primary:hover{transform:translateY(-1px);box-shadow:0 10px 26px rgba(79,70,229,.34);}
+.btn--ghost{background:var(--card);color:var(--text);border-color:var(--line);}
+.btn--ghost:hover{border-color:var(--brand);color:var(--brand);}
+.btn--sm{padding:7px 14px;font-size:13px;border-radius:var(--r-sm);font-weight:500;}
+
+/* ===== Nav ===== */
+.nav{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;gap:16px;
+  padding:12px 22px;border-bottom:1px solid var(--glass-line);
+  background:var(--glass);
+  backdrop-filter:blur(20px) saturate(160%);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);
+}
+.nav__logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;letter-spacing:-.01em;}
+.nav__logo i{
+  width:22px;height:22px;border-radius:7px;display:inline-block;
+  background:linear-gradient(135deg,var(--brand),var(--brand2));
+}
+.nav__links{display:flex;gap:20px;margin-left:14px;font-size:13.5px;color:var(--text-2);}
+.nav__links a:hover{color:var(--brand);}
+.nav .spacer{flex:1;}
+@media(max-width:760px){.nav__links{display:none;}}
+
+/* ===== Hero ===== */
+.hero{
+  padding:74px 22px 60px;text-align:center;
+  background:
+    radial-gradient(1100px 400px at 20% -12%, rgba(79,70,229,.13), transparent 62%),
+    radial-gradient(820px 340px at 84% 0%, rgba(124,58,237,.11), transparent 60%);
+  border-bottom:1px solid var(--line);
+}
+.hero__title{
+  font-family:var(--font-disp);font-size:clamp(32px,5.4vw,52px);
+  line-height:1.08;letter-spacing:-.04em;font-weight:300;margin:16px 0 16px;
+}
+.hero__title b{
+  font-weight:600;
+  background:linear-gradient(100deg,var(--brand),var(--brand2));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero__sub{
+  max-width:620px;margin:0 auto 26px;font-size:16px;line-height:1.85;color:var(--text-2);
+}
+.hero__cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:30px;}
+.hero__stats{display:flex;gap:34px;justify-content:center;flex-wrap:wrap;}
+.hero__stat b{
+  display:block;font-family:var(--font-disp);font-size:24px;font-weight:300;
+  letter-spacing:-.02em;color:var(--text);
+}
+.hero__stat span{font-size:12px;color:var(--text-3);}
+
+/* ===== Section ===== */
+.sec{padding:64px 22px;border-bottom:1px solid var(--line);}
+.sec--soft{background:var(--bg-soft);}
+.sec__hd{max-width:660px;margin:0 auto 38px;text-align:center;}
+.sec__hd h2{
+  font-family:var(--font-disp);font-size:clamp(24px,3.4vw,34px);
+  font-weight:300;letter-spacing:-.03em;margin:10px 0 10px;
+}
+.sec__hd p{margin:0;color:var(--text-2);font-size:14.5px;line-height:1.8;}
+
+/* ===== 三步流程 ===== */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;}
+.stepc{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);
+  padding:22px;box-shadow:var(--shadow-sm);position:relative;
+}
+.stepc__no{
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;
+  color:var(--brand);margin-bottom:8px;
+}
+.stepc h3{font-size:16px;font-weight:600;margin-bottom:8px;letter-spacing:-.01em;}
+.stepc p{margin:0;font-size:13.5px;color:var(--text-2);line-height:1.8;}
+
+/* ===== 模块卡片 ===== */
+.mods{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;}
+.mod{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);
+  padding:20px;box-shadow:var(--shadow-sm);transition:var(--t-fast);
+  display:flex;flex-direction:column;
+}
+.mod:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--line-strong);}
+.mod__hd{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
+.mod__ico{font-size:20px;}
+.mod__name{font-size:15.5px;font-weight:600;letter-spacing:-.01em;}
+.mod__tag{
+  margin-left:auto;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.12em;
+  text-transform:uppercase;padding:3px 8px;border-radius:100px;
+  border:1px solid var(--line-strong);color:var(--text-3);white-space:nowrap;
+}
+.mod__tag.is-done{color:var(--ok);border-color:rgba(4,120,87,.3);}
+.mod__tag.is-wip{color:var(--signal);border-color:rgba(3,105,161,.3);}
+.mod__tag.is-plan{color:var(--text-3);}
+.mod__desc{font-size:13px;color:var(--text-2);margin:0 0 14px;line-height:1.75;}
+.io{display:flex;flex-direction:column;gap:6px;margin-top:auto;}
+.io__row{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;line-height:1.6;}
+.io__k{
+  flex:0 0 42px;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.1em;
+  color:var(--text-3);padding-top:3px;
+}
+.io__v{color:var(--text-2);}
+.io__v code{
+  font-family:var(--font-mono);font-size:11.5px;
+  background:var(--bg-soft);padding:1px 5px;border-radius:4px;color:var(--brand);
+}
+
+/* ===== 进度表 ===== */
+.road{display:flex;flex-direction:column;gap:10px;max-width:820px;margin:0 auto;}
+.road__row{
+  display:grid;grid-template-columns:14px 96px 1fr;gap:14px;align-items:start;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);
+  padding:13px 16px;
+}
+@media(max-width:640px){.road__row{grid-template-columns:14px 1fr;}.road__row .road__st{grid-column:2;}}
+.road__dot{width:9px;height:9px;border-radius:100px;margin-top:7px;}
+.road__dot.is-done{background:var(--ok);}
+.road__dot.is-wip{background:var(--signal);}
+.road__dot.is-plan{background:var(--text-3);opacity:.5;}
+.road__dot.is-no{background:var(--alert);opacity:.6;}
+.road__st{
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  padding-top:2px;
+}
+.road__st.is-done{color:var(--ok);}
+.road__st.is-wip{color:var(--signal);}
+.road__st.is-plan{color:var(--text-3);}
+.road__st.is-no{color:var(--alert);}
+.road__t{font-size:13.5px;line-height:1.7;}
+.road__t b{font-weight:600;}
+.road__t span{display:block;color:var(--text-2);font-size:12.5px;margin-top:2px;}
+
+/* ===== 取舍 ===== */
+.trade{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;}
+.trade__c{
+  border:1px solid var(--line);border-radius:var(--r-lg);padding:18px;background:var(--card);
+}
+.trade__c h4{font-size:14px;font-weight:600;margin-bottom:8px;display:flex;gap:7px;align-items:center;}
+.trade__c p{margin:0;font-size:13px;color:var(--text-2);line-height:1.8;}
+
+/* ===== CTA ===== */
+.final{padding:70px 22px;text-align:center;}
+.final h2{font-family:var(--font-disp);font-size:clamp(24px,3.4vw,34px);font-weight:300;letter-spacing:-.03em;margin-bottom:12px;}
+.final p{color:var(--text-2);margin:0 0 24px;font-size:14.5px;}
+
+.foot{padding:34px 22px 46px;text-align:center;color:var(--text-3);font-size:12.5px;border-top:1px solid var(--line);}
+.foot a{color:var(--brand);}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav__logo" href="#top"><i></i>Y.Mine</a>
+  <div class="nav__links">
+    <a href="#how">怎么用</a>
+    <a href="#modules">功能模块</a>
+    <a href="#roadmap">进度</a>
+    <a href="#trade">设计取舍</a>
+  </div>
+  <span class="spacer"></span>
+  <button class="btn btn--sm btn--ghost" id="btnTheme">🌙 深色</button>
+  <a class="btn btn--sm btn--primary" href="index.html">打开工作台 →</a>
+</nav>
+
+<header class="hero" id="top">
+  <div class="eyebrow eyebrow--dot">本地优先 · 营销专用</div>
+  <h1 class="hero__title">营销人的 <b>AI 工作台</b><br>策略、竞品、内容、排期</h1>
+  <p class="hero__sub">
+    不是又一个聊天窗口。它把营销里能算的部分<b>真的算出来</b>——竞品加权排名、市场优先级、
+    排期倒排、文案六维体检——全部在你自己的浏览器里跑完。
+  </p>
+  <div class="hero__cta">
+    <a class="btn btn--primary" href="index.html">打开工作台 →</a>
+    <a class="btn btn--ghost" href="#modules">先看看能做什么</a>
+  </div>
+  <div class="hero__stats">
+    <div class="hero__stat"><b>9</b><span>个功能模块</span></div>
+    <div class="hero__stat"><b>4</b><span>个确定性分析函数</span></div>
+    <div class="hero__stat"><b>102</b><span>条可溯源违禁词规则</span></div>
+    <div class="hero__stat"><b>0</b><span>条数据上传</span></div>
+  </div>
+</header>
+
+<section class="sec" id="how">
+  <div class="wrap">
+    <div class="sec__hd">
+      <div class="eyebrow">How it works</div>
+      <h2>三步走完一个营销任务</h2>
+      <p>大部分工具停在第一步——给你一段提示词。这个工作台想做到第三步。</p>
+    </div>
+    <div class="steps">
+      <div class="stepc">
+        <div class="stepc__no">STEP 01</div>
+        <h3>填一次品牌语境</h3>
+        <p>品牌名、品类、目标人群、核心卖点、语气、禁用词。填一次，之后每次生成和评分都自动带上——这是输出从「AI 味」变成「你家味」的唯一杠杆。</p>
+      </div>
+      <div class="stepc">
+        <div class="stepc__no">STEP 02</div>
+        <h3>选任务，本地直接算</h3>
+        <p>能算的部分不交给模型猜：竞品加权排名、GE 矩阵优先级、排期倒计时、六维评分，全部是确定性函数，同样的输入永远得到同样的结果。</p>
+      </div>
+      <div class="stepc">
+        <div class="stepc__no">STEP 03</div>
+        <h3>导出可交付的成品</h3>
+        <p>分析结论导出 Markdown，商业图卡导出 SVG / PNG，工作流导出 Coze / Dify，运行记录导出 Trace。产出的东西能直接进方案。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec--soft" id="modules">
+  <div class="wrap">
+    <div class="sec__hd">
+      <div class="eyebrow">Modules</div>
+      <h2>九个模块，每个都写清楚怎么用</h2>
+      <p>每张卡片是这个模块的输入、处理、输出。看一遍就知道它对你有没有用。</p>
+    </div>
+    <div class="mods">
+
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">🧠</span><span class="mod__name">营销角色</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">8 个营销专家角色的结构化提示词拼装。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">角色 + 任务 + 背景 + 要求</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">按结构化字段拼装，自动注入品牌语境</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">可直接粘贴到任意 AI 的提示词</span></div>
+        </div>
+      </div>
+
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">✍️</span><span class="mod__name">内容工厂</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">多平台文案生成 + 六维体检 + 误报反馈。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">标题、关键词、平台、字数、调性</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">生成文案 → 六维评分 → 违禁词扫描</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">文案 + 评分卡 + 优先改进建议</span></div>
+        </div>
+      </div>
+
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">📊</span><span class="mod__name">策略模板</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">双模式：提示词交给 AI 展开，计算模式本地算出结论。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">竞品打分 / 细分市场 / 营销节点</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v"><code>analyze_competitor_matrix</code> 等确定性函数</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">加权排名、机会点、优先级建议</span></div>
+        </div>
+      </div>
+
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">🍸</span><span class="mod__name">品牌人格</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">16 型人格映射品牌调性，输出语气指南。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">人格类型 + 品牌特质</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">人格特征映射到 Tone of Voice 维度</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">品牌语气指南 + 表达禁忌</span></div>
+        </div>
+      </div>
+
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">🔗</span><span class="mod__name">工作流</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">6 步编排 + 变量流校验 + 三种格式导出。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">每步指令、执行器、<code>{{变量}}</code>、失败策略</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">校验变量引用，区分 function 与 llm 执行器</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">标准 JSON / Coze / Dify 三种格式</span></div>
+        </div>
+      </div>
+
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">📚</span><span class="mod__name">品牌知识库</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">沉淀品牌资产、竞品素材、用户原声、违禁词。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">五个预设文件夹下的文档</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">生成时作为参考资料注入，可设范围与条数</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">真正影响产出的上下文（不是记事本）</span></div>
+        </div>
+      </div>
+
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">🖼️</span><span class="mod__name">商业图卡</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">手写 SVG，咨询提案版式，零依赖。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">SWOT 四象限 / 定位坐标 / 画像字段 / 漏斗数值</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">纯前端生成 SVG，不加载任何图表库</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">SVG（可编辑）/ PNG（2 倍图）</span></div>
+        </div>
+      </div>
+
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">💬</span><span class="mod__name">Agent 工作台</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">左边对话下达任务，右边文档沉淀产出。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">自然语言，如「做个竞品分析」</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">意图路由 → 调本地函数真执行，不装</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">结果 + 可编辑文档块，能引用回对话</span></div>
+        </div>
+      </div>
+
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">📅</span><span class="mod__name">营销日历</span><span class="mod__tag is-wip">进行中</span></div>
+        <p class="mod__desc">月视图 + 事件追踪 + 节点库 + 到期提醒。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">事件、日期、优先级、状态；或一键导入倒排结果</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">月视图渲染，打开页面时计算逾期与临期</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">日历视图 + 提醒横幅 + 状态追踪</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="roadmap">
+  <div class="wrap">
+    <div class="sec__hd">
+      <div class="eyebrow">Roadmap</div>
+      <h2>做到哪里了，哪些不做</h2>
+      <p>个人项目相对大厂的唯一优势，是可以诚实。下面包括「明确不做」的部分。</p>
+    </div>
+    <div class="road">
+      <div class="road__row">
+        <span class="road__dot is-done"></span><span class="road__st is-done">已完成</span>
+        <div class="road__t"><b>九个模块主链路</b><span>填品牌 → 存知识 → 生成/计算 → 体检 → 导出，两条链路都跑通</span></div>
+      </div>
+      <div class="road__row">
+        <span class="road__dot is-done"></span><span class="road__st is-done">已完成</span>
+        <div class="road__t"><b>四个确定性分析函数</b><span>竞品矩阵、STP 市场选择、营销日历倒排、内容体检。同样输入永远同样输出</span></div>
+      </div>
+      <div class="road__row">
+        <span class="road__dot is-done"></span><span class="road__st is-done">已完成</span>
+        <div class="road__t"><b>Agent 导出与运行记录</b><span>标准 JSON / Coze / Dify 三种格式，Trace 证明流程真跑过</span></div>
+      </div>
+      <div class="road__row">
+        <span class="road__dot is-wip"></span><span class="road__st is-wip">进行中</span>
+        <div class="road__t"><b>营销日历完整能力</b><span>月视图与提醒已可用；周/日视图、看板模式暂未做</span></div>
+      </div>
+      <div class="road__row">
+        <span class="road__dot is-wip"></span><span class="road__st is-wip">进行中</span>
+        <div class="road__t"><b>违禁词库扩容</b><span>现 102 条「小而准」。等真实误报反馈后再扩，不闭门造车</span></div>
+      </div>
+      <div class="road__row">
+        <span class="road__dot is-plan"></span><span class="road__st is-plan">规划中</span>
+        <div class="road__t"><b>多客户档案切换</b><span>把「品牌记忆」升级成多份档案 + 全局切换器。属于架构改造，排在后面</span></div>
+      </div>
+      <div class="road__row">
+        <span class="road__dot is-no"></span><span class="road__st is-no">明确不做</span>
+        <div class="road__t"><b>关页面后仍推送的定时提醒</b><span>纯前端做不到，页面一关 JS 就停。不做，也不假装能做</span></div>
+      </div>
+      <div class="road__row">
+        <span class="road__dot is-no"></span><span class="road__st is-no">明确不做</span>
+        <div class="road__t"><b>自动抓取竞品网页数据</b><span>浏览器 CORS 100% 拦截。除非自建代理，而那会破坏「不经手数据」的承诺</span></div>
+      </div>
+      <div class="road__row">
+        <span class="road__dot is-no"></span><span class="road__st is-no">明确不做</span>
+        <div class="road__t"><b>多人协作与多设备同步</b><span>需要账号与后端，与本地优先的定位冲突</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec--soft" id="trade">
+  <div class="wrap">
+    <div class="sec__hd">
+      <div class="eyebrow">Trade-offs</div>
+      <h2>几个关键取舍</h2>
+      <p>产品是取舍的结果。这些判断决定了它现在长这样。</p>
+    </div>
+    <div class="trade">
+      <div class="trade__c">
+        <h4>🧮 能算的不交给模型</h4>
+        <p>竞品加权排名、市场优先级、排期倒计时这类有确定答案的，写成函数。模型只负责需要创造力和判断的部分。确定性带来的可信度，比"什么都能聊"更值钱。</p>
+      </div>
+      <div class="trade__c">
+        <h4>🔒 默认全本地，联网自己开</h4>
+        <p>营销人手上有未发布的 campaign 和真实投放数据，不敢粘进任何 SaaS。默认不联网是产品定位，不是技术限制。开启后请求是浏览器直连厂商，不经过本站。</p>
+      </div>
+      <div class="trade__c">
+        <h4>🚫 宁可少报，不要误报</h4>
+        <p>「限时」「100%」「有机」「保证」都不是违禁词，真实促销和有认证就能用。一刀切拦截会毁掉工具的可信度。102 条规则每条都标了依据和适用条件。</p>
+      </div>
+      <div class="trade__c">
+        <h4>🖼️ 手写 SVG，不用图表库</h4>
+        <p>引入 Chart.js 就破了"不联网"，而且营销要的 SWOT、定位地图、GE 矩阵它反而画不好。手写 SVG 零依赖、体积小、完全可控。</p>
+      </div>
+      <div class="trade__c">
+        <h4>📦 开发拆分，发布合并</h4>
+        <p>源码拆成 17 个模块便于阅读，构建合并成单文件便于部署。既保留零依赖、双击即开的特性，又不牺牲代码可维护性。</p>
+      </div>
+      <div class="trade__c">
+        <h4>💬 不假装完成任务</h4>
+        <p>本地跑不了创作类任务时，它会明说"这需要真实模型"，然后给你结构化提示词。每条回复都标注是「已执行」还是「提示词」。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <h2>打开就能用，不需要注册</h2>
+  <p>所有数据存在你自己的浏览器里。清缓存会丢，记得用「导出配置」备份。</p>
+  <a class="btn btn--primary" href="index.html">打开工作台 →</a>
+</section>
+
+<footer class="foot">
+  <div>Y.Mine 应用矩阵 · <a href="index.html">营销 AI 工作台</a></div>
+  <div style="margin-top:6px">违禁词库为审核辅助工具，不构成法律意见。命中不等于违法。</div>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+  var KEY='ym_studio_v1';
+  function applyTheme(t){
+    document.documentElement.setAttribute('data-theme', t);
+    var b=document.getElementById('btnTheme');
+    if(b) b.textContent = (t==='dark' ? '☀️ 浅色' : '🌙 深色');
+  }
+  var t='light';
+  try{
+    var s=JSON.parse(localStorage.getItem(KEY)||'{}');
+    if(s && s.theme) t=s.theme;
+  }catch(e){}
+  applyTheme(t);
+  var btn=document.getElementById('btnTheme');
+  if(btn) btn.onclick=function(){
+    var cur=document.documentElement.getAttribute('data-theme');
+    var nx=(cur==='dark'?'light':'dark');
+    applyTheme(nx);
+    try{
+      var s=JSON.parse(localStorage.getItem(KEY)||'{}');
+      s.theme=nx; localStorage.setItem(KEY, JSON.stringify(s));
+    }catch(e){}
+  };
+})();
+</script>
+</body>
+</html>

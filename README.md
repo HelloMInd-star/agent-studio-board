@@ -4,7 +4,9 @@ A local-first marketing AI workspace: chat, deterministic analysis tools,
 strategy charts, workflow orchestration, and agent export — all in one
 static page. No backend, no tracking, no login.
 
-Live: https://hellomind-star.github.io/agent-studio-board/
+Live:
+- Landing (what it does / how to use / roadmap): https://hellomind-star.github.io/agent-studio-board/landing.html
+- Workspace (the tool): https://hellomind-star.github.io/agent-studio-board/
 
 ---
 
