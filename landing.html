@@ -86,6 +86,31 @@ a{color:inherit;text-decoration:none;}
 .nav__links a:hover{color:var(--brand);}
 .nav .spacer{flex:1;}
 @media(max-width:760px){.nav__links{display:none;}}
+@media(max-width:900px){
+  .nav__links{gap:14px;font-size:13px;}
+  .hero{padding:56px 18px 46px;}
+  .hero__stats{gap:26px;}
+  .sec{padding:48px 18px;}
+}
+@media(max-width:620px){
+  .hero{padding:44px 16px 38px;}
+  .hero__sub{font-size:15px;}
+  .hero__stats{gap:20px;}
+  .hero__stat b{font-size:20px;}
+  .mods{grid-template-columns:1fr;}
+  .trade{grid-template-columns:1fr;}
+  .steps{grid-template-columns:1fr;}
+  .sec{padding:40px 16px;}
+  .wrap{padding:0 16px;}
+  .final{padding:52px 16px;}
+  .nav{padding:10px 16px;}
+}
+@media(max-width:420px){
+  .hero__stats{gap:16px;}
+  .hero__stat b{font-size:18px;}
+  .hero__cta .btn{padding:10px 18px;font-size:14px;}
+  .road__row{padding:11px 13px;gap:10px;}
+}
 
 /* ===== Hero ===== */
 .hero{
@@ -406,6 +431,14 @@ a{color:inherit;text-decoration:none;}
       </div>
       <div class="road__row">
         <span class="road__dot is-plan"></span><span class="road__st is-plan">规划中</span>
+        <div class="road__t"><b>Agent 自主循环（L1 → L2）</b><span>现在是「编排 + 导出定义」。下一步让流程在浏览器内真跑起来：步骤自动串联、产出自动流入下一步、失败自动重试。难点仍是执行端在浏览器外，会先做轻量本地轮询</span></div>
+      </div>
+      <div class="road__row">
+        <span class="road__dot is-plan"></span><span class="road__st is-plan">规划中</span>
+        <div class="road__t"><b>扩充可调用工具集</b><span>新增投放数据诊断、A/B 标题评分等确定性函数。原则不变：能算的不交给模型，每个新函数同步注册为 Agent 可调用的 tool</span></div>
+      </div>
+      <div class="road__row">
+        <span class="road__dot is-plan"></span><span class="road__st is-plan">规划中</span>
         <div class="road__t"><b>多客户档案切换</b><span>把「品牌记忆」升级成多份档案 + 全局切换器。属于架构改造，排在后面</span></div>
       </div>
       <div class="road__row">
@@ -451,6 +484,10 @@ a{color:inherit;text-decoration:none;}
       <div class="trade__c">
         <h4>📦 开发拆分，发布合并</h4>
         <p>源码拆成 17 个模块便于阅读，构建合并成单文件便于部署。既保留零依赖、双击即开的特性，又不牺牲代码可维护性。</p>
+      </div>
+      <div class="trade__c">
+        <h4>🤖 工具即 Function</h4>
+        <p>每个分析工具同时是人的表单和 Agent 的可调用函数，导出时带完整 schema。这样「工具」和「Agent」不是两个产品，而是同一套能力的两种形态。</p>
       </div>
       <div class="trade__c">
         <h4>💬 不假装完成任务</h4>

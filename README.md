@@ -163,6 +163,7 @@ execute deterministically instead of asking an LLM:
 - `plan_marketing_calendar`
 - `check_content_health`
 - `generate_mind_map`
+- `generate_mind_map`
 
 **Trace**: record each step's real output with status and notes, export as
 Markdown. Shows a workflow was executed, not just designed.
