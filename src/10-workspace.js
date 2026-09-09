@@ -336,6 +336,22 @@ var INTENTS = [
    tool:'render_chart', label:'转化漏斗'},
   {k:'chart_mind', kw:['思维导图','导图','脑图','mindmap','结构拆解','发散'],
    tool:'render_chart', label:'思维导图'},
+  {k:'five', kw:['波特五力','五力模型','五力分析','行业吸引力','值不值得进','行业格局'],
+   tool:'analyze_porter_five_forces', label:'波特五力分析'},
+  {k:'pest', kw:['pest','宏观环境','宏观','政策环境','经济环境','社会环境','技术趋势'],
+   tool:'analyze_pest', label:'PEST 宏观环境扫描'},
+  {k:'ansoff', kw:['安索夫','增长策略','市场渗透','多元化','增长方向','往哪走'],
+   tool:'plan_ansoff_growth', label:'安索夫增长矩阵'},
+  {k:'ge9', kw:['ge矩阵','九宫格','ge九宫格','麦肯锡矩阵','业务组合'],
+   tool:'evaluate_ge_nine_box', label:'GE-McKinsey 九宫格'},
+  {k:'vc', kw:['价值链','成本占比','降本增效','利润贡献','环节效率'],
+   tool:'analyze_value_chain', label:'价值链分析'},
+  {k:'cj', kw:['用户旅程','旅程地图','情绪曲线','体验地图','用户体验','journey'],
+   tool:'map_customer_journey', label:'用户旅程地图'},
+  {k:'ogsm', kw:['ogsm','目标拆解','战略落地','执行计划','战略解码'],
+   tool:'build_ogsm', label:'OGSM 战略拆解'},
+  {k:'pm', kw:['感知地图','心智地图','品牌定位图','差异化山头','认知地图'],
+   tool:'map_perceptual', label:'品牌感知地图'},
   {k:'write', kw:['写','文案','小红书','公众号','标题','种草','脚本','生成内容'],
    tool:'prompt', label:'内容创作'}
 ];
@@ -445,6 +461,22 @@ function runLocalTool(kind, ctxText){
     }
     kindLabel = '内容体检';
     addBlock('analysis', '内容体检 ' + sc.total + ' 分' + (demoUsed ? '（示例文案）' : ''), out, demoUsed ? '示例数据' : '');
+  }
+  else if(['five','pest','ansoff','ge9','vc','cj','ogsm','pm'].indexOf(kind) >= 0){
+    var TKF = {five:calcFive, pest:calcPest, ansoff:calcAnsoff, ge9:calcGE,
+               vc:calcVC, cj:calcCJ, ogsm:calcOGSM, pm:calcPM};
+    var TKO = {five:'#k5Out', pest:'#kpOut', ansoff:'#kaOut', ge9:'#kgOut',
+               vc:'#kvOut', cj:'#kjOut', ogsm:'#koOut', pm:'#kmOut'};
+    var TKL = {five:'波特五力分析', pest:'PEST 宏观环境扫描', ansoff:'安索夫增长矩阵',
+               ge9:'GE-McKinsey 九宫格', vc:'价值链分析', cj:'用户旅程地图',
+               ogsm:'OGSM 战略拆解', pm:'品牌感知地图'};
+    var tkr = TKF[kind] ? TKF[kind]() : null;
+    if(!tkr) return {text:'数据不足，请先到「🧰 经典工具 → ' + TKL[kind] + '」填写。', demo:false, kind:'analysis'};
+    var tke = $(TKO[kind]);
+    out = tke ? String(tke.textContent || '').replace(/\s+/g,' ').trim() : '';
+    if(!out || out.length < 30) out = '已生成 ' + TKL[kind] + '，完整图表请到「🧰 经典工具」查看。';
+    kindLabel = TKL[kind];
+    addBlock('analysis', TKL[kind], out, '');
   }
   else if(kind.indexOf('chart_') === 0){
     var ct = kind.replace('chart_','');

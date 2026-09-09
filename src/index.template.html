@@ -59,6 +59,8 @@
   <button class="tab" data-tab="research"><span class="tab__name">📐 调研方案</span><span class="tab__desc">模板 · 假设 · 验证</span></button>
   <button class="tab" data-tab="strat"><span class="tab__name">🎯 战略矩阵</span><span class="tab__desc">SWOT · TOWS · BCG</span></button>
   <button class="tab" data-tab="fin"><span class="tab__name">💹 财务测算</span><span class="tab__desc">GMV · LTV · 预算</span></button>
+  <button class="tab" data-tab="tkm"><span class="tab__name">🧰 经典工具</span><span class="tab__desc">五力 · PEST · OGSM</span></button>
+  <button class="tab" data-tab="toolmap"><span class="tab__name">🗺️ 工具地图</span><span class="tab__desc">70 个框架全景</span></button>
 </nav>
 
 <!-- ===================== 主体 ===================== -->
@@ -132,6 +134,146 @@
 
   <!-- ---------- 中栏 ---------- -->
   <main>
+
+    <!-- ===== 经典营销工具箱 ===== -->
+    <section class="panel" data-panel="tkm">
+      <h2 class="panel__hd">🧰 经典营销工具箱</h2>
+      <p class="panel__sub">8 个咨询级框架，全部可算、可出图。<b>能算的做成工具</b>，不生成让你自己琢磨的文字。</p>
+      <div class="chips" id="tkTools">
+        <button class="chip" data-tktool="five">⚔️ 行业吸引力判断</button>
+        <button class="chip" data-tktool="pest">🏛️ 宏观环境扫描</button>
+        <button class="chip" data-tktool="ansoff">🚀 增长策略选择</button>
+        <button class="chip" data-tktool="ge">🎯 业务组合分析</button>
+        <button class="chip" data-tktool="vc">🔗 成本与利润优化</button>
+        <button class="chip" data-tktool="cj">🚶 体验优化</button>
+        <button class="chip" data-tktool="ogsm">📋 OGSM 模型</button>
+        <button class="chip" data-tktool="pm">🗺️ 感知地图</button>      </div>
+
+      <div class="tksec" data-tksec="five" style="display:none">
+        <h3 class="tksec__t">⚔️ 波特五力</h3>
+        <p class="hint">行业吸引力判断</p>
+        <label class="f"><span>数据（每行一条）</span>
+          <textarea id="k5_rows" style="min-height:120px">供应商议价能力,6\n购买者议价能力,7\n新进入者威胁,5\n替代品威胁,4\n同业竞争程度,8</textarea></label>
+        <div class="row" style="margin-top:8px">
+          <button class="btn btn--primary btn--sm" id="btnK5">⚡ 分析</button>
+        </div>
+        <div class="chartwrap" id="k5Chart"><span class="ph">—</span></div>
+        <div class="preview" id="k5Out"><span class="ph">点「⚡ 分析」生成</span></div>
+      </div>
+
+      <div class="tksec" data-tksec="pest" style="display:none">
+        <h3 class="tksec__t">🏛️ PEST 分析</h3>
+        <p class="hint">宏观环境扫描</p>
+        <label class="f"><span>数据（每行一条）</span>
+          <textarea id="kp_rows" style="min-height:120px">政治政策,新广告法趋严,威胁,4\n经济环境,消费降级客单下滑,威胁,3\n社会文化,成分党崛起,机会,5\n技术趋势,AI 内容生产降本,机会,4</textarea></label>
+        <div class="row" style="margin-top:8px">
+          <button class="btn btn--primary btn--sm" id="btnKP">⚡ 分析</button>
+        </div>
+        <div class="chartwrap" id="kpChart"><span class="ph">—</span></div>
+        <div class="preview" id="kpOut"><span class="ph">点「⚡ 分析」生成</span></div>
+      </div>
+
+      <div class="tksec" data-tksec="ansoff" style="display:none">
+        <h3 class="tksec__t">🚀 安索夫矩阵</h3>
+        <p class="hint">增长策略选择</p>
+        <label class="f"><span>数据（每行一条）</span>
+          <textarea id="ka_rows" style="min-height:120px">市场渗透,提升复购频次,8,3\n市场开发,下沉渠道拓展,6,5\n产品开发,推出子品牌,7,6\n多元化,跨界联名,5,8</textarea></label>
+        <div class="row" style="margin-top:8px">
+          <button class="btn btn--primary btn--sm" id="btnKA">⚡ 分析</button>
+        </div>
+        <div class="chartwrap" id="kaChart"><span class="ph">—</span></div>
+        <div class="preview" id="kaOut"><span class="ph">点「⚡ 分析」生成</span></div>
+      </div>
+
+      <div class="tksec" data-tksec="ge" style="display:none">
+        <h3 class="tksec__t">🎯 GE 九宫格</h3>
+        <p class="hint">业务组合分析</p>
+        <label class="f"><span>数据（每行一条）</span>
+          <textarea id="kg_rows" style="min-height:120px">直播电商,5,4,800\n私域会员,4,4,400\n线下经销,2,3,600\n跨境业务,5,2,200</textarea></label>
+        <div class="row" style="margin-top:8px">
+          <button class="btn btn--primary btn--sm" id="btnKG">⚡ 分析</button>
+        </div>
+        <div class="chartwrap" id="kgChart"><span class="ph">—</span></div>
+        <div class="preview" id="kgOut"><span class="ph">点「⚡ 分析」生成</span></div>
+      </div>
+
+      <div class="tksec" data-tksec="vc" style="display:none">
+        <h3 class="tksec__t">🔗 价值链分析</h3>
+        <p class="hint">成本与利润优化</p>
+        <label class="f"><span>数据（每行一条）</span>
+          <textarea id="kv_rows" style="min-height:120px">供应链管理,18,12\n生产制造,25,20\n市场营销,35,12\n销售渠道,12,28\n售后服务,10,28</textarea></label>
+        <div class="row" style="margin-top:8px">
+          <button class="btn btn--primary btn--sm" id="btnKV">⚡ 分析</button>
+        </div>
+        <div class="chartwrap" id="kvChart"><span class="ph">—</span></div>
+        <div class="preview" id="kvOut"><span class="ph">点「⚡ 分析」生成</span></div>
+      </div>
+
+      <div class="tksec" data-tksec="cj" style="display:none">
+        <h3 class="tksec__t">🚶 用户旅程地图</h3>
+        <p class="hint">体验优化</p>
+        <label class="f"><span>数据（每行一条）</span>
+          <textarea id="kj_rows" style="min-height:120px">认知,刷到种草笔记,3,信息太杂记不住\n考虑,对比成分表,2,参数看不懂\n决策,犹豫价格,2,不知值不值\n购买,下单支付,4,流程繁琐\n使用,开箱体验,5,包装难拆\n推荐,分享返现,4,没有分享动力</textarea></label>
+        <div class="row" style="margin-top:8px">
+          <button class="btn btn--primary btn--sm" id="btnKJ">⚡ 分析</button>
+        </div>
+        <div class="chartwrap" id="kjChart"><span class="ph">—</span></div>
+        <div class="preview" id="kjOut"><span class="ph">点「⚡ 分析」生成</span></div>
+      </div>
+
+      <div class="tksec" data-tksec="ogsm" style="display:none">
+        <h3 class="tksec__t">📋 OGSM 模型 · 战略落地</h3>
+        <p class="hint">四层必须能被下一层翻译。缺任一层即断链。</p>
+        <label class="f"><span>终极目标 O</span><input type="text" id="ko_o" value="成为细分品类第一"></label>
+        <label class="f"><span>具体目标 G</span><input type="text" id="ko_g" value="Q4 GMV 破 5000 万"></label>
+        <label class="f"><span>策略 S</span><input type="text" id="ko_s" value="抖音+小红书双平台投放"></label>
+        <label class="f"><span>衡量 M</span><input type="text" id="ko_m" value="ROI≥3，CPL≤50"></label>
+        <div class="row" style="margin-top:8px">
+          <button class="btn btn--primary btn--sm" id="btnKO">⚡ 生成拆解</button>
+        </div>
+        <div class="chartwrap" id="koChart"><span class="ph">—</span></div>
+        <div class="preview" id="koOut"><span class="ph">点「⚡ 生成拆解」</span></div>
+      </div>
+
+      <div class="tksec" data-tksec="pm" style="display:none">
+        <h3 class="tksec__t">🗺️ 感知地图 · 品牌定位</h3>
+        <p class="hint">看<b>用户心智坐标</b>，不是客观参数。虚线格为无品牌占据的空白区。</p>
+        <div class="grid2">
+          <label class="f"><span>X 轴</span><input type="text" id="km_x" value="年轻 ↔ 传统"></label>
+          <label class="f"><span>Y 轴</span><input type="text" id="km_y" value="高端 ↔ 平价"></label>
+        </div>
+        <label class="f"><span>品牌坐标：名称,X,Y（0-10）</span>
+          <textarea id="km_rows" style="min-height:110px">我方,7,6
+竞品A,3,8
+竞品B,8,3
+竞品C,5,5</textarea></label>
+        <div class="row" style="margin-top:8px">
+          <button class="btn btn--primary btn--sm" id="btnKM">⚡ 生成地图</button>
+        </div>
+        <div class="chartwrap" id="kmChart"><span class="ph">—</span></div>
+        <div class="preview" id="kmOut"><span class="ph">点「⚡ 生成地图」</span></div>
+      </div>
+    </section>
+
+    <!-- ===== 营销工具地图 ===== -->
+    <section class="panel" data-panel="toolmap">
+      <h2 class="panel__hd">🗺️ 营销工具地图</h2>
+      <p class="panel__sub">70 个经典营销框架全景。已实现的直接跳转，未实现的提供<b>方法论速查</b>——没有空壳卡片。</p>
+
+      <div class="card">
+        <div class="card__hd">📂 筛选 <span class="eyebrow" id="tmCount" style="margin-left:auto"></span></div>
+        <div class="row" style="flex-wrap:wrap;gap:8px;margin-top:8px">
+          <input type="text" id="tmSearch" placeholder="🔍 搜索工具名称 / 英文名" style="flex:1;min-width:200px">
+        </div>
+        <div class="chips" id="tmCats" style="margin-top:8px"></div>
+        <div class="chips" id="tmSts" style="margin-top:6px"></div>
+      </div>
+
+      <div class="tmgrid" id="tmGrid"></div>
+      <div class="tmd" id="tmDetail"></div>
+    </section>
+
+
 
     <!-- ===== 开始：场景化流程导航 ===== -->
     <section class="panel is-on" data-panel="guide">

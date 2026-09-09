@@ -274,6 +274,34 @@ function bind(){
     switchTab('cal');
   };
 
+  // ===== 经典工具箱：计算按钮 =====
+  var tkBtns = [['#btnK5',calcFive],['#btnKP',calcPest],['#btnKA',calcAnsoff],['#btnKG',calcGE],
+                ['#btnKV',calcVC],['#btnKJ',calcCJ],['#btnKO',calcOGSM],['#btnKM',calcPM]];
+  tkBtns.forEach(function(b){
+    var e = $(b[0]);
+    if(e) e.onclick = function(){ try{ b[1](); }catch(err){ toast('计算出错：' + err.message); } };
+  });
+
+  // ===== 经典工具箱：工具切换 =====
+  [].forEach.call(document.querySelectorAll('[data-tktool]'), function(b){
+    b.onclick = function(){
+      var k = b.getAttribute('data-tktool');
+      [].forEach.call(document.querySelectorAll('[data-tktool]'), function(x){
+        x.classList.toggle('is-on', x === b);
+      });
+      [].forEach.call(document.querySelectorAll('[data-tksec]'), function(sec){
+        sec.style.display = (sec.getAttribute('data-tksec') === k) ? '' : 'none';
+      });
+      state.tkCur = k; save();
+    };
+  });
+
+  // ===== 工具地图 =====
+  var ts = $('#tmSearch');
+  if(ts) ts.addEventListener('input', function(){
+    tmState().q = ts.value.trim(); save(); renderToolMap();
+  });
+
   // ===== 开始：流程导航 =====
   $('#btnGdAsk').onclick = guideAsk;
   var gi = $('#gdInput');

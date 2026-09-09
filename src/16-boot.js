@@ -182,6 +182,46 @@ function restoreAll(){
   /* 开始页：默认打开，先解决「从哪开始」 */
   renderGuideAll();
 
+  /* 经典工具箱：回填 + 默认显示第一个 */
+  var TK = tk();
+  var tkFields = [['#k5_rows','five','rows'],['#kp_rows','pest','rows'],['#ka_rows','ansoff','rows'],
+                  ['#kg_rows','ge','rows'],['#kv_rows','vc','rows'],['#kj_rows','cj','rows'],
+                  ['#km_rows','pm','rows'],['#km_x','pm','x'],['#km_y','pm','y'],
+                  ['#ko_o','ogsm','o'],['#ko_g','ogsm','g'],['#ko_s','ogsm','s'],['#ko_m','ogsm','m']];
+  tkFields.forEach(function(a){
+    var e = $(a[0]); if(e) e.value = (TK[a[1]] || {})[a[2]] || e.value;
+  });
+  var tkCur = state.tkCur || 'five';
+  var firstChip = document.querySelector('[data-tktool="' + tkCur + '"]');
+  if(firstChip) firstChip.click();
+
+  /* 工具地图：分类/状态 chips + 首屏渲染 */
+  var catsHost = $('#tmCats'), stsHost = $('#tmSts');
+  if(catsHost){
+    catsHost.innerHTML = '';
+    TM_CATS.forEach(function(c){
+      var b = document.createElement('button');
+      b.className = 'chip';
+      b.setAttribute('data-tmcat', c.k);
+      b.textContent = c.n;
+      b.onclick = function(){ tmFilter('cat', c.k); };
+      catsHost.appendChild(b);
+    });
+  }
+  if(stsHost){
+    stsHost.innerHTML = '';
+    [['all','全部'],['done','✅ 已实现'],['planned','🚧 部分覆盖'],['todo','📋 方法论速查']].forEach(function(c){
+      var b = document.createElement('button');
+      b.className = 'chip';
+      b.setAttribute('data-tmst', c[0]);
+      b.textContent = c[1];
+      b.onclick = function(){ tmFilter('st', c[0]); };
+      stsHost.appendChild(b);
+    });
+  }
+  renderToolMap();
+  tmSyncUI();
+
   /* sticky 偏移同步：topbar 换行后高度变化，Tab 栏要跟着下移 */
   function syncSticky(){
     var tb = document.querySelector('.topbar');

@@ -58,6 +58,47 @@ function toolManifest(){
      description:'把缩进文本解析为树状结构，生成思维导图 SVG。第一行是中心主题，子项用空格或 Tab 缩进表示层级。确定性计算。',
      parameters:{type:'object', properties:{
        title:{type:'string'}, body:{type:'string'}}, required:['body']}},
+    {name:'analyze_porter_five_forces', label:'波特五力分析',
+     description:'五力强度打分(1-10)，算出行业吸引力(100-均值×10)、最大威胁与最弱环节，并给进入建议。确定性计算。',
+     parameters:{type:'object', properties:{
+       rows:{type:'array', description:'每个元素 {n:力量名, v:强度1-10}'}}, required:['rows']},
+     returns:{type:'object', properties:{attract:{type:'number'}, rows:{type:'array'}}}},
+    {name:'analyze_pest', label:'PEST宏观环境扫描',
+     description:'四维度(政治/经济/社会/技术)各填内容与机会/威胁及强度1-5，算出机会总强度、威胁总强度、净环境分，并判断顺风/中性/逆风。确定性计算。',
+     parameters:{type:'object', properties:{
+       rows:{type:'array', description:'每个元素 {d:维度, txt:内容, kind:机会|威胁, v:强度1-5}'}}, required:['rows']},
+     returns:{type:'object', properties:{oppS:{type:'number'}, thrS:{type:'number'}, net:{type:'number'}}}},
+    {name:'plan_ansoff_growth', label:'安索夫增长矩阵',
+     description:'四象限(渗透/开发/新产品/多元化)各填策略、预期收益1-10、风险1-10，算出性价比=收益/风险并给执行顺序。确定性计算。',
+     parameters:{type:'object', properties:{
+       rows:{type:'array', description:'每个元素 {q:象限, s:策略, gain:收益, risk:风险}'}}, required:['rows']},
+     returns:{type:'object', properties:{ranked:{type:'array'}}}},
+    {name:'evaluate_ge_nine_box', label:'GE-McKinsey九宫格',
+     description:'业务×行业吸引力(1-5)×业务竞争力(1-5)×规模，落入3×3九宫格并给投资增长/选择性投资/维持收割/收割退出建议。比BCG精细：用综合吸引力替代单一增长率。确定性计算。',
+     parameters:{type:'object', properties:{
+       rows:{type:'array', description:'每个元素 {n:业务, a:吸引力, c:竞争力, size:规模}'}}, required:['rows']},
+     returns:{type:'object', properties:{rows:{type:'array'}}}},
+    {name:'analyze_value_chain', label:'价值链成本利润分析',
+     description:'各环节成本占比与利润贡献，算出效率比=利润/成本，自动标注低效环节(<0.5，降本首选)与高效环节(>1.2，应加大投入)。确定性计算。',
+     parameters:{type:'object', properties:{
+       rows:{type:'array', description:'每个元素 {n:环节, cost:成本占比, profit:利润贡献}'}}, required:['rows']},
+     returns:{type:'object', properties:{bad:{type:'array'}, good:{type:'array'}}}},
+    {name:'map_customer_journey', label:'用户旅程地图',
+     description:'各阶段行为、情绪分(1-5)、痛点，输出情绪曲线、平均情绪分、情绪低谷与痛点清单。确定性计算。',
+     parameters:{type:'object', properties:{
+       rows:{type:'array', description:'每个元素 {s:阶段, act:行为, emo:情绪1-5, pain:痛点}'}}, required:['rows']},
+     returns:{type:'object', properties:{avg:{type:'number'}, low:{type:'object'}}}},
+    {name:'build_ogsm', label:'OGSM战略拆解',
+     description:'四层(终极目标/具体目标/策略/衡量)拆解，检查四层是否齐备、Goals与Measures是否含数字(可量化)，输出断链提醒。确定性计算。',
+     parameters:{type:'object', properties:{
+       o:{type:'string'}, g:{type:'string'}, s:{type:'string'}, m:{type:'string'}}, required:['o','g']},
+     returns:{type:'object', properties:{o:{type:'string'}, g:{type:'string'}, s:{type:'string'}, m:{type:'string'}}}},
+    {name:'map_perceptual', label:'品牌感知地图',
+     description:'自定义两轴+各品牌坐标(0-10)，输出2D散点图、最近竞品距离与区隔度诊断、3×3空白区识别。看用户心智坐标而非客观参数。确定性计算。',
+     parameters:{type:'object', properties:{
+       x:{type:'string'}, y:{type:'string'},
+       rows:{type:'array', description:'每个元素 {n:品牌, x:0-10, y:0-10}'}}, required:['rows']},
+     returns:{type:'object', properties:{empty:{type:'array'}, me:{type:'object'}}}},
     {name:'calc_marketing_finance', label:'营销财务测算',
      description:'四个高频场景：①GMV 增量拆解（逐因子替换法归因，各因子贡献之和恒等于总增量，无残差）；②LTV/CAC（毛利口径 + 回本周期 + 四档健康判定）；③预算分配矩阵（渠道×目标热力图，行和 100% 校验）；④渠道效率雷达（多维归一化，成本类维度自动反向计分）。输出图表 SVG + 结论。确定性计算。',
      parameters:{type:'object', properties:{

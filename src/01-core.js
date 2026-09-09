@@ -66,5 +66,7 @@ var state = {
   research:null,
   mx:null,
   fin:null,
-  guide:null
+  guide:null,
+  tk:null,
+  tm:null
 };
