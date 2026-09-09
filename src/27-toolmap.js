@@ -252,7 +252,8 @@ function renderToolMap(){
   var plan = TOOLMAP.filter(function(t){ return t.st === 'planned'; }).length;
   var todo = TOOLMAP.filter(function(t){ return t.st === 'todo'; }).length;
   var cnt = $('#tmCount');
-  if(cnt) cnt.textContent = '✅ ' + done + ' 已实现 · 🚧 ' + plan + ' 部分覆盖 · 📋 ' + todo + ' 方法论速查';
+  if(cnt) cnt.textContent = '✅ ' + done + ' 已实现 · 🚧 ' + plan + ' 部分覆盖 · 📋 ' + todo + ' 方法论速查' +
+    ' · 📐 ' + TOOLMAP.length + ' 个全部配结构示意图';
 
   var list = TOOLMAP.filter(function(t){
     if(M.cat !== 'all' && t.cat !== M.cat) return false;
@@ -310,6 +311,20 @@ function tmOpen(id){
        '</span></div>';
   h += '<p class="tmd__en">' + esc(t.en) + '　·　' + esc(t.catN) + '　·　图表形态：' + esc(t.chart) + '</p>';
   h += '<p class="tmd__d">' + esc(t.d) + '</p>';
+  /* 结构示意图 —— 70 个框架每个都有，不需要填数据即可看懂结构 */
+  var fig = '';
+  try{ fig = frameSVG(t.id); }catch(e){ fig = ''; }
+  if(fig){
+    h += '<div class="tmd__fig">' +
+      '<div class="tmd__fighd">' +
+        '<span>📐 结构示意图 · ' + esc(frameFigName(t.id) || t.chart) + '</span>' +
+        '<button class="btn btn--sm" data-tmsvg="' + t.id + '">⬇ 导出 SVG</button>' +
+      '</div>' +
+      '<div class="tmd__svgbox">' + fig + '</div>' +
+      '<div class="tmd__fignote">这是<b>结构示意图</b>——展示这个框架长什么样、每格填什么。' +
+      '要算带真实数据的图，请用「前往该模块」。</div>' +
+    '</div>';
+  }
   h += '<div class="tmd__row"><span class="tmd__k">看什么</span><span class="tmd__v">' + esc(t.w) + '</span></div>';
   h += '<div class="tmd__row"><span class="tmd__k">输出什么</span><span class="tmd__v">' + esc(t.o) + '</span></div>';
   h += '<div class="tmd__row is-warn"><span class="tmd__k">常见误用</span><span class="tmd__v">' + esc(t.m) + '</span></div>';
@@ -325,6 +340,29 @@ function tmOpen(id){
   }
   box.innerHTML = h;
   box.className = 'tmd is-on';
+  /* 导出结构示意图：把 CSS 变量替换成实际色值，保证独立打开也能正常显示 */
+  var dsvg = box.querySelector('[data-tmsvg]');
+  if(dsvg) dsvg.onclick = function(){
+    var svgEl = box.querySelector('.tmd__svgbox svg');
+    if(!svgEl) return;
+    var out = svgEl.outerHTML;
+    try{
+      var cs = getComputedStyle(document.documentElement);
+      out = out.replace(/var\(--([a-z0-9-]+)\)/g, function(m, k){
+        var v = cs.getPropertyValue('--' + k);
+        return (v && v.trim()) ? v.trim() : '#888';
+      });
+    }catch(e){}
+    var xml = '<?xml version="1.0" encoding="UTF-8"?>\n' + out;
+    if(typeof downloadFile === 'function'){
+      downloadFile('框架示意图_' + t.n + '.svg', xml, 'image/svg+xml');
+    } else {
+      var b = new Blob([xml], {type:'image/svg+xml;charset=utf-8'});
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(b); a.download = '框架示意图_' + t.n + '.svg';
+      a.click();
+    }
+  };
   var go = box.querySelector('[data-tmgo]');
   if(go) go.onclick = function(){
     var fn = go.getAttribute('data-tmfn');

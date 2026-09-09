@@ -201,6 +201,38 @@ so rather than faking success.
 
 ---
 
+### 3.9 Frame skeleton engine (70 diagrams from 24 skeletons)
+
+The tool map lists 70 classic marketing frameworks. Naively that would mean
+70 hand-written SVG renderers. It does not: **marketing frameworks collapse
+into ~24 graphic structures**.
+
+```
+quad2  grid3  radar  quadbubble  pyramid  funnel  journey  hex6
+gauge  ring   scatter  curve     area     sankey  heat     cycle
+bars   diamond  flow  cards      waterfall  gantt  matrix  cloud  treemap
+```
+
+Each framework is then just `skeleton type + labels`:
+
+```js
+'S-02': {s:'radar', t:'五边形雷达图',
+         l:['供应商议价','购买者议价','新进入者','替代品','同业竞争']}
+```
+
+Two things this buys:
+
+- **70 diagrams, ~750 lines of engine code** instead of 70 bespoke renderers
+- Every card has real content — including the 39 frameworks *not* built as
+  tools, which show a **structure diagram** plus `看什么 / 输出什么 / 常见误用`
+
+These are **structure diagrams, not data charts**: they show what the
+framework looks like and what goes in each cell. Real numbers come from the
+actual tool modules. Export replaces CSS variables with computed colours so
+the `.svg` renders standalone.
+
+---
+
 ## 4. Data
 
 Everything lives in `localStorage` under `ym_studio_v1`. Clearing browser

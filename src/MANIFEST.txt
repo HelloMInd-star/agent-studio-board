@@ -12,5 +12,18 @@
 12-generate.js	生成逻辑
 13-scan.js	内容体检六维评分
 14-feedback.js	误报反馈
+17-calendar.js	营销日历(月视图/节点库/到期提醒)
+18-synth.js	方案合成(跨8模块聚合 + 缺口诊断)
+19-pricing.js	定价策略(5法定价 + 折扣保本 + 价格带图)
+20-market.js	区域市场优先级 + 竞品档案追踪
+21-hotspot.js	热点决策(五维打分 + 高危否决 + 矛盾校验)
+22-research.js	调研方案模板库(假设/市场/交叉矩阵/WTP)
+23-strategy.js	战略矩阵(SWOT/TOWS/BCG/快照迁移)
+24-finance.js	营销财务测算(GMV归因/LTV CAC/预算矩阵/渠道雷达)
+25-guide.js	场景化流程导航 + 对话式入口
+26-toolkit.js	经典工具箱(8个咨询框架,可算可出图)
+28-framesvg.js	框架结构示意图引擎(24种SVG骨架)
+29-framecfg.js	70框架 → 骨架配置表
+27-toolmap.js	70工具全景地图(三态卡片,全部有内容)
 15-bind.js	事件绑定
 16-boot.js	回填 + 启动

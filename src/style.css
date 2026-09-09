@@ -914,3 +914,29 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
   .tcard{padding:12px;}
   .tmd__k{flex:0 0 56px;}
 }
+
+/* =========================================================
+ * 框架结构示意图（工具地图详情）
+ * ========================================================= */
+.tmd__fig{
+  margin:14px 0 4px;padding:14px;border:1px solid var(--line);
+  border-radius:var(--r-md);background:var(--bg-soft);
+}
+.tmd__fighd{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-bottom:10px;font-size:12px;color:var(--text-2);font-weight:600;
+  letter-spacing:.02em;
+}
+.tmd__svgbox{
+  background:var(--card);border:1px solid var(--line);
+  border-radius:var(--r-sm);padding:8px;overflow:hidden;
+}
+.tmd__svgbox svg{max-width:100%;height:auto;display:block;}
+.tmd__fignote{
+  margin-top:10px;font-size:12px;line-height:1.6;color:var(--text-3);
+  border-left:3px solid var(--brand);padding-left:10px;
+}
+.tmd__fignote b{color:var(--text-2);}
+@media (max-width:640px){
+  .tmd__fighd{flex-direction:column;align-items:flex-start;gap:6px;}
+}
