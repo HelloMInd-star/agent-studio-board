@@ -250,6 +250,50 @@ function runLocalStep(s, wrapEl){
       }
       if(!g && !l && !b && !rd) out += '（请先在「💹 财务测算」填写数据）';
     }
+    else if(s.local.key === 'brandcore'){
+      var BO = state.bc;
+      if(!BO){ out = '（请先在「🏛️ 品牌内核」填写品牌信息并点诊断）'; }
+      else {
+        var BR = bcAnalyze(BO);
+        out = '# 🏛️ 品牌内核诊断 · ' + (BO.brand || '未命名') + '\n\n';
+        out += '**健康度** ' + BR.score + '/100（🛑 ' + BR.bad + ' · ⚠️ ' + BR.warn + '）\n\n';
+        if(BR.mainFields.length){
+          out += '**主战场**：' + BR.mainFields.map(function(f){ return f.n; }).join(' / ') + '\n\n';
+        }
+        BR.diag.forEach(function(d){
+          out += '- ' + (d.lv === 'bad' ? '🛑' : d.lv === 'warn' ? '⚠️' : '✅') +
+                 ' **' + d.t + '**：' + d.d + '\n';
+        });
+      }
+    }
+    else if(s.local.key === 'tonecheck'){
+      var pvEl = $('#preview');
+      var tcTxt = pvEl ? pvEl.textContent : '';
+      if(!tcTxt || tcTxt.indexOf('请填写字段') > -1){
+        out = '（请先在内容工厂生成或粘贴一段文案，再执行本步骤）';
+      } else {
+        var TCr = tcAnalyze(tcTxt);
+        if(!TCr){ out = '（品牌内核未填写，或调性约束已关闭）'; }
+        else {
+          out = '# 🎭 品牌调性约束\n\n';
+          out += '**基准** ' + TCr.base.srcName + '　**调性得分** ' + TCr.score + '/25\n\n';
+          out += '| 信号 | 实测 | 期望 | 判定 |\n|---|---|---|---|\n';
+          TCr.sigRows.forEach(function(x){
+            out += '| ' + x.n + ' | ' + x.v + x.unit + ' | ' + x.lo + '~' + x.hi +
+                   ' | ' + (x.lv === 'ok' ? '✅' : (x.lv === 'bad' ? '🛑 偏高' : '⚠️')) + ' |\n';
+          });
+          if(TCr.hard.length){
+            out += '\n### 禁忌命中\n\n';
+            TCr.hard.forEach(function(h){
+              out += '- 🛑 **' + h.d + '**：' + h.words.join('、') + ' —— ' + h.why + '\n';
+            });
+          }
+          if(TCr.cov && TCr.cov.miss.length){
+            out += '\n⚠️ 未体现价值层级：' + TCr.cov.miss.join(' / ') + '\n';
+          }
+        }
+      }
+    }
   }catch(e){ out = '执行出错：' + e.message; }
   var ta = wrapEl.querySelector('.traceOut');
   if(ta){ ta.value = out; }
@@ -352,6 +396,10 @@ var INTENTS = [
    tool:'build_ogsm', label:'OGSM 战略拆解'},
   {k:'pm', kw:['感知地图','心智地图','品牌定位图','差异化山头','认知地图'],
    tool:'map_perceptual', label:'品牌感知地图'},
+  {k:'tonecheck', kw:['调性','调性检查','品牌调性','语气检查','是否偏离','符合品牌','调性约束'],
+   tool:'check_brand_tone', label:'品牌调性约束'},
+  {k:'brandcore', kw:['品牌内核','品牌诊断','品牌价值','品牌文化','价值层级'],
+   tool:'analyze_brand_core', label:'品牌内核诊断'},
   {k:'write', kw:['写','文案','小红书','公众号','标题','种草','脚本','生成内容'],
    tool:'prompt', label:'内容创作'}
 ];
@@ -461,6 +509,55 @@ function runLocalTool(kind, ctxText){
     }
     kindLabel = '内容体检';
     addBlock('analysis', '内容体检 ' + sc.total + ' 分' + (demoUsed ? '（示例文案）' : ''), out, demoUsed ? '示例数据' : '');
+  }
+  else if(kind === 'tonecheck'){
+    var tcRef = state.chatRef ? (state.chatRef.body || '') : '';
+    var tcTxt2 = tcRef || ctxText || ($('#preview') ? $('#preview').textContent : '');
+    if(!tcTxt2 || tcTxt2.length < 10 || tcTxt2.indexOf('请填写字段') > -1){
+      return {text:'请先在内容工厂生成或粘贴一段文案，再对我说「检查调性」。', demo:false, kind:'analysis'};
+    }
+    var tcr2 = tcAnalyze(tcTxt2);
+    if(!tcr2){
+      return {text:'调性约束未启用。请先到「🏛️ 品牌内核」填一次并诊断，或把体检面板的「基准来源」切回「跟随品牌内核」。',
+              demo:false, kind:'analysis'};
+    }
+    out = '**调性得分 ' + tcr2.score + '/25**　基准：' + tcr2.base.srcName +
+          (tcr2.base.cat ? '（' + tcr2.base.cat.n + '）' : '') + '\n\n';
+    out += '| 信号 | 实测 | 期望 | 判定 |\n|---|---|---|---|\n';
+    tcr2.sigRows.forEach(function(x){
+      out += '| ' + x.n + ' | ' + x.v + x.unit + ' | ' + x.lo + '~' + x.hi + ' | ' +
+             (x.lv === 'ok' ? '✅' : (x.lv === 'bad' ? '🛑 偏高' : '⚠️')) + ' |\n';
+    });
+    if(tcr2.hard.length){
+      out += '\n🛑 **禁忌命中**\n';
+      tcr2.hard.forEach(function(h){
+        out += '  · ' + h.d + '：' + h.words.join('、') + ' —— ' + h.why + '\n';
+      });
+    }
+    if(tcr2.cov && tcr2.cov.miss.length){
+      out += '\n⚠️ 未体现价值层级：' + tcr2.cov.miss.join(' / ') + '\n';
+    }
+    if(!tcr2.hard.length && tcr2.score >= 22){
+      out += '\n✅ 文案与品牌内核定义的调性一致。\n';
+    }
+    kindLabel = '品牌调性约束';
+    addBlock('analysis', '品牌调性 ' + tcr2.score + '/25', out, '');
+  }
+  else if(kind === 'brandcore'){
+    var BO2 = state.bc;
+    if(!BO2){
+      return {text:'请先到「🏛️ 品牌内核」填写品牌信息并点一次诊断，之后这里可以直接调用。', demo:false, kind:'analysis'};
+    }
+    var BR2 = bcAnalyze(BO2);
+    out = '**品牌内核健康度 ' + BR2.score + '/100**（🛑 ' + BR2.bad + ' · ⚠️ ' + BR2.warn + '）\n\n';
+    if(BR2.mainFields.length){
+      out += '主战场：' + BR2.mainFields.map(function(f){ return f.n; }).join(' / ') + '\n\n';
+    }
+    BR2.diag.forEach(function(d){
+      out += '- ' + (d.lv === 'bad' ? '🛑' : d.lv === 'warn' ? '⚠️' : '✅') + ' **' + d.t + '**：' + d.d + '\n';
+    });
+    kindLabel = '品牌内核诊断';
+    addBlock('analysis', '品牌内核 ' + BR2.score + '/100', out, '');
   }
   else if(['five','pest','ansoff','ge9','vc','cj','ogsm','pm'].indexOf(kind) >= 0){
     var TKF = {five:calcFive, pest:calcPest, ansoff:calcAnsoff, ge9:calcGE,

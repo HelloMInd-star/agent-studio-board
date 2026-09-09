@@ -1085,3 +1085,19 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
   margin-top:12px;font-size:11px;line-height:1.65;color:var(--text-3);
   border-top:1px dashed var(--line);padding-top:9px;
 }
+
+/* ===== 品牌调性基准选择区 ===== */
+.tcbase{
+  border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:12px 0;
+  background:var(--bg-2, rgba(127,127,127,.03));
+}
+.tcbase__hd{
+  font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:10px;
+}
+.tcbase .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:600px){ .tcbase .grid2{grid-template-columns:1fr;} }
+.tcbase__info{
+  margin-top:9px;padding-top:9px;border-top:1px dashed var(--line);
+  font-size:11.5px;color:var(--text-2);line-height:1.6;
+}
+.tcbase__info .hint{margin-top:4px;}

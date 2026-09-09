@@ -225,6 +225,9 @@ function restoreAll(){
   window.addEventListener('resize', syncSticky);
   state.scores = state.scores || [];
   renderScoreTrend();
+
+  /* 品牌调性基准：初始化下拉 + 基准提示 */
+  tcInitSelects();
 }
 
 /* ================= 启动 ================= */

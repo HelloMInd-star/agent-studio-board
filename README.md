@@ -1,8 +1,11 @@
-# Y.Mine · Marketing AI Workspace
+# Y.Mine · 品牌战略到增长的完整决策链
 
-A local-first marketing AI workspace: chat, deterministic analysis tools,
-strategy charts, workflow orchestration, and agent export — all in one
-static page. No backend, no tracking, no login.
+**Define the brand → validate the market → set the strategy → collect the
+result — entirely in your browser.**
+
+A local-first decision chain for brand and growth: 19 modules, 21
+deterministic analysis functions, 70 marketing frameworks. No backend, no
+tracking, no login.
 
 Live:
 - Landing (what it does / how to use / roadmap): https://hellomind-star.github.io/agent-studio-board/landing.html
@@ -233,7 +236,7 @@ the `.svg` renders standalone.
 
 ---
 
-### 3.10 Brand Core (brandcore)
+### 3.9b Brand Core (brandcore)
 
 Replaces the old "Brand Personality" tab, which was a cocktail-flavoured
 prompt wrapper with no computation at all (it carried `flavor` / `abv`
@@ -273,6 +276,50 @@ high-frequency discounting) scores 46 with 2 high-severity conflicts.
 
 Benchmarks are **experience-based reference values, not a database** —
 stated on the UI and adjustable.
+
+### 3.11 Brand tone constraint (tonecheck)
+
+This is the seam that turns "a brand module next to a content module" into
+an actual chain: **what Brand Core computes becomes the scoring baseline for
+content review**. Same copy, different brand, different verdict.
+
+Three deterministic checks (no semantic understanding claimed — these are
+surface language features, which is exactly where marketers slip):
+
+| # | Check | How |
+|---|---|---|
+| ① | Tone consistency | 6 signals (exclamation density, emoji, absolutist words, promo words, 2nd person, avg sentence length) vs a **brand-derived expected range** |
+| ② | Value-layer coverage | does the copy touch the functional / emotional / self-expression layers defined in Brand Core |
+| ③ | Positioning taboos | hard-hit marketing action words, gated by the brand's own dimension scores |
+
+The expected range is **derived, not hardcoded**. Each signal declares how
+brand dimensions shift its acceptable band:
+
+```js
+{ k:'promo', n:'促销词', base:[0, 1.0],
+  push:{ price:-0.90, status:-0.25, values:-0.15, speed:0.20, channel:0.15 } }
+```
+
+`price` is a **positional** dimension (high = premium, low = value-for-money
+— neither is better). So promo language gets near-zero tolerance at the
+premium end and a wide band at the value end. Verified:
+
+| Copy | Brand | Result |
+|---|---|---|
+| "限时秒杀！全场最低价！赶紧冲！！！" | 香奈儿 (luxury, premium) | 🛑 **0/25**, hits 「折扣叫卖」taboo |
+| same text | 瑞幸 (coffee, value-for-money) | ⚠️ **11/25**, no taboo hit — direction matches, only too shouty |
+| normal promo copy | 瑞幸 | ✅ **21/25** (not a false positive) |
+| house-tone copy | 香奈儿 | ✅ **23/25** |
+
+The point is not "which brand is better" — it is that **a tool with no brand
+baseline scores both of them identically**, which is the actual bug.
+
+Baseline injection supports both modes: auto-read from Brand Core, or
+manually switch (10 categories, or fall back to brand memory, or turn it
+off). Registered as `check_brand_tone` (21st function) and routed from chat
+via the `tonecheck` intent.
+
+---
 
 ### 3.10 Information architecture
 

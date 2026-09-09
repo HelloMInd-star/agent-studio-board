@@ -195,6 +195,7 @@ a:hover{text-decoration:underline;}
       <a href="#research">📐 调研方案</a>
       <a href="#strategy">🎯 战略矩阵</a>
       <a href="#persona">🏛️ 品牌内核</a>
+      <a href="#tonecheck">🎭 品牌调性约束</a>
       <a href="#hotspot">📡 热点决策</a>
     </div>
     <div class="mgroup">
@@ -491,6 +492,72 @@ a:hover{text-decoration:underline;}
       <p>每个品类预置了会摧毁该品类价值的行为，例如：</p>
       <div class="mcode">奢侈品    高频折扣会摧毁稀缺感 / 大众裂变稀释专属感 / 全渠道铺货破坏控价体系
 餐饮咖啡   过度空间投入拖累翻台率 / 高客单低频与快取模式互斥</div>
+    </section>
+
+    <section class="msec" id="tonecheck">
+      <h2><span class="ico">🎭</span>品牌调性约束<span class="mtag is-local">确定性函数</span></h2>
+      <div class="mflow" data-flow="tonecheck">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">品牌内核先诊断一次</span><span class="mfl__arrow">→</span><span class="mfl__step">内容工厂生成文案</span><span class="mfl__arrow">→</span><span class="mfl__step">选基准来源（默认跟随）</span><span class="mfl__arrow">→</span><span class="mfl__step">点「🩺 内容体检」</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">调性得分 /25 + 改写建议</span></div>
+        <div class="mflow__note">这是「品牌 → 营销」的接缝。<b>没有它，品牌内核只是一份报告</b>；有了它，品牌内核真的在约束内容生产。</div>
+      </div>
+      <p>把「品牌内核」算出来的调性、价值层级、定位禁忌，变成内容体检的评分基准。
+      <b>同一句文案，不同品牌给出不同结论。</b></p>
+
+      <h3>三类检测</h3>
+      <div class="mtable">
+        <table>
+          <tr><th>检测</th><th>怎么算</th></tr>
+          <tr><td>① 调性一致性</td><td>6 项表层语言信号 vs <b>品牌推导出的期望区间</b></td></tr>
+          <tr><td>② 价值覆盖</td><td>文案体现了功能 / 情感 / 自我表达哪几层</td></tr>
+          <tr><td>③ 定位禁忌</td><td>与自身定位冲突的硬命中词，按维度分启用</td></tr>
+        </table>
+      </div>
+
+      <h4>6 项语言信号</h4>
+      <div class="mtable">
+        <table>
+          <tr><th>信号</th><th>单位</th><th>受哪些品牌维度影响</th></tr>
+          <tr><td>感叹号密度</td><td>/百字</td><td>情绪共鸣 ↑　身份象征 ↓</td></tr>
+          <tr><td>表情符号</td><td>/百字</td><td>圈层归属 ↑　身份象征 ↓</td></tr>
+          <tr><td>绝对化用词</td><td>/百字</td><td>只约束上限，专业/高端定位更严</td></tr>
+          <tr><td>促销词</td><td>/百字</td><td><b>价格定位主导</b>：溢价端近乎零容忍</td></tr>
+          <tr><td>第二人称</td><td>/百字</td><td>服务温度 ↑　身份象征 ↓</td></tr>
+          <tr><td>平均句长</td><td>字</td><td>感官体验 ↑　效率速度 ↓</td></tr>
+        </table>
+      </div>
+
+      <h3>核心验证</h3>
+      <p>同一句促销文案，两个品牌的实际判定：</p>
+      <div class="mcode">文案：「限时秒杀！全场最低价！赶紧冲！！！」
+
+香奈儿（奢侈品·溢价·稀缺）  🛑  0/25   命中「折扣叫卖」禁忌
+瑞幸  （咖啡·性价比·效率）  ⚠️ 11/25   未命中，仅叫卖感偏重
+
+正常大促文案 → 瑞幸     ✅ 21/25（不误判）
+品牌调性文案 → 香奈儿   ✅ 23/25</div>
+
+      <div class="mnote">
+        <b>为什么这件事重要</b>：没有品牌基准的体检工具，给这两个品牌打的是<b>同一个分数</b>。
+        那才是真正的 bug——它看不出「促销语言对奢侈品是灾难，对性价比品牌是日常」。
+      </div>
+
+      <h3>基准来源</h3>
+      <ul>
+        <li><b>跟随品牌内核</b>（默认）——读你在「🏛️ 品牌内核」的维度分与品类</li>
+        <li><b>品类基准覆盖</b>——临时切换 10 个品类之一，不动品牌内核本身</li>
+        <li><b>仅用品牌记忆</b>——只做卖点 / 人群匹配，不做调性区间判定</li>
+        <li><b>关闭</b>——回到纯六维体检，本报告章节不出现</li>
+      </ul>
+
+      <div class="mnote is-warn">
+        <b>能力边界</b>：这是表层语言特征检测，<b>不是语义理解</b>。它看不出文案是否跑题、
+        是否有创意，只判断语气与用词是否偏离品牌设定的区间。不要把它当成内容质量评分。
+      </div>
+
+      <h3>对话调用</h3>
+      <p>在「💬 Agent 工作台」说「检查调性」「这符合品牌吗」，会直接调用本函数。
+      也注册为工作流本地函数节点（<code>check_brand_tone</code>），Trace 里能真执行。</p>
     </section>
 
     <!-- ============ 计算层 ============ -->

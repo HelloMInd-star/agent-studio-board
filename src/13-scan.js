@@ -345,6 +345,15 @@ function scanWords(){
     out += '✅ 未命中词库中的风险词。\n\n';
   }
 
+  /* ===== 品牌调性约束：由「品牌内核」驱动，同一句文案不同品牌结论不同 ===== */
+  var tcr = null;
+  try{
+    tcr = tcAnalyze(txt);
+    if(tcr) out += tcReport(tcr);
+  }catch(e){
+    /* 品牌内核未就绪时静默跳过，不影响主体检流程 */
+  }
+
   out += '---\n\n';
   out += '**重要说明**\n\n';
   out += '1. 本工具是「审核决策库」，不是黑名单。**命中 ≠ 违法**。\n';
@@ -366,8 +375,9 @@ function scanWords(){
     title: ($('#c_title') && $('#c_title').value) ? $('#c_title').value : '',
     dims: sc.dims
   });
-  toast('体检得分 ' + sc.total + ' 分（' + sc.grade + ' 级）');
-  pushHistory('内容体检 · ' + sc.total + ' 分', out);
+  toast('体检得分 ' + sc.total + ' 分（' + sc.grade + ' 级）' +
+        (tcr ? '　·　调性 ' + tcr.score + '/25' : ''));
+  pushHistory('内容体检 · ' + sc.total + ' 分' + (tcr ? ' · 调性 ' + tcr.score : ''), out);
 }
 
 function expand(){

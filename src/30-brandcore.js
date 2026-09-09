@@ -422,7 +422,9 @@ function analyzeBrandCore(p){
   };
 }
 if(typeof LOCAL_TOOLS !== 'undefined'){
-  LOCAL_TOOLS[21] = { key:'brandcore', name:'analyze_brand_core', label:'品牌内核诊断' };
+  /* 注意：21 已被「战略矩阵 mx」占用，此处必须用 23。
+     此前误写为 21，会把战略矩阵的注册顶掉，导致工作流里选 21 号执行不到分支。 */
+  LOCAL_TOOLS[23] = { key:'brandcore', name:'analyze_brand_core', label:'品牌内核诊断' };
   if(typeof TOOLS !== 'undefined' && TOOLS.indexOf('⚡ 品牌内核(本地函数)') < 0){
     TOOLS.push('⚡ 品牌内核(本地函数)');
   }

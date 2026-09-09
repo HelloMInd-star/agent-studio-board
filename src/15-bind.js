@@ -73,6 +73,12 @@ function bind(){
   $('#btnBC').onclick = bcRun;
   $('#btnGenFlow').onclick = genFlow;
   $('#btnScan').onclick = scanWords;
+
+  // 品牌调性基准：切换来源/品类时刷新提示
+  var _tcb = $('#c_tcbase');
+  if(_tcb) _tcb.onchange = function(){ tcRenderBase(); };
+  var _tcc = $('#c_tccat');
+  if(_tcc) _tcc.onchange = function(){ tcRenderBase(); };
   $('#btnExpand').onclick = expand;
 
   // 复制

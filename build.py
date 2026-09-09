@@ -53,6 +53,7 @@ MODULES = [
     '29-framecfg.js',   # 70 框架 → 骨架配置表（须在 toolmap 前）
     '27-toolmap.js',      # 70 工具全景地图（须在 boot 前）
     '30-brandcore.js',    # 品牌内核：三层结构 + 品类模板 + 商业模型对齐（须在 boot 前）
+    '32-tonecheck.js',    # 品牌调性约束：把品牌内核变成内容体检的评分基准（须在 brandcore 后）
     '16-boot.js',       # 回填 + 启动（最后，含 })();）
 ]
 

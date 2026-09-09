@@ -390,6 +390,24 @@
           <option value="weibo">微博</option>
         </select>
       </label>
+      <div class="tcbase">
+        <div class="tcbase__hd">🎭 品牌调性基准（决定体检按谁的标准打分）</div>
+        <div class="grid2">
+          <label class="f"><span>基准来源</span>
+            <select id="c_tcbase">
+              <option value="auto">跟随「品牌内核」（推荐）</option>
+              <option value="mem">仅用「品牌记忆」</option>
+              <option value="off">关闭调性约束</option>
+            </select>
+          </label>
+          <label class="f"><span>品类基准覆盖</span>
+            <select id="c_tccat">
+              <option value="__follow__">跟随品牌内核</option>
+            </select>
+          </label>
+        </div>
+        <div id="tcBaseInfo" class="tcbase__info"></div>
+      </div>
       <div class="row">
         <button class="btn btn--primary" id="btnGenContent">🚀 生成文稿</button>
         <button class="btn btn--ghost" id="btnCopyAll">📋 复制</button>
