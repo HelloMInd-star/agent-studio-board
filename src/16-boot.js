@@ -64,6 +64,9 @@ function restoreAll(){
   state.chat = state.chat || []; state.blocks = state.blocks || [];
   state.net = state.net || {on:false, provider:'deepseek', key:'', base:''};
   renderChat(); renderBlocks();
+  state.cal = state.cal || {y:new Date().getFullYear(), m:new Date().getMonth(), events:[]};
+  state.cal.events = state.cal.events || [];
+  renderCal();
   state.scores = state.scores || [];
   renderScoreTrend();
 }

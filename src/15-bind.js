@@ -264,6 +264,39 @@ function bind(){
       .catch(function(e){ msg.textContent = '❌ 连接失败：' + e.message + '（多半是 CORS 限制）'; });
   };
 
+  $('#btnToolToCal').onclick = function(){
+    if(!lastCalRes || !lastCalRes.nodes){ toast('请先运行营销日历倒排'); return; }
+    importPlanToCal(lastCalRes.nodes);
+    switchTab('cal');
+  };
+
+  // ===== 营销日历 =====
+  $('#btnCalPrev').onclick = function(){
+    state.cal.m--; if(state.cal.m < 0){ state.cal.m = 11; state.cal.y--; }
+    save(); renderCal();
+  };
+  $('#btnCalNext').onclick = function(){
+    state.cal.m++; if(state.cal.m > 11){ state.cal.m = 0; state.cal.y++; }
+    save(); renderCal();
+  };
+  $('#btnCalToday').onclick = function(){
+    var d = new Date(); state.cal.y = d.getFullYear(); state.cal.m = d.getMonth();
+    save(); renderCal();
+  };
+  $('#btnCalAdd').onclick = function(){ openCalModal(null); };
+  $('#btnCalNode').onclick = function(){ renderNodeChips(); $('#maskNode').classList.add('is-on'); };
+  $('#btnCloseCal').onclick = function(){ $('#maskCal').classList.remove('is-on'); };
+  $('#maskCal').onclick = function(e){ if(e.target === this) this.classList.remove('is-on'); };
+  $('#btnCloseNode').onclick = function(){ $('#maskNode').classList.remove('is-on'); };
+  $('#maskNode').onclick = function(e){ if(e.target === this) this.classList.remove('is-on'); };
+  $('#btnEvSave').onclick = saveCalEvent;
+  $('#btnEvDel').onclick = function(){
+    if(!calEditingId) return;
+    if(!confirm('删除这个事件？')) return;
+    state.cal.events = (state.cal.events||[]).filter(function(x){ return x.id !== calEditingId; });
+    save(); $('#maskCal').classList.remove('is-on'); renderCal(); toast('已删除');
+  };
+
   // ===== Agent 导出 =====
   $('#btnExpStd').onclick = function(){
     var r = exportStd(); if(!r) return;

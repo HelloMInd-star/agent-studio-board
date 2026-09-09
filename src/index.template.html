@@ -49,6 +49,7 @@
   <button class="tab" data-tab="kb"><span class="tab__name">📚 品牌知识库</span><span class="tab__desc">卖点 · 竞品 · 违禁词</span></button>
   <button class="tab" data-tab="chart"><span class="tab__name">📊 商业图卡</span><span class="tab__desc">填数据 · 出图导出</span></button>
   <button class="tab" data-tab="agent"><span class="tab__name">💬 Agent 工作台</span><span class="tab__desc">对话 · 文档 · 工具</span></button>
+  <button class="tab" data-tab="cal"><span class="tab__name">📅 营销日历</span><span class="tab__desc">排期 · 追踪 · 提醒</span></button>
 </nav>
 
 <!-- ===================== 主体 ===================== -->
@@ -260,6 +261,7 @@
         <div class="row" style="margin-bottom:12px">
           <button class="btn btn--primary" id="btnRunTool">⚡ 运行分析</button>
           <button class="btn btn--ghost" id="btnToolDemo">📋 填入示例</button>
+          <button class="btn btn--ghost" id="btnToolToCal" style="display:none">📅 存入日历</button>
           <button class="btn btn--ghost" id="btnToolSchema">📐 Function Schema</button>
           <button class="btn btn--ghost" id="btnToolSvg">⬇️ 导出 SVG</button>
           <button class="btn btn--ghost" id="btnToolPng">🖼️ 导出 PNG</button>
@@ -484,6 +486,37 @@
       </div>
     </section>
 
+
+    <!-- ===== 营销日历 ===== -->
+    <section class="panel" data-panel="cal">
+      <h2 class="panel__hd">📅 营销日历</h2>
+      <p class="panel__sub">把零散动作排成节奏：建事件 → 追踪状态 → 到期提醒。数据存在本地，打开页面时提醒你。</p>
+
+      <div id="calAlerts"></div>
+
+      <div class="calbar">
+        <button class="btn btn--sm btn--ghost" id="btnCalPrev">‹ 上月</button>
+        <span class="calbar__ym" id="calYM"></span>
+        <button class="btn btn--sm btn--ghost" id="btnCalNext">下月 ›</button>
+        <button class="btn btn--sm btn--ghost" id="btnCalToday">今天</button>
+        <span class="spacer"></span>
+        <button class="btn btn--sm btn--primary" id="btnCalAdd">➕ 新建事件</button>
+        <button class="btn btn--sm btn--ghost" id="btnCalNode">🎯 节点库</button>
+      </div>
+
+      <div class="calgrid" id="calGrid"></div>
+
+      <div class="callegend">
+        <span><i style="background:var(--brand)"></i>待开始</span>
+        <span><i style="background:var(--signal)"></i>进行中</span>
+        <span><i style="background:var(--ok)"></i>已完成</span>
+        <span><i style="background:var(--alert)"></i>已延期</span>
+        <span style="margin-left:auto">💡 点日历上的事件可直接改状态</span>
+      </div>
+
+      <div class="evlist" id="evList"></div>
+    </section>
+
   </main>
   <aside>
     <div class="card" id="scoreTrendCard">
@@ -556,6 +589,52 @@
     <button class="btn btn--sm btn--ghost" id="btnClearHist">🗑️ 清空历史</button>
   </div>
 </div>
+<div class="mask" id="maskCal">
+  <div class="modal">
+    <div class="modal__hd"><span id="calModalTitle">➕ 新建事件</span><button class="btn btn--sm btn--ghost" id="btnCloseCal">✕</button></div>
+    <label class="f"><span>标题</span><input type="text" id="ev_title" placeholder="例：618 预热第一波"></label>
+    <div class="grid2">
+      <label class="f"><span>日期</span><input type="date" id="ev_date"></label>
+      <label class="f"><span>优先级</span>
+        <select id="ev_pri"><option value="high">高</option><option value="mid" selected>中</option><option value="low">低</option></select>
+      </label>
+    </div>
+    <div class="grid2">
+      <label class="f"><span>状态</span>
+        <select id="ev_status">
+          <option value="todo">待开始</option>
+          <option value="doing">进行中</option>
+          <option value="done">已完成</option>
+          <option value="delayed">已延期</option>
+        </select>
+      </label>
+      <label class="f"><span>跳转到</span>
+        <select id="ev_link">
+          <option value="">不跳转</option>
+          <option value="strategy">📊 策略模板</option>
+          <option value="content">✍️ 内容工厂</option>
+          <option value="chart">📊 商业图卡</option>
+          <option value="agent">💬 Agent 工作台</option>
+          <option value="flow">🔗 工作流</option>
+        </select>
+      </label>
+    </div>
+    <label class="f"><span>备注</span><textarea id="ev_note" placeholder="目标、负责人、关联素材…"></textarea></label>
+    <div class="row">
+      <button class="btn btn--primary btn--sm" id="btnEvSave">💾 保存</button>
+      <button class="btn btn--ghost btn--sm" id="btnEvDel" style="display:none">🗑️ 删除</button>
+    </div>
+  </div>
+</div>
+
+<div class="mask" id="maskNode">
+  <div class="modal">
+    <div class="modal__hd"><span>🎯 营销节点库 · 一键添加</span><button class="btn btn--sm btn--ghost" id="btnCloseNode">✕</button></div>
+    <p class="hint" style="margin-bottom:10px">选一个节点，自动按今年日期加入日历。农历节点按 2026 年公历，跨年请手动改日期。</p>
+    <div class="chips" id="nodeChips"></div>
+  </div>
+</div>
+
 <div class="mask" id="maskNet">
   <div class="modal">
     <div class="modal__hd"><span>⚙️ 联网设置</span><button class="btn btn--sm btn--ghost" id="btnCloseNet">✕</button></div>

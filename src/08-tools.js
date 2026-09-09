@@ -422,6 +422,7 @@ function toolSchema(k){
 
 /* ---------- 工具：运行 / 渲染 / 导出 ---------- */
 var lastToolSvg = '';
+var lastCalRes = null;   // 最近一次日历倒排结果，供「存入日历」使用
 function runTool(){
   var k = state.tool.type;
   var res = null, report = '';
@@ -430,6 +431,8 @@ function runTool(){
   else { res = calcCal(); if(res) report = calReport(res); }
 
   if(!res){
+    lastCalRes = null;
+    var ti2 = $('#btnToolToCal'); if(ti2) ti2.style.display = 'none';
     setPreview('# ⚠️ 数据不足\n\n请先填好数据（或点「📋 填入示例」看看格式），再运行分析。\n\n' +
       (k==='comp' ? '需要：至少 1 个维度 + 至少 2 个竞品，每个竞品的分数个数要与维度数一致。\n'
       : k==='stp' ? '需要：至少 2 个细分市场，每行格式为「名称,吸引力,竞争力,规模」。\n'
@@ -437,6 +440,9 @@ function runTool(){
     toast('数据不足，请先填写'); return;
   }
   lastToolSvg = res.svg;
+  lastCalRes = (k === 'cal') ? res : null;
+  var ti = $('#btnToolToCal');
+  if(ti) ti.style.display = (k === 'cal') ? '' : 'none';
   $('#toolChartWrap').innerHTML = res.svg;
   setPreview(report);
   pushHistory('分析 · ' + (TOOL_TYPES.filter(function(x){return x.k===k;})[0]||{}).n, report);

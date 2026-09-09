@@ -39,7 +39,8 @@ MODULES = [
     '13-scan.js',       # 内容体检评分
     '14-feedback.js',   # 误报反馈
     '15-bind.js',       # 事件绑定
-    '16-boot.js',       # 回填 + 启动
+    '17-calendar.js',   # 营销日历（须在 boot 前：boot 结尾闭合 IIFE）
+    '16-boot.js',       # 回填 + 启动（最后，含 })();）
 ]
 
 

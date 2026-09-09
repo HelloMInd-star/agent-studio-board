@@ -5,22 +5,70 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>营销 AI 工作台 · Y.Mine Agent Studio</title>
 <style>
+/* =========================================================
+ * 设计 token —— 桌面工作台版
+ * 设计语言参考 orbit：token 化 / 轻字重标题 / mono 小标签 / 圆角梯度
+ * 浅色为主（办公场景 + 截图进方案），深色为可选皮肤
+ * ========================================================= */
 :root{
-  --brand:#6366f1; --brand2:#a855f7;
-  --bg:#ffffff; --bg-soft:#f7f7fb; --card:#ffffff;
-  --text:#16161d; --soft:#6b6b7b; --line:#e8e8ef;
-  --ok:#10b981; --warn:#f59e0b;
+  /* 品牌与语义色 */
+  --brand:#4f46e5; --brand2:#7c3aed;
+  --brand-soft:rgba(79,70,229,.08);
+  --ok:#047857; --warn:#b45309; --alert:#b91c1c; --signal:#0369a1;
+
+  /* 灰阶层次（0=最底，3=最弱文字） */
+  --bg:#fbfbfd; --bg-soft:#f4f5f9; --bg-elev:#ffffff;
+  --card:#ffffff;
+  --line:#e9eaf0; --line-strong:#d6d8e3;
+  --text:#14151a; --text-2:#5a5c6b; --text-3:#8b8d9c; --soft:#6b6d7c;
+
+  /* 字体 */
+  --font-disp:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --font-body:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;
+  --font-mono:"SF Mono",ui-monospace,"Menlo","Consolas",monospace;
+
+  /* 圆角梯度 */
+  --r-sm:8px; --r-md:12px; --r-lg:16px; --r-xl:22px;
+
+  /* 动效 */
+  --t-fast:160ms cubic-bezier(.2,.7,.2,1);
+  --t-mid:240ms cubic-bezier(.2,.7,.2,1);
+
+  /* 阴影（浅色下更柔和） */
+  --shadow-sm:0 1px 2px rgba(16,17,26,.04), 0 1px 3px rgba(16,17,26,.03);
+  --shadow-md:0 4px 14px rgba(16,17,26,.06);
+  --shadow-lg:0 12px 32px rgba(16,17,26,.10);
+
+  /* 毛玻璃 */
+  --glass:rgba(255,255,255,.78);
+  --glass-line:rgba(20,21,26,.07);
 }
 html[data-theme="dark"]{
-  --bg:#0e0e14; --bg-soft:#15151f; --card:#171722;
-  --text:#ececf3; --soft:#9a9aae; --line:#282833;
+  --brand:#8b85f7; --brand2:#a78bfa;
+  --brand-soft:rgba(139,133,247,.14);
+  --ok:#34d399; --warn:#fbbf24; --alert:#f87171; --signal:#60a5fa;
+
+  --bg:#0b0c10; --bg-soft:#12131a; --bg-elev:#16171f;
+  --card:#14151d;
+  --line:#23242f; --line-strong:#333545;
+  --text:#f0f0f4; --text-2:#a2a4b4; --text-3:#6e7080; --soft:#9a9caa;
+
+  --shadow-sm:0 1px 2px rgba(0,0,0,.4);
+  --shadow-md:0 4px 16px rgba(0,0,0,.45);
+  --shadow-lg:0 12px 34px rgba(0,0,0,.55);
+
+  --glass:rgba(16,17,25,.76);
+  --glass-line:rgba(255,255,255,.09);
 }
 *{box-sizing:border-box;}
 body{
   margin:0;background:var(--bg);color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+  font-family:var(--font-body);
   font-size:14px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
 }
+h1,h2,h3{margin:0;}
+::selection{background:rgba(79,70,229,.18);}
 button,input,textarea,select{font-family:inherit;font-size:inherit;color:inherit;}
 button{cursor:pointer;}
 a{color:var(--brand);text-decoration:none;}
@@ -39,7 +87,8 @@ a{color:var(--brand);text-decoration:none;}
 }
 .hero__badge::before{content:"\1F30C";}
 .hero__title{
-  margin:0 0 14px;font-size:clamp(28px,5vw,44px);line-height:1.18;font-weight:800;
+  margin:0 0 14px;font-family:var(--font-disp);font-size:clamp(30px,5vw,46px);
+  line-height:1.1;letter-spacing:-.04em;font-weight:300;
   background:linear-gradient(100deg,var(--brand),var(--brand2));
   -webkit-background-clip:text;background-clip:text;color:transparent;
 }
@@ -64,26 +113,36 @@ a{color:var(--brand);text-decoration:none;}
 /* ============ 顶栏 ============ */
 .topbar{
   display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;
-  padding:10px 20px;border-bottom:1px solid var(--line);background:var(--bg);
+  padding:10px 20px;border-bottom:1px solid var(--glass-line);
+  background:var(--glass);
+  backdrop-filter:blur(20px) saturate(160%);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);
   position:sticky;top:0;z-index:100;
 }
 .topbar .spacer{flex:1;}
 
 /* ============ Tabs ============ */
 .tabs{
-  display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
-  padding:14px 20px;border-bottom:1px solid var(--line);background:var(--bg);
+  display:flex;flex-wrap:wrap;gap:7px;justify-content:center;
+  padding:12px 20px;border-bottom:1px solid var(--glass-line);
+  background:var(--glass);
+  backdrop-filter:blur(20px) saturate(160%);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);
   position:sticky;top:47px;z-index:99;
 }
 .tab{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
-  padding:8px 15px;border-radius:10px;border:1px solid var(--line);background:var(--card);
-  transition:.18s;min-width:106px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  padding:7px 14px;border-radius:var(--r-md);border:1px solid var(--line);background:var(--card);
+  transition:var(--t-fast);min-width:104px;box-shadow:var(--shadow-sm);
 }
-.tab:hover{border-color:var(--brand);transform:translateY(-1px);}
-.tab.is-active{border-color:transparent;color:#fff;background:linear-gradient(100deg,var(--brand),var(--brand2));}
-.tab__name{font-size:14px;font-weight:600;line-height:1.3;}
-.tab__desc{font-size:11px;opacity:.72;line-height:1.3;font-weight:400;white-space:nowrap;}
+.tab:hover{border-color:var(--line-strong);transform:translateY(-1px);box-shadow:var(--shadow-md);}
+.tab.is-active{
+  border-color:transparent;color:#fff;
+  background:linear-gradient(100deg,var(--brand),var(--brand2));
+  box-shadow:var(--shadow-md);
+}
+.tab__name{font-family:var(--font-disp);font-size:13.5px;font-weight:600;line-height:1.35;letter-spacing:-.005em;}
+.tab__desc{font-size:10.5px;opacity:.78;line-height:1.3;font-weight:400;white-space:nowrap;letter-spacing:.01em;}
 
 /* ============ 布局 ============ */
 .wrap{
@@ -92,9 +151,13 @@ a{color:var(--brand);text-decoration:none;}
 }
 @media (max-width:1180px){ .wrap{grid-template-columns:1fr;} }
 .card{
-  background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);
+  padding:16px;margin-bottom:14px;box-shadow:var(--shadow-sm);
 }
-.card__hd{font-size:14px;font-weight:700;margin:0 0 12px;display:flex;align-items:center;gap:6px;}
+.card__hd{
+  font-family:var(--font-disp);font-size:13px;font-weight:600;margin:0 0 12px;
+  display:flex;align-items:center;gap:7px;letter-spacing:-.005em;
+}
 .hint{font-size:11.5px;color:var(--soft);line-height:1.65;}
 
 /* ============ 表单 ============ */
@@ -134,8 +197,11 @@ textarea{resize:vertical;min-height:74px;line-height:1.7;}
 /* ============ 主面板 ============ */
 .panel{display:none;}
 .panel.is-on{display:block;}
-.panel__hd{font-size:16px;font-weight:800;margin:0 0 4px;}
-.panel__sub{font-size:12.5px;color:var(--soft);margin:0 0 16px;}
+.panel__hd{
+  font-family:var(--font-disp);font-size:23px;font-weight:300;letter-spacing:-.03em;
+  margin:0 0 6px;
+}
+.panel__sub{font-size:12.5px;color:var(--text-3);margin:0 0 18px;line-height:1.6;}
 .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0 14px;}
 
 /* ============ 工作流步骤 ============ */
@@ -312,8 +378,9 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
 }
 .mask.is-on{display:flex;}
 .modal{
-  background:var(--card);border-radius:14px;padding:18px;width:100%;max-width:600px;
-  max-height:82vh;overflow:auto;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);
+  padding:18px;width:100%;max-width:600px;max-height:82vh;overflow:auto;
+  box-shadow:var(--shadow-lg);
 }
 .modal__hd{font-size:15px;font-weight:700;margin:0 0 12px;display:flex;justify-content:space-between;}
 .hist-item{
@@ -328,6 +395,116 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
   font-size:13px;z-index:300;opacity:0;pointer-events:none;transition:.25s;
 }
 .toast.is-on{opacity:1;bottom:44px;}
+
+/* =========================================================
+ * orbit 风格通用件：eyebrow / 状态徽章 / 轻字重标题
+ * ========================================================= */
+.eyebrow{
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;
+  color:var(--text-3);text-transform:uppercase;
+}
+.eyebrow--dot::before{
+  content:"";display:inline-block;width:5px;height:5px;border-radius:100px;
+  background:var(--brand);margin-right:7px;vertical-align:middle;transform:translateY(-1px);
+}
+.mono{font-family:var(--font-mono);font-feature-settings:"tnum" 1, "zero" 1;}
+
+/* 状态徽章（orbit 三色体系，用于日历/任务状态） */
+.badge{
+  display:inline-flex;align-items:center;gap:5px;
+  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+  padding:3px 8px;border-radius:100px;border:1px solid var(--line-strong);color:var(--text-2);
+  white-space:nowrap;
+}
+.badge .dot{width:5px;height:5px;border-radius:100px;background:var(--text-3);}
+.badge.is-todo{color:var(--text-2);}
+.badge.is-doing{color:var(--signal);border-color:rgba(3,105,161,.3);}
+.badge.is-doing .dot{background:var(--signal);}
+.badge.is-done{color:var(--ok);border-color:rgba(4,120,87,.3);}
+.badge.is-done .dot{background:var(--ok);}
+.badge.is-delayed{color:var(--alert);border-color:rgba(185,28,28,.3);}
+.badge.is-delayed .dot{background:var(--alert);}
+
+/* 优先级 */
+.pri{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.1em;padding:2px 6px;border-radius:5px;}
+.pri--high{background:rgba(185,28,28,.1);color:var(--alert);}
+.pri--mid{background:rgba(180,83,9,.1);color:var(--warn);}
+.pri--low{background:rgba(90,92,107,.1);color:var(--text-2);}
+
+/* =========================================================
+ * 营销日历
+ * ========================================================= */
+.calbar{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  margin-bottom:12px;padding:10px 12px;
+  border:1px solid var(--line);border-radius:var(--r-md);background:var(--bg-soft);
+}
+.calbar__ym{font-family:var(--font-disp);font-size:17px;font-weight:300;letter-spacing:-.02em;min-width:110px;}
+.calbar .spacer{flex:1;}
+.calgrid{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;
+}
+.calgrid__wd{
+  background:var(--bg-soft);padding:7px 0;text-align:center;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;color:var(--text-3);text-transform:uppercase;
+}
+.calcell{
+  background:var(--card);min-height:96px;padding:6px;position:relative;
+  transition:background var(--t-fast);
+}
+.calcell:hover{background:var(--bg-soft);}
+.calcell.is-out{background:var(--bg-soft);opacity:.42;}
+.calcell.is-today{box-shadow:inset 0 0 0 1.5px var(--brand);}
+.calcell__d{
+  font-family:var(--font-mono);font-size:11px;color:var(--text-3);margin-bottom:4px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.calcell.is-today .calcell__d{color:var(--brand);font-weight:600;}
+.calev{
+  font-size:11px;line-height:1.45;padding:3px 6px;border-radius:5px;margin-bottom:3px;
+  border-left:2.5px solid var(--brand);background:var(--brand-soft);
+  cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  transition:var(--t-fast);
+}
+.calev:hover{background:var(--brand);color:#fff;}
+.calev--done{opacity:.55;text-decoration:line-through;border-left-color:var(--ok);}
+.calev--delayed{border-left-color:var(--alert);background:rgba(185,28,28,.09);}
+.calev--high{border-left-width:3.5px;}
+.callegend{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;font-size:11px;color:var(--text-3);}
+.callegend span{display:flex;align-items:center;gap:5px;}
+.callegend i{width:9px;height:9px;border-radius:3px;display:inline-block;}
+
+/* 到期提醒横幅 */
+.calalert{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:10px 13px;margin-bottom:12px;border-radius:var(--r-md);
+  border:1px solid rgba(185,28,28,.28);background:rgba(185,28,28,.07);
+  font-size:12.5px;color:var(--alert);
+}
+.calalert--soon{
+  border-color:rgba(180,83,9,.28);background:rgba(180,83,9,.07);color:var(--warn);
+}
+.calalert b{font-weight:700;}
+.calalert .spacer{flex:1;}
+
+/* 事件列表（月视图下方） */
+.evlist{margin-top:14px;}
+.evrow{
+  display:flex;align-items:center;gap:9px;flex-wrap:wrap;
+  padding:9px 11px;border:1px solid var(--line);border-radius:var(--r-sm);
+  margin-bottom:7px;background:var(--card);transition:var(--t-fast);
+}
+.evrow:hover{border-color:var(--line-strong);box-shadow:var(--shadow-sm);}
+.evrow__t{font-size:13px;font-weight:500;flex:1;min-width:130px;}
+.evrow__d{font-family:var(--font-mono);font-size:11px;color:var(--text-3);}
+.evrow__ops{display:flex;gap:3px;}
+.evrow__ops button{
+  border:1px solid var(--line);background:var(--bg-soft);color:var(--text-2);
+  font-size:11px;padding:3px 7px;border-radius:5px;transition:var(--t-fast);
+}
+.evrow__ops button:hover{border-color:var(--brand);color:var(--brand);}
+.calempty{text-align:center;color:var(--text-3);font-size:12.5px;padding:26px 10px;line-height:1.9;}
 
 </style>
 </head>
@@ -372,6 +549,7 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
   <button class="tab" data-tab="kb"><span class="tab__name">📚 品牌知识库</span><span class="tab__desc">卖点 · 竞品 · 违禁词</span></button>
   <button class="tab" data-tab="chart"><span class="tab__name">📊 商业图卡</span><span class="tab__desc">填数据 · 出图导出</span></button>
   <button class="tab" data-tab="agent"><span class="tab__name">💬 Agent 工作台</span><span class="tab__desc">对话 · 文档 · 工具</span></button>
+  <button class="tab" data-tab="cal"><span class="tab__name">📅 营销日历</span><span class="tab__desc">排期 · 追踪 · 提醒</span></button>
 </nav>
 
 <!-- ===================== 主体 ===================== -->
@@ -583,6 +761,7 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
         <div class="row" style="margin-bottom:12px">
           <button class="btn btn--primary" id="btnRunTool">⚡ 运行分析</button>
           <button class="btn btn--ghost" id="btnToolDemo">📋 填入示例</button>
+          <button class="btn btn--ghost" id="btnToolToCal" style="display:none">📅 存入日历</button>
           <button class="btn btn--ghost" id="btnToolSchema">📐 Function Schema</button>
           <button class="btn btn--ghost" id="btnToolSvg">⬇️ 导出 SVG</button>
           <button class="btn btn--ghost" id="btnToolPng">🖼️ 导出 PNG</button>
@@ -807,6 +986,37 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
       </div>
     </section>
 
+
+    <!-- ===== 营销日历 ===== -->
+    <section class="panel" data-panel="cal">
+      <h2 class="panel__hd">📅 营销日历</h2>
+      <p class="panel__sub">把零散动作排成节奏：建事件 → 追踪状态 → 到期提醒。数据存在本地，打开页面时提醒你。</p>
+
+      <div id="calAlerts"></div>
+
+      <div class="calbar">
+        <button class="btn btn--sm btn--ghost" id="btnCalPrev">‹ 上月</button>
+        <span class="calbar__ym" id="calYM"></span>
+        <button class="btn btn--sm btn--ghost" id="btnCalNext">下月 ›</button>
+        <button class="btn btn--sm btn--ghost" id="btnCalToday">今天</button>
+        <span class="spacer"></span>
+        <button class="btn btn--sm btn--primary" id="btnCalAdd">➕ 新建事件</button>
+        <button class="btn btn--sm btn--ghost" id="btnCalNode">🎯 节点库</button>
+      </div>
+
+      <div class="calgrid" id="calGrid"></div>
+
+      <div class="callegend">
+        <span><i style="background:var(--brand)"></i>待开始</span>
+        <span><i style="background:var(--signal)"></i>进行中</span>
+        <span><i style="background:var(--ok)"></i>已完成</span>
+        <span><i style="background:var(--alert)"></i>已延期</span>
+        <span style="margin-left:auto">💡 点日历上的事件可直接改状态</span>
+      </div>
+
+      <div class="evlist" id="evList"></div>
+    </section>
+
   </main>
   <aside>
     <div class="card" id="scoreTrendCard">
@@ -879,6 +1089,52 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
     <button class="btn btn--sm btn--ghost" id="btnClearHist">🗑️ 清空历史</button>
   </div>
 </div>
+<div class="mask" id="maskCal">
+  <div class="modal">
+    <div class="modal__hd"><span id="calModalTitle">➕ 新建事件</span><button class="btn btn--sm btn--ghost" id="btnCloseCal">✕</button></div>
+    <label class="f"><span>标题</span><input type="text" id="ev_title" placeholder="例：618 预热第一波"></label>
+    <div class="grid2">
+      <label class="f"><span>日期</span><input type="date" id="ev_date"></label>
+      <label class="f"><span>优先级</span>
+        <select id="ev_pri"><option value="high">高</option><option value="mid" selected>中</option><option value="low">低</option></select>
+      </label>
+    </div>
+    <div class="grid2">
+      <label class="f"><span>状态</span>
+        <select id="ev_status">
+          <option value="todo">待开始</option>
+          <option value="doing">进行中</option>
+          <option value="done">已完成</option>
+          <option value="delayed">已延期</option>
+        </select>
+      </label>
+      <label class="f"><span>跳转到</span>
+        <select id="ev_link">
+          <option value="">不跳转</option>
+          <option value="strategy">📊 策略模板</option>
+          <option value="content">✍️ 内容工厂</option>
+          <option value="chart">📊 商业图卡</option>
+          <option value="agent">💬 Agent 工作台</option>
+          <option value="flow">🔗 工作流</option>
+        </select>
+      </label>
+    </div>
+    <label class="f"><span>备注</span><textarea id="ev_note" placeholder="目标、负责人、关联素材…"></textarea></label>
+    <div class="row">
+      <button class="btn btn--primary btn--sm" id="btnEvSave">💾 保存</button>
+      <button class="btn btn--ghost btn--sm" id="btnEvDel" style="display:none">🗑️ 删除</button>
+    </div>
+  </div>
+</div>
+
+<div class="mask" id="maskNode">
+  <div class="modal">
+    <div class="modal__hd"><span>🎯 营销节点库 · 一键添加</span><button class="btn btn--sm btn--ghost" id="btnCloseNode">✕</button></div>
+    <p class="hint" style="margin-bottom:10px">选一个节点，自动按今年日期加入日历。农历节点按 2026 年公历，跨年请手动改日期。</p>
+    <div class="chips" id="nodeChips"></div>
+  </div>
+</div>
+
 <div class="mask" id="maskNet">
   <div class="modal">
     <div class="modal__hd"><span>⚙️ 联网设置</span><button class="btn btn--sm btn--ghost" id="btnCloseNet">✕</button></div>
@@ -1023,7 +1279,8 @@ var state = {
     ]},
     {name:'爆款素材',docs:[]}
   ],curFolder:0,curDoc:-1},
-  history:[]
+  history:[],
+  cal:{y:new Date().getFullYear(), m:new Date().getMonth(), events:[]}
 };
 
 /* ===== src/02-presets.js ===== */
@@ -2477,6 +2734,7 @@ function toolSchema(k){
 
 /* ---------- 工具：运行 / 渲染 / 导出 ---------- */
 var lastToolSvg = '';
+var lastCalRes = null;   // 最近一次日历倒排结果，供「存入日历」使用
 function runTool(){
   var k = state.tool.type;
   var res = null, report = '';
@@ -2485,6 +2743,8 @@ function runTool(){
   else { res = calcCal(); if(res) report = calReport(res); }
 
   if(!res){
+    lastCalRes = null;
+    var ti2 = $('#btnToolToCal'); if(ti2) ti2.style.display = 'none';
     setPreview('# ⚠️ 数据不足\n\n请先填好数据（或点「📋 填入示例」看看格式），再运行分析。\n\n' +
       (k==='comp' ? '需要：至少 1 个维度 + 至少 2 个竞品，每个竞品的分数个数要与维度数一致。\n'
       : k==='stp' ? '需要：至少 2 个细分市场，每行格式为「名称,吸引力,竞争力,规模」。\n'
@@ -2492,6 +2752,9 @@ function runTool(){
     toast('数据不足，请先填写'); return;
   }
   lastToolSvg = res.svg;
+  lastCalRes = (k === 'cal') ? res : null;
+  var ti = $('#btnToolToCal');
+  if(ti) ti.style.display = (k === 'cal') ? '' : 'none';
   $('#toolChartWrap').innerHTML = res.svg;
   setPreview(report);
   pushHistory('分析 · ' + (TOOL_TYPES.filter(function(x){return x.k===k;})[0]||{}).n, report);
@@ -4235,6 +4498,39 @@ function bind(){
       .catch(function(e){ msg.textContent = '❌ 连接失败：' + e.message + '（多半是 CORS 限制）'; });
   };
 
+  $('#btnToolToCal').onclick = function(){
+    if(!lastCalRes || !lastCalRes.nodes){ toast('请先运行营销日历倒排'); return; }
+    importPlanToCal(lastCalRes.nodes);
+    switchTab('cal');
+  };
+
+  // ===== 营销日历 =====
+  $('#btnCalPrev').onclick = function(){
+    state.cal.m--; if(state.cal.m < 0){ state.cal.m = 11; state.cal.y--; }
+    save(); renderCal();
+  };
+  $('#btnCalNext').onclick = function(){
+    state.cal.m++; if(state.cal.m > 11){ state.cal.m = 0; state.cal.y++; }
+    save(); renderCal();
+  };
+  $('#btnCalToday').onclick = function(){
+    var d = new Date(); state.cal.y = d.getFullYear(); state.cal.m = d.getMonth();
+    save(); renderCal();
+  };
+  $('#btnCalAdd').onclick = function(){ openCalModal(null); };
+  $('#btnCalNode').onclick = function(){ renderNodeChips(); $('#maskNode').classList.add('is-on'); };
+  $('#btnCloseCal').onclick = function(){ $('#maskCal').classList.remove('is-on'); };
+  $('#maskCal').onclick = function(e){ if(e.target === this) this.classList.remove('is-on'); };
+  $('#btnCloseNode').onclick = function(){ $('#maskNode').classList.remove('is-on'); };
+  $('#maskNode').onclick = function(e){ if(e.target === this) this.classList.remove('is-on'); };
+  $('#btnEvSave').onclick = saveCalEvent;
+  $('#btnEvDel').onclick = function(){
+    if(!calEditingId) return;
+    if(!confirm('删除这个事件？')) return;
+    state.cal.events = (state.cal.events||[]).filter(function(x){ return x.id !== calEditingId; });
+    save(); $('#maskCal').classList.remove('is-on'); renderCal(); toast('已删除');
+  };
+
   // ===== Agent 导出 =====
   $('#btnExpStd').onclick = function(){
     var r = exportStd(); if(!r) return;
@@ -4393,6 +4689,241 @@ function bind(){
   };
 }
 
+/* ===== src/17-calendar.js ===== */
+/* ============================================================
+ * 营销日历 —— 时间轴与行动中枢
+ * 精简版：月视图 + 事件增删改 + 状态 + 节点库 + 到期提醒
+ * 说明：无后端，提醒在「打开页面时」计算，不承诺关页面后仍推送
+ * ============================================================ */
+var EV_STATUS = {
+  todo:   {n:'待开始', cls:'is-todo'},
+  doing:  {n:'进行中', cls:'is-doing'},
+  done:   {n:'已完成', cls:'is-done'},
+  delayed:{n:'已延期', cls:'is-delayed'}
+};
+var EV_PRI = {high:{n:'高',cls:'pri--high'}, mid:{n:'中',cls:'pri--mid'}, low:{n:'低',cls:'pri--low'}};
+
+var CAL_NODES_LIB = [
+  {n:'元旦', md:'01-01'}, {n:'年货节', md:'01-20'}, {n:'情人节', md:'02-14'},
+  {n:'春节', md:'02-17'}, {n:'妇女节', md:'03-08'}, {n:'五一', md:'05-01'},
+  {n:'母亲节', md:'05-10'}, {n:'618 大促', md:'06-18'}, {n:'818 大促', md:'08-18'},
+  {n:'七夕', md:'08-19'}, {n:'开学季', md:'09-01'}, {n:'99 大促', md:'09-09'},
+  {n:'中秋', md:'09-25'}, {n:'国庆', md:'10-01'}, {n:'双 11', md:'11-11'},
+  {n:'双 12', md:'12-12'}, {n:'圣诞', md:'12-25'}
+];
+
+/* ---------- 日期工具 ---------- */
+function ymd(d){
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function today0(){ var d = new Date(); d.setHours(0,0,0,0); return d; }
+function dayDiff(a, b){ return Math.round((a - b) / 86400000); }
+
+/* ---------- 渲染月视图 ---------- */
+function renderCal(){
+  var c = state.cal;
+  var y = c.y, m = c.m; // m: 0-11
+  var first = new Date(y, m, 1);
+  var start = new Date(first); start.setDate(1 - first.getDay()); // 周日起
+  var today = today0();
+  var todayS = ymd(today);
+
+  var el = $('#calYM');
+  if(el) el.textContent = y + ' 年 ' + (m+1) + ' 月';
+
+  var grid = $('#calGrid');
+  if(!grid) return;
+  var WD = ['日','一','二','三','四','五','六'];
+  var h = '';
+  WD.forEach(function(w){ h += '<div class="calgrid__wd">' + w + '</div>'; });
+
+  for(var i=0;i<42;i++){
+    var d = new Date(start); d.setDate(start.getDate() + i);
+    var ds = ymd(d);
+    var out = (d.getMonth() !== m);
+    var isToday = (ds === todayS);
+    var evs = (c.events || []).filter(function(e){ return e.date === ds; });
+    h += '<div class="calcell' + (out?' is-out':'') + (isToday?' is-today':'') + '" data-date="' + ds + '">';
+    h += '<div class="calcell__d"><span>' + d.getDate() + '</span>';
+    if(evs.length) h += '<span class="mono" style="font-size:9.5px">' + evs.length + '</span>';
+    h += '</div>';
+    evs.slice(0,3).forEach(function(e){
+      h += '<div class="calev ' + (e.status==='done'?'calev--done':e.status==='delayed'?'calev--delayed':'') +
+           (e.pri==='high'?' calev--high':'') + '" data-ev="' + e.id + '" title="' + esc(e.title) + '">' +
+           esc(e.title) + '</div>';
+    });
+    if(evs.length > 3) h += '<div class="calcell__d" style="margin-top:2px">+' + (evs.length-3) + '</div>';
+    h += '</div>';
+  }
+  grid.innerHTML = h;
+
+  // 点空白格 = 新建；点事件 = 编辑
+  grid.onclick = function(e){
+    var ev = e.target.closest('.calev');
+    if(ev){ openCalModal(ev.getAttribute('data-ev')); return; }
+    var cell = e.target.closest('.calcell');
+    if(cell){ openCalModal(null, cell.getAttribute('data-date')); }
+  };
+
+  renderCalAlerts();
+  renderEvList();
+}
+
+/* ---------- 到期提醒（打开页面时计算） ---------- */
+function renderCalAlerts(){
+  var host = $('#calAlerts'); if(!host) return;
+  var today = today0();
+  var evs = (state.cal.events || []).filter(function(e){ return e.status !== 'done'; });
+  var overdue = [], soon = [];
+  evs.forEach(function(e){
+    var d = new Date(e.date + 'T00:00:00');
+    if(isNaN(d)) return;
+    var diff = dayDiff(d, today);
+    if(diff < 0){ overdue.push({e:e, days:Math.abs(diff)}); }
+    else if(diff <= 3){ soon.push({e:e, days:diff}); }
+  });
+  var h = '';
+  if(overdue.length){
+    h += '<div class="calalert"><b>⚠️ ' + overdue.length + ' 项已逾期</b>' +
+         '<span>' + overdue.slice(0,3).map(function(x){ return esc(x.e.title) + '（逾期 ' + x.days + ' 天）'; }).join('、') +
+         (overdue.length>3 ? ' 等' : '') + '</span><span class="spacer"></span>' +
+         '<button class="btn btn--sm btn--ghost" id="btnMarkOverdue">全部标记延期</button></div>';
+  }
+  if(soon.length){
+    h += '<div class="calalert calalert--soon"><b>⏳ ' + soon.length + ' 项即将到期</b>' +
+         '<span>' + soon.slice(0,3).map(function(x){ return esc(x.e.title) + '（' + (x.days===0?'今天':x.days+' 天后') + '）'; }).join('、') +
+         (soon.length>3 ? ' 等' : '') + '</span></div>';
+  }
+  host.innerHTML = h;
+  var b = $('#btnMarkOverdue');
+  if(b) b.onclick = function(){
+    overdue.forEach(function(x){ x.e.status = 'delayed'; });
+    save(); renderCal(); toast('已标记 ' + overdue.length + ' 项为延期');
+  };
+}
+
+/* ---------- 事件列表 ---------- */
+function renderEvList(){
+  var host = $('#evList'); if(!host) return;
+  var evs = (state.cal.events || []).slice().sort(function(a,b){ return a.date < b.date ? -1 : 1; });
+  if(!evs.length){
+    host.innerHTML = '<div class="calempty">还没有事件<br>点「➕ 新建事件」或「🎯 节点库」一键添加</div>';
+    return;
+  }
+  var h = '';
+  evs.forEach(function(e){
+    var st = EV_STATUS[e.status] || EV_STATUS.todo;
+    var pr = EV_PRI[e.pri] || EV_PRI.mid;
+    h += '<div class="evrow">';
+    h += '<span class="badge ' + st.cls + '"><i class="dot"></i>' + st.n + '</span>';
+    h += '<span class="evrow__t">' + esc(e.title) + '</span>';
+    h += '<span class="pri ' + pr.cls + '">' + pr.n + '</span>';
+    h += '<span class="evrow__d">' + e.date.slice(5) + '</span>';
+    h += '<span class="evrow__ops">';
+    if(e.status !== 'done') h += '<button data-op="done" data-id="' + e.id + '">完成</button>';
+    if(e.link) h += '<button data-op="go" data-id="' + e.id + '">跳转</button>';
+    h += '<button data-op="edit" data-id="' + e.id + '">编辑</button>';
+    h += '</span></div>';
+  });
+  host.innerHTML = h;
+  host.onclick = function(ev){
+    var b = ev.target.closest('button[data-op]'); if(!b) return;
+    var op = b.getAttribute('data-op'), id = b.getAttribute('data-id');
+    var e = (state.cal.events||[]).filter(function(x){ return x.id === id; })[0];
+    if(!e) return;
+    if(op === 'done'){ e.status = 'done'; save(); renderCal(); toast('已标记完成'); }
+    else if(op === 'edit'){ openCalModal(id); }
+    else if(op === 'go'){ switchTab(e.link); }
+  };
+}
+
+/* ---------- 弹层 ---------- */
+var calEditingId = null;
+function openCalModal(id, date){
+  calEditingId = id || null;
+  var e = id ? (state.cal.events||[]).filter(function(x){ return x.id === id; })[0] : null;
+  $('#calModalTitle').textContent = e ? '✏️ 编辑事件' : '➕ 新建事件';
+  $('#ev_title').value  = e ? e.title : '';
+  $('#ev_date').value   = e ? e.date : (date || ymd(today0()));
+  $('#ev_pri').value    = e ? e.pri : 'mid';
+  $('#ev_status').value = e ? e.status : 'todo';
+  $('#ev_link').value   = e ? (e.link || '') : '';
+  $('#ev_note').value   = e ? (e.note || '') : '';
+  $('#btnEvDel').style.display = e ? '' : 'none';
+  $('#maskCal').classList.add('is-on');
+}
+function saveCalEvent(){
+  var t = $('#ev_title').value.trim();
+  if(!t){ toast('请填写标题'); return; }
+  var d = $('#ev_date').value || ymd(today0());
+  var o = {
+    title:t, date:d,
+    pri:$('#ev_pri').value, status:$('#ev_status').value,
+    link:$('#ev_link').value, note:$('#ev_note').value.trim()
+  };
+  if(calEditingId){
+    var e = (state.cal.events||[]).filter(function(x){ return x.id === calEditingId; })[0];
+    if(e){ e.title=o.title; e.date=o.date; e.pri=o.pri; e.status=o.status; e.link=o.link; e.note=o.note; }
+  } else {
+    o.id = 'ev' + Date.now() + Math.floor(Math.random()*100);
+    state.cal.events.push(o);
+  }
+  save();
+  $('#maskCal').classList.remove('is-on');
+  renderCal();
+  toast(calEditingId ? '已保存' : '已添加');
+}
+
+/* ---------- 节点库 ---------- */
+function renderNodeChips(){
+  var host = $('#nodeChips'); if(!host) return;
+  var y = today0().getFullYear();
+  host.innerHTML = '';
+  CAL_NODES_LIB.forEach(function(n){
+    var b = document.createElement('button');
+    b.className = 'chip';
+    b.textContent = n.n + ' · ' + n.md.replace('-','/');
+    b.onclick = function(){
+      var mm = n.md.split('-');
+      var dt = new Date(y, parseInt(mm[0],10)-1, parseInt(mm[1],10));
+      if(dt < today0()) dt = new Date(y+1, parseInt(mm[0],10)-1, parseInt(mm[1],10));
+      state.cal.events.push({
+        id:'ev' + Date.now() + Math.floor(Math.random()*100),
+        title:n.n, date:ymd(dt), pri:'mid', status:'todo', link:'', note:'来自节点库'
+      });
+      save(); renderCal();
+      $('#maskNode').classList.remove('is-on');
+      toast('已添加「' + n.n + '」');
+    };
+    host.appendChild(b);
+  });
+}
+
+/* ---------- 供其他模块调用：把倒排结果存入日历 ---------- */
+function importPlanToCal(nodes){
+  if(!nodes || !nodes.length){ toast('没有可导入的排期'); return; }
+  var n = 0;
+  nodes.forEach(function(nd){
+    state.cal.events.push({
+      id:'ev' + Date.now() + Math.floor(Math.random()*100) + n,
+      title:nd.n, date:ymd(nd.date), pri:'high', status:'todo',
+      link:'', note:'由营销日历倒排导入'
+    });
+    n++;
+  });
+  save();
+  renderCal();
+  toast('已导入 ' + n + ' 个节点到日历');
+  return n;
+}
+
+/* ---------- 切换 Tab（供跳转用） ---------- */
+function switchTab(name){
+  var btn = document.querySelector('.tab[data-tab="' + name + '"]');
+  if(btn && btn.onclick) btn.onclick();
+  else if(btn) btn.click();
+}
+
 /* ===== src/16-boot.js ===== */
 /* ================= 回填 ================= */
 function restoreAll(){
@@ -4460,6 +4991,9 @@ function restoreAll(){
   state.chat = state.chat || []; state.blocks = state.blocks || [];
   state.net = state.net || {on:false, provider:'deepseek', key:'', base:''};
   renderChat(); renderBlocks();
+  state.cal = state.cal || {y:new Date().getFullYear(), m:new Date().getMonth(), events:[]};
+  state.cal.events = state.cal.events || [];
+  renderCal();
   state.scores = state.scores || [];
   renderScoreTrend();
 }

@@ -52,5 +52,6 @@ var state = {
     ]},
     {name:'爆款素材',docs:[]}
   ],curFolder:0,curDoc:-1},
-  history:[]
+  history:[],
+  cal:{y:new Date().getFullYear(), m:new Date().getMonth(), events:[]}
 };
