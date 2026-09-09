@@ -328,6 +328,7 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
   font-size:13px;z-index:300;opacity:0;pointer-events:none;transition:.25s;
 }
 .toast.is-on{opacity:1;bottom:44px;}
+
 </style>
 </head>
 <body>
@@ -843,26 +844,26 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
 <section class="packs" id="packs">
   <div class="packs__inner">
     <div class="packs__hd">
-      <h2>内容包 · 让模板变成可交付的产出</h2>
-      <p>引擎永久免费。内容包提供完整工作流、种子素材库与实战案例。</p>
+      <h2>内容包 · 规划中</h2>
+      <p>引擎永久免费。内容包正在制作中，上线前你可以在「💬 Agent 工作台」里直接使用全部能力。</p>
     </div>
     <div class="packs__grid">
-      <div class="pack"><div class="pack__tag">最受欢迎</div><div class="pack__ico">📕</div>
+      <div class="pack"><div class="pack__ico">📕</div>
         <div class="pack__name">小红书增长包</div>
-        <div class="pack__desc">选题挖掘 → 标题公式 → 正文生成 → 违禁词体检 → 发布排期，含 500+ 爆款标题库</div>
-        <div class="pack__price">¥99<small>买断 · 永久更新</small></div></div>
-      <div class="pack"><div class="pack__tag">专业向</div><div class="pack__ico">⚔️</div>
+        <div class="pack__desc">选题挖掘 → 标题公式 → 正文生成 → 违禁词体检 → 发布排期</div>
+        <div class="pack__price">即将推出<small>关注更新</small></div></div>
+      <div class="pack"><div class="pack__ico">⚔️</div>
         <div class="pack__name">竞品情报包</div>
-        <div class="pack__desc">竞品识别 → 监测维度 → 对比矩阵 → 周报自动化，含 6 大行业竞品维度表</div>
-        <div class="pack__price">¥129<small>买断 · 永久更新</small></div></div>
-      <div class="pack"><div class="pack__tag">投放向</div><div class="pack__ico">📈</div>
+        <div class="pack__desc">竞品识别 → 监测维度 → 对比矩阵 → 周报自动化</div>
+        <div class="pack__price">即将推出<small>关注更新</small></div></div>
+      <div class="pack"><div class="pack__ico">📈</div>
         <div class="pack__name">投放复盘包</div>
         <div class="pack__desc">数据清洗 → 漏斗诊断 → 素材归因 → 预算重分配建议</div>
-        <div class="pack__price">¥129<small>买断 · 永久更新</small></div></div>
-      <div class="pack"><div class="pack__tag">超值</div><div class="pack__ico">💎</div>
-        <div class="pack__name">年度通行证</div>
-        <div class="pack__desc">全部内容包 + 一年持续更新 + 专属答疑社群</div>
-        <div class="pack__price">¥399<small>/ 年</small></div></div>
+        <div class="pack__price">即将推出<small>关注更新</small></div></div>
+      <div class="pack"><div class="pack__ico">🎓</div>
+        <div class="pack__name">方法论合辑</div>
+        <div class="pack__desc">本工具背后的方法说明：GE 矩阵、机会点判定、六维评分的推导过程</div>
+        <div class="pack__price">即将推出<small>关注更新</small></div></div>
     </div>
     <div class="packs__note">💡 所有配置与知识库均支持 JSON 导入导出 · 数据始终保存在你本地浏览器</div>
   </div>
@@ -967,6 +968,8 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
 <div class="toast" id="toast"></div>
 
 <script>
+/* ===== src/01-core.js ===== */
+
 (function(){
 'use strict';
 var $ = function(s){ return document.querySelector(s); };
@@ -1023,6 +1026,7 @@ var state = {
   history:[]
 };
 
+/* ===== src/02-presets.js ===== */
 /* ================= 预设数据 ================= */
 var PRESETS = [
   {n:'🎯品牌策略', role:'你是一位有 10 年经验的品牌策略师，服务过快消与互联网品牌，擅长从市场结构中找差异化机会。',
@@ -1092,32 +1096,26 @@ var FLOW_PRESETS = [
     {t:'输出 3 条可行动建议，附我方应对方案与优先级。', tool:1, inVar:'{{matrix}}', outVar:'actions', fail:'retry', gate:0},
     {t:'润色成周报格式，写入知识库「竞品素材」。', tool:2, inVar:'{{matrix}},{{actions}}', outVar:'report', fail:'skip', gate:70}
   ]},
+    {n:'🏷️ 品牌策略', goal:'输出品牌定位与信息屋', steps:[
+    {t:'梳理品类格局与我方资源，明确可占据的心智位置。', tool:0, inVar:'', outVar:'context', fail:'abort', gate:0},
+    {t:'做 STP：细分市场 → 目标人群 → 差异化定位陈述。', tool:1, inVar:'{{context}}', outVar:'stp', fail:'abort', gate:0},
+    {t:'用市场选择矩阵评估各细分市场，给出投入优先级。', tool:12, inVar:'{{stp}}', outVar:'priority', fail:'skip', gate:0},
+    {t:'搭信息屋：核心主张 + 三大支撑点 + 用户利益 + 信任状。', tool:0, inVar:'{{stp}}', outVar:'house', fail:'retry', gate:70},
+    {t:'输出 Tone of Voice 语气指南与禁用词清单。', tool:2, inVar:'{{house}}', outVar:'tone', fail:'retry', gate:0},
+    {t:'合规扫描全部对外表述，写入品牌记忆。', tool:14, inVar:'{{house}},{{tone}}', outVar:'compliance', fail:'abort', gate:0}
+  ]},
   {n:'📈 投放复盘', goal:'输出下一周期投放优化方案', steps:[
     {t:'导入投放后台导出的数据表，说明字段与统计周期。', tool:10, inVar:'', outVar:'dataset', fail:'abort', gate:0},
     {t:'计算 CTR / CVR / CPA / ROAS，按计划、素材、人群分层。', tool:1, inVar:'{{dataset}}', outVar:'metrics', fail:'abort', gate:0},
     {t:'识别跑量素材与衰退素材，标注生命周期阶段。', tool:1, inVar:'{{metrics}}', outVar:'creatives', fail:'retry', gate:0},
     {t:'归因分析：判断是素材、人群还是出价问题，给出依据。', tool:1, inVar:'{{metrics}},{{creatives}}', outVar:'attribution', fail:'abort', gate:0},
-    {t:'输出预算重分配方案与素材迭代方向。', tool:1, inVar:'{{attribution}}', outVar:'plan', fail:'retry', gate:0},
+    {t:'对头部素材做内容体检，找出文案层面的改进点。', tool:14, inVar:'{{creatives}}', outVar:'copycheck', fail:'skip', gate:0},
+    {t:'输出预算重分配方案与素材迭代方向。', tool:1, inVar:'{{attribution}},{{copycheck}}', outVar:'plan', fail:'retry', gate:0},
     {t:'沉淀结论进知识库，供下期策略调用。', tool:10, inVar:'{{plan}}', outVar:'memory', fail:'skip', gate:0}
-  ]},
-  {n:'🎵 音乐项目', goal:'生成一首完整的电子氛围音乐', steps:[
-    {t:'确定电子/氛围/实验风格，制定情绪基调与 BPM 范围。', tool:0, inVar:'', outVar:'style', fail:'retry', gate:0},
-    {t:'初始化 AudioContext，编写振荡器 + 滤波器基础播放示例。', tool:1, inVar:'{{style}}', outVar:'audioDemo', fail:'abort', gate:0},
-    {t:'拉取参考歌单元数据，提取 BPM 与调性。', tool:1, inVar:'{{style}}', outVar:'refs', fail:'skip', gate:0},
-    {t:'基于和弦走向生成 4 小节 MIDI，导出 JSON。', tool:0, inVar:'{{style}},{{refs}}', outVar:'midi', fail:'retry', gate:0},
-    {t:'初始化 Git 仓库并推送到 GitHub，用 Issues 管理任务。', tool:7, inVar:'{{midi}}', outVar:'repo', fail:'skip', gate:0},
-    {t:'连接 Vercel 配置环境变量，部署到生产环境。', tool:8, inVar:'{{repo}}', outVar:'deployUrl', fail:'skip', gate:0}
-  ]},
-  {n:'📱 App开发', goal:'从 0 到 1 上线一个应用', steps:[
-    {t:'明确目标用户与核心场景，输出功能清单与优先级。', tool:0, inVar:'', outVar:'spec', fail:'abort', gate:0},
-    {t:'设计数据模型与接口结构，输出 schema。', tool:1, inVar:'{{spec}}', outVar:'schema', fail:'abort', gate:0},
-    {t:'搭建项目骨架，实现核心页面与交互。', tool:5, inVar:'{{schema}}', outVar:'code', fail:'retry', gate:0},
-    {t:'编写测试用例，跑通主流程。', tool:1, inVar:'{{code}}', outVar:'tests', fail:'retry', gate:0},
-    {t:'推送 GitHub，配置 CI。', tool:7, inVar:'{{code}},{{tests}}', outVar:'repo', fail:'skip', gate:0},
-    {t:'部署 Vercel，配置域名与环境变量。', tool:8, inVar:'{{repo}}', outVar:'url', fail:'skip', gate:0}
   ]}
 ];
 
+/* ===== src/03-rules.js ===== */
 /* ============================================================
  * 违禁词规则库 v2.0 —— 三级分类 + 可溯源 + 用户可编辑
  *
@@ -1267,6 +1265,7 @@ var FALSE_POSITIVE_HINT = [
   {t:'100%', msg:'针对可验证对象（如特定批次纯度）且有方法/范围时可降级'}
 ];
 
+/* ===== src/04-store.js ===== */
 /* ================= 读写 ================= */
 function save(){
   try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
@@ -1342,6 +1341,7 @@ function pushHistory(title, txt){
   save();
 }
 
+/* ===== src/05-brand.js ===== */
 /* ============ 品牌记忆 ============ */
 /* 生成时从输入框实时读取，避免粘贴 / 自动填充不触发 oninput 导致漏注入 */
 function readBrand(){
@@ -1444,6 +1444,7 @@ function wrapWithBrand(body, title){
   return head + body;
 }
 
+/* ===== src/06-render.js ===== */
 /* ================= 渲染：预设 chips ================= */
 function renderPresets(){
   var host = $('#presetChips'); host.innerHTML = '';
@@ -1613,6 +1614,7 @@ function updateFlowDiag(){
   el.innerHTML = mdLite(h);
 }
 
+/* ===== src/07-charts.js ===== */
 /* ============================================================
  * 商业图卡引擎 —— 手写 SVG，零依赖，可导出
  * ============================================================ */
@@ -2050,6 +2052,7 @@ function gotoChart(type){
   }catch(e){}
 }
 
+/* ===== src/08-tools.js ===== */
 /* ============================================================
  * 策略计算工具 —— 真·能跑的分析引擎（本地计算，非提示词）
  * 1 竞品对比矩阵   加权排名 + 雷达图 + 机会点/威胁点
@@ -2570,6 +2573,7 @@ var TOOL_DEMO = {
   cal:{custom:'品牌周年庆,10-24\n新品首发,04-08'}
 };
 
+/* ===== src/09-agent.js ===== */
 /* ============================================================
  * Agent 导出引擎 —— 把编排结果变成可导入的 Agent 定义
  * 三种格式：标准 JSON / Coze workflow / Dify DSL
@@ -2780,6 +2784,7 @@ function downloadFile(name, text, mime){
   }catch(e){ return false; }
 }
 
+/* ===== src/10-workspace.js ===== */
 /* ============================================================
  * 运行记录 Trace —— 记录每步真实产出，形成可复现证据链
  * ============================================================ */
@@ -3337,6 +3342,7 @@ function exportDocJson(){
   downloadFile('workspace-' + Date.now() + '.json', JSON.stringify(data, null, 2));
 }
 
+/* ===== src/11-kb.js ===== */
 /* ================= 渲染：知识库 ================= */
 function renderKb(){
   var fh = $('#kbFolders'); fh.innerHTML = '';
@@ -3371,6 +3377,7 @@ function renderKb(){
   });
 }
 
+/* ===== src/12-generate.js ===== */
 /* ================= 生成逻辑 ================= */
 function genRole(){
   var r = {role:$('#r_role').value, task:$('#r_task').value, bg:$('#r_bg').value,
@@ -3516,6 +3523,7 @@ function userWords(){
   return res;
 }
 
+/* ===== src/13-scan.js ===== */
 /* ============================================================
  * 内容体检中心 —— 六维评分引擎（纯规则，不联网）
  * 维度：合规30 / 平台适配15 / 钩子15 / CTA10 / 可读性15 / 品牌一致性15
@@ -3900,6 +3908,7 @@ function expand(){
   setPreview(out); toast('已生成扩写指令');
 }
 
+/* ===== src/14-feedback.js ===== */
 /* ================= 误报反馈 ================= */
 function openFP(){
   var sel = $('#fp_word');
@@ -3959,6 +3968,7 @@ function buildFPText(){
   return s;
 }
 
+/* ===== src/15-bind.js ===== */
 /* ================= 事件绑定 ================= */
 function bind(){
   // Tab
@@ -4383,6 +4393,7 @@ function bind(){
   };
 }
 
+/* ===== src/16-boot.js ===== */
 /* ================= 回填 ================= */
 function restoreAll(){
   document.documentElement.setAttribute('data-theme', state.theme);
@@ -4459,6 +4470,7 @@ bind();
 restoreAll();
 renderScoreTrend();
 })();
+
 </script>
 </body>
 </html>

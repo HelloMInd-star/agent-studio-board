@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>营销 AI 工作台 · Y.Mine Agent Studio</title>
+<style>
+/*__CSS__*/
+</style>
+</head>
+<body>
+
+<!-- ===================== Hero ===================== -->
+<header class="hero">
+  <div class="hero__badge">Y.Mine 应用矩阵 · 营销专用</div>
+  <h1 class="hero__title">营销人的 AI 工作台</h1>
+  <p class="hero__sub">
+    策略 · 文案 · 竞品 · 投放 —— <b>40+ 营销模板与可编排工作流</b><br>
+    全部在你自己的浏览器里跑完，不登录、不上传、不联网
+  </p>
+  <div class="hero__trust">
+    <span>🔒 数据不出浏览器</span>
+    <span>⚡ 打开即用 · 零配置</span>
+    <span>🎁 核心功能永久免费</span>
+    <span>🧩 配置可导入导出</span>
+  </div>
+  <div class="hero__cta">
+    <a class="btn btn--primary" href="#studio">免费开始使用</a>
+    <a class="btn btn--ghost" href="#packs">查看付费内容包 →</a>
+  </div>
+</header>
+
+<!-- ===================== 顶栏 ===================== -->
+<nav class="topbar">
+  <span class="spacer"></span>
+  <button class="btn btn--sm btn--ghost" id="btnTheme">🌙 深色</button>
+  <button class="btn btn--sm btn--ghost" id="btnExport">📤 导出配置</button>
+  <button class="btn btn--sm btn--ghost" id="btnImport">📥 导入配置</button>
+  <input type="file" id="fileImport" accept=".json" style="display:none">
+</nav>
+
+<!-- ===================== Tabs ===================== -->
+<nav class="tabs" id="studio">
+  <button class="tab is-on" data-tab="role"><span class="tab__name">🧠 营销角色</span><span class="tab__desc">12 位专家 · 一键生成</span></button>
+  <button class="tab" data-tab="content"><span class="tab__name">✍️ 内容工厂</span><span class="tab__desc">多平台 · 批量出稿</span></button>
+  <button class="tab" data-tab="strategy"><span class="tab__name">📊 策略模板</span><span class="tab__desc">STP · 竞品 · GTM</span></button>
+  <button class="tab" data-tab="persona"><span class="tab__name">🍸 品牌人格</span><span class="tab__desc">调性指南 · 彩蛋玩法</span></button>
+  <button class="tab" data-tab="flow"><span class="tab__name">🔗 营销工作流</span><span class="tab__desc">6 步编排 · 自动跑通</span></button>
+  <button class="tab" data-tab="kb"><span class="tab__name">📚 品牌知识库</span><span class="tab__desc">卖点 · 竞品 · 违禁词</span></button>
+  <button class="tab" data-tab="chart"><span class="tab__name">📊 商业图卡</span><span class="tab__desc">填数据 · 出图导出</span></button>
+  <button class="tab" data-tab="agent"><span class="tab__name">💬 Agent 工作台</span><span class="tab__desc">对话 · 文档 · 工具</span></button>
+</nav>
+
+<!-- ===================== 主体 ===================== -->
+<div class="wrap">
+
+  <!-- ---------- 左栏 ---------- -->
+  <aside>
+    <div class="card" style="padding:13px">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <strong style="font-size:13px">💾 自动记忆</strong>
+        <label style="font-size:12px;display:flex;align-items:center;gap:5px;cursor:pointer">
+          <input type="checkbox" id="memOn" checked> 启用
+        </label>
+      </div>
+      <p class="hint" style="margin:6px 0 0">所有填写内容自动保存在本地浏览器。</p>
+    </div>
+
+    <div class="memory">
+      <div class="memory__hd">🎯 品牌记忆（核心资产）</div>
+      <div class="memory__tip">
+        填写一次，之后<b>每次生成自动注入</b>。禁用词会同步进违禁词体检。
+      </div>
+      <div class="memform">
+        <label class="f"><span>🏷️ 品牌名</span><input type="text" id="m_brand" placeholder="例：Y.Mine"></label>
+        <label class="f"><span>📦 品类</span><input type="text" id="m_cat" placeholder="例：AI 效率工具 / SaaS"></label>
+        <label class="f"><span>👥 目标人群</span><input type="text" id="m_aud" placeholder="例：25-35 岁品牌经理"></label>
+        <label class="f"><span>💎 核心卖点</span><input type="text" id="m_usp" placeholder="例：本地运行，数据不出浏览器"></label>
+        <label class="f"><span>🎭 专家角色</span><input type="text" id="defRole" placeholder="例：资深品牌策略师"></label>
+        <label class="f"><span>🎨 语气/风格</span><input type="text" id="defTone" placeholder="例：专业但不端着，直接给结论"></label>
+        <label class="f"><span>🚫 禁用词（逗号分隔）</span><input type="text" id="m_ban" placeholder="例：竞品名A, 内部代号, 打折"></label>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button class="btn btn--sm btn--ghost" id="btnMemPeek">👀 预览注入效果</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__hd">📚 知识库引用</div>
+      <label style="font-size:12.5px;display:flex;align-items:center;gap:6px;cursor:pointer;margin-bottom:6px">
+        <input type="checkbox" id="kbUse" checked> 生成时自动带上知识库内容
+      </label>
+      <label class="f" style="margin-bottom:6px"><span>引用范围</span>
+        <select id="kbScope">
+          <option value="all">全部文件夹</option>
+          <option value="cur">仅当前选中文件夹</option>
+          <option value="off">不引用</option>
+        </select>
+      </label>
+      <label class="f" style="margin-bottom:6px"><span>最多引用文档数</span>
+        <select id="kbMax">
+          <option>3</option><option selected>5</option><option>10</option><option>20</option>
+        </select>
+      </label>
+      <p class="hint" id="kbStat">当前可引用 0 篇文档</p>
+    </div>
+
+    <div class="card">
+      <div class="card__hd">📋 配置智能体</div>
+      <div class="chips" id="presetChips"></div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn btn--sm btn--ghost" id="btnClear">✕ 清空</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__hd">🤖 当前智能体</div>
+      <div style="font-size:13px" id="curAgent">提示词工坊</div>
+      <p class="hint" style="margin:6px 0 0">全局记忆自动注入</p>
+    </div>
+  </aside>
+
+  <!-- ---------- 中栏 ---------- -->
+  <main>
+
+    <!-- ===== 营销角色（提示词工坊） ===== -->
+    <section class="panel is-on" data-panel="role">
+      <h2 class="panel__hd">🧠 营销角色 · 提示词工坊</h2>
+      <p class="panel__sub">按结构化字段拼装高质量提示词，复制后粘贴到任意 AI 平台即可使用。</p>
+      <div class="grid2">
+        <label class="f"><span>🎭 角色设定</span><textarea id="r_role" placeholder="例：你是一位有 8 年经验的小红书内容操盘手"></textarea></label>
+        <label class="f"><span>🎯 核心任务</span><textarea id="r_task" placeholder="例：为新产品写 10 个爆款标题"></textarea></label>
+        <label class="f"><span>📌 背景信息</span><textarea id="r_bg" placeholder="产品、人群、渠道、时机等"></textarea></label>
+        <label class="f"><span>⚙️ 具体要求</span><textarea id="r_req" placeholder="字数、格式、条数、禁忌等"></textarea></label>
+      </div>
+      <label class="f"><span>📎 参考示例</span><textarea id="r_ex" placeholder="粘贴一条你认可的样例（可选）"></textarea></label>
+      <div class="row">
+        <button class="btn btn--primary" id="btnGenRole">✨ 生成提示词</button>
+        <button class="btn btn--ghost" id="btnCopyRole">📋 复制</button>
+      </div>
+    </section>
+
+    <!-- ===== 内容工厂 ===== -->
+    <section class="panel" data-panel="content">
+      <h2 class="panel__hd">✍️ 内容工厂</h2>
+      <p class="panel__sub">多平台调性切换，一次输入批量出稿。生成后可一键做违禁词体检。</p>
+      <div class="grid2">
+        <label class="f"><span>📝 内容题目</span><input type="text" id="c_title" placeholder="例：夏季防晒新品上市种草"></label>
+        <label class="f"><span>🏷️ 关键词（逗号分隔）</span><input type="text" id="c_kw" placeholder="防晒, 轻薄, 通勤"></label>
+        <label class="f"><span>📱 投放平台</span>
+          <select id="c_platform">
+            <option>小红书</option><option>公众号</option><option>抖音口播</option>
+            <option>视频号</option><option>B站</option><option>知乎</option>
+            <option>微博</option><option>电商详情页</option><option>朋友圈</option>
+          </select>
+        </label>
+        <label class="f"><span>📏 字数</span>
+          <select id="c_len"><option>300 字</option><option selected>800 字</option><option>1500 字</option><option>3000 字</option></select>
+        </label>
+        <label class="f"><span>🎯 风格</span>
+          <select id="c_style">
+            <option>种草安利型</option><option selected>专业干货型</option>
+            <option>故事叙事型</option><option>情绪共鸣型</option><option>硬广转化型</option>
+          </select>
+        </label>
+        <label class="f"><span>👥 目标人群</span><input type="text" id="c_aud" placeholder="例：25-32 岁都市职场女性"></label>
+      </div>
+      <label class="f"><span>📚 参考素材（每行一条）</span><textarea id="c_ref" placeholder="竞品爆款标题 / 用户真实评论 / 产品资料"></textarea></label>
+      <label class="f"><span>📌 额外要求</span><textarea id="c_extra" placeholder="例：开头 3 秒必须有钩子；结尾带 CTA"></textarea></label>
+      <label class="f"><span>⚖️ 体检平台（决定叠加哪套平台规则）</span>
+        <select id="c_scanpf">
+          <option value="__follow__">跟随上方「投放平台」</option>
+          <option value="__all__">全部平台（最严格）</option>
+          <option value="xhs">小红书</option>
+          <option value="dy">抖音</option>
+          <option value="wx">微信 / 公众号</option>
+          <option value="tb">淘宝 / 天猫</option>
+          <option value="bili">B站</option>
+          <option value="zhihu">知乎</option>
+          <option value="weibo">微博</option>
+        </select>
+      </label>
+      <div class="row">
+        <button class="btn btn--primary" id="btnGenContent">🚀 生成文稿</button>
+        <button class="btn btn--ghost" id="btnCopyAll">📋 复制</button>
+        <button class="btn btn--ghost" id="btnExportMd">⬇️ 导出 MD</button>
+        <button class="btn btn--ghost" id="btnScan">🩺 内容体检</button>
+        <button class="btn btn--ghost" id="btnReportFP">🚩 报告误报</button>
+      </div>
+    </section>
+
+    <!-- ===== 策略模板 ===== -->
+    <section class="panel" data-panel="strategy">
+      <h2 class="panel__hd">📊 营销策略 · 双模式</h2>
+      <p class="panel__sub">同一批营销框架，两种用法：<b>提示词模式</b>交给 AI 展开，<b>计算模式</b>本地直接算出结论。</p>
+
+      <div class="chips" id="stratMode" style="margin-bottom:14px"></div>
+
+      <!-- ========== 模式A：提示词 ========== -->
+      <div id="stratPromptMode">
+        <label class="f"><span>选择框架</span></label>
+        <div class="chips" id="stratChips" style="margin-bottom:14px"></div>
+        <div class="grid2">
+          <label class="f"><span>🎯 项目名称</span><input type="text" id="s_name" placeholder="例：Y.Mine 2026 Q4 上市"></label>
+          <label class="f"><span>📌 背景 / 痛点</span><input type="text" id="s_bg" placeholder="当前问题或机会是什么"></label>
+        </div>
+        <label class="f"><span>📎 额外备注</span><textarea id="s_extra" placeholder="约束条件、预算、时间节点等"></textarea></label>
+        <div class="row">
+          <button class="btn btn--primary" id="btnGenStrat">🧠 生成文档</button>
+          <button class="btn btn--ghost" id="btnCopyAll2">📋 复制</button>
+          <button class="btn btn--ghost" id="btnStratChart">📊 配图卡</button>
+        </div>
+      </div>
+
+      <!-- ========== 模式B：计算 ========== -->
+      <div id="stratCalcMode" style="display:none">
+        <div class="chips" id="toolChips" style="margin-bottom:14px"></div>
+
+        <!-- 工具1：竞品对比矩阵 -->
+        <div class="toolform" id="tfComp">
+          <p class="hint" style="margin-bottom:10px">按维度加权打分（1-5），自动算排名，并找出<b>所有竞品都弱、而你能打的空白点</b>。</p>
+          <div class="grid2">
+            <label class="f"><span>📐 维度与权重（每行：名称,权重%）</span>
+              <textarea id="cp_dims" style="min-height:120px" placeholder="价格力,30&#10;产品功能,25&#10;渠道覆盖,20&#10;内容营销,15&#10;品牌口碑,10"></textarea>
+            </label>
+            <label class="f"><span>🏷️ 竞品打分（每行：名称,分1,分2… 与维度顺序一致）</span>
+              <textarea id="cp_rows" style="min-height:120px" placeholder="我方(第一行视为自己),4,3,2,4,3&#10;竞品A,5,4,4,3,5&#10;竞品B,3,2,3,5,2&#10;竞品C,4,4,2,2,4"></textarea>
+            </label>
+          </div>
+          <p class="hint" id="cpStat" style="margin-top:-4px">已解析 0 个维度 × 0 个竞品</p>
+        </div>
+
+        <!-- 工具2：STP 市场选择 -->
+        <div class="toolform" id="tfStp" style="display:none">
+          <p class="hint" style="margin-bottom:10px">用 GE 矩阵评估细分市场：横轴市场吸引力、纵轴自身竞争力、气泡大小代表规模，自动给出投入建议。</p>
+          <label class="f"><span>🎯 细分市场（每行：名称,吸引力1-5,竞争力1-5,规模数值）</span>
+            <textarea id="st_rows" style="min-height:130px" placeholder="一线白领,5,4,800&#10;下沉新中产,4,2,1200&#10;学生群体,3,5,300&#10;银发人群,2,2,500"></textarea>
+          </label>
+          <p class="hint" id="stStat" style="margin-top:-4px">已解析 0 个细分市场</p>
+        </div>
+
+        <!-- 工具3：营销日历倒排 -->
+        <div class="toolform" id="tfCal" style="display:none">
+          <p class="hint" style="margin-bottom:10px">选节点 → 自动倒排筹备任务并算倒计时。农历节点按 2026 年公历日期，跨年请手动校正。</p>
+          <label class="f"><span>📅 选择节点（可多选，Ctrl/⌘ 多选）</span>
+            <select id="cal_pick" multiple size="9"></select>
+          </label>
+          <label class="f"><span>➕ 自定义节点（每行：名称,MM-DD）</span>
+            <textarea id="cal_custom" style="min-height:70px" placeholder="品牌周年庆,10-24&#10;新品首发,04-08"></textarea>
+          </label>
+          <label class="f"><span>⏳ 筹备周期（天）</span>
+            <select id="cal_lead">
+              <option value="21">21 天（快速）</option>
+              <option value="30" selected>30 天（标准）</option>
+              <option value="45">45 天（大促）</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="row" style="margin-bottom:12px">
+          <button class="btn btn--primary" id="btnRunTool">⚡ 运行分析</button>
+          <button class="btn btn--ghost" id="btnToolDemo">📋 填入示例</button>
+          <button class="btn btn--ghost" id="btnToolSchema">📐 Function Schema</button>
+          <button class="btn btn--ghost" id="btnToolSvg">⬇️ 导出 SVG</button>
+          <button class="btn btn--ghost" id="btnToolPng">🖼️ 导出 PNG</button>
+        </div>
+        <div class="chartwrap" id="toolChartWrap">
+          <div class="chartph">👈 填好数据，点「⚡ 运行分析」<br><br>结论与图表会在右栏同时产出</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 品牌人格 ===== -->
+    <section class="panel" data-panel="persona">
+      <h2 class="panel__hd">🍸 品牌人格 · 调性指南</h2>
+      <p class="panel__sub">用 MBTI 给品牌定人设，输出可直接写进品牌手册的 Tone of Voice 指南（附彩蛋特调）。</p>
+      <label class="f"><span>🧬 人格类型</span>
+        <select id="p_type"></select>
+      </label>
+      <div class="grid2">
+        <label class="f"><span>🍭 口味偏好</span>
+          <select id="p_flavor"><option>酸甜/果味</option><option>苦烈/干型</option><option>清爽/草本</option><option>辛辣/烟熏</option></select>
+        </label>
+        <label class="f"><span>🍷 酒精度</span>
+          <select id="p_abv"><option>低度数</option><option selected>中高度</option><option>高度数</option></select>
+        </label>
+      </div>
+      <label class="f"><span>📝 品牌 / 场合</span><input type="text" id="p_occ" placeholder="例：Y.Mine · 新品发布会 after party"></label>
+      <div class="row">
+        <button class="btn btn--primary" id="btnGenPersona">🍸 生成调性指南</button>
+        <button class="btn btn--ghost" id="btnCopyAll3">📋 复制</button>
+      </div>
+    </section>
+
+    <!-- ===== 营销工作流 ===== -->
+    <section class="panel" data-panel="flow">
+      <h2 class="panel__hd">🔗 工作流编排 · 详细指令版</h2>
+      <p class="panel__sub">每一步写清「做什么 + 用什么工具」，生成完整路由包。</p>
+      <label class="f"><span>预设链路</span></label>
+      <div class="chips" id="flowChips" style="margin-bottom:14px"></div>
+      <div class="grid2">
+        <label class="f"><span>🎯 项目目标</span><input type="text" id="f_goal" placeholder="例：产出本周竞品情报周报"></label>
+        <label class="f"><span>📌 全局背景</span><input type="text" id="f_bg" placeholder="品牌 / 品类 / 周期"></label>
+      </div>
+      <label class="f"><span>🔀 数据流图（变量如何在节点间传递）</span></label>
+      <div class="flowdiag" id="flowDiag"></div>
+      <label class="f"><span>⚙️ 工作流步骤（含详细指令与变量契约）</span></label>
+      <div id="steps"></div>
+      <div class="row" style="margin-bottom:14px">
+        <button class="btn btn--sm btn--ghost" id="btnAddStep">➕ 添加步骤</button>
+        <button class="btn btn--sm btn--ghost" id="btnResetStep">🗑️ 重置步骤</button>
+      </div>
+      <div class="row" style="margin-bottom:10px">
+        <button class="btn btn--primary" id="btnGenFlow">🚀 生成路由包</button>
+        <button class="btn btn--ghost" id="btnCopyAll4">📋 复制全部</button>
+      </div>
+
+      <label class="f"><span>📦 导出为 Agent 定义（可被编排平台导入）</span></label>
+      <div class="row" style="margin-bottom:10px">
+        <button class="btn btn--sm btn--ghost" id="btnExpStd">📐 标准 Agent JSON</button>
+        <button class="btn btn--sm btn--ghost" id="btnExpCoze">🤖 Coze 工作流</button>
+        <button class="btn btn--sm btn--ghost" id="btnExpDify">🔧 Dify DSL</button>
+      </div>
+
+      <label class="f"><span>🧾 运行记录 Trace（记录每步真实产出，形成可复现证据链）</span></label>
+      <div class="row">
+        <button class="btn btn--sm btn--ghost" id="btnTraceOpen">📝 填写执行结果</button>
+        <button class="btn btn--sm btn--ghost" id="btnTraceView">👀 查看 Trace</button>
+        <button class="btn btn--sm btn--ghost" id="btnTraceExp">📤 导出 Trace</button>
+        <button class="btn btn--sm btn--ghost" id="btnTraceClear">🗑️ 清空</button>
+      </div>
+      <p class="hint" id="traceStat" style="margin-top:6px">尚未记录任何执行结果</p>
+      <p class="hint" style="margin-top:4px">💡 工作流里若选了「⚡ 本地工具」，可点「▶ 运行」直接执行；也可手工粘贴每步产出。</p>
+    </section>
+
+    <!-- ===== 品牌知识库 ===== -->
+    <section class="panel" data-panel="kb">
+      <h2 class="panel__hd">📚 品牌知识库 · 飞书风格</h2>
+      <p class="panel__sub">沉淀品牌资产、竞品素材、用户原声与违禁词，供生成时调用。</p>
+      <div class="kb">
+        <div>
+          <div class="kb__list" id="kbFolders"></div>
+          <div class="row" style="margin-top:8px">
+            <button class="btn btn--sm btn--ghost" id="btnAddFolder">📁 +</button>
+            <button class="btn btn--sm btn--ghost" id="btnDelFolder">🗑️</button>
+          </div>
+        </div>
+        <div>
+          <div class="kb__list" id="kbDocs"></div>
+          <div class="row" style="margin-top:8px;margin-bottom:12px">
+            <button class="btn btn--sm btn--ghost" id="btnAddDoc">📄 + 新建</button>
+          </div>
+          <div id="docForm" style="display:none">
+            <label class="f"><span>文档标题</span><input type="text" id="d_title"></label>
+            <label class="f"><span>正文（Markdown）</span><textarea id="d_body" style="min-height:130px"></textarea></label>
+            <div class="grid2">
+              <label class="f"><span>标签（逗号分隔）</span><input type="text" id="d_tags"></label>
+              <label class="f"><span>外部链接</span><input type="text" id="d_link" placeholder="https://"></label>
+            </div>
+            <div class="row">
+              <button class="btn btn--sm btn--primary" id="btnSaveDoc">💾 保存</button>
+              <button class="btn btn--sm btn--ghost" id="btnDelDoc">🗑️ 删除</button>
+              <button class="btn btn--sm btn--ghost" id="btnCancelDoc">取消</button>
+            </div>
+          </div>
+          <div id="docView" style="display:none"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 商业图卡 ===== -->
+    <section class="panel" data-panel="chart">
+      <h2 class="panel__hd">📊 商业图卡 · 填数据出图</h2>
+      <p class="panel__sub">纯本地渲染，不联网。填完即可预览，支持导出 SVG（可编辑）与 PNG（2 倍图）。</p>
+
+      <label class="f"><span>选择图卡</span></label>
+      <div class="chips" id="chartChips" style="margin-bottom:14px"></div>
+
+      <!-- SWOT -->
+      <div class="chartform" id="cfSwot">
+        <div class="grid2">
+          <label class="f"><span>💪 优势 S（每行一条）</span><textarea id="sw_s" placeholder="品牌知名度高&#10;供应链成熟"></textarea></label>
+          <label class="f"><span>🔻 劣势 W（每行一条）</span><textarea id="sw_w" placeholder="渠道单一&#10;复购率低"></textarea></label>
+          <label class="f"><span>🌱 机会 O（每行一条）</span><textarea id="sw_o" placeholder="下沉市场增长&#10;品类教育完成"></textarea></label>
+          <label class="f"><span>⚠️ 威胁 T（每行一条）</span><textarea id="sw_t" placeholder="头部品牌降价&#10;替代品涌现"></textarea></label>
+        </div>
+        <label class="f"><span>📌 标题</span><input type="text" id="sw_title" placeholder="例：Y.Mine 2026 SWOT 分析"></label>
+      </div>
+
+      <!-- 定位地图 -->
+      <div class="chartform" id="cfPos" style="display:none">
+        <div class="grid2">
+          <label class="f"><span>↔️ X 轴（向右增强）</span><input type="text" id="pm_x" placeholder="例：价格高端化"></label>
+          <label class="f"><span>↕️ Y 轴（向上增强）</span><input type="text" id="pm_y" placeholder="例：功能专业度"></label>
+        </div>
+        <label class="f"><span>📌 标题</span><input type="text" id="pm_title" placeholder="例：竞品定位地图"></label>
+        <label class="f"><span>📍 品牌点位（每行一个，格式：名称,X,Y）</span>
+          <textarea id="pm_pts" style="min-height:110px" placeholder="Y.Mine,7,8&#10;竞品A,3,6&#10;竞品B,8,3&#10;竞品C,5,5"></textarea>
+        </label>
+        <p class="hint" style="margin-top:-6px">X / Y 取值 0-10，从左下角 (0,0) 算起。</p>
+      </div>
+
+      <!-- 用户画像 -->
+      <div class="chartform" id="cfPersona" style="display:none">
+        <div class="grid2">
+          <label class="f"><span>👤 姓名 / 代称</span><input type="text" id="pe_name" placeholder="例：林晓"></label>
+          <label class="f"><span>🎂 年龄 / 城市</span><input type="text" id="pe_age" placeholder="例：29 岁 · 上海"></label>
+          <label class="f"><span>💼 职业 / 身份</span><input type="text" id="pe_job" placeholder="例：美妆品牌市场经理"></label>
+          <label class="f"><span>🎨 配色</span>
+            <select id="pe_color">
+              <option value="indigo">靛蓝</option><option value="rose">玫红</option>
+              <option value="teal">青绿</option><option value="amber">琥珀</option>
+            </select>
+          </label>
+        </div>
+        <label class="f"><span>🎯 目标（每行一条）</span><textarea id="pe_goal" placeholder="做出能刷屏的种草内容&#10;控制获客成本"></textarea></label>
+        <label class="f"><span>😖 痛点（每行一条）</span><textarea id="pe_pain" placeholder="违禁词拿不准，反复改稿&#10;竞品动态跟不过来"></textarea></label>
+        <label class="f"><span>💬 一句原声（会放大展示）</span><input type="text" id="pe_quote" placeholder="例：我要的是能直接发的稿，不是一堆建议"></label>
+        <label class="f"><span>🛒 常用渠道</span><input type="text" id="pe_ch" placeholder="例：小红书 / 抖音 / 私域社群"></label>
+      </div>
+
+      <!-- 漏斗 -->
+      <div class="chartform" id="cfFunnel" style="display:none">
+        <label class="f"><span>📌 标题</span><input type="text" id="fu_title" placeholder="例：投放转化漏斗"></label>
+        <label class="f"><span>🔻 各环节（每行：名称,数值，从上到下）</span>
+          <textarea id="fu_stages" style="min-height:130px" placeholder="曝光,120000&#10;点击,9600&#10;加购,2400&#10;下单,720&#10;复购,180"></textarea>
+        </label>
+        <p class="hint" style="margin-top:-6px">自动计算各环节转化率与整体转化率。</p>
+      </div>
+
+      <div class="row" style="margin-bottom:14px">
+        <button class="btn btn--primary" id="btnDrawChart">🎨 生成图卡</button>
+        <button class="btn btn--ghost" id="btnChartSvg">⬇️ 导出 SVG</button>
+        <button class="btn btn--ghost" id="btnChartPng">🖼️ 导出 PNG</button>
+        <button class="btn btn--ghost" id="btnChartData">📋 复制数据</button>
+      </div>
+
+      <div class="chartwrap" id="chartWrap">
+        <div class="chartph">👈 填好上方数据，点「🎨 生成图卡」<br><br>图卡纯本地渲染，不经过任何服务器</div>
+      </div>
+    </section>
+
+
+    <!-- ===== Agent 工作台 ===== -->
+    <section class="panel" data-panel="agent">
+      <h2 class="panel__hd">💬 Agent 工作台</h2>
+      <p class="panel__sub">左边对话下达任务，右边文档沉淀产出。本地工具直接执行，创作类生成提示词。</p>
+
+      <div class="agentwrap">
+        <!-- 左：对话 -->
+        <div class="agentchat">
+          <div class="agentchat__hd">
+            <span id="netBadge" class="netbadge netbadge--off">🔒 本地模式</span>
+            <button class="btn btn--sm btn--ghost" id="btnNetCfg">⚙️ 联网设置</button>
+            <button class="btn btn--sm btn--ghost" id="btnChatClear">🗑️ 清空</button>
+          </div>
+          <div class="agentchat__log" id="chatLog"></div>
+          <div class="agentquick" id="chatQuick"></div>
+          <div class="agentchat__ref" id="chatRef" style="display:none"></div>
+          <div class="agentchat__in">
+            <textarea id="chatInput" placeholder="说句话试试：做个竞品分析 / 618 怎么排期 / 这段文案几分 / 画个 SWOT"></textarea>
+            <div class="row">
+              <button class="btn btn--primary btn--sm" id="btnChatSend">发送</button>
+              <button class="btn btn--ghost btn--sm" id="btnChatDoc">📄 存为文档块</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右：文档 -->
+        <div class="agentdoc">
+          <div class="agentdoc__hd">
+            <span>📄 工作台文档</span>
+            <span id="docStat" style="font-weight:400;color:var(--soft);font-size:12px">0 个块</span>
+          </div>
+          <div class="agentdoc__body" id="docBlocks"></div>
+          <div class="agentdoc__ft">
+            <div class="row">
+              <button class="btn btn--sm btn--ghost" id="btnAddNote">➕ 新建笔记</button>
+              <button class="btn btn--sm btn--ghost" id="btnDocMd">⬇️ 导出 MD</button>
+              <button class="btn btn--sm btn--ghost" id="btnDocJson">📦 导出 JSON</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  <aside>
+    <div class="card" id="scoreTrendCard">
+      <div class="card__hd">📈 内容体检趋势 <span id="scoreCount" style="font-weight:400;color:var(--soft);font-size:12px">暂无记录</span></div>
+      <div id="scoreTrend">
+        <p class="hint">每次体检会自动记录评分，改完再测就能看到进步。<br>数据存在本地，越用越准。</p>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button class="btn btn--sm btn--ghost" id="btnScoreHist">📜 全部记录</button>
+        <button class="btn btn--sm btn--ghost" id="btnScoreClear">🗑️ 清空</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__hd">📄 输出预览 <span id="charCount" style="font-weight:400;color:var(--soft);font-size:12px">0 字符</span></div>
+      <div class="preview" id="preview">⚠️ 请填写字段或选择预设。</div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn btn--sm btn--ghost" id="btnExpand">✍️ 扩写</button>
+        <button class="btn btn--sm btn--ghost" id="btnHistory">📜 历史</button>
+        <button class="btn btn--sm btn--ghost" id="btnCopyPreview">📋 复制</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card__hd">🔌 可路由节点</div>
+      <p class="hint">
+        🧠 豆包（创意）· 💻 DeepSeek（逻辑/代码）· 📝 通义千问（润色长文）·
+        🖥️ Ollama（本地）· 🤖 扣子 Coze · ⚡ Trae · 🌿 Claude ·
+        🐙 GitHub · ▲ Vercel · 🚂 Railway · ✋ 手动
+      </p>
+    </div>
+  </aside>
+</div>
+
+<!-- ===================== 内容包 ===================== -->
+<section class="packs" id="packs">
+  <div class="packs__inner">
+    <div class="packs__hd">
+      <h2>内容包 · 规划中</h2>
+      <p>引擎永久免费。内容包正在制作中，上线前你可以在「💬 Agent 工作台」里直接使用全部能力。</p>
+    </div>
+    <div class="packs__grid">
+      <div class="pack"><div class="pack__ico">📕</div>
+        <div class="pack__name">小红书增长包</div>
+        <div class="pack__desc">选题挖掘 → 标题公式 → 正文生成 → 违禁词体检 → 发布排期</div>
+        <div class="pack__price">即将推出<small>关注更新</small></div></div>
+      <div class="pack"><div class="pack__ico">⚔️</div>
+        <div class="pack__name">竞品情报包</div>
+        <div class="pack__desc">竞品识别 → 监测维度 → 对比矩阵 → 周报自动化</div>
+        <div class="pack__price">即将推出<small>关注更新</small></div></div>
+      <div class="pack"><div class="pack__ico">📈</div>
+        <div class="pack__name">投放复盘包</div>
+        <div class="pack__desc">数据清洗 → 漏斗诊断 → 素材归因 → 预算重分配建议</div>
+        <div class="pack__price">即将推出<small>关注更新</small></div></div>
+      <div class="pack"><div class="pack__ico">🎓</div>
+        <div class="pack__name">方法论合辑</div>
+        <div class="pack__desc">本工具背后的方法说明：GE 矩阵、机会点判定、六维评分的推导过程</div>
+        <div class="pack__price">即将推出<small>关注更新</small></div></div>
+    </div>
+    <div class="packs__note">💡 所有配置与知识库均支持 JSON 导入导出 · 数据始终保存在你本地浏览器</div>
+  </div>
+</section>
+
+<footer class="foot">🌌 Y.Mine 应用矩阵 · 返回作品集</footer>
+
+<!-- ===================== 弹层 ===================== -->
+<div class="mask" id="maskHist">
+  <div class="modal">
+    <div class="modal__hd"><span>📜 生成历史记录</span><button class="btn btn--sm btn--ghost" id="btnCloseHist">✕</button></div>
+    <div id="histList"></div>
+    <button class="btn btn--sm btn--ghost" id="btnClearHist">🗑️ 清空历史</button>
+  </div>
+</div>
+<div class="mask" id="maskNet">
+  <div class="modal">
+    <div class="modal__hd"><span>⚙️ 联网设置</span><button class="btn btn--sm btn--ghost" id="btnCloseNet">✕</button></div>
+    <p class="hint" style="margin-bottom:12px">
+      <b>默认关闭</b>：所有计算在本地完成，数据不出浏览器。<br>
+      开启后：对话会调用你选择的 AI 厂商，<b>数据会发送到该厂商，不经过本站服务器</b>。
+    </p>
+    <div class="row" style="margin-bottom:10px">
+      <button class="btn btn--sm btn--ghost" id="btnNetOff">🔒 关闭联网</button>
+      <button class="btn btn--sm btn--primary" id="btnNetOn">🌐 开启联网</button>
+    </div>
+    <label class="f"><span>服务商</span>
+      <select id="netProvider">
+        <option value="deepseek">DeepSeek</option>
+        <option value="moonshot">Moonshot / Kimi</option>
+        <option value="zhipu">智谱 GLM</option>
+        <option value="custom">自定义（OpenAI 兼容）</option>
+      </select>
+    </label>
+    <label class="f"><span>API Key（仅存本地 localStorage）</span>
+      <input type="password" id="netKey" placeholder="sk-...">
+    </label>
+    <label class="f"><span>自定义 Base URL（选「自定义」时填）</span>
+      <input type="text" id="netBase" placeholder="https://api.example.com/v1">
+    </label>
+    <div class="row">
+      <button class="btn btn--primary btn--sm" id="btnNetSave">💾 保存</button>
+      <button class="btn btn--ghost btn--sm" id="btnNetTest">🔌 测试连接</button>
+    </div>
+    <p class="hint" id="netMsg" style="margin-top:10px"></p>
+    <p class="hint" style="margin-top:10px">
+      ⚠️ 浏览器直连受厂商 CORS 策略限制。若连接失败，说明该厂商不允许浏览器端调用，
+      需要自建代理——本站不提供，也不经手你的数据。
+    </p>
+  </div>
+</div>
+
+<div class="mask" id="maskTrace">
+  <div class="modal">
+    <div class="modal__hd"><span>🧾 填写执行结果 · Trace</span><button class="btn btn--sm btn--ghost" id="btnCloseTrace">✕</button></div>
+    <p class="hint" style="margin-bottom:12px">
+      把每一步的真实产出贴进来，形成一份可复现的运行记录。<br>
+      这份记录能证明「流程真的跑过」，而不只是设计过。
+    </p>
+    <div id="traceList"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn btn--primary" id="btnTraceSave">💾 保存 Trace</button>
+      <button class="btn btn--ghost" id="btnTraceRunAll">⚡ 执行可运行的步骤</button>
+    </div>
+  </div>
+</div>
+
+<div class="mask" id="maskFP">
+  <div class="modal">
+    <div class="modal__hd"><span>🚩 报告误报 / 补充词条</span><button class="btn btn--sm btn--ghost" id="btnCloseFP">✕</button></div>
+    <p class="hint" style="margin-bottom:12px">
+      内置词库 <b id="fpCount">0</b> 条，难免有判错或漏掉的词。你的反馈会直接决定下一次更新。<br>
+      <b>反馈不会自动上传</b> —— 生成后由你复制发送，数据始终在你手上。
+    </p>
+    <label class="f"><span>反馈类型</span>
+      <select id="fp_type">
+        <option>误报（这个词不该被标记）</option>
+        <option>漏报（有风险词没被查出）</option>
+        <option>分级错误（红线 / 风险 / 平台级别不对）</option>
+        <option>替换建议不好</option>
+        <option>其他建议</option>
+      </select>
+    </label>
+    <label class="f"><span>涉及词（从本次体检结果选）</span>
+      <select id="fp_word"></select>
+    </label>
+    <label class="f"><span>补充词（漏报时填该词，多个用逗号分隔）</span>
+      <input type="text" id="fp_new" placeholder="例：全网独家, 内部专享">
+    </label>
+    <label class="f"><span>说明（越具体越容易改对）</span>
+      <textarea id="fp_note" placeholder="例：这是真实促销，有明确起止时间和库存，不应判为风险词"></textarea>
+    </label>
+    <div class="row">
+      <button class="btn btn--primary" id="btnFpCopy">📋 复制反馈内容</button>
+      <button class="btn btn--ghost" id="btnFpMail">✉️ 用邮件发送</button>
+    </div>
+    <p class="hint" style="margin-top:10px">
+      复制后粘贴到微信 / 邮件 / 问卷即可。有效反馈会在词库更新日志中致谢，并可获年度通行证。
+    </p>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/*__JS__*/
+</script>
+</body>
+</html>

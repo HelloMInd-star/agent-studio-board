@@ -1,0 +1,16 @@
+01-core.js	状态定义
+02-presets.js	预设数据：角色/策略/MBTI/工作流
+03-rules.js	违禁词规则库(102条,三级分类可溯源)
+04-store.js	读写/存储/导入导出
+05-brand.js	品牌记忆 + 知识库引用
+06-render.js	渲染：预设chips/工作流步骤/数据流图
+07-charts.js	SVG 图卡引擎(咨询风)
+08-tools.js	确定性分析工具(竞品/STP/日历)
+09-agent.js	Agent 导出(JSON/Coze/Dify) + Trace
+10-workspace.js	Agent 工作台：意图路由 + 文档块
+11-kb.js	知识库渲染
+12-generate.js	生成逻辑
+13-scan.js	内容体检六维评分
+14-feedback.js	误报反馈
+15-bind.js	事件绑定
+16-boot.js	回填 + 启动
