@@ -267,11 +267,16 @@ a:hover{text-decoration:underline;}
 
     <section class="msec" id="start">
       <h2><span class="ico">🚀</span>从哪开始</h2>
+      <div class="mflow" data-flow="start">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">设定品牌语境</span><span class="mfl__arrow">→</span><span class="mfl__step">选一个场景</span><span class="mfl__arrow">→</span><span class="mfl__step">按步骤走完</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">导出交付</span></div>
+        <div class="mflow__note">这是主线。不确定走哪条时，先「🧭 开始」Tab 选场景。</div>
+      </div>
       <p>如果你第一次打开，<b>不要挨个点 16 个 Tab</b>。按这个顺序：</p>
       <div class="msteps">
-        <div class="mstep"><b>先填品牌记忆</b>（左侧栏）—— 填一次，后续所有生成都会自动带上你的品牌语境。这是性价比最高的一步。</div>
-        <div class="mstep"><b>打开「🧭 开始」</b>—— 选一个场景，按步骤走。这是默认打开页，就是为了防止你迷路。</div>
-        <div class="mstep"><b>卡住就说一句话</b>—— 在开始页的输入框里描述你要做什么，工具会判断该从哪一步开始。</div>
+        <div class="mlegacystep"><b>先填品牌记忆</b>（左侧栏）—— 填一次，后续所有生成都会自动带上你的品牌语境。这是性价比最高的一步。</div>
+        <div class="mlegacystep"><b>打开「🧭 开始」</b>—— 选一个场景，按步骤走。这是默认打开页，就是为了防止你迷路。</div>
+        <div class="mlegacystep"><b>卡住就说一句话</b>—— 在开始页的输入框里描述你要做什么，工具会判断该从哪一步开始。</div>
       </div>
       <div class="mnote is-ok">
         <b>建议</b>：先花 5 分钟填完品牌记忆，再开始任何分析。不填也能用，但产出会缺品牌语境。
@@ -281,6 +286,11 @@ a:hover{text-decoration:underline;}
     <!-- ============ 入口层 ============ -->
     <section class="msec" id="guide">
       <h2><span class="ico">🧭</span>开始 · 流程导航<span class="mtag is-done">入口层</span></h2>
+      <div class="mflow" data-flow="guide">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">选场景（新品上市/投放复盘/内容运营/品牌定位）</span><span class="mfl__arrow">→</span><span class="mfl__step">看当前步骤说明</span><span class="mfl__arrow">→</span><span class="mfl__step">点「前往」跳到对应模块</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">标记完成 / 回上一步 / 跳过</span></div>
+        <div class="mflow__note">也可以直接在输入框说一句，比如「我想做个竞品分析」，会自动跳到对应步骤。</div>
+      </div>
       <p>解决"16 个 Tab 不知道点哪个"的问题。<b>这是默认打开页。</b></p>
       <h3>四个场景</h3>
       <div class="mgrid">
@@ -306,6 +316,11 @@ a:hover{text-decoration:underline;}
 
     <section class="msec" id="ws">
       <h2><span class="ico">💬</span>Agent 工作台<span class="mtag is-done">入口层</span></h2>
+      <div class="mflow" data-flow="ws">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">输入一句话</span><span class="mfl__arrow">→</span><span class="mfl__step">意图路由判断</span><span class="mfl__arrow">→</span><span class="mfl__step">命中本地函数 → 真执行</span><span class="mfl__arrow">→</span><span class="mfl__step">产出存成文档块</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">点 💬 引用回对话继续问</span></div>
+        <div class="mflow__note">本地算不了的（如写文案）会明确标「📋 提示词」，不会假装完成。</div>
+      </div>
       <p>左边对话、右边文档的形态。你说一句话，它<b>真的去执行</b>本地函数，不是生成一段"你可以这样做"的话。</p>
       <div class="mtable">
         <table>
@@ -331,6 +346,11 @@ a:hover{text-decoration:underline;}
     <!-- ============ 方法论层 ============ -->
     <section class="msec" id="research">
       <h2><span class="ico">📐</span>调研方案<span class="mtag is-done">方法论层</span></h2>
+      <div class="mflow" data-flow="research">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">选模板骨架</span><span class="mfl__arrow">→</span><span class="mfl__step">写待验证假设（第 0 步）</span><span class="mfl__arrow">→</span><span class="mfl__step">填市场数据 TAM/SAM/SOM</span><span class="mfl__arrow">→</span><span class="mfl__step">竞品 × 画像交叉矩阵</span><span class="mfl__arrow">→</span><span class="mfl__step">定价验证（WTP 曲线）</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">生成报告 + 未验证警告</span></div>
+        <div class="mflow__note">假设放在第一节——这是它和普通调研模板最大的区别。</div>
+      </div>
       <p>引导式营销调研。<b>第一节是"待验证假设"，不是市场数据</b>——这是它和其他调研模板最大的区别。</p>
       <h3>六步</h3>
       <div class="mtable">
@@ -358,6 +378,11 @@ a:hover{text-decoration:underline;}
 
     <section class="msec" id="strategy">
       <h2><span class="ico">🎯</span>战略矩阵<span class="mtag is-done">方法论层</span></h2>
+      <div class="mflow" data-flow="strategy">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">填 SWOT 条目（可绑数据）</span><span class="mfl__arrow">→</span><span class="mfl__step">自动生成 TOWS 四策略</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">一键推到营销日历</span></div>
+        <div class="mflow__note">另有 BCG：填业务线数据 → 象限判定 → 预算建议 → 存快照对比迁移。</div>
+      </div>
       <p>增强版 SWOT + BCG，针对传统分析的三个问题：<b>静态、主观、孤岛</b>。</p>
       <h3>增强版 SWOT</h3>
       <ul>
@@ -385,6 +410,11 @@ a:hover{text-decoration:underline;}
 
     <section class="msec" id="hotspot">
       <h2><span class="ico">📡</span>热点决策<span class="mtag is-done">方法论层</span></h2>
+      <div class="mflow" data-flow="hotspot">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">描述这个热点</span><span class="mfl__arrow">→</span><span class="mfl__step">五维打分</span><span class="mfl__arrow">→</span><span class="mfl__step">敏感话题检测（8 类）</span><span class="mfl__arrow">→</span><span class="mfl__step">综合分 + 四档建议</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">送去内容体检</span></div>
+        <div class="mflow__note">它回答「该不该跟」，不做事实核查——敏感话题会一票否决。</div>
+      </div>
       <p>判断<b>该不该跟热点</b>，而不是"热点是真是假"。</p>
       <div class="mnote is-warn">
         <b>为什么不做"求真"</b>：验证真伪需要联网抓取权威数据源，纯前端做不到，
@@ -413,6 +443,11 @@ a:hover{text-decoration:underline;}
     <!-- ============ 计算层 ============ -->
     <section class="msec" id="competitor">
       <h2><span class="ico">⚔️</span>竞品对比矩阵<span class="mtag is-local">确定性函数</span></h2>
+      <div class="mflow" data-flow="competitor">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">填维度与权重</span><span class="mfl__arrow">→</span><span class="mfl__step">给各竞品打分（1-5）</span><span class="mfl__arrow">→</span><span class="mfl__step">算加权总分排名</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">自动识别机会点 / 威胁点</span></div>
+        <div class="mflow__note">机会点 = 我方 ≥4 且竞品均分 ≤3；威胁点 = 我方 ≤2 且最强对手 ≥4。</div>
+      </div>
       <p>填维度权重与各竞品打分，算出加权排名 + 机会点 + 威胁点。</p>
       <div class="mtable">
         <table>
@@ -430,6 +465,11 @@ a:hover{text-decoration:underline;}
 
     <section class="msec" id="stp">
       <h2><span class="ico">🎯</span>STP 市场选择<span class="mtag is-local">确定性函数</span></h2>
+      <div class="mflow" data-flow="stp">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">填各细分市场</span><span class="mfl__arrow">→</span><span class="mfl__step">吸引力 × 竞争力打分</span><span class="mfl__arrow">→</span><span class="mfl__step">GE 矩阵落象限</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">优先级排序 + 投入建议</span></div>
+        <div class="mflow__note">规模取对数——避免大市场仅凭体量压倒一切。</div>
+      </div>
       <p>每个细分市场按「吸引力 × 竞争力」打分，自动落四象限并给建议。</p>
       <div class="mcode">优先级 =（吸引力×0.5 + 竞争力×0.5）×（0.6 + 0.4×规模对数权重）</div>
       <p>规模取<b>对数</b>是 GE 矩阵的标准做法——避免大市场凭体量压倒一切。</p>
@@ -437,6 +477,11 @@ a:hover{text-decoration:underline;}
 
     <section class="msec" id="region">
       <h2><span class="ico">🗺️</span>区域市场<span class="mtag is-local">确定性函数</span></h2>
+      <div class="mflow" data-flow="region">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">选预置区域或新增</span><span class="mfl__arrow">→</span><span class="mfl__step">吸引力 × 竞争力 × 规模</span><span class="mfl__arrow">→</span><span class="mfl__step">算优先级分</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">四象限建议（投入/提升/维持/放弃）</span></div>
+        <div class="mflow__note">和 STP 用的是同一套 GE 算法，结论不会互相打架。</div>
+      </div>
       <p>华东/华南/华北…… 及国际区域。<b>复用 STP 的同一套算法</b>，所以两个结论不会打架。</p>
       <div class="mnote">
         <b>为什么强调复用</b>：如果各写一套，迟早出现"STP 说投一线白领、区域说投西北"这种矛盾结论。
@@ -446,6 +491,11 @@ a:hover{text-decoration:underline;}
 
     <section class="msec" id="pricing">
       <h2><span class="ico">💰</span>定价策略<span class="mtag is-local">确定性函数</span></h2>
+      <div class="mflow" data-flow="pricing">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">填成本 / 目标毛利 / 竞品价</span><span class="mfl__arrow">→</span><span class="mfl__step">5 种定价法并行计算</span><span class="mfl__arrow">→</span><span class="mfl__step">折扣保本倍数测算</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">价格带图 + 建议区间</span></div>
+        <div class="mflow__note">折扣那栏是关键：打 8 折要多卖 36% 才保住总毛利。</div>
+      </div>
       <p>五种定价法并行计算 + 促销折扣保本测算。</p>
       <div class="mtable">
         <table>
@@ -466,6 +516,11 @@ a:hover{text-decoration:underline;}
 
     <section class="msec" id="finance">
       <h2><span class="ico">💹</span>财务测算<span class="mtag is-local">确定性函数</span></h2>
+      <div class="mflow" data-flow="finance">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">选场景（GMV/LTV/预算/雷达）</span><span class="mfl__arrow">→</span><span class="mfl__step">填对应数据</span><span class="mfl__arrow">→</span><span class="mfl__step">确定性计算</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">出图 + 结论</span></div>
+        <div class="mflow__note">GMV 拆解用逐因子归因，不是简单相减——避免无法解释的残差。</div>
+      </div>
       <p>四个高频场景。值钱的是<b>计算模型</b>，图表只是呈现。</p>
       <h3>① GMV 拆解（归因）</h3>
       <p>难点不是画瀑布图，是归因。简单相减会产生无法解释的残差。
@@ -488,6 +543,11 @@ a:hover{text-decoration:underline;}
 
     <section class="msec" id="scan">
       <h2><span class="ico">🩺</span>内容体检<span class="mtag is-local">确定性函数</span></h2>
+      <div class="mflow" data-flow="scan">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">粘贴文案</span><span class="mfl__arrow">→</span><span class="mfl__step">六维评分（0-100）</span><span class="mfl__arrow">→</span><span class="mfl__step">违禁词扫描</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">列出优先改进项</span></div>
+        <div class="mflow__note">扫描刻意不"一刀切"：限时/100%/保证/有机 等词不自动拦截。</div>
+      </div>
       <p>六维评分，不只是查违禁词。</p>
       <div class="mtable">
         <table>
@@ -513,6 +573,11 @@ a:hover{text-decoration:underline;}
     <!-- ============ 执行层 ============ -->
     <section class="msec" id="content">
       <h2><span class="ico">✍️</span>内容工厂</h2>
+      <div class="mflow" data-flow="content">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">填标题 / 关键词 / 平台</span><span class="mfl__arrow">→</span><span class="mfl__step">选营销角色</span><span class="mfl__arrow">→</span><span class="mfl__step">生成内容</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">送去内容体检</span></div>
+        <div class="mflow__note">品牌记忆里填的信息会自动带入，不用每篇重填。</div>
+      </div>
       <p>带品牌语境生成内容提示词。<b>生成的是提示词，不是成品文案</b>——
       这是不联网定位的必然结果，不是 bug。</p>
       <p>生成后可一键送体检。若觉得判错了，点「🚩 报告误报」，
@@ -522,6 +587,11 @@ a:hover{text-decoration:underline;}
 
     <section class="msec" id="charts">
       <h2><span class="ico">📊</span>商业图卡</h2>
+      <div class="mflow" data-flow="charts">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">选图卡类型（5 种）</span><span class="mfl__arrow">→</span><span class="mfl__step">填数据</span><span class="mfl__arrow">→</span><span class="mfl__step">实时出 SVG</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">导出 PNG / SVG</span></div>
+        <div class="mflow__note">思维导图用缩进表示层级，不用写 JSON。</div>
+      </div>
       <p>五种图，全部<b>手写 SVG</b>，可导出 SVG / PNG。</p>
       <div class="mgrid">
         <div class="mcard"><div class="mcard__t">🎯 SWOT 四象限</div><div class="mcard__d">四色分区，自动折行</div></div>
@@ -535,6 +605,11 @@ a:hover{text-decoration:underline;}
 
     <section class="msec" id="cal">
       <h2><span class="ico">📅</span>营销日历</h2>
+      <div class="mflow" data-flow="cal">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">新建事件 / 从节点库一键添加</span><span class="mfl__arrow">→</span><span class="mfl__step">设优先级与状态</span><span class="mfl__arrow">→</span><span class="mfl__step">月视图追踪进度</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">打开时提醒逾期与临期</span></div>
+        <div class="mflow__note">策略里的营销日历倒排结果，可以一键「存入日历」。</div>
+      </div>
       <p>月视图 + 事件增删改 + 17 个预置节点 + 到期提醒。</p>
       <p>与「策略 → 计算模式 → 营销日历倒排」联动：倒排跑完可一键「📅 存入日历」。</p>
       <div class="mnote is-no">
@@ -545,6 +620,11 @@ a:hover{text-decoration:underline;}
 
     <section class="msec" id="flow">
       <h2><span class="ico">🔄</span>工作流编排</h2>
+      <div class="mflow" data-flow="flow">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">选预设或自建</span><span class="mfl__arrow">→</span><span class="mfl__step">编排步骤（可挂本地函数）</span><span class="mfl__arrow">→</span><span class="mfl__step">检查变量流</span><span class="mfl__arrow">→</span><span class="mfl__step">导出 JSON / Coze / Dify</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">填 Trace 运行记录</span></div>
+        <div class="mflow__note">标了「⚡ 本地函数」的步骤能被 Agent 真调用，不是文本占位。</div>
+      </div>
       <p>6 步编排，可导出<b>三种 Agent 格式</b>：标准 Agent JSON、Coze、Dify DSL。</p>
       <p>每个步骤可以选「本地函数」而不是 LLM——导出时变成确定性 tool 调用，
       Agent 跑到这里不靠模型自由发挥。</p>
@@ -555,6 +635,11 @@ a:hover{text-decoration:underline;}
 
     <section class="msec" id="synth">
       <h2><span class="ico">📋</span>方案合成</h2>
+      <div class="mflow" data-flow="synth">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">确认 8 个数据源状态</span><span class="mfl__arrow">→</span><span class="mfl__step">勾选要包含的章节</span><span class="mfl__arrow">→</span><span class="mfl__step">一键生成方案</span><span class="mfl__arrow">→</span><span class="mfl__step">看缺口诊断</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">导出 MD / JSON</span></div>
+        <div class="mflow__note">缺口诊断会反过来告诉你"还缺什么、去哪补"。</div>
+      </div>
       <p>跨 8 个模块采集数据，聚合成一份完整的营销方案。八个章节，最后一章是
       <b>缺口诊断</b>——它会反过来说你还缺什么、该去哪补。</p>
       <div class="mnote">
@@ -570,6 +655,11 @@ a:hover{text-decoration:underline;}
     <!-- ============ 基础 ============ -->
     <section class="msec" id="brand">
       <h2><span class="ico">🎯</span>品牌记忆</h2>
+      <div class="mflow" data-flow="brand">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">填品牌 / 品类 / 人群 / 卖点</span><span class="mfl__arrow">→</span><span class="mfl__step">保存到 localStorage</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">生成时自动注入语境</span></div>
+        <div class="mflow__note">填一次，全站生效。换品牌时记得回来改。</div>
+      </div>
       <p><b>这是最该先填的地方。</b>7 个字段，填一次，后续所有生成自动带上。</p>
       <div class="mtable">
         <table>
@@ -584,6 +674,11 @@ a:hover{text-decoration:underline;}
 
     <section class="msec" id="kb">
       <h2><span class="ico">📚</span>知识库</h2>
+      <div class="mflow" data-flow="kb">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">建文件夹</span><span class="mfl__arrow">→</span><span class="mfl__step">存入文档（卖点/竞品/话术）</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">生成时可选引用范围与条数</span></div>
+        <div class="mflow__note">引用是"整段塞进上下文"，不是向量检索——条数别开太多。</div>
+      </div>
       <p>存品牌资产、用户原声、竞品素材。生成时可自动引用（可设范围与条数）。</p>
       <p>注入时会附带一句约束："请优先基于以上真实资料创作，不要编造与资料冲突的信息"。
       <b>这是从"AI 味"变成"你家味"的关键一步。</b></p>
@@ -591,6 +686,11 @@ a:hover{text-decoration:underline;}
 
     <section class="msec" id="agent">
       <h2><span class="ico">🤖</span>Agent 导出</h2>
+      <div class="mflow" data-flow="agent">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">在工作流里编排好步骤</span><span class="mfl__arrow">→</span><span class="mfl__step">选导出格式</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">得到可导入的 Agent 定义</span></div>
+        <div class="mflow__note">导出的是定义文件，执行仍在 Coze / Dify 等平台完成。</div>
+      </div>
       <p>12 个确定性函数都可被 Agent 调用。每个都有标准 JSON Schema，
       点各模块的「📐 Function Schema」可查看。</p>
       <div class="mnote">
@@ -603,6 +703,11 @@ a:hover{text-decoration:underline;}
 
     <section class="msec" id="toolkit">
       <h2><span class="ico">🧰</span>经典工具箱<span class="mtag is-local">8 个确定性函数</span></h2>
+      <div class="mflow" data-flow="toolkit">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">选框架（8 个）</span><span class="mfl__arrow">→</span><span class="mfl__step">填参数</span><span class="mfl__arrow">→</span><span class="mfl__step">算 + 出图</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">导出结果</span></div>
+        <div class="mflow__note">这 8 个都能真算，不是模板话术。</div>
+      </div>
       <p>8 个咨询级框架，全部可算、可出图。<b>能算的做成工具</b>，不生成让你自己琢磨的文字。</p>
       <div class="mtable">
         <table>
@@ -626,6 +731,11 @@ a:hover{text-decoration:underline;}
 
     <section class="msec" id="toolmap">
       <h2><span class="ico">🗺️</span>工具地图</h2>
+      <div class="mflow" data-flow="toolmap">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">按分类 / 状态筛选或搜索</span><span class="mfl__arrow">→</span><span class="mfl__step">点开任意卡片</span><span class="mfl__arrow">→</span><span class="mfl__step">看结构示意图 + 方法论速查</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">已实现的点「前往该模块」</span></div>
+        <div class="mflow__note">70 个全部配了结构示意图；未做成工具的给方法论，不是空壳。</div>
+      </div>
       <p>70 个经典营销框架全景，按 8 个分类组织。三态卡片：</p>
       <div class="mtable">
         <table>

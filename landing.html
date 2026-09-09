@@ -235,6 +235,14 @@ a{color:inherit;text-decoration:none;}
 
 .foot{padding:34px 22px 46px;text-align:center;color:var(--text-3);font-size:12.5px;border-top:1px solid var(--line);}
 .foot a{color:var(--brand);}
+
+.mflow{margin:14px 0 18px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg-soft);}
+.mflow__hd{font-family:var(--font-mono);font-size:9.5px;font-weight:700;letter-spacing:.10em;color:var(--text-3);margin-bottom:9px;}
+.mflow__steps{display:flex;flex-wrap:wrap;align-items:center;gap:6px;justify-content:center;}
+.mfl__step{font-size:12px;line-height:1.45;padding:5px 11px;border-radius:8px;background:var(--card);border:1px solid var(--line);color:var(--text-2);white-space:nowrap;}
+.mfl__step.is-out{background:var(--brand-soft);border-color:var(--brand);color:var(--brand);font-weight:600;}
+.mfl__arrow{color:var(--text-3);font-size:12px;flex:0 0 auto;}
+.mflow__note{margin-top:9px;font-size:12.5px;line-height:1.65;color:var(--text-3);border-left:3px solid var(--line-strong);padding-left:10px;text-align:left;}
 </style>
 </head>
 <body>
@@ -303,8 +311,21 @@ a{color:inherit;text-decoration:none;}
   <div class="wrap">
     <div class="sec__hd">
       <div class="eyebrow">Modules</div>
-      <h2>十九个模块，每个都写清楚怎么用</h2>
-      <p>每张卡片是这个模块的输入、处理、输出。看一遍就知道它对你有没有用。</p>
+      <h2>十九个模块，六个分组</h2>
+      <p>19 个模块按任务分成六组——<b>入口 · 想清楚 · 算出来 · 做出来 · 串起来 · 存下来</b>，
+      对应营销人真实的工作顺序，不是功能堆砌。每张卡片写清输入、处理、输出。</p>
+      <div class="mflow" style="max-width:760px;margin:16px auto 4px">
+        <div class="mflow__hd">推荐动线</div>
+        <div class="mflow__steps">
+          <span class="mfl__step">🧭 开始（选场景）</span><span class="mfl__arrow">→</span>
+          <span class="mfl__step">想清楚（方法论）</span><span class="mfl__arrow">→</span>
+          <span class="mfl__step">算出来（分析）</span><span class="mfl__arrow">→</span>
+          <span class="mfl__step">做出来（内容）</span><span class="mfl__arrow">→</span>
+          <span class="mfl__step">串起来（编排）</span><span class="mfl__arrow">→</span>
+          <span class="mfl__step is-out">存下来（沉淀）</span>
+        </div>
+        <div class="mflow__note">不确定从哪开始，就走「🧭 开始」——它是默认打开页，会按场景告诉你下一步点哪个。</div>
+      </div>
     </div>
     <div class="mods">
 

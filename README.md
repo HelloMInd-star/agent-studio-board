@@ -233,6 +233,31 @@ the `.svg` renders standalone.
 
 ---
 
+### 3.10 Information architecture
+
+19 tabs are grouped by **task**, not by when they were built:
+
+```
+入口     guide
+想清楚   hotspot · research · strat · tkm · toolmap
+算出来   strategy · pricing · market · fin
+做出来   role · content · persona · chart
+串起来   flow · agent · cal · synth
+存下来   kb
+```
+
+The group labels double as a recommended path: figure out *what* to do,
+compute *whether* it works, produce the content, wire it together, then
+keep the output. `guide` is the default landing tab for the same reason —
+19 tabs with no entry point is a list, not a workflow.
+
+The manual mirrors this: each of the 22 module chapters opens with a
+**user flow strip** (`input → steps → output`) plus a note on what to do
+before and after, so a chapter answers "when do I open this" rather than
+just "what does this do".
+
+---
+
 ## 4. Data
 
 Everything lives in `localStorage` under `ym_studio_v1`. Clearing browser
