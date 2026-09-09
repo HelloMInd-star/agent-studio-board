@@ -646,3 +646,21 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
   .rtl__row{flex-direction:column;gap:2px;}
   .rtl__c{min-width:0;}
 }
+
+
+/* ============ 热点决策 ============ */
+.hsgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px 16px;}
+.hsslider input[type=range]{
+  width:100%;margin:6px 0 2px;accent-color:var(--brand);height:4px;
+}
+.hsv{font-family:var(--font-mono);font-size:11px;color:var(--brand);margin-left:6px;}
+.f__hint{display:block;font-size:10.5px;color:var(--text-3);line-height:1.5;margin-top:2px;}
+.f__lo{color:var(--text-3);}
+.f__hi{color:var(--ok);}
+.hsbadge{
+  margin-left:auto;font-size:12.5px;font-weight:600;padding:3px 11px;
+  border:1px solid var(--line-strong);border-radius:100px;color:var(--text-2);
+}
+@media(max-width:620px){
+  .hsgrid{grid-template-columns:1fr;}
+}

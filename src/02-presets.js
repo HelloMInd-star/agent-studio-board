@@ -51,7 +51,8 @@ var LOCAL_TOOLS = {
   15:{key:'mind', name:'generate_mind_map',         label:'思维导图'},
   16:{key:'synth', name:'synthesize_marketing_plan', label:'方案合成'},
   17:{key:'pricing', name:'calculate_pricing_strategy', label:'定价策略'},
-  18:{key:'region', name:'evaluate_regional_markets', label:'区域市场'}
+  18:{key:'region', name:'evaluate_regional_markets', label:'区域市场'},
+  19:{key:'hotspot', name:'decide_hotspot_follow', label:'热点决策'}
 };
 function isLocalTool(i){ return !!LOCAL_TOOLS[i]; }
 

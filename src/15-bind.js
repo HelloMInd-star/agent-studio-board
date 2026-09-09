@@ -272,6 +272,23 @@ function bind(){
     switchTab('cal');
   };
 
+  // ===== 热点决策 =====
+  $('#btnHsCalc').onclick = renderHotspot;
+  $('#btnHsDemo').onclick = demoHotspot;
+  $('#btnHsExp').onclick  = exportHotspot;
+  $('#btnHsScan').onclick = hotspotToScan;
+  ['hs_topic','hs_way'].forEach(function(id){
+    var el = $('#' + id);
+    if(el) el.addEventListener('input', function(){ state.hotspot[id.slice(3)] = el.value; save(); });
+  });
+  ['rel','time','risk','fit','value'].forEach(function(k){
+    var el = $('#hs_' + k);
+    if(el) el.addEventListener('input', function(){
+      state.hotspot[k] = el.value; save();
+      if(lastHotspot) renderHotspot();
+    });
+  });
+
   // ===== 区域市场 + 竞品档案 =====
   $('#btnRgCalc').onclick = renderRegion;
   $('#btnRgDemo').onclick = demoRegion;

@@ -43,6 +43,7 @@ MODULES = [
     '18-synth.js',      # 方案合成（跨模块聚合，须在 boot 前）
     '19-pricing.js',    # 定价策略（5 种定价法 + 折扣测算，须在 boot 前）
     '20-market.js',     # 区域市场 + 竞品档案（须在 boot 前）
+    '21-hotspot.js',    # 热点决策（五维打分 + 风险预警，须在 boot 前）
     '16-boot.js',       # 回填 + 启动（最后，含 })();）
 ]
 

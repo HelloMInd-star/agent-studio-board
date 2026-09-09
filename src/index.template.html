@@ -54,6 +54,7 @@
   <button class="tab" data-tab="synth"><span class="tab__name">📋 方案合成</span><span class="tab__desc">跨模块 · 一键聚合</span></button>
   <button class="tab" data-tab="pricing"><span class="tab__name">💰 定价策略</span><span class="tab__desc">5 法 · 折扣 · 价格带</span></button>
   <button class="tab" data-tab="market"><span class="tab__name">🌏 市场与竞品</span><span class="tab__desc">区域 · 档案 · 追踪</span></button>
+  <button class="tab" data-tab="hotspot"><span class="tab__name">📡 热点决策</span><span class="tab__desc">该不该跟 · 风险预警</span></button>
 </nav>
 
 <!-- ===================== 主体 ===================== -->
@@ -645,6 +646,58 @@
           <button class="btn btn--ghost btn--sm" id="btnRvExp">⬇️ 导出情报台账</button>
         </div>
         <div class="rvlist" id="rvList"></div>
+      </div>
+    </section>
+
+
+    <!-- ===== 热点决策 ===== -->
+    <section class="panel" data-panel="hotspot">
+      <h2 class="panel__hd">📡 热点决策</h2>
+      <p class="panel__sub">判断一个热点该不该跟、怎么跟。<b>做决策辅助，不做事实核查</b>——营销翻车多半不是因为热点是假的，而是热点是真的但不该跟。</p>
+
+      <div class="card">
+        <div class="card__hd">📝 热点信息 <span class="eyebrow" id="hsStat" style="margin-left:auto"></span></div>
+        <label class="f"><span>热点描述</span>
+          <input type="text" id="hs_topic" placeholder="例：某明星官宣新代言，全网热议"></label>
+        <label class="f"><span>你计划怎么跟（可留空）</span>
+          <textarea id="hs_way" style="min-height:70px" placeholder="例：借势发小红书，做平价成分对比测评"></textarea></label>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">🎚️ 五维自评</div>
+        <div class="hsgrid">
+          <label class="f hsslider"><span>🎯 相关性（1-5）<b class="hsv" id="hs_rel_v">3</b></span>
+            <input type="range" id="hs_rel" min="1" max="5" step="1" value="3"
+                   oninput="document.getElementById('hs_rel_v').textContent=this.value">
+            <small class="f__hint">与品牌/品类关联度　<span class="f__lo">只是蹭热闹</span> ← → <span class="f__hi">强相关</span></small></label>
+          <label class="f hsslider"><span>⏱️ 时效性（1-5）<b class="hsv" id="hs_time_v">3</b></span>
+            <input type="range" id="hs_time" min="1" max="5" step="1" value="3"
+                   oninput="document.getElementById('hs_time_v').textContent=this.value">
+            <small class="f__hint">还能火多久　<span class="f__lo">已经降温</span> ← → <span class="f__hi">上升期</span></small></label>
+          <label class="f hsslider"><span>⚠️ 风险度（1-5）<b class="hsv" id="hs_risk_v">3</b></span>
+            <input type="range" id="hs_risk" min="1" max="5" step="1" value="3"
+                   oninput="document.getElementById('hs_risk_v').textContent=this.value">
+            <small class="f__hint">敏感程度（分越高越安全）　<span class="f__lo">高危话题</span> ← → <span class="f__hi">完全安全</span></small></label>
+          <label class="f hsslider"><span>🎭 品牌契合（1-5）<b class="hsv" id="hs_fit_v">3</b></span>
+            <input type="range" id="hs_fit" min="1" max="5" step="1" value="3"
+                   oninput="document.getElementById('hs_fit_v').textContent=this.value">
+            <small class="f__hint">与调性契合度　<span class="f__lo">与调性冲突</span> ← → <span class="f__hi">天然契合</span></small></label>
+          <label class="f hsslider"><span>💰 转化潜力（1-5）<b class="hsv" id="hs_value_v">3</b></span>
+            <input type="range" id="hs_value" min="1" max="5" step="1" value="3"
+                   oninput="document.getElementById('hs_value_v').textContent=this.value">
+            <small class="f__hint">能否带来业务价值　<span class="f__lo">只有曝光</span> ← → <span class="f__hi">直接带货</span></small></label>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn btn--primary btn--sm" id="btnHsCalc">⚡ 计算决策</button>
+          <button class="btn btn--ghost btn--sm" id="btnHsDemo">📋 填入示例</button>
+          <button class="btn btn--ghost btn--sm" id="btnHsExp">⬇️ 导出报告</button>
+          <button class="btn btn--ghost btn--sm" id="btnHsScan">🩺 送去内容体检</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">🎯 决策结论 <span class="hsbadge" id="hsBadge">待计算</span></div>
+        <div class="preview" id="hsPreview"><span class="ph">填写热点后点「⚡ 计算决策」</span></div>
       </div>
     </section>
 

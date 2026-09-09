@@ -156,6 +156,28 @@ function runLocalStep(s, wrapEl){
         out += '**谨慎/放弃**：' + (rd.tier.drop.join('、') || '暂无') + '\n';
       }
     }
+    else if(s.local.key === 'hotspot'){
+      var hd = calcHotspot();
+      if(!hd){ out = '（请先在「📡 热点决策」填写热点描述）'; }
+      else {
+        out = '# 📡 热点跟进决策\n\n';
+        out += '**热点**：' + hd.topic + '\n\n';
+        out += '## ' + hd.advice + '（' + hd.total + '/100）\n\n';
+        out += '| 维度 | 自评 | 得分 |\n|---|---|---|\n';
+        hd.dims.forEach(function(x){
+          out += '| ' + x.n + ' | ' + x.raw + '/5 | ' + x.s + '/' + x.max + ' |\n';
+        });
+        if(hd.risks.length){
+          out += '\n### 风险识别\n\n';
+          hd.risks.forEach(function(r){
+            out += '- **' + (r.lv === 'high' ? '🔴 高危' : '🟡 中危') + ' ' + r.n + '**：' + r.tip + '\n';
+          });
+        }
+        out += '\n### 跟进角度\n\n';
+        hd.angles.forEach(function(a, i){ out += (i+1) + '. ' + a + '\n'; });
+        out += '\n*决策辅助，不做事实核查。*';
+      }
+    }
   }catch(e){ out = '执行出错：' + e.message; }
   var ta = wrapEl.querySelector('.traceOut');
   if(ta){ ta.value = out; }

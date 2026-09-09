@@ -102,6 +102,26 @@ function restoreAll(){
   renderRivals();
   if(state.region.rows) renderRegion();
 
+  /* 热点决策：回填 */
+  state.hotspot = state.hotspot || {};
+  var hsMap = {hs_topic:'topic', hs_way:'way'};
+  Object.keys(hsMap).forEach(function(id){
+    var el = $('#' + id);
+    if(el && state.hotspot[hsMap[id]] !== undefined){
+      el.value = state.hotspot[hsMap[id]];
+      el.addEventListener('input', function(){ state.hotspot[hsMap[id]] = el.value; save(); });
+    }
+  });
+  ['rel','time','risk','fit','value'].forEach(function(k){
+    var el = $('#hs_' + k);
+    if(el && state.hotspot[k] !== undefined){
+      el.value = state.hotspot[k];
+      var lab = $('#hs_' + k + '_v'); if(lab) lab.textContent = el.value;
+      el.addEventListener('input', function(){ state.hotspot[k] = el.value; save(); });
+    }
+  });
+  if($('#hs_topic') && $('#hs_topic').value) renderHotspot();
+
   /* sticky 偏移同步：topbar 换行后高度变化，Tab 栏要跟着下移 */
   function syncSticky(){
     var tb = document.querySelector('.topbar');

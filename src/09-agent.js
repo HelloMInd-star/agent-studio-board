@@ -58,6 +58,19 @@ function toolManifest(){
      description:'把缩进文本解析为树状结构，生成思维导图 SVG。第一行是中心主题，子项用空格或 Tab 缩进表示层级。确定性计算。',
      parameters:{type:'object', properties:{
        title:{type:'string'}, body:{type:'string'}}, required:['body']}},
+    {name:'decide_hotspot_follow', label:'热点跟进决策',
+     description:'输入热点描述与五维自评（相关性/时效性/风险度/品牌契合/转化潜力），输出综合分、四档跟进建议（果断跟进/谨慎跟进/不建议投入/不建议跟进）、敏感话题风险预警与跟进角度建议。注意：做决策辅助，不做事实核查。确定性计算。',
+     parameters:{type:'object', properties:{
+       topic:{type:'string', description:'热点描述'},
+       way:{type:'string', description:'计划跟进方式'},
+       rel:{type:'number', description:'相关性1-5'},
+       time:{type:'number', description:'时效性1-5'},
+       risk:{type:'number', description:'风险度1-5，越高越安全'},
+       fit:{type:'number', description:'品牌契合1-5'},
+       value:{type:'number', description:'转化潜力1-5'}}, required:['topic']},
+     returns:{type:'object', properties:{
+       total:{type:'number'}, advice:{type:'string'},
+       risks:{type:'array'}, angles:{type:'array'}}}},
     {name:'evaluate_regional_markets', label:'区域市场优先级',
      description:'输入各区域的市场体量/吸引力/竞争力，输出优先级排序与 GE 四象限分层建议（重点投入/提升能力/维持收割/放弃）。与 STP 同一套判定规则。确定性计算。',
      parameters:{type:'object', properties:{
