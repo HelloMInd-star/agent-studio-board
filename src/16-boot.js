@@ -179,6 +179,9 @@ function restoreAll(){
   if(fg.pT && fg.nT) calcGmv();
   if(fl.aov && fl.cac) calcLtv();
 
+  /* 开始页：默认打开，先解决「从哪开始」 */
+  renderGuideAll();
+
   /* sticky 偏移同步：topbar 换行后高度变化，Tab 栏要跟着下移 */
   function syncSticky(){
     var tb = document.querySelector('.topbar');

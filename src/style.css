@@ -790,3 +790,46 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
 @media(max-width:620px){
   .grid4{grid-template-columns:repeat(2,1fr);}
 }
+
+
+/* ============ 开始：流程导航 ============ */
+.gdbar{height:5px;background:var(--bg-soft);border-radius:100px;overflow:hidden;margin-bottom:12px;}
+.gdbar__fill{height:100%;width:0;background:var(--brand);border-radius:100px;transition:width .35s ease;}
+
+.gdsteps{display:flex;flex-direction:column;gap:10px;margin-top:12px;}
+.gdstep{
+  border:1px solid var(--line);border-left:3px solid var(--brand);
+  border-radius:var(--r-md);padding:12px 14px;background:var(--card);
+}
+.gdstep.is-done{border-left-color:var(--ok);opacity:.72;}
+.gdstep__hd{display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+.gdstep__no{
+  width:22px;height:22px;border-radius:50%;background:var(--brand);color:#fff;
+  font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+}
+.gdstep.is-done .gdstep__no{background:var(--ok);}
+.gdstep__t{font-size:13.5px;font-weight:600;letter-spacing:-.01em;}
+.gdstep__ok{
+  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.08em;
+  padding:2px 7px;border-radius:100px;background:var(--bg-soft);color:var(--ok);
+}
+.gdstep__d{margin:7px 0 0;font-size:12px;line-height:1.65;color:var(--text-2);}
+.gdstep__p{
+  margin:5px 0 0;font-size:11.5px;color:var(--text-3);
+  padding:5px 9px;background:var(--bg-soft);border-radius:6px;
+}
+.gdstep__acts{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px;}
+
+.gdanw{margin-top:10px;}
+.gdanw.is-hit{border-left:3px solid var(--ok);}
+.gdanw.is-miss{border-left:3px solid var(--warn);}
+.gdanw__hd{font-size:12.5px;font-weight:600;margin-bottom:6px;}
+.gdanw__m{font-size:13px;margin-bottom:9px;line-height:1.6;}
+.gdanw__acts{display:flex;gap:7px;flex-wrap:wrap;}
+.gdanw__tip{font-size:11.5px;color:var(--text-2);line-height:1.6;margin:0 0 8px;}
+.gdanw__list{margin:0;padding-left:18px;font-size:12px;line-height:2;}
+.gdanw__list li{margin-bottom:3px;}
+.gdanw__list button{margin-left:6px;}
+@media(max-width:620px){
+  .gdstep__acts .btn{flex:1 1 auto;}
+}

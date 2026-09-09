@@ -274,6 +274,13 @@ function bind(){
     switchTab('cal');
   };
 
+  // ===== 开始：流程导航 =====
+  $('#btnGdAsk').onclick = guideAsk;
+  var gi = $('#gdInput');
+  if(gi) gi.addEventListener('keydown', function(e){
+    if(e.key === 'Enter') guideAsk();
+  });
+
   // ===== 营销财务测算 =====
   $('#btnGmvCalc').onclick = calcGmv;
   $('#btnGmvDemo').onclick = demoGmv;

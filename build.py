@@ -47,6 +47,7 @@ MODULES = [
     '22-research.js',   # 调研方案模板库（假设/市场/交叉/定价，须在 boot 前）
     '23-strategy.js',   # 战略矩阵（SWOT/TOWS/BCG，须在 boot 前）
     '24-finance.js',    # 营销财务测算（GMV/LTV/预算/雷达，须在 boot 前）
+    '25-guide.js',      # 场景化流程导航 + 对话式入口（须在 boot 前）
     '16-boot.js',       # 回填 + 启动（最后，含 })();）
 ]
 
@@ -114,6 +115,16 @@ def main():
 
     size = os.path.getsize(OUT)
     print('[v] 构建完成 -> index.html (%d 字节, %d 行)' % (size, out.count('\n') + 1))
+
+    # 使用手册：src/manual.template.html -> manual.html（纯静态，无需合并）
+    tpl = os.path.join(SRC, 'manual.template.html')
+    if os.path.exists(tpl):
+        mt = open(tpl, encoding='utf-8').read()
+        mo = os.path.join(ROOT, 'manual.html')
+        open(mo, 'w', encoding='utf-8', newline='\n').write(mt)
+        print('[v] 使用手册 -> manual.html (%d 字节)' % len(mt.encode('utf-8')))
+    else:
+        print('[!] 未找到 manual.template.html，跳过手册生成')
     print('    模块数: %d' % len(MODULES))
     print('    源文件: src/')
 

@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>使用手册 · Y.Mine 营销 AI 工作台</title>
+<style>
+:root{
+  --bg:#fbfaf9; --card:#ffffff; --line:#e8e4df;
+  --ink:#1a1a1a; --sub:#5a5a5a; --mute:#9a9a9a;
+  --brand:#1e3a8a; --brandSoft:#eff6ff;
+  --ok:#047857; --warn:#b45309; --alert:#b91c1c;
+  --sans:'PingFang SC','Microsoft YaHei','Hiragino Sans GB',sans-serif;
+  --mono:'SF Mono',ui-monospace,monospace;
+  --r:14px; --r-sm:9px;
+  --sidebar:266px;
+}
+html[data-theme="dark"]{
+  --bg:#14171c; --card:#1b1f26; --line:#2a3038;
+  --ink:#e8eaf0; --sub:#a8b0bd; --mute:#6b7480;
+  --brand:#5b82d6; --brandSoft:#1a2438;
+  --ok:#34d399; --warn:#fbbf24; --alert:#f87171;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:var(--sans);background:var(--bg);color:var(--ink);
+  line-height:1.75;-webkit-font-smoothing:antialiased;
+}
+a{color:var(--brand);text-decoration:none;}
+a:hover{text-decoration:underline;}
+
+/* ---------- 顶栏 ---------- */
+.mtop{
+  position:sticky;top:0;z-index:50;background:var(--card);
+  border-bottom:1px solid var(--line);padding:0 22px;height:52px;
+  display:flex;align-items:center;gap:14px;
+}
+.mtop__logo{font-size:14px;font-weight:700;letter-spacing:-.02em;}
+.mtop__sub{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;
+  color:var(--mute);text-transform:uppercase;
+}
+.mtop__right{margin-left:auto;display:flex;gap:10px;align-items:center;}
+.mbtn{
+  font-size:12px;padding:5px 12px;border:1px solid var(--line);
+  border-radius:var(--r-sm);background:var(--bg);color:var(--sub);cursor:pointer;
+}
+.mbtn:hover{border-color:var(--brand);color:var(--brand);}
+.mbtn.is-primary{background:var(--brand);color:#fff;border-color:var(--brand);}
+
+/* ---------- 布局 ---------- */
+.mlayout{display:flex;align-items:flex-start;}
+
+/* ---------- 侧边栏 ---------- */
+.mside{
+  position:sticky;top:52px;flex:0 0 var(--sidebar);width:var(--sidebar);
+  height:calc(100vh - 52px);overflow-y:auto;
+  border-right:1px solid var(--line);padding:20px 12px 60px;
+  background:var(--card);
+}
+.mside::-webkit-scrollbar{width:5px;}
+.mside::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px;}
+.mgroup{margin-bottom:18px;}
+.mgroup__t{
+  font-family:var(--mono);font-size:9px;letter-spacing:.14em;
+  color:var(--mute);text-transform:uppercase;padding:0 10px;margin-bottom:6px;
+}
+.mside a{
+  display:block;padding:6px 10px;border-radius:7px;
+  font-size:12.5px;color:var(--sub);line-height:1.5;
+  border-left:2px solid transparent;
+}
+.mside a:hover{background:var(--bg);color:var(--ink);text-decoration:none;}
+.mside a.is-active{
+  background:var(--brandSoft);color:var(--brand);
+  border-left-color:var(--brand);font-weight:600;
+}
+
+/* ---------- 内容区 ---------- */
+.mmain{flex:1;min-width:0;padding:34px 46px 120px;max-width:920px;}
+.mhero{margin-bottom:34px;padding-bottom:26px;border-bottom:1px solid var(--line);}
+.mhero h1{font-size:31px;font-weight:300;letter-spacing:-.035em;line-height:1.25;}
+.mhero p{margin-top:10px;font-size:13.5px;color:var(--sub);line-height:1.8;}
+
+.msec{margin-bottom:46px;scroll-margin-top:70px;}
+.msec h2{
+  font-size:21px;font-weight:600;letter-spacing:-.025em;
+  margin-bottom:6px;padding-bottom:9px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:9px;
+}
+.msec h2 .ico{font-size:19px;}
+.msec h3{
+  font-size:15px;font-weight:600;margin:22px 0 8px;letter-spacing:-.015em;
+}
+.msec h4{font-size:13px;font-weight:600;margin:16px 0 6px;color:var(--sub);}
+.msec p{font-size:13.5px;color:var(--sub);margin-bottom:10px;line-height:1.85;}
+.msec ul,.msec ol{margin:0 0 12px 20px;font-size:13.5px;color:var(--sub);line-height:1.9;}
+.msec li{margin-bottom:4px;}
+.msec strong{color:var(--ink);font-weight:600;}
+
+.mtable{width:100%;border-collapse:collapse;margin:12px 0 16px;font-size:12.5px;}
+.mtable th{
+  text-align:left;padding:8px 11px;background:var(--bg);
+  border-bottom:1px solid var(--line);font-weight:600;font-size:11.5px;
+  color:var(--sub);letter-spacing:.02em;
+}
+.mtable td{padding:8px 11px;border-bottom:1px solid var(--line);color:var(--sub);vertical-align:top;}
+.mtable td:first-child{color:var(--ink);font-weight:500;}
+.mtable tr:hover td{background:var(--bg);}
+
+.mnote{
+  padding:11px 14px;border-radius:var(--r-sm);margin:12px 0;
+  font-size:12.5px;line-height:1.75;
+  border-left:3px solid var(--brand);background:var(--brandSoft);
+}
+.mnote.is-warn{border-left-color:var(--warn);background:rgba(180,83,9,.06);}
+.mnote.is-ok{border-left-color:var(--ok);background:rgba(4,120,87,.06);}
+.mnote.is-no{border-left-color:var(--alert);background:rgba(185,28,28,.06);}
+.mnote b{color:var(--ink);}
+
+.mcode{
+  font-family:var(--mono);font-size:11.5px;background:var(--bg);
+  border:1px solid var(--line);border-radius:var(--r-sm);
+  padding:12px 14px;margin:10px 0;overflow-x:auto;line-height:1.7;
+  white-space:pre;color:var(--sub);
+}
+.msteps{counter-reset:ms;margin:12px 0;}
+.mstep{
+  position:relative;padding-left:32px;margin-bottom:14px;font-size:13.5px;
+  color:var(--sub);line-height:1.8;
+}
+.mstep::before{
+  counter-increment:ms;content:counter(ms);
+  position:absolute;left:0;top:2px;width:21px;height:21px;border-radius:50%;
+  background:var(--brand);color:#fff;font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
+.mstep b{color:var(--ink);}
+
+.mtag{
+  display:inline-block;font-family:var(--mono);font-size:9.5px;
+  letter-spacing:.08em;padding:2px 8px;border-radius:100px;
+  background:var(--bg);color:var(--mute);margin-left:8px;
+  border:1px solid var(--line);vertical-align:middle;
+}
+.mtag.is-done{color:var(--ok);border-color:rgba(4,120,87,.3);}
+.mtag.is-local{color:var(--brand);border-color:rgba(30,58,138,.3);}
+
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:14px 0;}
+.mcard{
+  border:1px solid var(--line);border-radius:var(--r);
+  padding:13px 15px;background:var(--card);
+}
+.mcard__t{font-size:13px;font-weight:600;margin-bottom:5px;letter-spacing:-.01em;}
+.mcard__d{font-size:12px;color:var(--sub);line-height:1.7;}
+
+.mfoot{
+  margin-top:52px;padding-top:22px;border-top:1px solid var(--line);
+  font-size:12px;color:var(--mute);line-height:1.9;
+}
+
+@media(max-width:900px){
+  .mside{display:none;}
+  .mmain{padding:24px 20px 80px;}
+  .mhero h1{font-size:25px;}
+}
+</style>
+</head>
+<body>
+
+<header class="mtop">
+  <span class="mtop__logo">Y.Mine 营销 AI 工作台</span>
+  <span class="mtop__sub">USER MANUAL</span>
+  <div class="mtop__right">
+    <button class="mbtn" id="mTheme">🌙 深色</button>
+    <a class="mbtn is-primary" href="index.html">打开工作台 →</a>
+  </div>
+</header>
+
+<div class="mlayout">
+  <nav class="mside" id="mSide">
+    <div class="mgroup">
+      <div class="mgroup__t">开始之前</div>
+      <a href="#intro">这是什么</a>
+      <a href="#privacy">数据存在哪</a>
+      <a href="#start">从哪开始</a>
+    </div>
+    <div class="mgroup">
+      <div class="mgroup__t">入口层</div>
+      <a href="#guide">🧭 开始 · 流程导航</a>
+      <a href="#ws">💬 Agent 工作台</a>
+    </div>
+    <div class="mgroup">
+      <div class="mgroup__t">方法论层</div>
+      <a href="#research">📐 调研方案</a>
+      <a href="#strategy">🎯 战略矩阵</a>
+      <a href="#hotspot">📡 热点决策</a>
+    </div>
+    <div class="mgroup">
+      <div class="mgroup__t">计算层</div>
+      <a href="#competitor">⚔️ 竞品对比矩阵</a>
+      <a href="#stp">🎯 STP 市场选择</a>
+      <a href="#region">🗺️ 区域市场</a>
+      <a href="#pricing">💰 定价策略</a>
+      <a href="#finance">💹 财务测算</a>
+      <a href="#scan">🩺 内容体检</a>
+    </div>
+    <div class="mgroup">
+      <div class="mgroup__t">执行层</div>
+      <a href="#content">✍️ 内容工厂</a>
+      <a href="#charts">📊 商业图卡</a>
+      <a href="#cal">📅 营销日历</a>
+      <a href="#flow">🔄 工作流编排</a>
+      <a href="#synth">📋 方案合成</a>
+    </div>
+    <div class="mgroup">
+      <div class="mgroup__t">基础</div>
+      <a href="#brand">🎯 品牌记忆</a>
+      <a href="#kb">📚 知识库</a>
+      <a href="#agent">🤖 Agent 导出</a>
+    </div>
+    <div class="mgroup">
+      <div class="mgroup__t">附录</div>
+      <a href="#limits">做不到的事</a>
+      <a href="#faq">常见问题</a>
+    </div>
+  </nav>
+
+  <main class="mmain">
+    <div class="mhero">
+      <h1>使用手册</h1>
+      <p>16 个功能模块，每个都写清楚<b>解决什么问题、怎么用、注意什么</b>。
+      左侧目录可跳转，滚动时会自动高亮当前章节。</p>
+    </div>
+
+    <!-- ============ 开始之前 ============ -->
+    <section class="msec" id="intro">
+      <h2><span class="ico">📖</span>这是什么</h2>
+      <p>一个<b>完全在浏览器本地运行</b>的营销分析与内容工作台。它不联网、不上传、不需要账号——
+      打开就能用，关掉数据还在你自己的浏览器里。</p>
+      <p>和常见营销 AI 工具最大的区别是：它<b>不生成"一段话让你去别处执行"</b>，而是尽量
+      <b>直接算出结论</b>。目前有 12 个确定性分析函数，同样输入永远得到同样输出。</p>
+      <div class="mnote">
+        <b>一句话定位</b>：营销人的本地分析工具箱 —— 能算的不交给模型，算不了的诚实告诉你。
+      </div>
+    </section>
+
+    <section class="msec" id="privacy">
+      <h2><span class="ico">🔒</span>数据存在哪</h2>
+      <p>所有数据存在浏览器的 <code>localStorage</code> 里，<b>不会上传到任何服务器</b>。</p>
+      <div class="mtable">
+        <table>
+          <tr><th>场景</th><th>数据在哪</th></tr>
+          <tr><td>正常使用</td><td>只在你这台电脑的浏览器里</td></tr>
+          <tr><td>换设备</td><td>不会自动同步，需用「导出配置 / 导入配置」</td></tr>
+          <tr><td>清浏览器缓存</td><td><b>会丢失</b>，重要内容请先导出</td></tr>
+          <tr><td>开启联网对话</td><td>请求直达你填的 AI 厂商，不经本站服务器</td></tr>
+        </table>
+      </div>
+      <div class="mnote is-warn">
+        <b>注意</b>：无痕模式、清理浏览数据、换浏览器都会导致数据丢失。
+        重要结论建议用各模块的「导出」按钮存成 Markdown。
+      </div>
+    </section>
+
+    <section class="msec" id="start">
+      <h2><span class="ico">🚀</span>从哪开始</h2>
+      <p>如果你第一次打开，<b>不要挨个点 16 个 Tab</b>。按这个顺序：</p>
+      <div class="msteps">
+        <div class="mstep"><b>先填品牌记忆</b>（左侧栏）—— 填一次，后续所有生成都会自动带上你的品牌语境。这是性价比最高的一步。</div>
+        <div class="mstep"><b>打开「🧭 开始」</b>—— 选一个场景，按步骤走。这是默认打开页，就是为了防止你迷路。</div>
+        <div class="mstep"><b>卡住就说一句话</b>—— 在开始页的输入框里描述你要做什么，工具会判断该从哪一步开始。</div>
+      </div>
+      <div class="mnote is-ok">
+        <b>建议</b>：先花 5 分钟填完品牌记忆，再开始任何分析。不填也能用，但产出会缺品牌语境。
+      </div>
+    </section>
+
+    <!-- ============ 入口层 ============ -->
+    <section class="msec" id="guide">
+      <h2><span class="ico">🧭</span>开始 · 流程导航<span class="mtag is-done">入口层</span></h2>
+      <p>解决"16 个 Tab 不知道点哪个"的问题。<b>这是默认打开页。</b></p>
+      <h3>四个场景</h3>
+      <div class="mgrid">
+        <div class="mcard"><div class="mcard__t">🚀 新品上市</div><div class="mcard__d">市场判断 → 定位定价 → 内容生产 → 执行排期 → 复盘优化</div></div>
+        <div class="mcard"><div class="mcard__t">📊 投放复盘</div><div class="mcard__d">数据归集 → 效率诊断 → 归因拆解 → 单位经济 → 报告产出</div></div>
+        <div class="mcard"><div class="mcard__t">✍️ 内容运营</div><div class="mcard__d">语境设定 → 选题生成 → 合规体检 → 排期发布 → 效果追踪</div></div>
+        <div class="mcard"><div class="mcard__t">🎯 品牌定位</div><div class="mcard__d">现状盘点 → 竞品格局 → 用户分层 → 差异化切口 → 落地表达</div></div>
+      </div>
+      <h3>每步能做什么</h3>
+      <ul>
+        <li><b>前往 →</b> 直接跳到对应的功能 Tab</li>
+        <li><b>标记完成</b> 进度会自动存下来，关掉页面再打开还在</li>
+        <li><b>↩ 回上一步</b> 卡住时的退路，会取消当前步的完成标记</li>
+        <li><b>⏭ 跳过</b> 这步不适用就直接过</li>
+      </ul>
+      <h3>对话式入口</h3>
+      <p>顶部输入框可以说话，比如"我想做个竞品分析"、"618 怎么排期"。工具做<b>关键词匹配</b>后告诉你该从哪一步开始。</p>
+      <div class="mnote is-warn">
+        <b>匹配不到会怎样？</b>不会硬猜。会明说"没太确定你说的是哪一步"，然后摊开四个场景让你选。
+        纯本地工具做不了语义理解，<b>装作听懂了比说不知道更糟</b>。
+      </div>
+    </section>
+
+    <section class="msec" id="ws">
+      <h2><span class="ico">💬</span>Agent 工作台<span class="mtag is-done">入口层</span></h2>
+      <p>左边对话、右边文档的形态。你说一句话，它<b>真的去执行</b>本地函数，不是生成一段"你可以这样做"的话。</p>
+      <div class="mtable">
+        <table>
+          <tr><th>你说</th><th>实际发生</th><th>标签</th></tr>
+          <tr><td>做个竞品分析</td><td>调用竞品矩阵函数，出加权排名</td><td>⚡ 已执行本地函数</td></tr>
+          <tr><td>618 怎么排期</td><td>调用日历函数，出倒排任务</td><td>⚡ 已执行本地函数</td></tr>
+          <tr><td>这段文案几分</td><td>调用体检函数，出六维评分</td><td>⚡ 已执行本地函数</td></tr>
+          <tr><td>写个小红书文案</td><td>生成提示词，需你拿到别处执行</td><td>📋 提示词</td></tr>
+        </table>
+      </div>
+      <h3>引用闭环</h3>
+      <p>右侧每个文档块都有 💬 按钮，点了可以把它<b>引用回对话</b>。比如引用一份竞品分析，再问"这段文案几分"，
+      它评的就是这份内容，不是别处的。</p>
+      <h3>联网开关</h3>
+      <p>默认<b>关闭</b>（本地模式）。需要真实模型对话时，在设置里填你自己的 API Key。</p>
+      <div class="mnote">
+        <b>关于 CORS</b>：浏览器直连 AI 厂商可能被其跨域策略拦截。
+        若连接失败，说明该厂商不允许浏览器端调用（不是本工具的问题）。
+        请求路径是「你的浏览器 → 厂商」，<b>不经过本站任何服务器</b>。
+      </div>
+    </section>
+
+    <!-- ============ 方法论层 ============ -->
+    <section class="msec" id="research">
+      <h2><span class="ico">📐</span>调研方案<span class="mtag is-done">方法论层</span></h2>
+      <p>引导式营销调研。<b>第一节是"待验证假设"，不是市场数据</b>——这是它和其他调研模板最大的区别。</p>
+      <h3>六步</h3>
+      <div class="mtable">
+        <table>
+          <tr><th>步骤</th><th>算什么</th></tr>
+          <tr><td>0 待验证假设</td><td>不计算 —— 追踪"已验证 / 待验证 / 已推翻"</td></tr>
+          <tr><td>1 市场测算</td><td>TAM / SAM / SOM</td></tr>
+          <tr><td>2 竞品 × 画像交叉</td><td>找"所有竞品都没满足"的空白格</td></tr>
+          <tr><td>3 用户分层</td><td>占比校验（应为 100%）</td></tr>
+          <tr><td>4 定价验证</td><td>支付意愿曲线（可选标准 Van Westendorp）</td></tr>
+          <tr><td>5 可行性与风险</td><td>分期路线 + 风险清单</td></tr>
+        </table>
+      </div>
+      <div class="mnote">
+        <b>为什么假设放在第 0 步</b>：一份开头就写"这几条是我的假设，第 3 条还没验证"的报告，
+        比填满一百个数字的更可信。生成的报告会自动警告还有几条未验证。
+      </div>
+      <h3>关于定价模型的纠正</h3>
+      <p>常见错误：用<b>单题</b>问卷（"你愿意付多少"）的数据去套 <b>Van Westendorp</b>。
+      这个模型需要每个受访者回答<b>四个独立问题</b>（太便宜/便宜/贵/太贵）。</p>
+      <p>本工具默认改用<b>支付意愿（WTP）曲线</b>，标准模型做成可选项。另外做了
+      <b>计费口径分离</b>——月费档和一次性档不能混在同一条收入曲线上比，否则会算出荒谬的最优价。</p>
+      <div class="mcode">☑ 最高档为「一次性付费」，不计入订阅收入对比</div>
+    </section>
+
+    <section class="msec" id="strategy">
+      <h2><span class="ico">🎯</span>战略矩阵<span class="mtag is-done">方法论层</span></h2>
+      <p>增强版 SWOT + BCG，针对传统分析的三个问题：<b>静态、主观、孤岛</b>。</p>
+      <h3>增强版 SWOT</h3>
+      <ul>
+        <li><b>每条可绑数据</b>：把"品牌认知度高"写成"品牌认知度 87%（+5%，来源 Q1 调研）"</li>
+        <li><b>TOWS 自动推导</b>：SO 进攻 / WO 补强 / ST 防御 / WT 转型，每条列出参与要素与判断依据</li>
+        <li><b>可推日历</b>：策略一键变成待执行任务，判断依据一并带走</li>
+      </ul>
+      <div class="mnote">
+        <b>策略不是模板话术</b>：要素来自你填的条目，改一个条目，策略文本就跟着变。
+      </div>
+      <h3>BCG 业务组合</h3>
+      <p>气泡图（大小=销售额），自动判定象限并给预算建议。支持两种份额口径：</p>
+      <div class="mtable">
+        <table>
+          <tr><th>口径</th><th>阈值</th><th>说明</th></tr>
+          <tr><td>相对份额</td><td>&gt;1</td><td>相对最大竞对，教科书定义</td></tr>
+          <tr><td>百分制</td><td>≥50</td><td>多数营销人没相对份额数据时的务实选择</td></tr>
+        </table>
+      </div>
+      <p>除了单象限建议，还会做<b>组合健康度诊断</b>——这才是 BCG 真正的用法：</p>
+      <div class="mcode">⚠️ 无现金牛却有问题儿童：缺少自我造血业务，扩张依赖外部输血</div>
+      <h3>版本快照</h3>
+      <p>存快照后点「对比当前」，可看业务线在四象限间的迁移，如"小红书从 ❓ 问题儿童进入 ⭐ 明星，说明投入有效"。</p>
+    </section>
+
+    <section class="msec" id="hotspot">
+      <h2><span class="ico">📡</span>热点决策<span class="mtag is-done">方法论层</span></h2>
+      <p>判断<b>该不该跟热点</b>，而不是"热点是真是假"。</p>
+      <div class="mnote is-warn">
+        <b>为什么不做"求真"</b>：验证真伪需要联网抓取权威数据源，纯前端做不到，
+        且说错了要负法律责任。而营销翻车 90% 不是因为热点是假的，
+        是<b>热点是真的但不该跟</b>（灾难、逝者、社会悲剧）。
+      </div>
+      <h3>五维打分</h3>
+      <div class="mtable">
+        <table>
+          <tr><th>维度</th><th>权重</th><th>问什么</th></tr>
+          <tr><td>相关性</td><td>25</td><td>与品牌/品类关联度</td></tr>
+          <tr><td>风险度</td><td>25</td><td>分越高越安全</td></tr>
+          <tr><td>时效性</td><td>20</td><td>还能火多久</td></tr>
+          <tr><td>品牌契合</td><td>15</td><td>与调性冲突吗</td></tr>
+          <tr><td>转化潜力</td><td>15</td><td>能带货吗</td></tr>
+        </table>
+      </div>
+      <h3>两个关键机制</h3>
+      <ul>
+        <li><b>高危一票否决</b>：8 类敏感话题（灾难/名人离世/时政/性别对立等）直接判"不建议跟进"</li>
+        <li><b>矛盾校验</b>：如果你给"某地地震"的风险项打了 5 分（自认为安全），
+        工具会指出冲突："你给风险维度打了 5 分，但描述中含高危话题词，请重新确认"——<b>不会默默接受矛盾输入</b></li>
+      </ul>
+    </section>
+
+    <!-- ============ 计算层 ============ -->
+    <section class="msec" id="competitor">
+      <h2><span class="ico">⚔️</span>竞品对比矩阵<span class="mtag is-local">确定性函数</span></h2>
+      <p>填维度权重与各竞品打分，算出加权排名 + 机会点 + 威胁点。</p>
+      <div class="mtable">
+        <table>
+          <tr><th>输出</th><th>判定规则</th></tr>
+          <tr><td>加权总分排名</td><td>各维度得分 × 权重求和</td></tr>
+          <tr><td>🔥 机会点</td><td>我方 ≥4 且竞品均分 ≤3</td></tr>
+          <tr><td>⚠️ 威胁点</td><td>我方 ≤2 且最强对手 ≥4</td></tr>
+        </table>
+      </div>
+      <div class="mnote">
+        <b>价值在"找空白"</b>：竞品分析 80% 的活是打分，Excel 也能做；
+        但"哪个维度所有竞品都弱而你能打"这一步，Excel 做不了。
+      </div>
+    </section>
+
+    <section class="msec" id="stp">
+      <h2><span class="ico">🎯</span>STP 市场选择<span class="mtag is-local">确定性函数</span></h2>
+      <p>每个细分市场按「吸引力 × 竞争力」打分，自动落四象限并给建议。</p>
+      <div class="mcode">优先级 =（吸引力×0.5 + 竞争力×0.5）×（0.6 + 0.4×规模对数权重）</div>
+      <p>规模取<b>对数</b>是 GE 矩阵的标准做法——避免大市场凭体量压倒一切。</p>
+    </section>
+
+    <section class="msec" id="region">
+      <h2><span class="ico">🗺️</span>区域市场<span class="mtag is-local">确定性函数</span></h2>
+      <p>华东/华南/华北…… 及国际区域。<b>复用 STP 的同一套算法</b>，所以两个结论不会打架。</p>
+      <div class="mnote">
+        <b>为什么强调复用</b>：如果各写一套，迟早出现"STP 说投一线白领、区域说投西北"这种矛盾结论。
+        同一套公式保证了内部一致性。
+      </div>
+    </section>
+
+    <section class="msec" id="pricing">
+      <h2><span class="ico">💰</span>定价策略<span class="mtag is-local">确定性函数</span></h2>
+      <p>五种定价法并行计算 + 促销折扣保本测算。</p>
+      <div class="mtable">
+        <table>
+          <tr><th>策略</th><th>公式</th></tr>
+          <tr><td>成本加成</td><td>成本 ÷（1 − 目标毛利率）</td></tr>
+          <tr><td>竞品锚定</td><td>竞品均价 × 定位系数</td></tr>
+          <tr><td>价值定价</td><td>感知价值 × 价值捕获率</td></tr>
+          <tr><td>渗透定价</td><td>竞品均价 × 0.85</td></tr>
+          <tr><td>撇脂定价</td><td>竞品均价 × 1.25</td></tr>
+        </table>
+      </div>
+      <h3>促销折扣（最实用的一段）</h3>
+      <div class="mcode">保本倍数 =（原价 − 变动成本）÷（折后价 − 变动成本）</div>
+      <p>比如成本 30、原价 128、打 8 折：需要多卖 <b>36%</b> 才能保住总毛利。
+      这个数字大部分人做促销时压根没算过。工具还会按增量要求给风险分级，
+      超过 100% 会建议改用满减。</p>
+    </section>
+
+    <section class="msec" id="finance">
+      <h2><span class="ico">💹</span>财务测算<span class="mtag is-local">确定性函数</span></h2>
+      <p>四个高频场景。值钱的是<b>计算模型</b>，图表只是呈现。</p>
+      <h3>① GMV 拆解（归因）</h3>
+      <p>难点不是画瀑布图，是归因。简单相减会产生无法解释的残差。
+      本工具用<b>逐因子替换法</b>：按流量→转化率→客单价→退货率顺序逐个替换，
+      贡献 = 替换后的 GMV 差。这样各因子贡献之和<b>恒等于</b>总增量。</p>
+      <div class="mcode">流量     +97,637.8
+转化率   +85,063.2
+客单价   +34,215.7
+退货率   -11,319.6
+         ─────────
+合计     205,597.1  ≡  总增量   残差 0.0</div>
+      <h3>② LTV / CAC</h3>
+      <p>采用<b>毛利口径</b>（× 毛利率）——判断获客是否划算要看能回收多少毛利。
+      要用营收口径把毛利率填 100% 即可。会标出"回本周期 &gt; 生命周期"的不成立情形。</p>
+      <h3>③ 预算矩阵</h3>
+      <p>渠道 × 目标热力图，每行合计自动校验（应 100%），颜色深浅代表占比。</p>
+      <h3>④ 渠道雷达</h3>
+      <p>多维归一化。成本类维度（含 CPM/CPC/CPL/成本/cost/CPA）<b>自动反向计分</b>——数值越低得分越高。</p>
+    </section>
+
+    <section class="msec" id="scan">
+      <h2><span class="ico">🩺</span>内容体检<span class="mtag is-local">确定性函数</span></h2>
+      <p>六维评分，不只是查违禁词。</p>
+      <div class="mtable">
+        <table>
+          <tr><th>维度</th><th>权重</th><th>检查什么</th></tr>
+          <tr><td>合规风险</td><td>30</td><td>红线 −10 / 风险 −3 / 平台 −2</td></tr>
+          <tr><td>平台适配</td><td>15</td><td>按平台分别检查（小红书看 emoji，抖音看对话感…）</td></tr>
+          <tr><td>开头钩子</td><td>15</td><td>前 40 字有无数字/疑问/钩子词</td></tr>
+          <tr><td>行动号召</td><td>10</td><td>有无 CTA + 是否在结尾</td></tr>
+          <tr><td>可读性</td><td>15</td><td>句长、段落、有无列表</td></tr>
+          <tr><td>品牌一致性</td><td>15</td><td>卖点/人群/品牌名是否体现</td></tr>
+        </table>
+      </div>
+      <h3>刻意不过度拦截</h3>
+      <div class="mnote is-ok">
+        "限时""100%""保证""有机"<b>不自动拦截</b>——它们有合法用法
+        （真实起止时间、客观数据描述、资质认证、有机认证）。
+        一刀切会让工具没法用，所以标为风险并给说明，由你判断。
+      </div>
+      <h3>评分历史</h3>
+      <p>最近 12 次的迷你柱状图 + 对比上次变化，能看到内容质量是否在提升。</p>
+    </section>
+
+    <!-- ============ 执行层 ============ -->
+    <section class="msec" id="content">
+      <h2><span class="ico">✍️</span>内容工厂</h2>
+      <p>带品牌语境生成内容提示词。<b>生成的是提示词，不是成品文案</b>——
+      这是不联网定位的必然结果，不是 bug。</p>
+      <p>生成后可一键送体检。若觉得判错了，点「🚩 报告误报」，
+      工具会自动生成反馈文本（含涉及词、工具判定理由、你的原文），你复制后自己发送——
+      <b>不会自动上传</b>。</p>
+    </section>
+
+    <section class="msec" id="charts">
+      <h2><span class="ico">📊</span>商业图卡</h2>
+      <p>五种图，全部<b>手写 SVG</b>，可导出 SVG / PNG。</p>
+      <div class="mgrid">
+        <div class="mcard"><div class="mcard__t">🎯 SWOT 四象限</div><div class="mcard__d">四色分区，自动折行</div></div>
+        <div class="mcard"><div class="mcard__t">🗺️ 竞品定位地图</div><div class="mcard__d">X/Y 轴 + 坐标标注，营销人最爱</div></div>
+        <div class="mcard"><div class="mcard__t">👤 用户画像卡</div><div class="mcard__d">4 套配色，原声放大展示</div></div>
+        <div class="mcard"><div class="mcard__t">🔻 转化漏斗</div><div class="mcard__d">自动算各环节与整体转化率</div></div>
+        <div class="mcard"><div class="mcard__t">🧠 思维导图</div><div class="mcard__d">缩进即层级，后序遍历布局</div></div>
+      </div>
+      <p>另有财务测算中的瀑布图、仪表盘、热力矩阵、雷达图，共 <b>9 种</b>。</p>
+    </section>
+
+    <section class="msec" id="cal">
+      <h2><span class="ico">📅</span>营销日历</h2>
+      <p>月视图 + 事件增删改 + 17 个预置节点 + 到期提醒。</p>
+      <p>与「策略 → 计算模式 → 营销日历倒排」联动：倒排跑完可一键「📅 存入日历」。</p>
+      <div class="mnote is-no">
+        <b>提醒的边界</b>：只有在<b>你打开页面时</b>才会提醒。
+        关掉页面 JS 就停止运行，做不到"定时推送"——这是纯前端的硬限制。
+      </div>
+    </section>
+
+    <section class="msec" id="flow">
+      <h2><span class="ico">🔄</span>工作流编排</h2>
+      <p>6 步编排，可导出<b>三种 Agent 格式</b>：标准 Agent JSON、Coze、Dify DSL。</p>
+      <p>每个步骤可以选「本地函数」而不是 LLM——导出时变成确定性 tool 调用，
+      Agent 跑到这里不靠模型自由发挥。</p>
+      <h3>Trace 运行记录</h3>
+      <p>每步可记录真实产出 + 状态（成功/部分成功/失败/跳过），导出成 Markdown。
+      这证明工作流<b>不只是设计稿，是执行过且可复现的</b>。</p>
+    </section>
+
+    <section class="msec" id="synth">
+      <h2><span class="ico">📋</span>方案合成</h2>
+      <p>跨 8 个模块采集数据，聚合成一份完整的营销方案。八个章节，最后一章是
+      <b>缺口诊断</b>——它会反过来说你还缺什么、该去哪补。</p>
+      <div class="mnote">
+        <b>这是从聚合器变成顾问的一步</b>：不只汇总你填过的，还会指出"竞品数据未填写，
+        否则差异化定位缺乏依据"。
+      </div>
+      <div class="mnote is-warn">
+        <b>已知限制</b>：STP 和竞品矩阵是<b>表单态</b>不是持久化态。
+        填完后别切走，直接切到方案合成页生成——切走再回来会显示未填写。
+      </div>
+    </section>
+
+    <!-- ============ 基础 ============ -->
+    <section class="msec" id="brand">
+      <h2><span class="ico">🎯</span>品牌记忆</h2>
+      <p><b>这是最该先填的地方。</b>7 个字段，填一次，后续所有生成自动带上。</p>
+      <div class="mtable">
+        <table>
+          <tr><th>字段</th><th>作用</th></tr>
+          <tr><td>品牌名 / 品类 / 目标人群 / 核心卖点</td><td>注入每次生成，并参与品牌一致性评分</td></tr>
+          <tr><td>专家角色 / 语气风格</td><td>注入提示词</td></tr>
+          <tr><td>禁用词</td><td><b>同步进违禁词体检</b>，命中直接判红线</td></tr>
+        </table>
+      </div>
+      <p>点「👀 预览注入效果」可看到每次生成到底自动加了什么，消除黑箱感。</p>
+    </section>
+
+    <section class="msec" id="kb">
+      <h2><span class="ico">📚</span>知识库</h2>
+      <p>存品牌资产、用户原声、竞品素材。生成时可自动引用（可设范围与条数）。</p>
+      <p>注入时会附带一句约束："请优先基于以上真实资料创作，不要编造与资料冲突的信息"。
+      <b>这是从"AI 味"变成"你家味"的关键一步。</b></p>
+    </section>
+
+    <section class="msec" id="agent">
+      <h2><span class="ico">🤖</span>Agent 导出</h2>
+      <p>12 个确定性函数都可被 Agent 调用。每个都有标准 JSON Schema，
+      点各模块的「📐 Function Schema」可查看。</p>
+      <div class="mnote">
+        <b>核心设计：工具即 Function</b> —— 每个分析工具同时是"人的表单"和"Agent 的可调用函数"。
+        这样"工具"和"Agent"不是两个产品，而是同一套能力的两种形态。
+      </div>
+      <p><b>不是所有模块都适合注册成 function</b>：竞品档案这类增删改查不适合，
+      它没有"计算"的语义。</p>
+    </section>
+
+    <!-- ============ 附录 ============ -->
+    <section class="msec" id="limits">
+      <h2><span class="ico">🚫</span>做不到的事</h2>
+      <p>这些是<b>诚实的边界</b>，不是待办事项：</p>
+      <div class="mtable">
+        <table>
+          <tr><th>功能</th><th>为什么做不到</th></tr>
+          <tr><td>自动抓取竞品网页</td><td>浏览器 CORS 100% 拦截，除非自建代理，而那会破坏隐私承诺</td></tr>
+          <tr><td>关页面后定时提醒</td><td>页面关了 JS 就停止运行</td></tr>
+          <tr><td>多人协作 / 多设备同步</td><td>需要后端与账号体系</td></tr>
+          <tr><td>热点事实核查</td><td>需联网 + 权威数据源，且说错要担责</td></tr>
+          <tr><td>3D 图表</td><td>扭曲比例（近大远小）、遮挡数据，不适合财务数据</td></tr>
+          <tr><td>引入 ECharts</td><td>1MB+，引入即破坏"零依赖 + 单文件"</td></tr>
+          <tr><td>通用 BI（筛选/钻取）</td><td>做不过 Excel 和帆软，不是本工具的战场</td></tr>
+        </table>
+      </div>
+      <div class="mnote is-ok">
+        <b>砍东西能说清为什么，比做了什么更能体现产品判断力。</b>
+        这些边界都公开写在产品说明页的「明确不做」栏。
+      </div>
+    </section>
+
+    <section class="msec" id="faq">
+      <h2><span class="ico">❓</span>常见问题</h2>
+      <h4>数据会丢吗？</h4>
+      <p>清浏览器缓存、换浏览器、无痕模式都会丢。重要内容请用各模块的导出按钮存 Markdown。</p>
+      <h4>为什么生成的是提示词不是成品文案？</h4>
+      <p>因为不联网、不接模型。这是定位取舍，不是未完成功能。创作类任务必须靠外部模型执行。</p>
+      <h4>能多人用吗？</h4>
+      <p>当前是单用户本地工具。要协作需自建后端，那会改变产品定位。</p>
+      <h4>为什么不用 LangChain / ECharts？</h4>
+      <p>LangChain 是接 LLM 的胶水层，本工具核心是确定性计算，引入它不带来新能力，
+      却会破坏"零依赖"卖点。ECharts 同理，且所有图表手写 SVG 都够用。</p>
+      <h4>填了品牌记忆没效果？</h4>
+      <p>检查左侧「品牌记忆」开关是否打开，以及知识库引用设置。点「👀 预览注入效果」可确认。</p>
+    </section>
+
+    <div class="mfoot">
+      Y.Mine 营销 AI 工作台 · 使用手册<br>
+      本地运行，数据不出浏览器。本手册内容随版本同步更新。<br>
+      <a href="landing.html">产品说明</a> · <a href="index.html">打开工作台</a>
+    </div>
+  </main>
+</div>
+
+<script>
+/* 主题切换（与工作台共用同一 key） */
+(function(){
+  var KEY = 'ymb_state';
+  function getTheme(){
+    try{ var s = JSON.parse(localStorage.getItem(KEY) || '{}'); return s.theme || 'light'; }
+    catch(e){ return 'light'; }
+  }
+  function setTheme(t){
+    document.documentElement.setAttribute('data-theme', t);
+    var b = document.getElementById('mTheme');
+    if(b) b.textContent = t === 'dark' ? '☀️ 浅色' : '🌙 深色';
+    try{
+      var s = JSON.parse(localStorage.getItem(KEY) || '{}');
+      s.theme = t; localStorage.setItem(KEY, JSON.stringify(s));
+    }catch(e){}
+  }
+  setTheme(getTheme());
+  var btn = document.getElementById('mTheme');
+  if(btn) btn.onclick = function(){
+    setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  };
+})();
+
+/* 滚动高亮：当前章节对应的侧边栏项 */
+(function(){
+  var links = [].slice.call(document.querySelectorAll('#mSide a'));
+  var secs = links.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+  function onScroll(){
+    var y = window.scrollY + 90;
+    var idx = 0;
+    for(var i = 0; i < secs.length; i++){
+      if(secs[i] && secs[i].offsetTop <= y) idx = i;
+    }
+    links.forEach(function(a, i){ a.classList.toggle('is-active', i === idx); });
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+</body>
+</html>

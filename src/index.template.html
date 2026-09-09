@@ -42,7 +42,8 @@
 
 <!-- ===================== Tabs ===================== -->
 <nav class="tabs" id="studio">
-  <button class="tab is-on" data-tab="role"><span class="tab__name">🧠 营销角色</span><span class="tab__desc">12 位专家 · 一键生成</span></button>
+  <button class="tab is-on" data-tab="guide"><span class="tab__name">🧭 开始</span><span class="tab__desc">从哪开始 · 流程</span></button>
+  <button class="tab" data-tab="role"><span class="tab__name">🧠 营销角色</span><span class="tab__desc">12 位专家 · 一键生成</span></button>
   <button class="tab" data-tab="content"><span class="tab__name">✍️ 内容工厂</span><span class="tab__desc">多平台 · 批量出稿</span></button>
   <button class="tab" data-tab="strategy"><span class="tab__name">📊 策略模板</span><span class="tab__desc">STP · 竞品 · GTM</span></button>
   <button class="tab" data-tab="persona"><span class="tab__name">🍸 品牌人格</span><span class="tab__desc">调性指南 · 彩蛋玩法</span></button>
@@ -132,8 +133,35 @@
   <!-- ---------- 中栏 ---------- -->
   <main>
 
+    <!-- ===== 开始：场景化流程导航 ===== -->
+    <section class="panel is-on" data-panel="guide">
+      <h2 class="panel__hd">🧭 从哪开始</h2>
+      <p class="panel__sub">16 个模块不用自己猜。选一个场景，按顺序走完；卡住了可以回上一步或跳过。</p>
+
+      <div class="card">
+        <div class="card__hd">💬 直接说你要做什么</div>
+        <p class="hint">输入一句话，工具判断该从哪一步开始。<b>匹配不到会诚实告诉你，不会硬猜。</b></p>
+        <div class="row">
+          <input type="text" id="gdInput" placeholder="例：我想做个竞品分析 / 618 怎么排期 / 这段文案能发吗"
+                 style="flex:1;min-width:220px">
+          <button class="btn btn--primary btn--sm" id="btnGdAsk">🔍 告诉我在哪</button>
+        </div>
+        <div class="preview gdanw" id="gdAnswer"></div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">🗺️ 场景流程 <span class="eyebrow" id="gdProgress" style="margin-left:auto"></span></div>
+        <div class="gdbar"><div class="gdbar__fill" id="gdBarFill"></div></div>
+        <div class="chips" id="gdScenes"></div>
+        <p class="hint" id="gdSceneDesc" style="margin-top:8px"></p>
+        <div class="gdsteps" id="gdSteps"></div>
+      </div>
+    </section>
+
+
+
     <!-- ===== 营销角色（提示词工坊） ===== -->
-    <section class="panel is-on" data-panel="role">
+    <section class="panel" data-panel="role">
       <h2 class="panel__hd">🧠 营销角色 · 提示词工坊</h2>
       <p class="panel__sub">按结构化字段拼装高质量提示词，复制后粘贴到任意 AI 平台即可使用。</p>
       <div class="grid2">
