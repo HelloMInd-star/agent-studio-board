@@ -51,6 +51,7 @@
   <button class="tab" data-tab="chart"><span class="tab__name">📊 商业图卡</span><span class="tab__desc">填数据 · 出图导出</span></button>
   <button class="tab" data-tab="agent"><span class="tab__name">💬 Agent 工作台</span><span class="tab__desc">对话 · 文档 · 工具</span></button>
   <button class="tab" data-tab="cal"><span class="tab__name">📅 营销日历</span><span class="tab__desc">排期 · 追踪 · 提醒</span></button>
+  <button class="tab" data-tab="synth"><span class="tab__name">📋 方案合成</span><span class="tab__desc">跨模块 · 一键聚合</span></button>
 </nav>
 
 <!-- ===================== 主体 ===================== -->
@@ -530,6 +531,36 @@
       </div>
 
       <div class="evlist" id="evList"></div>
+    </section>
+
+
+    <!-- ===== 方案合成 ===== -->
+    <section class="panel" data-panel="synth">
+      <h2 class="panel__hd">📋 方案合成</h2>
+      <p class="panel__sub">把散落在各模块的数据汇成一份整合营销方案，并指出还缺什么。</p>
+
+      <div class="card">
+        <div class="card__hd">📡 数据源采集 <span class="eyebrow" id="synthCount" style="margin-left:auto"></span></div>
+        <div class="srcgrid" id="synthSources"></div>
+        <p class="hint" style="margin-top:10px">
+          💡 数据从各模块实时读取。灰色项表示尚未填写，点下方章节仍可生成，但会标注「未填写」。
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">🧩 选择章节</div>
+        <div class="chips" id="synthSecs"></div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn btn--primary btn--sm" id="btnSynthGen">⚡ 生成方案</button>
+          <button class="btn btn--ghost btn--sm" id="btnSynthMd">⬇️ 导出 Markdown</button>
+          <button class="btn btn--ghost btn--sm" id="btnSynthJson" style="display:none">📐 导出 JSON</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">📄 整合营销方案</div>
+        <div class="preview" id="synthPreview"><span class="ph">点「⚡ 生成方案」后，这里会显示完整的整合营销方案</span></div>
+      </div>
     </section>
 
   </main>

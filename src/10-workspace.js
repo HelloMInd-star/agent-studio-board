@@ -110,6 +110,14 @@ function runLocalStep(s, wrapEl){
         }
       }
     }
+    else if(s.local.key === 'synth'){
+      var srcs = collectSources();
+      var n = srcs.filter(function(x){ return x.filled; }).length;
+      out = buildPlan(['summary','gap']);
+      out = '# 📋 方案合成（摘要 + 缺口）\n\n**数据源**：' + n + ' / ' +
+            srcs.length + ' 个模块有数据\n\n' +
+            out.replace(/^# 整合营销方案\n\n[\s\S]*?---\n\n/, '');
+    }
   }catch(e){ out = '执行出错：' + e.message; }
   var ta = wrapEl.querySelector('.traceOut');
   if(ta){ ta.value = out; }

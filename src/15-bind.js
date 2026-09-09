@@ -7,6 +7,8 @@ function bind(){
       b.classList.add('is-on');
       var k = b.getAttribute('data-tab');
       $$('.panel').forEach(function(p){ p.classList.toggle('is-on', p.getAttribute('data-panel') === k); });
+      // 切到方案合成时实时重采数据源（各模块数据可能刚填完）
+      if(k === 'synth') renderSynthSources();
     };
   });
 
@@ -269,6 +271,11 @@ function bind(){
     importPlanToCal(lastCalRes.nodes);
     switchTab('cal');
   };
+
+  // ===== 方案合成 =====
+  $('#btnSynthGen').onclick  = generatePlan;
+  $('#btnSynthMd').onclick   = exportPlanMd;
+  $('#btnSynthJson').onclick = exportPlanJson;
 
   // ===== 营销日历 =====
   $('#btnCalPrev').onclick = function(){

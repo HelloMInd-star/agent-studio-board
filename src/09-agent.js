@@ -57,7 +57,13 @@ function toolManifest(){
     {name:'generate_mind_map', label:'思维导图',
      description:'把缩进文本解析为树状结构，生成思维导图 SVG。第一行是中心主题，子项用空格或 Tab 缩进表示层级。确定性计算。',
      parameters:{type:'object', properties:{
-       title:{type:'string'}, body:{type:'string'}}, required:['body']}}
+       title:{type:'string'}, body:{type:'string'}}, required:['body']}},
+    {name:'synthesize_marketing_plan', label:'方案合成',
+     description:'跨模块采集数据（品牌记忆/STP/竞品/内容体检/营销日历/知识库/工作流/工作台），聚合成一份整合营销方案，并输出缺口诊断与下一步建议。确定性聚合，不调用模型。',
+     parameters:{type:'object', properties:{
+       sections:{type:'array', items:{type:'string',
+         enum:['summary','brand','market','compete','content','schedule','asset','gap']},
+         description:'要包含的章节，不传则全部包含'}}, required:[]}}
   ];
 }
 
