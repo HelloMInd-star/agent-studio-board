@@ -272,6 +272,39 @@ function bind(){
     switchTab('cal');
   };
 
+  // ===== 调研方案 =====
+  $('#btnAsAdd').onclick = addAssump;
+  $('#btnRsRival').onclick = addRivalRow;
+  $('#btnRsSeg').onclick = addSeg;
+  $('#btnRsGen').onclick = renderRsReport;
+  $('#btnRsExp').onclick = exportRsReport;
+  ['rs_users','rs_arpu','rs_samr','rs_somr'].forEach(function(id){
+    var e = $('#' + id);
+    if(e) e.addEventListener('input', function(){ calcTAM(); });
+  });
+  ['rs_prices','rs_counts','rs_target'].forEach(function(id){
+    var e = $('#' + id);
+    if(e) e.addEventListener('input', function(){ calcWTP(); });
+  });
+  var vw = $('#rs_vw');
+  if(vw) vw.addEventListener('change', function(){
+    var d = $('#rs_vwdata');
+    if(d) d.style.display = vw.checked ? '' : 'none';
+    calcWTP();
+  });
+  var vwd = $('#rs_vwdata');
+  if(vwd) vwd.addEventListener('input', calcWTP);
+  var rn = $('#rs_name');
+  if(rn) rn.addEventListener('input', function(){
+    var R = rs(); R.name = rn.value; save();
+  });
+  ['rs_stages','rs_risks'].forEach(function(id){
+    var e = $('#' + id);
+    if(e) e.addEventListener('input', function(){
+      var R = rs(); R.feas = R.feas || {}; R.feas[id.slice(3)] = e.value; save();
+    });
+  });
+
   // ===== 热点决策 =====
   $('#btnHsCalc').onclick = renderHotspot;
   $('#btnHsDemo').onclick = demoHotspot;

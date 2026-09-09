@@ -178,6 +178,22 @@ function runLocalStep(s, wrapEl){
         out += '\n*决策辅助，不做事实核查。*';
       }
     }
+    else if(s.local.key === 'research'){
+      var RR = rs();
+      var rep = buildResearchReport();
+      var gapsN = 0;
+      if(RR.segs.length && RR.rivals.length){
+        RR.segs.forEach(function(sg, i){
+          if(!RR.rivals.some(function(rv){ return rv.cells[i] === 'full'; })) gapsN++;
+        });
+      }
+      out = '**项目**：' + (RR.name || '未命名') + '　**模板**：' +
+            ((RS_TEMPLATES[RR.tpl]||{}).n || '-') + '\n\n';
+      out += '**假设**：' + RR.assumptions.length + ' 条，已验证 ' +
+             RR.assumptions.filter(function(a){ return a.status === 'done'; }).length + ' 条\n';
+      out += '**市场空白格**：' + gapsN + ' 个\n\n';
+      out += rep.slice(0, 2000) + (rep.length > 2000 ? '\n\n…（完整内容见「📐 调研方案」Tab）' : '');
+    }
   }catch(e){ out = '执行出错：' + e.message; }
   var ta = wrapEl.querySelector('.traceOut');
   if(ta){ ta.value = out; }

@@ -58,6 +58,26 @@ function toolManifest(){
      description:'把缩进文本解析为树状结构，生成思维导图 SVG。第一行是中心主题，子项用空格或 Tab 缩进表示层级。确定性计算。',
      parameters:{type:'object', properties:{
        title:{type:'string'}, body:{type:'string'}}, required:['body']}},
+    {name:'build_research_plan', label:'调研方案生成',
+     description:'引导式营销调研：待验证假设清单 + TAM/SAM/SOM 测算 + 竞品×画像交叉矩阵（找市场空白格）+ 用户分层 + 定价验证（WTP 曲线/标准 Van Westendorp）。输出完整调研方案 Markdown。确定性聚合与计算。',
+     parameters:{type:'object', properties:{
+       tpl:{type:'string', enum:['consumer','app','offline','b2b'], description:'模板类型'},
+       name:{type:'string', description:'项目名称'},
+       assumptions:{type:'array', items:{type:'object', properties:{
+         text:{type:'string'}, how:{type:'string'},
+         status:{type:'string', enum:['todo','doing','done','fail']}}}},
+       market:{type:'object', properties:{
+         users:{type:'number'}, unit:{type:'number'}, arpu:{type:'number'},
+         samRate:{type:'number'}, somRate:{type:'number'}}},
+       segments:{type:'array', items:{type:'object', properties:{
+         n:{type:'string'}, pct:{type:'number'}, who:{type:'string'}, need:{type:'string'}}}},
+       rivals:{type:'array', items:{type:'object', properties:{
+         name:{type:'string'}, cells:{type:'array', items:{type:'string', enum:['full','partial','none']}}}}},
+       wtp:{type:'object', properties:{
+         prices:{type:'string'}, counts:{type:'string'}, target:{type:'number'}}}},
+       required:[]},
+     returns:{type:'object', properties:{
+       markdown:{type:'string'}, gaps:{type:'array'}, bestPrice:{type:'number'}}}},
     {name:'decide_hotspot_follow', label:'热点跟进决策',
      description:'输入热点描述与五维自评（相关性/时效性/风险度/品牌契合/转化潜力），输出综合分、四档跟进建议（果断跟进/谨慎跟进/不建议投入/不建议跟进）、敏感话题风险预警与跟进角度建议。注意：做决策辅助，不做事实核查。确定性计算。',
      parameters:{type:'object', properties:{

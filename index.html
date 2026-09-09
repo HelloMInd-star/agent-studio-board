@@ -672,6 +672,53 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
   .hsgrid{grid-template-columns:1fr;}
 }
 
+
+/* ============ 调研方案 ============ */
+.aslist{display:flex;flex-direction:column;gap:7px;}
+.asrow{
+  display:flex;gap:7px;align-items:center;flex-wrap:wrap;
+  padding:8px 10px;border:1px solid var(--line);border-radius:var(--r-sm);
+  background:var(--card);border-left-width:3px;
+}
+.asrow.is-todo{border-left-color:var(--text-3);}
+.asrow.is-doing{border-left-color:var(--warn);}
+.asrow.is-done{border-left-color:var(--ok);}
+.asrow.is-fail{border-left-color:var(--alert);}
+.asrow__st{
+  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.08em;
+  padding:2px 7px;border-radius:100px;background:var(--bg-soft);
+  color:var(--text-2);flex:0 0 auto;white-space:nowrap;
+}
+.asrow__t{flex:2;min-width:180px;border:none;background:transparent;font-size:12.5px;font-weight:600;}
+.asrow__h{flex:1.4;min-width:130px;border:none;background:transparent;font-size:11.5px;color:var(--text-2);}
+.asrow__s{font-size:11px;padding:3px 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);}
+
+.seglist{display:flex;flex-direction:column;gap:7px;}
+.segrow{display:flex;gap:7px;align-items:center;flex-wrap:wrap;}
+.segrow__n{width:88px;font-size:12.5px;font-weight:600;}
+.segrow__p{width:62px;font-size:12.5px;}
+.segrow__w{flex:1.3;min-width:130px;font-size:11.5px;}
+.segrow__d{flex:1.5;min-width:140px;font-size:11.5px;}
+
+.rstbl{overflow-x:auto;}
+.crosstbl{min-width:520px;}
+.crosstbl th{white-space:nowrap;}
+.crosstbl th small{font-weight:400;color:var(--text-3);}
+.ctname{width:110px;font-size:12px;font-weight:600;border:1px solid transparent;background:transparent;}
+.ctname:hover{border-color:var(--line);}
+.ctsel{
+  font-size:12px;padding:4px 7px;border:1px solid var(--line);border-radius:7px;
+  background:var(--bg);cursor:pointer;min-width:76px;
+}
+.ctsel.is-full{color:var(--ok);border-color:rgba(4,120,87,.4);background:rgba(4,120,87,.07);}
+.ctsel.is-partial{color:var(--warn);border-color:rgba(180,83,9,.35);background:rgba(180,83,9,.06);}
+.ctsel.is-none{color:var(--text-3);}
+@media(max-width:620px){
+  .asrow__t,.asrow__h{min-width:100%;}
+  .segrow__n,.segrow__p{width:auto;flex:0 0 auto;}
+  .segrow__w,.segrow__d{min-width:100%;}
+}
+
 </style>
 </head>
 <body>
@@ -721,6 +768,7 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
   <button class="tab" data-tab="pricing"><span class="tab__name">💰 定价策略</span><span class="tab__desc">5 法 · 折扣 · 价格带</span></button>
   <button class="tab" data-tab="market"><span class="tab__name">🌏 市场与竞品</span><span class="tab__desc">区域 · 档案 · 追踪</span></button>
   <button class="tab" data-tab="hotspot"><span class="tab__name">📡 热点决策</span><span class="tab__desc">该不该跟 · 风险预警</span></button>
+  <button class="tab" data-tab="research"><span class="tab__name">📐 调研方案</span><span class="tab__desc">模板 · 假设 · 验证</span></button>
 </nav>
 
 <!-- ===================== 主体 ===================== -->
@@ -1367,6 +1415,94 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
       </div>
     </section>
 
+
+    <!-- ===== 调研方案 ===== -->
+    <section class="panel" data-panel="research">
+      <h2 class="panel__hd">📐 调研方案</h2>
+      <p class="panel__sub">引导式营销调研。每一步都预置「该填什么」与「填的标准」，能算的部分当场算，最后生成完整调研方案。</p>
+
+      <div class="card">
+        <div class="card__hd">📦 选择模板</div>
+        <p class="hint">选择后会带入该类项目的<b>假设骨架</b>与<b>用户分层骨架</b>，你只需改数字与描述。</p>
+        <div class="chips" id="rsTpls"></div>
+        <div class="row" style="margin-top:10px">
+          <input type="text" id="rs_name" placeholder="项目名称（如：觉醉 · 感官情绪探索游戏）" style="flex:1;min-width:200px">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">0️⃣ 待验证假设 <span class="eyebrow" id="rsAssumpCount" style="margin-left:auto"></span></div>
+        <p class="hint">💡 这是整份报告<b>最关键的一节</b>。敢写「这几条我还没验证」比填满一百个数字更专业。报告会据此提示哪些结论不宜直接引用。</p>
+        <div class="aslist" id="rsAssump"></div>
+        <button class="btn btn--ghost btn--sm" id="btnAsAdd" style="margin-top:8px">➕ 添加假设</button>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">1️⃣ 市场测算（TAM / SAM / SOM）</div>
+        <div class="grid3">
+          <label class="f"><span>目标用户数</span>
+            <div style="display:flex;gap:6px">
+              <input type="number" id="rs_users" placeholder="例：2000" style="flex:2">
+              <select id="rs_uunit" style="flex:1"><option value="10000" selected>万人</option><option value="1">人</option><option value="100000000">亿人</option></select>
+            </div></label>
+          <label class="f"><span>年均付费（元）</span><input type="number" id="rs_arpu" placeholder="例：228"></label>
+          <label class="f"><span>SAM 占比 %</span><input type="number" id="rs_samr" value="100"></label>
+          <label class="f"><span>SOM 渗透率 %</span><input type="number" id="rs_somr" value="1"></label>
+        </div>
+        <div class="preview" id="rsTamOut" style="margin-top:10px"><span class="ph">填写后自动计算</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">2️⃣ 竞品 × 画像交叉矩阵</div>
+        <p class="hint">💡 不是列竞品参数，而是标出<b>每层用户被各家满足了哪块</b>。<b>●</b> 满足 / <b>◐</b> 局部 / <b>✕</b> 缺失。全列 ✕ 或 ◐ 的那一层就是市场空白。</p>
+        <div class="rstbl" id="rsCross"></div>
+        <button class="btn btn--ghost btn--sm" id="btnRsRival" style="margin-top:8px">➕ 添加竞品</button>
+        <div class="preview" id="rsCrossNote" style="margin-top:10px"></div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">3️⃣ 用户分层 <span class="eyebrow" id="rsSegSum" style="margin-left:auto"></span></div>
+        <div class="seglist" id="rsSegs"></div>
+        <button class="btn btn--ghost btn--sm" id="btnRsSeg" style="margin-top:8px">➕ 添加分层</button>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">4️⃣ 定价验证</div>
+        <div class="grid3">
+          <label class="f"><span>价格点（逗号分隔）</span><input type="text" id="rs_prices" value="0,9.9,19,39,99"></label>
+          <label class="f"><span>各价位选择人数</span><input type="text" id="rs_counts" placeholder="例：8,22,28,12,10"></label>
+          <label class="f"><span>你的目标定价</span><input type="number" id="rs_target" placeholder="例：19"></label>
+        </div>
+        <label class="f" style="margin-top:8px">
+          <span><input type="checkbox" id="rs_exlast" checked style="width:auto;margin-right:6px">最高档为「一次性付费」，不计入订阅收入对比</span>
+        </label>
+        <p class="f__hint" style="margin:-4px 0 8px">⚠️ 月费档与一次性档混在同一条曲线上会算出错误的最优价（不同计费口径不可直接比收入）。勾选后只在前几个同口径档位间比较。</p>
+        <label class="f">
+          <span><input type="checkbox" id="rs_vw" style="width:auto;margin-right:6px">我有标准 Van Westendorp 四问数据</span>
+        </label>
+        <textarea id="rs_vwdata" style="min-height:80px;display:none;margin-top:6px"
+          placeholder="每行：价格,太便宜%,便宜%,贵%,太贵%&#10;例：&#10;0,0,5,60,35&#10;9.9,5,20,55,20"></textarea>
+        <div class="preview" id="rsWtpOut" style="margin-top:10px"><span class="ph">填写后自动计算</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">5️⃣ 可行性与风险</div>
+        <label class="f"><span>分期路线（可用 Markdown）</span>
+          <textarea id="rs_stages" style="min-height:90px" placeholder="例：&#10;| 阶段 | 范围 | 周期 | 成本 |&#10;|---|---|---|---|&#10;| MVP | 静态站 + 核心闭环 | 已完成 | ¥0 |"></textarea></label>
+        <label class="f"><span>风险清单（每行一条）</span>
+          <textarea id="rs_risks" style="min-height:80px" placeholder="例：&#10;酒精安全：敏感场景强制无酒精&#10;隐私：数据仅存本地，后续需隐私政策"></textarea></label>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">📄 完整调研方案</div>
+        <div class="row" style="margin-bottom:10px">
+          <button class="btn btn--primary btn--sm" id="btnRsGen">🔄 生成报告</button>
+          <button class="btn btn--ghost btn--sm" id="btnRsExp">⬇️ 导出 Markdown</button>
+        </div>
+        <div class="preview" id="rsReport"><span class="ph">点「🔄 生成报告」汇总全部内容</span></div>
+      </div>
+    </section>
+
   </main>
   <aside>
     <div class="card" id="scoreTrendCard">
@@ -1639,7 +1775,8 @@ var state = {
            cap:'60', pos:'mid', base:'', varc:'', disc:'80'},
   rivals:[],
   region:{rows:''},
-  hotspot:{topic:'', way:'', rel:3, time:3, risk:3, fit:3, value:3}
+  hotspot:{topic:'', way:'', rel:3, time:3, risk:3, fit:3, value:3},
+  research:null
 };
 
 /* ===== src/02-presets.js ===== */
@@ -1697,7 +1834,8 @@ var LOCAL_TOOLS = {
   16:{key:'synth', name:'synthesize_marketing_plan', label:'方案合成'},
   17:{key:'pricing', name:'calculate_pricing_strategy', label:'定价策略'},
   18:{key:'region', name:'evaluate_regional_markets', label:'区域市场'},
-  19:{key:'hotspot', name:'decide_hotspot_follow', label:'热点决策'}
+  19:{key:'hotspot', name:'decide_hotspot_follow', label:'热点决策'},
+  20:{key:'research', name:'build_research_plan', label:'调研方案'}
 };
 function isLocalTool(i){ return !!LOCAL_TOOLS[i]; }
 
@@ -3425,6 +3563,26 @@ function toolManifest(){
      description:'把缩进文本解析为树状结构，生成思维导图 SVG。第一行是中心主题，子项用空格或 Tab 缩进表示层级。确定性计算。',
      parameters:{type:'object', properties:{
        title:{type:'string'}, body:{type:'string'}}, required:['body']}},
+    {name:'build_research_plan', label:'调研方案生成',
+     description:'引导式营销调研：待验证假设清单 + TAM/SAM/SOM 测算 + 竞品×画像交叉矩阵（找市场空白格）+ 用户分层 + 定价验证（WTP 曲线/标准 Van Westendorp）。输出完整调研方案 Markdown。确定性聚合与计算。',
+     parameters:{type:'object', properties:{
+       tpl:{type:'string', enum:['consumer','app','offline','b2b'], description:'模板类型'},
+       name:{type:'string', description:'项目名称'},
+       assumptions:{type:'array', items:{type:'object', properties:{
+         text:{type:'string'}, how:{type:'string'},
+         status:{type:'string', enum:['todo','doing','done','fail']}}}},
+       market:{type:'object', properties:{
+         users:{type:'number'}, unit:{type:'number'}, arpu:{type:'number'},
+         samRate:{type:'number'}, somRate:{type:'number'}}},
+       segments:{type:'array', items:{type:'object', properties:{
+         n:{type:'string'}, pct:{type:'number'}, who:{type:'string'}, need:{type:'string'}}}},
+       rivals:{type:'array', items:{type:'object', properties:{
+         name:{type:'string'}, cells:{type:'array', items:{type:'string', enum:['full','partial','none']}}}}},
+       wtp:{type:'object', properties:{
+         prices:{type:'string'}, counts:{type:'string'}, target:{type:'number'}}}},
+       required:[]},
+     returns:{type:'object', properties:{
+       markdown:{type:'string'}, gaps:{type:'array'}, bestPrice:{type:'number'}}}},
     {name:'decide_hotspot_follow', label:'热点跟进决策',
      description:'输入热点描述与五维自评（相关性/时效性/风险度/品牌契合/转化潜力），输出综合分、四档跟进建议（果断跟进/谨慎跟进/不建议投入/不建议跟进）、敏感话题风险预警与跟进角度建议。注意：做决策辅助，不做事实核查。确定性计算。',
      parameters:{type:'object', properties:{
@@ -3800,6 +3958,22 @@ function runLocalStep(s, wrapEl){
         hd.angles.forEach(function(a, i){ out += (i+1) + '. ' + a + '\n'; });
         out += '\n*决策辅助，不做事实核查。*';
       }
+    }
+    else if(s.local.key === 'research'){
+      var RR = rs();
+      var rep = buildResearchReport();
+      var gapsN = 0;
+      if(RR.segs.length && RR.rivals.length){
+        RR.segs.forEach(function(sg, i){
+          if(!RR.rivals.some(function(rv){ return rv.cells[i] === 'full'; })) gapsN++;
+        });
+      }
+      out = '**项目**：' + (RR.name || '未命名') + '　**模板**：' +
+            ((RS_TEMPLATES[RR.tpl]||{}).n || '-') + '\n\n';
+      out += '**假设**：' + RR.assumptions.length + ' 条，已验证 ' +
+             RR.assumptions.filter(function(a){ return a.status === 'done'; }).length + ' 条\n';
+      out += '**市场空白格**：' + gapsN + ' 个\n\n';
+      out += rep.slice(0, 2000) + (rep.length > 2000 ? '\n\n…（完整内容见「📐 调研方案」Tab）' : '');
     }
   }catch(e){ out = '执行出错：' + e.message; }
   var ta = wrapEl.querySelector('.traceOut');
@@ -5177,6 +5351,39 @@ function bind(){
     importPlanToCal(lastCalRes.nodes);
     switchTab('cal');
   };
+
+  // ===== 调研方案 =====
+  $('#btnAsAdd').onclick = addAssump;
+  $('#btnRsRival').onclick = addRivalRow;
+  $('#btnRsSeg').onclick = addSeg;
+  $('#btnRsGen').onclick = renderRsReport;
+  $('#btnRsExp').onclick = exportRsReport;
+  ['rs_users','rs_arpu','rs_samr','rs_somr'].forEach(function(id){
+    var e = $('#' + id);
+    if(e) e.addEventListener('input', function(){ calcTAM(); });
+  });
+  ['rs_prices','rs_counts','rs_target'].forEach(function(id){
+    var e = $('#' + id);
+    if(e) e.addEventListener('input', function(){ calcWTP(); });
+  });
+  var vw = $('#rs_vw');
+  if(vw) vw.addEventListener('change', function(){
+    var d = $('#rs_vwdata');
+    if(d) d.style.display = vw.checked ? '' : 'none';
+    calcWTP();
+  });
+  var vwd = $('#rs_vwdata');
+  if(vwd) vwd.addEventListener('input', calcWTP);
+  var rn = $('#rs_name');
+  if(rn) rn.addEventListener('input', function(){
+    var R = rs(); R.name = rn.value; save();
+  });
+  ['rs_stages','rs_risks'].forEach(function(id){
+    var e = $('#' + id);
+    if(e) e.addEventListener('input', function(){
+      var R = rs(); R.feas = R.feas || {}; R.feas[id.slice(3)] = e.value; save();
+    });
+  });
 
   // ===== 热点决策 =====
   $('#btnHsCalc').onclick = renderHotspot;
@@ -7084,6 +7291,653 @@ function exportHotspot(){
   downloadFile('热点决策_' + ymd(new Date()) + '.md', out.join('\n'), 'text/markdown');
 }
 
+/* ===== src/22-research.js ===== */
+/* ============================================================
+ * 调研方案 —— 引导式营销调研模板库
+ * 内核来源：把「觉醉」调研项目的方法论结构化
+ *   0 待验证假设（区分已验证/待验证/已推翻，这是专业度的核心）
+ *   1 TAM/SAM/SOM 市场测算
+ *   2 竞品 × 画像交叉矩阵（找空白格）
+ *   3 三层用户结构 + 转化路径
+ *   4 定价验证（WTP 曲线 + Van Westendorp 双模型）
+ *   5 可行性分期 + 风险清单
+ * ============================================================ */
+
+/* ---------- 模板类型：每类预置假设骨架与画像分层 ---------- */
+var RS_TEMPLATES = {
+  consumer: {
+    n:'新消费品牌', icon:'🧴',
+    assumptions:[
+      '目标市场处于增长通道',
+      '核心用户层的付费假设成立',
+      '目标定价落在用户可接受区间',
+      '产品闭环带来显著高于工具型竞品的留存'
+    ],
+    segs:[
+      {n:'主力', pct:50, who:'核心高频用户', need:'核心需求被完整满足'},
+      {n:'泛用户', pct:35, who:'低频尝鲜用户', need:'轻需求 + 社交货币'},
+      {n:'长尾', pct:15, who:'专业/从业者', need:'专业工具 + 创作素材'}
+    ],
+    axes:['实用 ←→ 体验', '低频 ←→ 高频']
+  },
+  app: {
+    n:'APP / 订阅产品', icon:'📱',
+    assumptions:[
+      '目标用户存在明确的持续性需求',
+      '订阅制付费心智已被市场教育',
+      '目标 ARPU 处于用户可接受区间',
+      '留存曲线优于同类工具型产品'
+    ],
+    segs:[
+      {n:'核心用户', pct:50, who:'高频重度用户', need:'深度功能 + 个性化'},
+      {n:'活跃用户', pct:35, who:'周期性使用', need:'核心功能够用'},
+      {n:'创作者/专业', pct:15, who:'产出内容的人', need:'专业工具 + 分发'}
+    ],
+    axes:['工具 ←→ 内容', '通用 ←→ 垂直']
+  },
+  offline: {
+    n:'线下门店 / 空间', icon:'🏪',
+    assumptions:[
+      '选址半径内有足够目标客群',
+      '客单价与复购频次支撑模型',
+      '体验差异化足以驱动到店',
+      '坪效/人效达到行业基准'
+    ],
+    segs:[
+      {n:'周边常客', pct:50, who:'3 公里内高频', need:'便利 + 稳定品质'},
+      {n:'目的性到访', pct:35, who:'专程打卡', need:'体验独特性'},
+      {n:'团体/活动', pct:15, who:'包场/团建', need:'空间 + 服务'}
+    ],
+    axes:['刚需 ←→ 体验', '低价 ←→ 高价']
+  },
+  b2b: {
+    n:'B 端服务 / SaaS', icon:'💼',
+    assumptions:[
+      '目标行业存在明确痛点且预算已存在',
+      '决策链可在合理周期内走完',
+      'ACV 与 LTV/CAC 比例健康',
+      '产品可被标准化交付而非纯定制'
+    ],
+    segs:[
+      {n:'标杆客户', pct:50, who:'行业中大型', need:'完整方案 + 案例背书'},
+      {n:'中小客户', pct:35, who:'长尾 SMB', need:'轻量好用 + 低门槛'},
+      {n:'渠道伙伴', pct:15, who:'代理/集成商', need:'可分润 + 易交付'}
+    ],
+    axes:['标准化 ←→ 定制', '轻量 ←→ 重度']
+  }
+};
+
+/* ---------- 当前调研数据（挂在 state 上） ---------- */
+function rs(){
+  if(!state.research) state.research = {
+    tpl:'consumer',
+    name:'',
+    assumptions:[],
+    market:{users:'', arpu:'', samRate:'', somRate:''},
+    rivals:[],       // {name, cells:['full','partial','none', ...]}
+    segs:[],         // 分层（从模板带入，可改）
+    wtp:{prices:'0,9.9,19,39,99', counts:'8,22,28,12,10', target:'19'},
+    feas:{stages:'', risks:''},
+    ver:{
+      market:{users:'万人', note:'目标市场总人数'},
+      arpu:{users:'元/年', note:'年均付费'}
+    }
+  };
+  return state.research;
+}
+
+/* ---------- 模板切换：带入骨架 ---------- */
+function applyTpl(k){
+  var t = RS_TEMPLATES[k]; if(!t) return;
+  var R = rs();
+  R.tpl = k;
+  R.assumptions = t.assumptions.map(function(a){
+    return {text:a, how:'', status:'todo'};
+  });
+  R.segs = t.segs.map(function(s){
+    return {n:s.n, pct:s.pct, who:s.who, need:s.need};
+  });
+  R.axes = t.axes.slice();
+  save();
+  renderRsAll();
+  toast('已套用「' + t.n + '」模板骨架');
+}
+
+/* ---------- 假设清单渲染 ---------- */
+function renderAssump(){
+  var host = $('#rsAssump'); if(!host) return;
+  var R = rs();
+  host.innerHTML = '';
+  if(!R.assumptions.length){
+    host.innerHTML = '<span class="ph">选择模板后会自动带入假设骨架</span>';
+    return;
+  }
+  var ST = {todo:'待验证', doing:'验证中', done:'已验证', fail:'已推翻'};
+  R.assumptions.forEach(function(a, i){
+    var row = document.createElement('div');
+    row.className = 'asrow is-' + a.status;
+    row.innerHTML =
+      '<span class="asrow__st">' + (ST[a.status]||'待验证') + '</span>' +
+      '<input type="text" class="asrow__t" value="' + esc(a.text) + '" placeholder="假设描述">' +
+      '<input type="text" class="asrow__h" value="' + esc(a.how) + '" placeholder="验证方式（如：问卷 Q3 / 50 份）">' +
+      '<select class="asrow__s">' +
+        ['todo','doing','done','fail'].map(function(k){
+          return '<option value="' + k + '"' + (a.status===k?' selected':'') + '>' + (ST[k]) + '</option>';
+        }).join('') +
+      '</select>' +
+      '<button class="btn btn--sm btn--ghost" data-asdel="' + i + '">✕</button>';
+    host.appendChild(row);
+    var ti = row.querySelector('.asrow__t'), hi = row.querySelector('.asrow__h'),
+        si = row.querySelector('.asrow__s');
+    ti.addEventListener('input', function(){ a.text = ti.value; save(); });
+    hi.addEventListener('input', function(){ a.how = hi.value; save(); });
+    si.addEventListener('change', function(){ a.status = si.value; save(); renderAssump(); renderRsReport(); });
+  });
+  [].forEach.call(host.querySelectorAll('[data-asdel]'), function(b){
+    b.onclick = function(){
+      R.assumptions.splice(parseInt(b.getAttribute('data-asdel'),10), 1);
+      save(); renderAssump();
+    };
+  });
+  // 统计
+  var c = $('#rsAssumpCount');
+  if(c){
+    var done = R.assumptions.filter(function(a){ return a.status === 'done'; }).length;
+    c.textContent = done + ' / ' + R.assumptions.length + ' 已验证';
+  }
+}
+function addAssump(){
+  rs().assumptions.push({text:'', how:'', status:'todo'});
+  save(); renderAssump();
+}
+
+/* ---------- 1. TAM/SAM/SOM ---------- */
+function calcTAM(){
+  var R = rs();
+  var num = function(id){ var e=$(id); var v=parseFloat(e&&e.value); return isNaN(v)?0:v; };
+  var uu = $('#rs_uunit') ? (parseFloat($('#rs_uunit').value) || 10000) : 10000;
+  var usersRaw = num('#rs_users');
+  var users = usersRaw * uu;      // 换算成「人」
+  var arpu = num('#rs_arpu'),
+      samR = num('#rs_samr'), somR = num('#rs_somr');
+  R.market = {users:usersRaw, unit:uu, arpu:arpu, samRate:samR, somRate:somR};
+  save();
+  if(!users || !arpu){
+    var w = $('#rsTamOut'); if(w) w.innerHTML = '<span class="ph">填写「目标用户数」与「年均付费」后自动计算</span>';
+    return null;
+  }
+  var tam = users * arpu;
+  var samN = users * (samR || 100) / 100;
+  var sam = samN * arpu;
+  var somN = samN * (somR || 1) / 100;
+  var som = somN * arpu;
+  var res = {users:users, arpu:arpu, tam:tam, samN:samN, sam:sam, somN:somN, som:som,
+             samRate:samR||100, somRate:somR||1};
+  var w2 = $('#rsTamOut');
+  if(w2){
+    var o = [];
+    o.push('| 层级 | 用户数 | 年均付费 | 市场规模 |');
+    o.push('|---|---|---|---|');
+    o.push('| **TAM** 总市场 | ' + fmtN(res.users) + ' | ' + res.arpu + ' | **' + fmtMoney(res.tam) + '** |');
+    o.push('| **SAM** 可服务 | ' + fmtN(res.samN) + '（' + res.samRate + '%） | ' + res.arpu + ' | **' + fmtMoney(res.sam) + '** |');
+    o.push('| **SOM** 可获得 | ' + fmtN(res.somN) + '（' + res.somRate + '%） | ' + res.arpu + ' | **' + fmtMoney(res.som) + '** |');
+    o.push('');
+    o.push('> 算法：用户数 × 年均付费。**这是假设模型，需用真实数据校准。**');
+    w2.innerHTML = mdLite(o.join('\n'));
+  }
+  return res;
+}
+
+/* ---------- 2. 竞品 × 画像交叉矩阵 ---------- */
+var CELL = {full:{s:'●', n:'满足'}, partial:{s:'◐', n:'局部'}, none:{s:'✕', n:'缺失'}};
+
+function renderCross(){
+  var host = $('#rsCross'); if(!host) return;
+  var R = rs();
+  if(!R.segs.length || !R.rivals.length){
+    host.innerHTML = '<span class="ph">先在下方的「用户分层」与「竞品」里填入数据</span>';
+    return;
+  }
+  var t = '<table class="mdtbl crosstbl"><thead><tr><th>竞品 ＼ 用户层</th>';
+  R.segs.forEach(function(s){ t += '<th>' + esc(s.n) + '<br><small>' + s.pct + '%</small></th>'; });
+  t += '</tr></thead><tbody>';
+  R.rivals.forEach(function(r, ri){
+    t += '<tr><td><input type="text" class="ctname" value="' + esc(r.name) + '" data-ri="' + ri + '"></td>';
+    R.segs.forEach(function(s, si){
+      var v = r.cells[si] || 'none';
+      t += '<td><select class="ctsel is-' + v + '" data-ri="' + ri + '" data-si="' + si + '">' +
+        Object.keys(CELL).map(function(k){
+          return '<option value="' + k + '"' + (v===k?' selected':'') + '>' + CELL[k].s + ' ' + CELL[k].n + '</option>';
+        }).join('') + '</select></td>';
+    });
+    t += '<td><button class="btn btn--sm btn--ghost" data-rdel="' + ri + '">✕</button></td></tr>';
+  });
+  t += '</tbody></table>';
+  host.innerHTML = t;
+
+  [].forEach.call(host.querySelectorAll('.ctname'), function(el){
+    el.addEventListener('input', function(){
+      R.rivals[parseInt(el.getAttribute('data-ri'),10)].name = el.value; save();
+    });
+  });
+  [].forEach.call(host.querySelectorAll('.ctsel'), function(el){
+    el.addEventListener('change', function(){
+      var ri = parseInt(el.getAttribute('data-ri'),10), si = parseInt(el.getAttribute('data-si'),10);
+      R.rivals[ri].cells[si] = el.value;
+      el.className = 'ctsel is-' + el.value;
+      save(); renderCrossNote();
+    });
+  });
+  [].forEach.call(host.querySelectorAll('[data-rdel]'), function(b){
+    b.onclick = function(){ R.rivals.splice(parseInt(b.getAttribute('data-rdel'),10),1); save(); renderCross(); renderCrossNote(); };
+  });
+  renderCrossNote();
+}
+
+/* 交叉矩阵的核心洞察：找出所有竞品都未满足的用户层 */
+function renderCrossNote(){
+  var host = $('#rsCrossNote'); if(!host) return;
+  var R = rs();
+  if(!R.segs.length || !R.rivals.length){ host.innerHTML = ''; return; }
+  var gaps = [];
+  R.segs.forEach(function(s, si){
+    var full = R.rivals.filter(function(r){ return r.cells[si] === 'full'; }).length;
+    if(full === 0){
+      gaps.push({n:s.n, pct:s.pct, why:'无任何竞品完整满足'});
+    }
+  });
+  var out = [];
+  if(gaps.length){
+    out.push('### 🔥 市场空白格');
+    out.push('');
+    gaps.forEach(function(g){
+      out.push('- **' + g.n + '（' + g.pct + '%）**：' + g.why + ' → 可作为差异化切口');
+    });
+  } else {
+    out.push('未发现完全空白的用户层（每层至少有 1 家竞品完整满足）。');
+    out.push('');
+    out.push('> 此时应转向**局部满足**的层：找竞品普遍只做到 ◐（局部）的层，比拼谁能做完整。');
+  }
+  host.innerHTML = mdLite(out.join('\n'));
+}
+
+function addRivalRow(){
+  var R = rs();
+  R.rivals.push({name:'竞品 ' + (R.rivals.length+1), cells:R.segs.map(function(){ return 'none'; })});
+  save(); renderCross();
+}
+
+/* ---------- 3. 用户分层 ---------- */
+function renderSegs(){
+  var host = $('#rsSegs'); if(!host) return;
+  var R = rs();
+  if(!R.segs.length){ host.innerHTML = '<span class="ph">选择模板后自动带入分层骨架</span>'; return; }
+  var total = R.segs.reduce(function(a,s){ return a + (parseFloat(s.pct)||0); }, 0);
+  host.innerHTML = '';
+  R.segs.forEach(function(s, i){
+    var row = document.createElement('div');
+    row.className = 'segrow';
+    row.innerHTML =
+      '<input type="text" class="segrow__n" value="' + esc(s.n) + '" placeholder="分层名">' +
+      '<input type="number" class="segrow__p" value="' + s.pct + '" min="0" max="100">%' +
+      '<input type="text" class="segrow__w" value="' + esc(s.who) + '" placeholder="人群描述">' +
+      '<input type="text" class="segrow__d" value="' + esc(s.need) + '" placeholder="核心需求">' +
+      '<button class="btn btn--sm btn--ghost" data-sdel="' + i + '">✕</button>';
+    host.appendChild(row);
+    var q = function(sel){ return row.querySelector(sel); };
+    q('.segrow__n').addEventListener('input', function(){ s.n = this.value; save(); renderCross(); });
+    q('.segrow__p').addEventListener('input', function(){ s.pct = parseFloat(this.value)||0; save(); renderSegSum(); });
+    q('.segrow__w').addEventListener('input', function(){ s.who = this.value; save(); });
+    q('.segrow__d').addEventListener('input', function(){ s.need = this.value; save(); });
+  });
+  [].forEach.call(host.querySelectorAll('[data-sdel]'), function(b){
+    b.onclick = function(){
+      var i = parseInt(b.getAttribute('data-sdel'),10);
+      R.segs.splice(i,1);
+      R.rivals.forEach(function(r){ r.cells.splice(i,1); });
+      save(); renderSegs(); renderCross();
+    };
+  });
+  renderSegSum();
+}
+function renderSegSum(){
+  var R = rs(), c = $('#rsSegSum');
+  if(!c) return;
+  var total = R.segs.reduce(function(a,s){ return a + (parseFloat(s.pct)||0); }, 0);
+  var ok = Math.abs(total - 100) < 0.5;
+  c.textContent = '合计 ' + total + '%' + (ok ? ' ✅' : ' ⚠️ 应为 100%');
+  c.style.color = ok ? 'var(--ok)' : 'var(--warn)';
+}
+function addSeg(){
+  rs().segs.push({n:'新分层', pct:0, who:'', need:''});
+  rs().rivals.forEach(function(r){ r.cells.push('none'); });
+  save(); renderSegs(); renderCross();
+}
+
+/* ---------- 4. 定价验证：WTP 曲线 + Van Westendorp ---------- */
+function bindUnit(){
+  var u = $('#rs_uunit');
+  if(u) u.addEventListener('change', function(){ calcTAM(); });
+  var el = $('#rs_exlast');
+  if(el) el.addEventListener('change', function(){ calcWTP(); });
+}
+
+function calcWTP(){
+  var R = rs();
+  var pStr = ($('#rs_prices') && $('#rs_prices').value) || '0,9.9,19,39,99';
+  var cStr = ($('#rs_counts') && $('#rs_counts').value) || '';
+  var target = parseFloat(($('#rs_target') && $('#rs_target').value) || 0);
+  var prices = pStr.split(/[,，\s]+/).map(function(x){ return parseFloat(x); }).filter(function(x){ return !isNaN(x); });
+  var counts = cStr.split(/[,，\s]+/).map(function(x){ return parseFloat(x); }).filter(function(x){ return !isNaN(x); });
+  R.wtp = {prices:pStr, counts:cStr, target:target};
+  save();
+  var host = $('#rsWtpOut');
+  if(prices.length !== counts.length || !prices.length){
+    if(host) host.innerHTML = '<span class="ph">价格点与人数数量需一致（如 5 个价格点对应 5 个数字）</span>';
+    return null;
+  }
+  var total = counts.reduce(function(a,b){ return a+b; }, 0);
+  if(!total){ if(host) host.innerHTML = '<span class="ph">请填写各价位选择人数</span>'; return null; }
+
+  /* --- 模型 A：支付意愿曲线（WTP）--- 匹配单问"你愿意付多少" --- */
+  // 累计接受度：选该价及以下的占比
+  var rows = [], cum = 0;
+  prices.forEach(function(p, i){
+    cum += counts[i];
+    var accept = cum / total;              // 接受此价及以下的比例
+    rows.push({p:p, n:counts[i], cum:cum, accept:accept, above:1 - accept + counts[i]/total});
+  });
+  // 愿付此价及以上的人数（用于算收入）
+  var exLast = $('#rs_exlast') ? $('#rs_exlast').checked : true;
+  var cmpEnd = (exLast && rows.length > 1) ? rows.length - 1 : rows.length;
+  rows.forEach(function(r, i){
+    var above = 0;
+    for(var j = i; j < cmpEnd; j++) above += rows[j].n;
+    r.aboveN = above;
+    r.rev = r.p * above;                    // 预期收入
+    r.inCmp = i < cmpEnd;                   // 是否参与最优价比较
+  });
+  // 收入最大化价格（只在同口径档位间比较）
+  var cmpRows = rows.filter(function(r){ return r.inCmp; });
+  var best = cmpRows.reduce(function(a,b){ return b.rev > a.rev ? b : a; }, cmpRows[0]);
+  // 50% 接受价格（中位数 WTP）：线性插值
+  var med = null;
+  for(var i = 1; i < rows.length; i++){
+    if(rows[i-1].accept < 0.5 && rows[i].accept >= 0.5){
+      var t = (0.5 - rows[i-1].accept) / (rows[i].accept - rows[i-1].accept || 1);
+      med = rows[i-1].p + t * (rows[i].p - rows[i-1].p);
+      break;
+    }
+  }
+  if(med === null) med = rows[rows.length-1].accept >= 0.5 ? rows[0].p : rows[rows.length-1].p;
+
+  /* --- 模型 B：标准 Van Westendorp 需四问数据，此处仅作说明 --- */
+  var vw = null;
+  var vwOn = $('#rs_vw') && $('#rs_vw').checked;
+  if(vwOn){
+    var raw = ($('#rs_vwdata') && $('#rs_vwdata').value) || '';
+    var lines = raw.split('\n').map(function(l){ return l.trim(); }).filter(Boolean);
+    if(lines.length >= 2){
+      var pts = [];
+      lines.forEach(function(l){
+        var a = l.split(/[,，\s]+/).map(parseFloat).filter(function(x){ return !isNaN(x); });
+        if(a.length >= 5) pts.push({p:a[0], tc:a[1], c:a[2], e:a[3], te:a[4]});
+      });
+      if(pts.length >= 2) vw = solveVW(pts);
+    }
+  }
+
+  var res = {rows:rows, total:total, best:best, med:med, target:target, vw:vw};
+  if(host) host.innerHTML = mdLite(wtpReport(res));
+  return res;
+}
+
+/* 标准 Van Westendorp 求解：给定若干价格点的四类百分比，线性插值求交点 */
+function solveVW(pts){
+  // 找两条曲线的交点（反号或跨越处线性插值）
+  var cross = function(aKey, bKey){
+    for(var i = 1; i < pts.length; i++){
+      var a0 = pts[i-1][aKey] - pts[i-1][bKey], a1 = pts[i][aKey] - pts[i][bKey];
+      if(a0 === 0) return pts[i-1].p;
+      if(a0 * a1 < 0){
+        var t = Math.abs(a0) / (Math.abs(a0) + Math.abs(a1));
+        return pts[i-1].p + t * (pts[i].p - pts[i-1].p);
+      }
+    }
+    return null;
+  };
+  var opp = cross('tc','te');   // 太便宜 与 太贵
+  var ipc = cross('c','e');     // 便宜 与 贵
+  // 可接受区间：太便宜=50% 与 太贵=50% 对应的价格
+  var atPct = function(key, v){
+    for(var i = 1; i < pts.length; i++){
+      var v0 = pts[i-1][key], v1 = pts[i][key];
+      if((v0 - v) * (v1 - v) <= 0 && v0 !== v1){
+        var t = (v - v0) / (v1 - v0);
+        return pts[i-1].p + t * (pts[i].p - pts[i-1].p);
+      }
+    }
+    return null;
+  };
+  return {opp:opp, ipc:ipc, lo:atPct('tc', 50), hi:atPct('te', 50)};
+}
+
+function wtpReport(r){
+  var o = [];
+  o.push('### 📊 支付意愿分布（WTP）');
+  o.push('');
+  o.push('> 样本 **' + r.total + '** 份　|　每个价格点的「接受此价及以下」比例与预期收入：');
+  o.push('');
+  o.push('| 价格 | 选择人数 | 累计接受 | 愿付此价及以上 | 预期收入 |');
+  o.push('|---|---|---|---|---|');
+  r.rows.forEach(function(x){
+    var mark = (r.target && Math.abs(x.p - r.target) < 0.01) ? ' ⭐' : '';
+    var ex = x.inCmp ? '' : '（不参与）';
+    o.push('| ' + x.p + mark + ' | ' + x.n + ' | ' + (x.accept*100).toFixed(0) + '% | ' +
+           x.aboveN + ' 人 | **' + x.rev.toFixed(0) + '** ' + ex + ' |');
+  });
+  o.push('');
+  o.push('**关键结果**');
+  o.push('');
+  o.push('- **收入最大化价格**：**' + r.best.p + '**（预期收入 ' + r.best.rev.toFixed(0) + '）');
+  o.push('- **中位数支付意愿**（50% 用户可接受）：约 **' + r.med.toFixed(1) + '**');
+  if(r.target){
+    o.push('');
+    var tj, tip;
+    if(Math.abs(r.target - r.best.p) < 0.01){
+      tj = '✅ **恰为收入最大化点**';
+      tip = '定价合理。若想冲量可下调至中位数 ' + r.med.toFixed(1) + ' 附近换取更高转化。';
+    } else if(r.target < r.med){
+      tj = '✅ 低于中位数支付意愿（' + r.med.toFixed(1) + '）';
+      tip = '多数用户可接受，转化率高；但总收入未最大化，可考虑增设更高档位承接高支付意愿用户。';
+    } else if(r.target < r.best.p){
+      tj = '🟡 介于中位数（' + r.med.toFixed(1) + '）与最优价（' + r.best.p + '）之间';
+      tip = '属于"牺牲部分转化率换客单价"，需配合明确的价值塑造（成分/背书/权益）支撑溢价。';
+    } else {
+      tj = '⚠️ 高于收入最大化点（' + r.best.p + '）';
+      tip = '预计会因价格流失大量用户，总收入反而下降。建议下调，或改为"低价引流 + 高价进阶"两档。';
+    }
+    o.push('- **目标价 ' + r.target + ' 的判定**：' + tj);
+    o.push('- **建议**：' + tip);
+    var acc = null;
+    r.rows.forEach(function(x){ if(Math.abs(x.p - r.target) < 0.01) acc = x.accept; });
+    if(acc !== null) o.push('- **该价位累计接受度**：' + (acc*100).toFixed(0) + '% 的用户接受此价或更低');
+  }
+  o.push('');
+  if(r.vw){
+    o.push('### 📐 标准 Van Westendorp（四问数据）');
+    o.push('');
+    o.push('- **OPP**（最优价格点）≈ **' + (r.vw.opp !== null ? r.vw.opp.toFixed(1) : '—') + '**');
+    o.push('- **IPC**（无差异价格）≈ **' + (r.vw.ipc !== null ? r.vw.ipc.toFixed(1) : '—') + '**');
+    o.push('- **可接受区间**：' + (r.vw.lo !== null ? r.vw.lo.toFixed(1) : '—') +
+           ' ~ ' + (r.vw.hi !== null ? r.vw.hi.toFixed(1) : '—'));
+  } else {
+    o.push('> 💡 **关于 Van Westendorp**：标准模型需要四个独立问题（什么价太便宜/便宜/贵/太贵），');
+    o.push('> 单题「你愿意付多少」严格来说不适合直接套用。上方用的是更匹配的 **WTP 曲线**。');
+    o.push('> 若你已做四问调研，勾选「我有四问数据」可启用标准模型。');
+  }
+  return o.join('\n');
+}
+
+/* ---------- 报告生成 ---------- */
+function buildResearchReport(){
+  var R = rs();
+  var T = RS_TEMPLATES[R.tpl] || RS_TEMPLATES.consumer;
+  var out = [];
+  out.push('# ' + (R.name || '未命名项目') + ' · 市场调研方案');
+  out.push('');
+  out.push('> 模板：**' + T.n + '**　·　生成于 ' + new Date().toLocaleString('zh-CN'));
+  out.push('>');
+  out.push('> 本地生成，数据不出浏览器。');
+  out.push('');
+  out.push('---');
+  out.push('');
+
+  /* 0 假设 */
+  out.push('## 0. 待验证假设');
+  out.push('');
+  if(R.assumptions.length){
+    var ST = {todo:'待验证', doing:'验证中', done:'已验证', fail:'已推翻'};
+    out.push('| 状态 | 假设 | 验证方式 |');
+    out.push('|---|---|---|');
+    R.assumptions.forEach(function(a){
+      out.push('| ' + (ST[a.status]||'待验证') + ' | ' + (a.text||'—') + ' | ' + (a.how||'—') + ' |');
+    });
+    var un = R.assumptions.filter(function(a){ return a.status !== 'done'; }).length;
+    out.push('');
+    if(un){
+      out.push('⚠️ **尚有 ' + un + ' 条假设未验证。** 报告中的相关结论应视为待验证，不宜直接对外引用。');
+    } else {
+      out.push('✅ 所有假设均已验证。');
+    }
+  } else {
+    out.push('*未填写假设清单。*');
+  }
+  out.push('');
+
+  /* 1 市场 */
+  var tam = calcTAM();
+  out.push('## 1. 市场测算');
+  out.push('');
+  if(tam){
+    out.push('| 层级 | 用户数 | 年均付费 | 市场规模 |');
+    out.push('|---|---|---|---|');
+    out.push('| TAM 总市场 | ' + fmtN(tam.users) + ' | ' + tam.arpu + ' | **' + fmtMoney(tam.tam) + '** |');
+    out.push('| SAM 可服务 | ' + fmtN(tam.samN) + '（' + tam.samRate + '%） | ' + tam.arpu + ' | **' + fmtMoney(tam.sam) + '** |');
+    out.push('| SOM 可获得 | ' + fmtN(tam.somN) + '（' + tam.somRate + '%） | ' + tam.arpu + ' | **' + fmtMoney(tam.som) + '** |');
+    out.push('');
+    out.push('> 算法：用户数 × 年均付费；SAM/SOM 按比例折算。**这是假设模型，需用真实数据校准。**');
+  } else {
+    out.push('*未填写市场参数。*');
+  }
+  out.push('');
+
+  /* 2 竞品交叉 */
+  out.push('## 2. 竞品 × 画像交叉');
+  out.push('');
+  if(R.segs.length && R.rivals.length){
+    out.push('| 竞品 ＼ 用户层 |' + R.segs.map(function(s){ return ' ' + s.n + '（' + s.pct + '%） |'; }).join(''));
+    out.push('|---|' + R.segs.map(function(){ return '---|'; }).join(''));
+    R.rivals.forEach(function(r){
+      out.push('| ' + r.name + ' |' + R.segs.map(function(s, i){
+        return ' ' + CELL[r.cells[i]||'none'].s + ' ' + CELL[r.cells[i]||'none'].n + ' |';
+      }).join(''));
+    });
+    out.push('');
+    var gaps = [];
+    R.segs.forEach(function(s, i){
+      if(!R.rivals.some(function(r){ return r.cells[i] === 'full'; })) gaps.push(s);
+    });
+    if(gaps.length){
+      out.push('### 🔥 市场空白格');
+      out.push('');
+      gaps.forEach(function(g){
+        out.push('- **' + g.n + '（' + g.pct + '%）**：' + g.why + ' → 可作为差异化切口');
+      });
+    } else {
+      out.push('每层至少有 1 家竞品完整满足，无完全空白层。建议转向竞品普遍只做到「局部」的层做深。');
+    }
+  } else {
+    out.push('*未填写竞品或用户分层。*');
+  }
+  out.push('');
+
+  /* 3 分层 */
+  out.push('## 3. 用户分层');
+  out.push('');
+  if(R.segs.length){
+    out.push('| 分层 | 占比 | 人群 | 核心需求 |');
+    out.push('|---|---|---|---|');
+    R.segs.forEach(function(s){
+      out.push('| ' + s.n + ' | ' + s.pct + '% | ' + (s.who||'—') + ' | ' + (s.need||'—') + ' |');
+    });
+  } else {
+    out.push('*未填写。*');
+  }
+  out.push('');
+
+  /* 4 定价 */
+  out.push('## 4. 定价验证');
+  out.push('');
+  var w = calcWTP();
+  if(w){
+    out.push(wtpReport(w));
+  } else {
+    out.push('*未填写定价数据。*');
+  }
+  out.push('');
+
+  /* 5 可行性 */
+  out.push('## 5. 可行性与风险');
+  out.push('');
+  var st = ($('#rs_stages') && $('#rs_stages').value.trim()) || '';
+  var rk = ($('#rs_risks') && $('#rs_risks').value.trim()) || '';
+  if(st){
+    out.push('### 分期路线');
+    out.push('');
+    out.push(st);
+    out.push('');
+  }
+  if(rk){
+    out.push('### 风险清单');
+    out.push('');
+    out.push(rk);
+    out.push('');
+  }
+  if(!st && !rk) out.push('*未填写。*');
+
+  out.push('');
+  out.push('---');
+  out.push('');
+  out.push('*本方案基于你填写的数据生成。标为「待验证」的假设需通过调研确认后才能作为决策依据。*');
+  return out.join('\n');
+}
+
+function fmtN(v){
+  if(v >= 10000) return (v/10000).toFixed(1) + ' 万';
+  return String(Math.round(v));
+}
+function fmtMoney(v){
+  if(v >= 100000000) return (v/100000000).toFixed(2) + ' 亿';
+  if(v >= 10000) return (v/10000).toFixed(1) + ' 万';
+  return String(Math.round(v));
+}
+
+function renderRsReport(){
+  var host = $('#rsReport');
+  if(!host) return;
+  host.innerHTML = mdLite(buildResearchReport());
+}
+
+function exportRsReport(){
+  downloadFile('调研方案_' + ymd(new Date()) + '.md', buildResearchReport(), 'text/markdown');
+}
+
+/* ---------- 统一渲染 ---------- */
+function renderRsAll(){
+  renderAssump(); renderSegs(); renderCross(); calcTAM(); calcWTP(); renderRsReport();
+}
+
 /* ===== src/16-boot.js ===== */
 /* ================= 回填 ================= */
 function restoreAll(){
@@ -7208,6 +8062,43 @@ function restoreAll(){
     }
   });
   if($('#hs_topic') && $('#hs_topic').value) renderHotspot();
+
+  /* 调研方案：模板 chips + 回填 */
+  var rt = $('#rsTpls');
+  if(rt){
+    rt.innerHTML = '';
+    Object.keys(RS_TEMPLATES).forEach(function(k){
+      var t = RS_TEMPLATES[k];
+      var b = document.createElement('button');
+      b.className = 'chip' + (rs().tpl === k ? ' is-on' : '');
+      b.textContent = t.icon + ' ' + t.n;
+      b.onclick = function(){
+        [].forEach.call(rt.children, function(x){ x.classList.remove('is-on'); });
+        b.classList.add('is-on');
+        applyTpl(k);
+      };
+      rt.appendChild(b);
+    });
+  }
+  var R0 = rs();
+  if(!R0.assumptions.length && !R0.segs.length) applyTpl(R0.tpl || 'consumer');
+  else renderRsAll();
+  var rn0 = $('#rs_name'); if(rn0) rn0.value = R0.name || '';
+  var m = R0.market || {};
+  if($('#rs_users')) $('#rs_users').value = m.users || '';
+  if($('#rs_arpu'))  $('#rs_arpu').value  = m.arpu  || '';
+  if($('#rs_samr'))  $('#rs_samr').value  = m.samRate || 100;
+  if($('#rs_somr'))  $('#rs_somr').value  = m.somRate || 1;
+  var w0 = R0.wtp || {};
+  if($('#rs_prices')) $('#rs_prices').value = w0.prices || '0,9.9,19,39,99';
+  if($('#rs_counts')) $('#rs_counts').value = w0.counts || '';
+  if($('#rs_target')) $('#rs_target').value = w0.target || '';
+  var f0 = R0.feas || {};
+  if($('#rs_stages')) $('#rs_stages').value = f0.stages || '';
+  if($('#rs_risks'))  $('#rs_risks').value  = f0.risks  || '';
+  if($('#rs_uunit') && m.unit) $('#rs_uunit').value = m.unit;
+  bindUnit();
+  calcTAM(); calcWTP();
 
   /* sticky 偏移同步：topbar 换行后高度变化，Tab 栏要跟着下移 */
   function syncSticky(){

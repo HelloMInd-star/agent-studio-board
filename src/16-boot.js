@@ -122,6 +122,43 @@ function restoreAll(){
   });
   if($('#hs_topic') && $('#hs_topic').value) renderHotspot();
 
+  /* 调研方案：模板 chips + 回填 */
+  var rt = $('#rsTpls');
+  if(rt){
+    rt.innerHTML = '';
+    Object.keys(RS_TEMPLATES).forEach(function(k){
+      var t = RS_TEMPLATES[k];
+      var b = document.createElement('button');
+      b.className = 'chip' + (rs().tpl === k ? ' is-on' : '');
+      b.textContent = t.icon + ' ' + t.n;
+      b.onclick = function(){
+        [].forEach.call(rt.children, function(x){ x.classList.remove('is-on'); });
+        b.classList.add('is-on');
+        applyTpl(k);
+      };
+      rt.appendChild(b);
+    });
+  }
+  var R0 = rs();
+  if(!R0.assumptions.length && !R0.segs.length) applyTpl(R0.tpl || 'consumer');
+  else renderRsAll();
+  var rn0 = $('#rs_name'); if(rn0) rn0.value = R0.name || '';
+  var m = R0.market || {};
+  if($('#rs_users')) $('#rs_users').value = m.users || '';
+  if($('#rs_arpu'))  $('#rs_arpu').value  = m.arpu  || '';
+  if($('#rs_samr'))  $('#rs_samr').value  = m.samRate || 100;
+  if($('#rs_somr'))  $('#rs_somr').value  = m.somRate || 1;
+  var w0 = R0.wtp || {};
+  if($('#rs_prices')) $('#rs_prices').value = w0.prices || '0,9.9,19,39,99';
+  if($('#rs_counts')) $('#rs_counts').value = w0.counts || '';
+  if($('#rs_target')) $('#rs_target').value = w0.target || '';
+  var f0 = R0.feas || {};
+  if($('#rs_stages')) $('#rs_stages').value = f0.stages || '';
+  if($('#rs_risks'))  $('#rs_risks').value  = f0.risks  || '';
+  if($('#rs_uunit') && m.unit) $('#rs_uunit').value = m.unit;
+  bindUnit();
+  calcTAM(); calcWTP();
+
   /* sticky 偏移同步：topbar 换行后高度变化，Tab 栏要跟着下移 */
   function syncSticky(){
     var tb = document.querySelector('.topbar');

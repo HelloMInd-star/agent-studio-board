@@ -62,5 +62,6 @@ var state = {
            cap:'60', pos:'mid', base:'', varc:'', disc:'80'},
   rivals:[],
   region:{rows:''},
-  hotspot:{topic:'', way:'', rel:3, time:3, risk:3, fit:3, value:3}
+  hotspot:{topic:'', way:'', rel:3, time:3, risk:3, fit:3, value:3},
+  research:null
 };

@@ -55,6 +55,7 @@
   <button class="tab" data-tab="pricing"><span class="tab__name">💰 定价策略</span><span class="tab__desc">5 法 · 折扣 · 价格带</span></button>
   <button class="tab" data-tab="market"><span class="tab__name">🌏 市场与竞品</span><span class="tab__desc">区域 · 档案 · 追踪</span></button>
   <button class="tab" data-tab="hotspot"><span class="tab__name">📡 热点决策</span><span class="tab__desc">该不该跟 · 风险预警</span></button>
+  <button class="tab" data-tab="research"><span class="tab__name">📐 调研方案</span><span class="tab__desc">模板 · 假设 · 验证</span></button>
 </nav>
 
 <!-- ===================== 主体 ===================== -->
@@ -698,6 +699,94 @@
       <div class="card">
         <div class="card__hd">🎯 决策结论 <span class="hsbadge" id="hsBadge">待计算</span></div>
         <div class="preview" id="hsPreview"><span class="ph">填写热点后点「⚡ 计算决策」</span></div>
+      </div>
+    </section>
+
+
+    <!-- ===== 调研方案 ===== -->
+    <section class="panel" data-panel="research">
+      <h2 class="panel__hd">📐 调研方案</h2>
+      <p class="panel__sub">引导式营销调研。每一步都预置「该填什么」与「填的标准」，能算的部分当场算，最后生成完整调研方案。</p>
+
+      <div class="card">
+        <div class="card__hd">📦 选择模板</div>
+        <p class="hint">选择后会带入该类项目的<b>假设骨架</b>与<b>用户分层骨架</b>，你只需改数字与描述。</p>
+        <div class="chips" id="rsTpls"></div>
+        <div class="row" style="margin-top:10px">
+          <input type="text" id="rs_name" placeholder="项目名称（如：觉醉 · 感官情绪探索游戏）" style="flex:1;min-width:200px">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">0️⃣ 待验证假设 <span class="eyebrow" id="rsAssumpCount" style="margin-left:auto"></span></div>
+        <p class="hint">💡 这是整份报告<b>最关键的一节</b>。敢写「这几条我还没验证」比填满一百个数字更专业。报告会据此提示哪些结论不宜直接引用。</p>
+        <div class="aslist" id="rsAssump"></div>
+        <button class="btn btn--ghost btn--sm" id="btnAsAdd" style="margin-top:8px">➕ 添加假设</button>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">1️⃣ 市场测算（TAM / SAM / SOM）</div>
+        <div class="grid3">
+          <label class="f"><span>目标用户数</span>
+            <div style="display:flex;gap:6px">
+              <input type="number" id="rs_users" placeholder="例：2000" style="flex:2">
+              <select id="rs_uunit" style="flex:1"><option value="10000" selected>万人</option><option value="1">人</option><option value="100000000">亿人</option></select>
+            </div></label>
+          <label class="f"><span>年均付费（元）</span><input type="number" id="rs_arpu" placeholder="例：228"></label>
+          <label class="f"><span>SAM 占比 %</span><input type="number" id="rs_samr" value="100"></label>
+          <label class="f"><span>SOM 渗透率 %</span><input type="number" id="rs_somr" value="1"></label>
+        </div>
+        <div class="preview" id="rsTamOut" style="margin-top:10px"><span class="ph">填写后自动计算</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">2️⃣ 竞品 × 画像交叉矩阵</div>
+        <p class="hint">💡 不是列竞品参数，而是标出<b>每层用户被各家满足了哪块</b>。<b>●</b> 满足 / <b>◐</b> 局部 / <b>✕</b> 缺失。全列 ✕ 或 ◐ 的那一层就是市场空白。</p>
+        <div class="rstbl" id="rsCross"></div>
+        <button class="btn btn--ghost btn--sm" id="btnRsRival" style="margin-top:8px">➕ 添加竞品</button>
+        <div class="preview" id="rsCrossNote" style="margin-top:10px"></div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">3️⃣ 用户分层 <span class="eyebrow" id="rsSegSum" style="margin-left:auto"></span></div>
+        <div class="seglist" id="rsSegs"></div>
+        <button class="btn btn--ghost btn--sm" id="btnRsSeg" style="margin-top:8px">➕ 添加分层</button>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">4️⃣ 定价验证</div>
+        <div class="grid3">
+          <label class="f"><span>价格点（逗号分隔）</span><input type="text" id="rs_prices" value="0,9.9,19,39,99"></label>
+          <label class="f"><span>各价位选择人数</span><input type="text" id="rs_counts" placeholder="例：8,22,28,12,10"></label>
+          <label class="f"><span>你的目标定价</span><input type="number" id="rs_target" placeholder="例：19"></label>
+        </div>
+        <label class="f" style="margin-top:8px">
+          <span><input type="checkbox" id="rs_exlast" checked style="width:auto;margin-right:6px">最高档为「一次性付费」，不计入订阅收入对比</span>
+        </label>
+        <p class="f__hint" style="margin:-4px 0 8px">⚠️ 月费档与一次性档混在同一条曲线上会算出错误的最优价（不同计费口径不可直接比收入）。勾选后只在前几个同口径档位间比较。</p>
+        <label class="f">
+          <span><input type="checkbox" id="rs_vw" style="width:auto;margin-right:6px">我有标准 Van Westendorp 四问数据</span>
+        </label>
+        <textarea id="rs_vwdata" style="min-height:80px;display:none;margin-top:6px"
+          placeholder="每行：价格,太便宜%,便宜%,贵%,太贵%&#10;例：&#10;0,0,5,60,35&#10;9.9,5,20,55,20"></textarea>
+        <div class="preview" id="rsWtpOut" style="margin-top:10px"><span class="ph">填写后自动计算</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">5️⃣ 可行性与风险</div>
+        <label class="f"><span>分期路线（可用 Markdown）</span>
+          <textarea id="rs_stages" style="min-height:90px" placeholder="例：&#10;| 阶段 | 范围 | 周期 | 成本 |&#10;|---|---|---|---|&#10;| MVP | 静态站 + 核心闭环 | 已完成 | ¥0 |"></textarea></label>
+        <label class="f"><span>风险清单（每行一条）</span>
+          <textarea id="rs_risks" style="min-height:80px" placeholder="例：&#10;酒精安全：敏感场景强制无酒精&#10;隐私：数据仅存本地，后续需隐私政策"></textarea></label>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">📄 完整调研方案</div>
+        <div class="row" style="margin-bottom:10px">
+          <button class="btn btn--primary btn--sm" id="btnRsGen">🔄 生成报告</button>
+          <button class="btn btn--ghost btn--sm" id="btnRsExp">⬇️ 导出 Markdown</button>
+        </div>
+        <div class="preview" id="rsReport"><span class="ph">点「🔄 生成报告」汇总全部内容</span></div>
       </div>
     </section>
 
