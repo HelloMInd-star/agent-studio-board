@@ -81,11 +81,17 @@ a{color:var(--brand);text-decoration:none;}
     var(--bg-soft);
   border-bottom:1px solid var(--line);padding:50px 20px 38px;text-align:center;
 }
+/* 与 landing 的 .eyebrow 统一：mono 小标签 + 品牌点 */
 .hero__badge{
-  display:inline-flex;align-items:center;gap:6px;font-size:12px;letter-spacing:.4px;color:var(--soft);
-  border:1px solid var(--line);background:var(--card);padding:6px 14px;border-radius:999px;margin-bottom:18px;
+  display:inline-flex;align-items:center;font-family:var(--font-mono);
+  font-size:10px;letter-spacing:.2em;color:var(--text-3);text-transform:uppercase;
+  border:1px solid var(--line);background:var(--card);padding:6px 14px;
+  border-radius:999px;margin-bottom:18px;
 }
-.hero__badge::before{content:"\1F30C";}
+.hero__badge::before{
+  content:"";display:inline-block;width:5px;height:5px;border-radius:100px;
+  background:var(--brand);margin-right:7px;flex:0 0 auto;
+}
 .hero__title{
   margin:0 0 14px;font-family:var(--font-disp);font-size:clamp(30px,5vw,46px);
   line-height:1.1;letter-spacing:-.04em;font-weight:300;
@@ -1032,13 +1038,14 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
   </div>
   <div class="hero__cta">
     <a class="btn btn--primary" href="#studio">免费开始使用</a>
-    <a class="btn btn--ghost" href="#packs">查看付费内容包 →</a>
+    <a class="btn btn--ghost" href="manual.html">📖 使用手册</a>
   </div>
 </header>
 
 <!-- ===================== 顶栏 ===================== -->
 <nav class="topbar">
   <a class="btn btn--sm btn--ghost" href="landing.html">← 产品说明</a>
+  <a class="btn btn--sm btn--ghost" href="manual.html">📖 手册</a>
   <span class="spacer"></span>
   <button class="btn btn--sm btn--ghost" id="btnTheme">🌙 深色</button>
   <button class="btn btn--sm btn--ghost" id="btnExport">📤 导出配置</button>
