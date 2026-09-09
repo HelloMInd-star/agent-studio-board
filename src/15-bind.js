@@ -272,6 +272,21 @@ function bind(){
     switchTab('cal');
   };
 
+  // ===== 定价策略 =====
+  $('#btnPrCalc').onclick = renderPricing;
+  $('#btnPrDemo').onclick = demoPricing;
+  $('#btnPrSvg').onclick  = exportPricingSvg;
+  // 输入即重算（参数齐全时）
+  ['pr_cost','pr_gm','pr_fixed','pr_qty','pr_rlo','pr_rhi','pr_value','pr_cap',
+   'pr_base','pr_varc','pr_disc'].forEach(function(id){
+    var el = $('#' + id);
+    if(el) el.addEventListener('change', function(){
+      if(lastPricing) renderPricing();
+    });
+  });
+  var ps = $('#pr_pos');
+  if(ps) ps.addEventListener('change', function(){ if(lastPricing) renderPricing(); });
+
   // ===== 方案合成 =====
   $('#btnSynthGen').onclick  = generatePlan;
   $('#btnSynthMd').onclick   = exportPlanMd;

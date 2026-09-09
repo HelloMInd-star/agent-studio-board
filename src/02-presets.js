@@ -41,7 +41,7 @@ var MBTI = [
 var TOOLS = ['🧠 豆包 (创意)','💻 DeepSeek (代码/逻辑)','📝 通义千问 (润色/长文本)','🖥️ Ollama (本地)',
   '🤖 扣子 Coze','⚡ Trae','🌿 Claude','🐙 GitHub','▲ Vercel','🚂 Railway','✋ 手动',
   '⚡ 竞品矩阵(本地函数)','⚡ STP市场选择(本地函数)','⚡ 营销日历(本地函数)','⚡ 内容体检(本地函数)',
-  '⚡ 思维导图(本地函数)','⚡ 方案合成(本地函数)'];
+  '⚡ 思维导图(本地函数)','⚡ 方案合成(本地函数)','⚡ 定价策略(本地函数)'];
 /* 本地可执行的确定性工具：索引 -> 定义 */
 var LOCAL_TOOLS = {
   11:{key:'comp', name:'analyze_competitor_matrix', label:'竞品对比矩阵'},
@@ -49,7 +49,8 @@ var LOCAL_TOOLS = {
   13:{key:'cal',  name:'plan_marketing_calendar',   label:'营销日历倒排'},
   14:{key:'scan', name:'check_content_health',      label:'内容体检评分'},
   15:{key:'mind', name:'generate_mind_map',         label:'思维导图'},
-  16:{key:'synth', name:'synthesize_marketing_plan', label:'方案合成'}
+  16:{key:'synth', name:'synthesize_marketing_plan', label:'方案合成'},
+  17:{key:'pricing', name:'calculate_pricing_strategy', label:'定价策略'}
 };
 function isLocalTool(i){ return !!LOCAL_TOOLS[i]; }
 

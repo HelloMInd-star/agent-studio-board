@@ -118,6 +118,28 @@ function runLocalStep(s, wrapEl){
             srcs.length + ' 个模块有数据\n\n' +
             out.replace(/^# 整合营销方案\n\n[\s\S]*?---\n\n/, '');
     }
+    else if(s.local.key === 'pricing'){
+      var pd = calcPricing();
+      if(!pd){ out = '（请先在「💰 定价策略」填写成本与竞品价格带）'; }
+      else {
+        out = '# 💰 定价策略\n\n';
+        out += '**成本** ' + pd.cost + '　**目标毛利率** ' + pd.gm + '%　**竞品带** ' +
+               pd.rivalLo + ' – ' + pd.rivalHi + '（均价 ' + pd.rivalAvg + '）\n\n';
+        out += '| 策略 | 价格 | 毛利率 | 盈亏平衡 |\n|---|---|---|---|\n';
+        pd.strategies.forEach(function(x){
+          out += '| ' + x.n + ' | ' + x.price.toFixed(1) + ' | ' + x.marginRate.toFixed(1) +
+                 '% | ' + (x.beQty !== null ? x.beQty + ' 件' : '—') + ' |\n';
+        });
+        out += '\n**建议区间**：' + pd.lo.toFixed(1) + ' – ' + pd.hi.toFixed(1) + '\n\n';
+        var cd2 = pd.curDisc;
+        if(cd2){
+          out += '**' + (pd.disc/10).toFixed(1) + ' 折测算**：折后 ' + cd2.price.toFixed(1) +
+                 '，单件毛利 ' + cd2.margin.toFixed(1) +
+                 (cd2.safe ? ('，需多卖 ×' + cd2.mult.toFixed(2) + '（+' + cd2.needPct.toFixed(0) + '%）')
+                           : '，❌ 已击穿成本') + '\n';
+        }
+      }
+    }
   }catch(e){ out = '执行出错：' + e.message; }
   var ta = wrapEl.querySelector('.traceOut');
   if(ta){ ta.value = out; }

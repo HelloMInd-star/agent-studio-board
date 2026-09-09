@@ -219,6 +219,7 @@ textarea{resize:vertical;min-height:74px;line-height:1.7;}
 }
 .panel__sub{font-size:12.5px;color:var(--text-3);margin:0 0 18px;line-height:1.6;}
 .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0 14px;}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:0 12px;}
 
 /* ============ 工作流步骤 ============ */
 .step{
@@ -594,3 +595,24 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
   letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);}
 .srcrow.is-on .srcrow__s{color:var(--ok);}
 .srcrow__hint{width:100%;font-size:11px;color:var(--text-3);line-height:1.5;}
+
+
+/* ============ 定价策略 ============ */
+@media(max-width:620px){
+  .grid3{grid-template-columns:1fr;}
+}
+
+
+/* ============ Markdown 表格（方案合成 / 定价报告） ============ */
+.mdtbl{
+  width:100%;border-collapse:collapse;margin:10px 0 14px;font-size:12.5px;
+}
+.mdtbl th{
+  background:var(--bg-soft);font-weight:600;text-align:left;
+  padding:7px 10px;border:1px solid var(--line);color:var(--text-2);
+  white-space:nowrap;
+}
+.mdtbl td{
+  padding:6px 10px;border:1px solid var(--line);vertical-align:top;line-height:1.6;
+}
+.mdtbl tbody tr:hover{background:var(--bg-soft);}

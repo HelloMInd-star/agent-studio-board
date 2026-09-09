@@ -70,6 +70,31 @@ function restoreAll(){
   renderSynthSecs();
   renderSynthSources();
 
+  /* 定价策略：回填表单 + 参数齐全自动算一次 */
+  state.pricing = state.pricing || {};
+  var pm = {pr_cost:'cost', pr_gm:'gm', pr_fixed:'fixed', pr_qty:'qty',
+            pr_rlo:'rlo', pr_rhi:'rhi', pr_value:'value', pr_cap:'cap',
+            pr_base:'base', pr_varc:'varc', pr_disc:'disc'};
+  Object.keys(pm).forEach(function(id){
+    var el = $('#' + id);
+    if(el && state.pricing[pm[id]] !== undefined) el.value = state.pricing[pm[id]];
+  });
+  var ppos = $('#pr_pos');
+  if(ppos && state.pricing.pos) ppos.value = state.pricing.pos;
+  // 保存：输入即存
+  Object.keys(pm).forEach(function(id){
+    var el = $('#' + id);
+    if(el) el.addEventListener('input', function(){
+      state.pricing[pm[id]] = el.value; save();
+    });
+  });
+  if(ppos) ppos.addEventListener('change', function(){
+    state.pricing.pos = ppos.value; save();
+  });
+  if($('#pr_cost') && $('#pr_cost').value && $('#pr_rlo').value && $('#pr_rhi').value){
+    renderPricing();
+  }
+
   /* sticky 偏移同步：topbar 换行后高度变化，Tab 栏要跟着下移 */
   function syncSticky(){
     var tb = document.querySelector('.topbar');

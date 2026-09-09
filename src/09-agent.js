@@ -58,6 +58,21 @@ function toolManifest(){
      description:'把缩进文本解析为树状结构，生成思维导图 SVG。第一行是中心主题，子项用空格或 Tab 缩进表示层级。确定性计算。',
      parameters:{type:'object', properties:{
        title:{type:'string'}, body:{type:'string'}}, required:['body']}},
+    {name:'calculate_pricing_strategy', label:'定价策略',
+     description:'输入成本/目标毛利率/竞品价格带/感知价值等，输出五种定价法（成本加成/竞品锚定/价值定价/渗透/撇脂）的建议价格、毛利率、盈亏平衡销量，以及促销折扣的保本销量倍数。确定性计算。',
+     parameters:{type:'object', properties:{
+       cost:{type:'number', description:'单位变动成本'},
+       gm:{type:'number', description:'目标毛利率百分比，默认55'},
+       fixed:{type:'number', description:'固定成本总额'},
+       qty:{type:'number', description:'预估销量'},
+       rivalLo:{type:'number', description:'竞品价格下限'},
+       rivalHi:{type:'number', description:'竞品价格上限'},
+       value:{type:'number', description:'用户感知价值，可空'},
+       capRate:{type:'number', description:'价值捕获率百分比，默认60'},
+       position:{type:'string', enum:['high','mid','low'], description:'品牌定位'},
+       base:{type:'number', description:'促销原价'},
+       varCost:{type:'number', description:'促销期单位变动成本'},
+       discount:{type:'number', description:'计划折扣，80表示8折'}}, required:['cost','rivalLo','rivalHi']}},
     {name:'synthesize_marketing_plan', label:'方案合成',
      description:'跨模块采集数据（品牌记忆/STP/竞品/内容体检/营销日历/知识库/工作流/工作台），聚合成一份整合营销方案，并输出缺口诊断与下一步建议。确定性聚合，不调用模型。',
      parameters:{type:'object', properties:{

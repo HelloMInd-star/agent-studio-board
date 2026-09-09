@@ -26,13 +26,57 @@ function toast(m){
   setTimeout(function(){ t.classList.remove('is-on'); }, 1800);
 }
 /* 预览区轻量 Markdown 渲染：先转义再渲染，避免 XSS */
+/* 把 markdown 表格行转成 <table>，其余文本原样返回 */
+function mdTable(lines, i){
+  // lines[i] 是表头行，lines[i+1] 是分隔行
+  var cells = function(l){
+    return l.replace(/^\s*\|/,'').replace(/\|\s*$/,'').split('|').map(function(x){ return x.trim(); });
+  };
+  var head = cells(lines[i]);
+  var body = [];
+  var j = i + 2;
+  while(j < lines.length && /\|/.test(lines[j]) && lines[j].trim()){
+    body.push(cells(lines[j])); j++;
+  }
+  var h = '<table class="mdtbl"><thead><tr>';
+  head.forEach(function(c){ h += '<th>' + c + '</th>'; });
+  h += '</tr></thead><tbody>';
+  body.forEach(function(r){
+    h += '<tr>';
+    r.forEach(function(c){ h += '<td>' + c + '</td>'; });
+    h += '</tr>';
+  });
+  h += '</tbody></table>';
+  return {html:h, next:j};
+}
+
 function mdLite(s){
   if(!s) return '';
   var h = s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  // 逐行处理：识别 markdown 表格
+  var lines = h.split('\n');
+  var blocks = [], buf = [], i = 0;
+  while(i < lines.length){
+    if(/\|/.test(lines[i]) && /^\s*\|/.test(lines[i]) &&
+       i + 1 < lines.length && /^\s*\|[\s:|-]+\|\s*$/.test(lines[i+1])){
+      if(buf.length){ blocks.push({t:'raw', v:buf.join('\n')}); buf = []; }
+      var r = mdTable(lines, i);
+      blocks.push({t:'table', v:r.html});
+      i = r.next;
+    } else { buf.push(lines[i]); i++; }
+  }
+  if(buf.length) blocks.push({t:'raw', v:buf.join('\n')});
+
+  h = blocks.map(function(b){ return b.v; }).join('\n');
+
+  // 表格块内部已有 HTML，标题/加粗只在非表格片段生效的影响可忽略（** 已在单元格内）
   h = h.replace(/^### (.*)$/gm,'<b style="color:var(--brand)">$1</b>')
        .replace(/^## (.*)$/gm,'<b style="font-size:14.5px">$1</b>')
        .replace(/^# (.*)$/gm,'<b style="font-size:15.5px">$1</b>')
        .replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>');
+  // 表格块内的换行不能转成 <br>，否则 <table> 被破坏
+  h = h.replace(/<\/table>\n/g,'</table>');
   return h.replace(/\n/g,'<br>');
 }
 /* 记住「待检原文」：体检报告本身含免责声明里的敏感词，避免重复扫描时自我命中

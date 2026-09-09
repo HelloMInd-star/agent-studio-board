@@ -52,6 +52,7 @@
   <button class="tab" data-tab="agent"><span class="tab__name">💬 Agent 工作台</span><span class="tab__desc">对话 · 文档 · 工具</span></button>
   <button class="tab" data-tab="cal"><span class="tab__name">📅 营销日历</span><span class="tab__desc">排期 · 追踪 · 提醒</span></button>
   <button class="tab" data-tab="synth"><span class="tab__name">📋 方案合成</span><span class="tab__desc">跨模块 · 一键聚合</span></button>
+  <button class="tab" data-tab="pricing"><span class="tab__name">💰 定价策略</span><span class="tab__desc">5 法 · 折扣 · 价格带</span></button>
 </nav>
 
 <!-- ===================== 主体 ===================== -->
@@ -560,6 +561,58 @@
       <div class="card">
         <div class="card__hd">📄 整合营销方案</div>
         <div class="preview" id="synthPreview"><span class="ph">点「⚡ 生成方案」后，这里会显示完整的整合营销方案</span></div>
+      </div>
+    </section>
+
+
+    <!-- ===== 定价策略 ===== -->
+    <section class="panel" data-panel="pricing">
+      <h2 class="panel__hd">💰 定价策略</h2>
+      <p class="panel__sub">五种定价法对比 + 促销折扣保本测算 + 价格带可视化。全部为确定性计算，同样输入永远同样输出。</p>
+
+      <div class="card">
+        <div class="card__hd">📥 成本与竞争参数 <span class="eyebrow" id="prStat" style="margin-left:auto"></span></div>
+        <div class="grid3">
+          <label class="f"><span>单位变动成本</span><input type="number" id="pr_cost" placeholder="例：30"></label>
+          <label class="f"><span>固定成本总额</span><input type="number" id="pr_fixed" placeholder="例：120000"></label>
+          <label class="f"><span>目标毛利率 %</span><input type="number" id="pr_gm" value="55" placeholder="55"></label>
+          <label class="f"><span>预估销量</span><input type="number" id="pr_qty" placeholder="例：8000"></label>
+          <label class="f"><span>竞品价格下限</span><input type="number" id="pr_rlo" placeholder="例：88"></label>
+          <label class="f"><span>竞品价格上限</span><input type="number" id="pr_rhi" placeholder="例：168"></label>
+          <label class="f"><span>用户感知价值</span><input type="number" id="pr_value" placeholder="例：260，可留空"></label>
+          <label class="f"><span>价值捕获率 %</span><input type="number" id="pr_cap" value="60" placeholder="60"></label>
+          <label class="f"><span>品牌定位</span>
+            <select id="pr_pos">
+              <option value="high">高端（×1.2）</option>
+              <option value="mid" selected>持平（×1.0）</option>
+              <option value="low">性价比（×0.85）</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">🏷️ 促销折扣参数</div>
+        <div class="grid3">
+          <label class="f"><span>原价</span><input type="number" id="pr_base" placeholder="例：128"></label>
+          <label class="f"><span>促销期单位变动成本</span><input type="number" id="pr_varc" placeholder="例：30"></label>
+          <label class="f"><span>计划折扣（80 = 8 折）</span><input type="number" id="pr_disc" value="80"></label>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn btn--primary btn--sm" id="btnPrCalc">⚡ 计算定价</button>
+          <button class="btn btn--ghost btn--sm" id="btnPrDemo">📋 填入示例</button>
+          <button class="btn btn--ghost btn--sm" id="btnPrSvg">⬇️ 导出价格带图</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">📈 价格带对比图</div>
+        <div class="chartwrap" id="prChart"><span class="ph">填写参数后点「⚡ 计算定价」</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">📄 定价分析报告</div>
+        <div class="preview" id="prPreview"><span class="ph">这里会显示五种定价法对比、建议区间与折扣保本测算</span></div>
       </div>
     </section>
 
