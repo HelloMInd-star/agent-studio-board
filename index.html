@@ -430,6 +430,7 @@ textarea{resize:vertical;min-height:74px;line-height:1.7;}
         <button class="btn btn--ghost" id="btnCopyAll">📋 复制</button>
         <button class="btn btn--ghost" id="btnExportMd">⬇️ 导出 MD</button>
         <button class="btn btn--ghost" id="btnScan">🩺 内容体检</button>
+        <button class="btn btn--ghost" id="btnReportFP">🚩 报告误报</button>
       </div>
     </section>
 
@@ -672,6 +673,40 @@ textarea{resize:vertical;min-height:74px;line-height:1.7;}
     <div class="modal__hd"><span>📜 生成历史记录</span><button class="btn btn--sm btn--ghost" id="btnCloseHist">✕</button></div>
     <div id="histList"></div>
     <button class="btn btn--sm btn--ghost" id="btnClearHist">🗑️ 清空历史</button>
+  </div>
+</div>
+<div class="mask" id="maskFP">
+  <div class="modal">
+    <div class="modal__hd"><span>🚩 报告误报 / 补充词条</span><button class="btn btn--sm btn--ghost" id="btnCloseFP">✕</button></div>
+    <p class="hint" style="margin-bottom:12px">
+      内置词库 <b id="fpCount">0</b> 条，难免有判错或漏掉的词。你的反馈会直接决定下一次更新。<br>
+      <b>反馈不会自动上传</b> —— 生成后由你复制发送，数据始终在你手上。
+    </p>
+    <label class="f"><span>反馈类型</span>
+      <select id="fp_type">
+        <option>误报（这个词不该被标记）</option>
+        <option>漏报（有风险词没被查出）</option>
+        <option>分级错误（红线 / 风险 / 平台级别不对）</option>
+        <option>替换建议不好</option>
+        <option>其他建议</option>
+      </select>
+    </label>
+    <label class="f"><span>涉及词（从本次体检结果选）</span>
+      <select id="fp_word"></select>
+    </label>
+    <label class="f"><span>补充词（漏报时填该词，多个用逗号分隔）</span>
+      <input type="text" id="fp_new" placeholder="例：全网独家, 内部专享">
+    </label>
+    <label class="f"><span>说明（越具体越容易改对）</span>
+      <textarea id="fp_note" placeholder="例：这是真实促销，有明确起止时间和库存，不应判为风险词"></textarea>
+    </label>
+    <div class="row">
+      <button class="btn btn--primary" id="btnFpCopy">📋 复制反馈内容</button>
+      <button class="btn btn--ghost" id="btnFpMail">✉️ 用邮件发送</button>
+    </div>
+    <p class="hint" style="margin-top:10px">
+      复制后粘贴到微信 / 邮件 / 问卷即可。有效反馈会在词库更新日志中致谢，并可获年度通行证。
+    </p>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -1004,6 +1039,7 @@ function mdLite(s){
    注意：mdLite 会把「## 」渲染掉，所以标记必须取渲染后仍存在的文字 */
 var SCAN_MARK = '内容体检报告';
 var lastScanSrc = '';
+var lastScan = null;   // 最近一次体检结果，供误报反馈引用
 /* 判断一段文本是否为体检报告本身（标题前带 emoji 和 ##，故取前段做包含判断） */
 function isReport(txt){
   if(!txt) return false;
@@ -2185,8 +2221,9 @@ function scanWords(){
   out += '6. 🔵 平台敏感词仅为「运营风险提示」，不代表违法；不同平台规则差异大，切换「体检平台」结果会不同。\n\n';
   out += '> ⚠️ 本工具仅作辅助参考，不构成法律意见。正式发布前请人工复核。\n\n';
   out += '💡 想增删词条？去「📚 品牌知识库 → 违禁词库」，用 `## 红线词` / `## 风险词` / `## 平台敏感词` 分节编辑即可，扫描时会自动合并。\n\n';
-  out += '💡 想看别的平台结果？改上面「体检平台」再扫一次。';
+  out += '💡 想看别的平台结果？改上面「体检平台」再扫一次。\n\n💡 觉得判错了？点旁边的「🚩 报告误报」告诉我们 —— 每一条反馈都会让词库更准。';
 
+  lastScan = {txt:txt, pfName:pfName, pfKey:pfKey, hits:hits, score:sc};
   setPreview(out);
   pushScore({
     d: new Date().toLocaleString('zh-CN'),
@@ -2209,6 +2246,65 @@ function expand(){
   out += '---\n\n原文：\n\n' + txt + '\n\n---\n\n';
   out += '请输出改进后的完整版本，并在末尾用表格列出你做了哪些修改及原因。';
   setPreview(out); toast('已生成扩写指令');
+}
+
+/* ================= 误报反馈 ================= */
+function openFP(){
+  var sel = $('#fp_word');
+  sel.innerHTML = '';
+  var o0 = document.createElement('option');
+  o0.value = ''; o0.textContent = '（不涉及具体词 / 我要补充新词）';
+  sel.appendChild(o0);
+  if(lastScan){
+    [['🔴 红线', lastScan.hits.red], ['🟡 风险', lastScan.hits.yellow], ['🔵 平台', lastScan.hits.blue]]
+    .forEach(function(g){
+      g[1].forEach(function(r){
+        var o = document.createElement('option');
+        o.value = r.t; o.textContent = g[0] + '　' + r.t;
+        sel.appendChild(o);
+      });
+    });
+  }
+  var cnt = $('#fpCount'); if(cnt) cnt.textContent = WORD_RULES.length;
+  $('#maskFP').classList.add('is-on');
+}
+
+function buildFPText(){
+  var type = $('#fp_type').value || '';
+  var word = $('#fp_word').value || '';
+  var nw   = ($('#fp_new').value || '').trim();
+  var note = ($('#fp_note').value || '').trim();
+
+  var lv = '', lvName = '（本次未命中）', why = '';
+  if(lastScan && word){
+    var all = lastScan.hits.red.concat(lastScan.hits.yellow, lastScan.hits.blue);
+    for(var i=0;i<all.length;i++){
+      if(all[i].t === word){ lv = all[i].lv; why = all[i].why || ''; break; }
+    }
+    lvName = {red:'🔴 红线', yellow:'🟡 风险', blue:'🔵 平台敏感'}[lv] || lvName;
+  }
+
+  var src = lastScan ? lastScan.txt : '';
+  var snippet = src;
+  if(word && src.indexOf(word) > -1){
+    var pos = src.indexOf(word);
+    var a = Math.max(0, pos - 40), b = Math.min(src.length, pos + 40);
+    snippet = (a > 0 ? '…' : '') + src.slice(a, b) + (b < src.length ? '…' : '');
+  } else if(src.length > 140){
+    snippet = src.slice(0, 140) + '…';
+  }
+
+  var s = '【Y.Mine 词库反馈】\n\n';
+  s += '类型：' + type + '\n';
+  s += '体检平台：' + (lastScan ? lastScan.pfName : '未指定') + '\n';
+  if(word) s += '涉及词：' + word + '　当前判定：' + lvName + '\n';
+  if(why)  s += '工具给出的理由：' + why + '\n';
+  if(nw)   s += '补充词：' + nw + '\n';
+  if(lastScan) s += '本次评分：' + lastScan.score.total + ' 分（' + lastScan.score.grade + ' 级）\n';
+  s += '\n我的原文：\n' + (snippet || '（无）') + '\n';
+  s += '\n我的说明：\n' + (note || '（请补充）') + '\n';
+  s += '\n---\n如需回复，可留联系方式：\n';
+  return s;
 }
 
 /* ================= 事件绑定 ================= */
@@ -2325,6 +2421,32 @@ function bind(){
   $('#btnCloseHist').onclick = function(){ $('#maskHist').classList.remove('is-on'); };
   $('#maskHist').onclick = function(e){ if(e.target === this) this.classList.remove('is-on'); };
   $('#btnClearHist').onclick = function(){ state.history = []; save(); $('#btnHistory').click(); toast('历史已清空'); };
+
+  // 误报反馈
+  $('#btnReportFP').onclick = function(){
+    if(!lastScan){
+      // 未体检也能反馈漏报
+      var ok = confirm('尚未进行内容体检。\n\n仍可提交「漏报」或补充词条，继续吗？');
+      if(!ok) return;
+      $('#fp_type').value = '漏报（有风险词没被查出）';
+    }
+    openFP();
+  };
+  $('#btnCloseFP').onclick = function(){ $('#maskFP').classList.remove('is-on'); };
+  $('#maskFP').onclick = function(e){ if(e.target === this) this.classList.remove('is-on'); };
+  $('#btnFpCopy').onclick = function(){
+    var t = buildFPText();
+    copy(t);
+    setPreview('# 反馈内容已生成\n\n下面是为你填好的反馈，复制后粘贴到微信 / 邮件 / 问卷发送即可。\n\n---\n\n' + t);
+  };
+  $('#btnFpMail').onclick = function(){
+    var t = buildFPText();
+    var subj = 'Y.Mine 词库反馈';
+    var w = $('#fp_word').value || $('#fp_new').value;
+    if(w) subj += ' · ' + w;
+    window.location.href = 'mailto:Hello.Mind-Y@outlook.com?subject=' + encodeURIComponent(subj) + '&body=' + encodeURIComponent(t);
+    toast('已唤起邮件客户端');
+  };
 
   // 评分记录
   $('#btnScoreHist').onclick = showScoreHistory;

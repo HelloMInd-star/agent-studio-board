@@ -148,6 +148,25 @@ platform and per-dimension breakdown. Right panel shows a 12-run sparkline
 plus delta vs last run. "History" button prints the full log with an
 overall first -> latest progression. Stored in localStorage.
 
+
+## 4.4 False-positive reporting
+
+The 102-rule library will make mistakes. A "Report issue" button next to
+the health check opens a dialog that pre-fills a feedback payload:
+
+- feedback type (false positive / missed word / wrong level / bad suggestion)
+- the flagged word, picked from the current scan result
+- current level + the rule's own reasoning
+- surrounding context from the user's text
+- the user's own explanation
+- current score
+
+Output is plain text the user copies and sends manually (WeChat / email /
+form). **Nothing is auto-uploaded** - this keeps the no-network promise
+while still collecting the signal that matters most.
+
+Also works without a prior scan, for reporting missed words.
+
 ## 5. Data
 
 - Stored in browser localStorage, key `ym_studio_v1`
