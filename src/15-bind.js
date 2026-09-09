@@ -70,7 +70,7 @@ function bind(){
   $('#btnGenRole').onclick = genRole;
   $('#btnGenContent').onclick = genContent;
   $('#btnGenStrat').onclick = genStrat;
-  $('#btnGenPersona').onclick = genPersona;
+  $('#btnBC').onclick = bcRun;
   $('#btnGenFlow').onclick = genFlow;
   $('#btnScan').onclick = scanWords;
   $('#btnExpand').onclick = expand;
@@ -79,7 +79,12 @@ function bind(){
   $('#btnCopyRole').onclick = function(){ copy($('#preview').textContent); };
   $('#btnCopyAll').onclick = function(){ copy($('#preview').textContent); };
   $('#btnCopyAll2').onclick = function(){ copy($('#preview').textContent); };
-  $('#btnCopyAll3').onclick = function(){ copy($('#preview').textContent); };
+  $('#btnBCCopy').onclick = function(){ copy($('#bcOut').textContent); };
+  $('#btnBCSvg').onclick = bcExportSvg;
+  $('#btnBCMd').onclick  = bcExportMd;
+  $('#bcUseBase').onclick = bcFillBase;
+  $('#bcClear').onclick   = bcClearDims;
+  $('#bc_cat').onchange   = function(){ bcRenderDims(); bcFillBase(); };
   $('#btnCopyAll4').onclick = function(){ copy($('#preview').textContent); };
   $('#btnCopyPreview').onclick = function(){ copy($('#preview').textContent); };
 

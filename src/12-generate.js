@@ -77,26 +77,6 @@ function stratOutline(k){
   return m[k] || '按该框架的标准结构展开。';
 }
 
-function genPersona(){
-  var p = {type:$('#p_type').value, flavor:$('#p_flavor').value, abv:$('#p_abv').value, occ:$('#p_occ').value};
-  state.persona = p;
-  var t = p.type.split(' · ')[0];
-  var name = p.type.split(' · ')[1] || '';
-  var out = '你是一位品牌调性顾问。\n\n';
-  out += '## 任务\n为一个具有「' + p.type + '」人格特质的品牌，输出完整的 Tone of Voice 调性指南。\n\n';
-  out += '## 品牌场合\n' + (p.occ || '（未填写）') + '\n\n';
-  out += '## 输出结构\n';
-  out += '1. 人格速写：这个品牌"像什么样的人"（3-5 个特质词）\n';
-  out += '2. 语气三要素：句式偏好 / 词汇偏好 / 情绪浓度\n';
-  out += '3. 该说 vs 不该说（各 5 条对照）\n';
-  out += '4. 分触点表达示例：社媒 / 官网 / 客服 / 广告 / 危机声明\n';
-  out += '5. 一句品牌 Slogan 与三条核心文案\n';
-  out += '6. 彩蛋：基于「' + p.flavor + ' · ' + p.abv + '」为这个人格调一杯专属特调，给出配方、步骤与命名寓意\n\n';
-  out += '## 要求\n调性要能直接写进品牌手册，具体到可执行的程度，不要停留在形容词。';
-  var txt = wrapWithBrand(out, '品牌人格 · ' + t + ' ' + name);
-  setPreview(txt); pushHistory('品牌人格 · ' + t, txt); save();
-}
-
 function genFlow(){
   state.flow.goal = $('#f_goal').value;
   state.flow.bg = $('#f_bg').value;

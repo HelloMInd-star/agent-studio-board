@@ -30,15 +30,8 @@ function restoreAll(){
   $('#s_name').value = state.strat.name || ''; $('#s_bg').value = state.strat.bg || '';
   $('#s_extra').value = state.strat.extra || '';
 
-  var sel = $('#p_type'); sel.innerHTML = '';
-  MBTI.forEach(function(m){
-    var o = document.createElement('option'); o.textContent = m;
-    if(m === state.persona.type) o.selected = true;
-    sel.appendChild(o);
-  });
-  $('#p_flavor').value = state.persona.flavor || '酸甜/果味';
-  $('#p_abv').value = state.persona.abv || '中高度';
-  $('#p_occ').value = state.persona.occ || '';
+  /* 品牌内核：下拉与维度表初始化 */
+  bcInitUI();
 
   $('#f_goal').value = state.flow.goal || '';
   $('#f_bg').value = state.flow.bg || '';

@@ -233,6 +233,47 @@ the `.svg` renders standalone.
 
 ---
 
+### 3.10 Brand Core (brandcore)
+
+Replaces the old "Brand Personality" tab, which was a cocktail-flavoured
+prompt wrapper with no computation at all (it carried `flavor` / `abv`
+fields left over from a drinks project — deleted).
+
+Three layers, defined top-down:
+
+```
+1 文化内核    Mission / Vision / Values
+2 价值层级    functional → emotional → self-expressive  (must abstract upward)
+3 人格调性    Tone of Voice   ← MBTI is now a *reverse* entry point
++ 商业模式    revenue model + monetization tactics (consistency check only)
+```
+
+**Position-type vs intensity-type dimensions.** `价格定位` has no
+"better" direction — high = premium end, low = value end. Treating it as
+intensity-type produces nonsense ("your price competitiveness is weak"
+about Starbucks). Main-field detection therefore uses **absolute scores
+(>= 4.0)**, not ratio-over-benchmark: luxury benchmarks are already 4.5,
+so a 1.3x rule would demand 5.85/5 and flag every luxury brand as
+"no main field" — which is exactly what the first implementation did.
+Differentiation is measured separately, as **absolute deviation >= 0.5**.
+
+**Five deterministic checks**
+
+| Check | Rule |
+|---|---|
+| 主战场 | count of dims scored >= 4.0 (2-5 healthy) |
+| 记忆点 | dims deviating >= 0.5 from category benchmark |
+| 撕裂 | claim keywords vs actual dimension investment |
+| 抽象度 | token overlap between adjacent value layers (>= 0.3 = restating) |
+| 变现冲突 | monetization tactic × dimension, only when that dim is a real focus (ratio > 1.0) |
+
+Validated against four real cases — Starbucks, Luckin, Chanel, Dior all
+score >= 90 with 0 blockers; a deliberately torn case (luxury +
+high-frequency discounting) scores 46 with 2 high-severity conflicts.
+
+Benchmarks are **experience-based reference values, not a database** —
+stated on the UI and adjustable.
+
 ### 3.10 Information architecture
 
 19 tabs are grouped by **task**, not by when they were built:

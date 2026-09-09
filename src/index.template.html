@@ -57,6 +57,7 @@
       <button class="tab" data-tab="strat"><span class="tab__name">🎯 战略矩阵</span><span class="tab__desc">SWOT · TOWS · BCG</span></button>
       <button class="tab" data-tab="tkm"><span class="tab__name">🧰 经典工具</span><span class="tab__desc">五力 · PEST · OGSM</span></button>
       <button class="tab" data-tab="toolmap"><span class="tab__name">🗺️ 工具地图</span><span class="tab__desc">70 个框架全景</span></button>
+      <button class="tab" data-tab="persona"><span class="tab__name">🏛️ 品牌内核</span><span class="tab__desc">文化 · 价值 · 商业模型</span></button>
     </div>
   </div>
   <div class="tgroup" data-group="calc">
@@ -73,7 +74,6 @@
     <div class="tgroup__tabs">
       <button class="tab" data-tab="role"><span class="tab__name">🧠 营销角色</span><span class="tab__desc">12 位专家 · 一键生成</span></button>
       <button class="tab" data-tab="content"><span class="tab__name">✍️ 内容工厂</span><span class="tab__desc">多平台 · 批量出稿</span></button>
-      <button class="tab" data-tab="persona"><span class="tab__name">🍸 品牌人格</span><span class="tab__desc">调性指南 · 彩蛋玩法</span></button>
       <button class="tab" data-tab="chart"><span class="tab__name">📊 商业图卡</span><span class="tab__desc">填数据 · 出图导出</span></button>
     </div>
   </div>
@@ -483,23 +483,95 @@
 
     <!-- ===== 品牌人格 ===== -->
     <section class="panel" data-panel="persona">
-      <h2 class="panel__hd">🍸 品牌人格 · 调性指南</h2>
-      <p class="panel__sub">用 MBTI 给品牌定人设，输出可直接写进品牌手册的 Tone of Voice 指南（附彩蛋特调）。</p>
-      <label class="f"><span>🧬 人格类型</span>
-        <select id="p_type"></select>
-      </label>
-      <div class="grid2">
-        <label class="f"><span>🍭 口味偏好</span>
-          <select id="p_flavor"><option>酸甜/果味</option><option>苦烈/干型</option><option>清爽/草本</option><option>辛辣/烟熏</option></select>
-        </label>
-        <label class="f"><span>🍷 酒精度</span>
-          <select id="p_abv"><option>低度数</option><option selected>中高度</option><option>高度数</option></select>
-        </label>
-      </div>
-      <label class="f"><span>📝 品牌 / 场合</span><input type="text" id="p_occ" placeholder="例：Y.Mine · 新品发布会 after party"></label>
-      <div class="row">
-        <button class="btn btn--primary" id="btnGenPersona">🍸 生成调性指南</button>
-        <button class="btn btn--ghost" id="btnCopyAll3">📋 复制</button>
+      <h2 class="panel__hd">🏛️ 品牌内核 · 文化与价值</h2>
+      <p class="panel__sub">
+        品牌是<b>承诺</b>，商业模式是<b>履约结构</b>——两者必须互相锁定。
+        这里自上而下定义三层（文化 → 价值 → 调性），再检测它与你的赚钱方式是否自洽。
+      </p>
+
+      <div class="bcsplit">
+
+        <!-- ============ 左：输入 ============ -->
+        <div class="bcform">
+
+          <!-- 第 1 层：文化内核 -->
+          <div class="bclayer">
+            <div class="bclayer__hd"><span class="bclayer__n">1</span>文化内核</div>
+            <p class="hint">为什么存在。填不出可先跳过，用下方「人格反推」。</p>
+            <label class="f"><span>🎯 使命 Mission</span>
+              <input type="text" id="bc_mission" placeholder="例：让每个人每天都能喝到一杯好咖啡"></label>
+            <label class="f"><span>🔭 愿景 Vision</span>
+              <input type="text" id="bc_vision" placeholder="例：成为中国最贴近日常的高品质咖啡品牌"></label>
+            <label class="f"><span>💎 价值观 Values</span>
+              <input type="text" id="bc_mvv" placeholder="例：专业 · 效率 · 不装"></label>
+          </div>
+
+          <!-- 第 2 层：价值层级 -->
+          <div class="bclayer">
+            <div class="bclayer__hd"><span class="bclayer__n">2</span>价值层级</div>
+            <p class="hint">必须<b>逐级抽象</b>。功能「深层补水」→ 情感应是「素颜也从容」，不是「补水效果好」。</p>
+            <label class="f"><span>🔧 功能价值</span>
+              <input type="text" id="bc_lvf" placeholder="例：现磨咖啡，3 分钟出杯"></label>
+            <label class="f"><span>❤️ 情感价值</span>
+              <input type="text" id="bc_lve" placeholder="例：忙碌早晨里的一点从容"></label>
+            <label class="f"><span>✨ 自我表达价值</span>
+              <input type="text" id="bc_lvs" placeholder="例：我是一个高效而不将就的人"></label>
+          </div>
+
+          <!-- 第 2.5 层：品类与维度打分 -->
+          <div class="bclayer">
+            <div class="bclayer__hd"><span class="bclayer__n">3</span>价值重心</div>
+            <label class="f"><span>📂 品类模板</span>
+              <select id="bc_cat"></select></label>
+            <p class="hint">给各维度打分（1-5）。<b>价格定位</b>是位置型维度——高=溢价端，低=性价比端，没有好坏。</p>
+            <div id="bc_dims" class="bcdims"></div>
+            <div class="row" style="margin-top:6px">
+              <button class="btn btn--ghost btn--sm" id="bcUseBase">📊 填入品类基准</button>
+              <button class="btn btn--ghost btn--sm" id="bcClear">🧹 清空打分</button>
+            </div>
+            <p class="hint" style="margin-top:6px">基准为<b>经验参考值</b>，不来自任何数据库，可自行调整。</p>
+          </div>
+
+          <!-- 第 3 层：人格调性（反向入口） -->
+          <div class="bclayer">
+            <div class="bclayer__hd"><span class="bclayer__n">4</span>人格调性（反向入口）</div>
+            <p class="hint">填不出使命愿景时，可先选人格反推价值主张，再回头校准。</p>
+            <label class="f"><span>🧬 人格类型（可选）</span>
+              <select id="bc_type"></select></label>
+          </div>
+
+          <!-- 第 5 层：商业模式 -->
+          <div class="bclayer">
+            <div class="bclayer__hd"><span class="bclayer__n">5</span>商业模式</div>
+            <p class="hint">只检测<b>逻辑一致性</b>，不算单位经济（那归定价与财务模块）。</p>
+            <div class="grid2">
+              <label class="f"><span>🏷️ 品牌 / 项目</span>
+                <input type="text" id="bc_brand" placeholder="例：Y.Mine"></label>
+              <label class="f"><span>👥 目标人群</span>
+                <input type="text" id="bc_aud" placeholder="例：25-35 岁都市白领"></label>
+            </div>
+            <label class="f"><span>📣 价值主张（一句话）</span>
+              <input type="text" id="bc_claim" placeholder="例：高性价比的专业咖啡 / 稀缺的奢华体验"></label>
+            <label class="f"><span>💰 收入模式</span>
+              <select id="bc_rev"></select></label>
+            <label class="f"><span>🎯 变现策略（可多选）</span></label>
+            <div id="bc_mon" class="chips"></div>
+          </div>
+
+          <div class="row" style="margin-top:10px">
+            <button class="btn btn--primary" id="btnBC">⚡ 诊断品牌内核</button>
+            <button class="btn btn--ghost" id="btnBCCopy">📋 复制</button>
+            <button class="btn btn--ghost" id="btnBCSvg">🖼️ 导出图</button>
+            <button class="btn btn--ghost" id="btnBCMd">⬇️ 导出 MD</button>
+          </div>
+        </div>
+
+        <!-- ============ 右：输出 ============ -->
+        <div class="bcout">
+          <div class="chartwrap" id="bcChart"><span class="ph">点「⚡ 诊断」生成价值曲线</span></div>
+          <div class="preview" id="bcOut"><span class="ph">诊断结论会出现在这里</span></div>
+        </div>
+
       </div>
     </section>
 

@@ -194,6 +194,7 @@ a:hover{text-decoration:underline;}
       <div class="mgroup__t">方法论层</div>
       <a href="#research">📐 调研方案</a>
       <a href="#strategy">🎯 战略矩阵</a>
+      <a href="#persona">🏛️ 品牌内核</a>
       <a href="#hotspot">📡 热点决策</a>
     </div>
     <div class="mgroup">
@@ -438,6 +439,58 @@ a:hover{text-decoration:underline;}
         <li><b>矛盾校验</b>：如果你给"某地地震"的风险项打了 5 分（自认为安全），
         工具会指出冲突："你给风险维度打了 5 分，但描述中含高危话题词，请重新确认"——<b>不会默默接受矛盾输入</b></li>
       </ul>
+    </section>
+
+    <section class="msec" id="persona">
+      <h2><span class="ico">🏛️</span>品牌内核<span class="mtag is-done">方法论层</span></h2>
+      <div class="mflow" data-flow="persona">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">填文化内核（MVV）</span><span class="mfl__arrow">→</span><span class="mfl__step">填价值层级（逐级抽象）</span><span class="mfl__arrow">→</span><span class="mfl__step">选品类 + 给维度打分</span><span class="mfl__arrow">→</span><span class="mfl__step">选收入模式与变现策略</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">诊断结论 + 价值曲线图</span></div>
+        <div class="mflow__note">品牌是<b>承诺</b>，商业模式是<b>履约结构</b>，两者必须互相锁定。填不出使命愿景时，可先用「人格调性」反推。</div>
+      </div>
+      <p>品牌是<b>承诺</b>，商业模式是<b>履约结构</b>。这里自上而下定义三层，再检测它与你的赚钱方式是否自洽。</p>
+
+      <h3>三层结构</h3>
+      <div class="mtable">
+        <table>
+          <tr><th>层</th><th>内容</th></tr>
+          <tr><td>1 文化内核</td><td>使命 / 愿景 / 价值观</td></tr>
+          <tr><td>2 价值层级</td><td>功能 → 情感 → 自我表达，必须<b>逐级抽象</b></td></tr>
+          <tr><td>3 人格调性</td><td>Tone of Voice（MBTI 是反向入口，不是起点）</td></tr>
+          <tr><td>+ 商业模式</td><td>收入模式 + 变现策略，只做一致性检测，不算单位经济</td></tr>
+        </table>
+      </div>
+
+      <h3>五类诊断</h3>
+      <div class="mtable">
+        <table>
+          <tr><th>诊断</th><th>规则</th></tr>
+          <tr><td>主战场</td><td>得分 ≥ 4.0 的维度数量（2-5 个健康）</td></tr>
+          <tr><td>记忆点</td><td>与品类基准偏离 ≥ 0.5 的维度</td></tr>
+          <tr><td>撕裂</td><td>价值主张关键词 vs 实际维度投入</td></tr>
+          <tr><td>抽象度</td><td>相邻价值层词元重合度（≥ 0.3 判为复述）</td></tr>
+          <tr><td>变现冲突</td><td>变现策略 × 维度，仅当该维度是真实重心时触发</td></tr>
+        </table>
+      </div>
+
+      <div class="mnote">
+        <b>为什么主战场用绝对分而不是比值</b>：奢侈品品类的「身份象征」基准本来就 4.5 分，
+        若要求"高于基准 30%"，等于要 5.85 分——永远达不到，会把所有奢侈品误判成"没有主战场"。
+        所以主战场看绝对分（≥4.0），差异化另用「绝对偏离 ≥0.5」衡量。
+      </div>
+
+      <h3>位置型维度</h3>
+      <p><b>价格定位</b>没有好坏方向：高 = 溢价端，低 = 性价比端。星巴克在溢价端不是缺点，是选择。
+      所以「高频折扣」只在价格处于溢价端（≥3.8）时才算冲突——瑞幸做折扣不冲突，奢侈品做折扣才冲突。</p>
+
+      <div class="mnote is-warn">
+        <b>基准线说明</b>：10 个品类的基准是<b>经验参考值，不来自任何数据库</b>，可在界面上拖动调整。
+      </div>
+
+      <h3>品类禁忌</h3>
+      <p>每个品类预置了会摧毁该品类价值的行为，例如：</p>
+      <div class="mcode">奢侈品    高频折扣会摧毁稀缺感 / 大众裂变稀释专属感 / 全渠道铺货破坏控价体系
+餐饮咖啡   过度空间投入拖累翻台率 / 高客单低频与快取模式互斥</div>
     </section>
 
     <!-- ============ 计算层 ============ -->
