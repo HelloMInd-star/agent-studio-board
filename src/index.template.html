@@ -57,6 +57,7 @@
   <button class="tab" data-tab="hotspot"><span class="tab__name">📡 热点决策</span><span class="tab__desc">该不该跟 · 风险预警</span></button>
   <button class="tab" data-tab="research"><span class="tab__name">📐 调研方案</span><span class="tab__desc">模板 · 假设 · 验证</span></button>
   <button class="tab" data-tab="strat"><span class="tab__name">🎯 战略矩阵</span><span class="tab__desc">SWOT · TOWS · BCG</span></button>
+  <button class="tab" data-tab="fin"><span class="tab__name">💹 财务测算</span><span class="tab__desc">GMV · LTV · 预算</span></button>
 </nav>
 
 <!-- ===================== 主体 ===================== -->
@@ -837,6 +838,83 @@
         <button class="btn btn--ghost btn--sm" id="btnSnapAdd">💾 保存当前为快照</button>
         <div class="snaplist" id="smSnaps"></div>
         <div class="preview" id="smSnapOut"></div>
+      </div>
+    </section>
+
+
+    <!-- ===== 营销财务测算 ===== -->
+    <section class="panel" data-panel="fin">
+      <h2 class="panel__hd">💹 营销财务测算</h2>
+      <p class="panel__sub">四个高频场景。值钱的是<b>计算模型</b>，图表只是呈现——所有图都是手写 SVG，零依赖、可导出。</p>
+
+      <div class="card">
+        <div class="card__hd">1️⃣ GMV 拆解（为什么这个月多卖了/少卖了）</div>
+        <p class="hint">💡 采用<b>逐因子替换法</b>：按流量→转化率→客单价→退货率顺序逐个替换，各因子贡献之和<b>恒等于</b>总增量，不产生无法解释的残差。这是 Excel 里最容易算错的地方。</p>
+        <div class="grid4">
+          <label class="f"><span>上期流量</span><input type="number" id="g_pT" placeholder="120000"></label>
+          <label class="f"><span>上期转化率 %</span><input type="number" id="g_pC" step="0.01" placeholder="2.20"></label>
+          <label class="f"><span>上期客单价</span><input type="number" id="g_pA" placeholder="268"></label>
+          <label class="f"><span>上期退货率 %</span><input type="number" id="g_pR" step="0.1" placeholder="8"></label>
+          <label class="f"><span>本期流量</span><input type="number" id="g_nT" placeholder="138000"></label>
+          <label class="f"><span>本期转化率 %</span><input type="number" id="g_nC" step="0.01" placeholder="2.45"></label>
+          <label class="f"><span>本期客单价</span><input type="number" id="g_nA" placeholder="279"></label>
+          <label class="f"><span>本期退货率 %</span><input type="number" id="g_nR" step="0.1" placeholder="9.2"></label>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn btn--primary btn--sm" id="btnGmvCalc">⚡ 拆解</button>
+          <button class="btn btn--ghost btn--sm" id="btnGmvDemo">📋 填入示例</button>
+        </div>
+        <div class="chartwrap" id="gmvChart" style="margin-top:12px"><span class="ph">—</span></div>
+        <div class="preview" id="gmvOut"><span class="ph">填写后点「⚡ 拆解」</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">2️⃣ LTV / CAC（这个渠道还值得投吗）</div>
+        <p class="hint">💡 LTV 采用<b>毛利口径</b>（×毛利率）——判断获客是否划算应看能回收多少毛利。若你的行业用营收口径，毛利率填 100% 即可。</p>
+        <div class="grid3">
+          <label class="f"><span>客单价</span><input type="number" id="l_aov" placeholder="268"></label>
+          <label class="f"><span>年复购次数</span><input type="number" id="l_freq" step="0.1" placeholder="2.4"></label>
+          <label class="f"><span>生命周期（年）</span><input type="number" id="l_life" step="0.5" placeholder="2"></label>
+          <label class="f"><span>毛利率 %</span><input type="number" id="l_gm" placeholder="62"></label>
+          <label class="f"><span>获客成本 CAC</span><input type="number" id="l_cac" placeholder="186"></label>
+          <label class="f"><span>留存率 %（可选）</span><input type="number" id="l_ret" placeholder="35"></label>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn btn--primary btn--sm" id="btnLtvCalc">⚡ 测算</button>
+          <button class="btn btn--ghost btn--sm" id="btnLtvDemo">📋 填入示例</button>
+        </div>
+        <div class="chartwrap" id="ltvGauge" style="margin-top:12px"><span class="ph">—</span></div>
+        <div class="preview" id="ltvOut"><span class="ph">填写后点「⚡ 测算」</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">3️⃣ 预算分配矩阵（钱怎么分到渠道 × 目标）</div>
+        <p class="hint">💡 每行合计应等于 100%，工具会<b>自动校验并标红</b>。颜色越深占比越高。</p>
+        <label class="f"><span>营销目标列（逗号分隔）</span>
+          <input type="text" id="b_goals" value="品牌曝光,销售转化,私域沉淀"></label>
+        <label class="f"><span>渠道行：渠道名,目标1%,目标2%,目标3%</span>
+          <textarea id="b_rows" style="min-height:110px">抖音,35,20,15
+小红书,20,30,25
+公众号,10,15,30
+视频号,20,20,20</textarea></label>
+        <button class="btn btn--primary btn--sm" id="btnBudgetCalc" style="margin-top:8px">⚡ 生成矩阵</button>
+        <div class="chartwrap" id="budgetChart" style="margin-top:12px"><span class="ph">—</span></div>
+        <div class="preview" id="budgetOut"><span class="ph">点「⚡ 生成矩阵」</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">4️⃣ 渠道效率雷达（哪个渠道综合最强）</div>
+        <p class="hint">💡 成本类维度（含 CPM/CPC/CPL/成本/Cost/CPA）会<b>自动反向计分</b>——数值越低得分越高。归一化是相对排名，不代表绝对达标。</p>
+        <label class="f"><span>评估维度（逗号分隔，至少 3 个）</span>
+          <input type="text" id="r_dims" value="CPM,CPC,CPL,ROI,转化率"></label>
+        <label class="f"><span>渠道数据：渠道名,维度1,维度2,…</span>
+          <textarea id="r_rows" style="min-height:110px">抖音,80,60,70,85,75
+小红书,65,75,85,70,80
+公众号,90,80,60,60,65
+视频号,70,70,75,65,70</textarea></label>
+        <button class="btn btn--primary btn--sm" id="btnRadarCalc" style="margin-top:8px">⚡ 生成雷达</button>
+        <div class="chartwrap" id="radarChart" style="margin-top:12px"><span class="ph">—</span></div>
+        <div class="preview" id="radarOut"><span class="ph">点「⚡ 生成雷达」</span></div>
       </div>
     </section>
 

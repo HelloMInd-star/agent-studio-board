@@ -624,8 +624,9 @@ function fmtN(v){
   return String(Math.round(v));
 }
 function fmtMoney(v){
-  if(v >= 100000000) return (v/100000000).toFixed(2) + ' 亿';
-  if(v >= 10000) return (v/10000).toFixed(1) + ' 万';
+  var a = Math.abs(v);
+  if(a >= 100000000) return (v/100000000).toFixed(2) + ' 亿';
+  if(a >= 10000) return (v/10000).toFixed(1) + ' 万';
   return String(Math.round(v));
 }
 

@@ -216,6 +216,40 @@ function runLocalStep(s, wrapEl){
       }
       if(!tw.length && !bb) out += '（请先在「🎯 战略矩阵」填写 SWOT 或 BCG 数据）';
     }
+    else if(s.local.key === 'fin'){
+      var g = calcGmv(), l = calcLtv(), b = calcBudget(), rd = calcRadar();
+      out = '# 💹 营销财务测算\n\n';
+      if(g){
+        out += '## GMV 拆解\n\n';
+        out += '上期 ' + fmtMoney(g.base) + ' → 本期 ' + fmtMoney(g.now) +
+               '（' + (g.total>=0?'+':'') + fmtMoney(g.total) + '）\n\n';
+        g.steps.forEach(function(x){
+          out += '- **' + x.n + '**：' + (x.d>=0?'+':'') + fmtMoney(x.d) + '\n';
+        });
+        out += '\n> 逐因子替换法，贡献之和恒等于总增量。\n\n';
+      }
+      if(l){
+        out += '## LTV / CAC\n\n';
+        out += '- LTV（毛利口径）：¥' + l.ltv.toFixed(0) + '\n';
+        out += '- CAC：¥' + l.cac + '\n';
+        out += '- **LTV/CAC：' + l.ratio.toFixed(2) + '**　' + ltvVerdict(l.ratio).t + '\n';
+        out += '- 回本周期：' + (l.payback===Infinity ? '—' : l.payback.toFixed(1) + ' 个月') + '\n\n';
+      }
+      if(b){
+        out += '## 预算分配\n\n';
+        b.rows.forEach(function(r){
+          out += '- ' + r.n + '：' + r.vals.join('% / ') + '%　合计 ' + r.sum.toFixed(0) + '%\n';
+        });
+        out += '\n';
+      }
+      if(rd){
+        out += '## 渠道效率\n\n';
+        rd.ranked.forEach(function(r, i){
+          out += (i+1) + '. **' + r.n + '**　综合 ' + r.avg.toFixed(1) + '\n';
+        });
+      }
+      if(!g && !l && !b && !rd) out += '（请先在「💹 财务测算」填写数据）';
+    }
   }catch(e){ out = '执行出错：' + e.message; }
   var ta = wrapEl.querySelector('.traceOut');
   if(ta){ ta.value = out; }

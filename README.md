@@ -169,6 +169,7 @@ execute deterministically instead of asking an LLM:
 - `decide_hotspot_follow`
 - `build_research_plan`
 - `analyze_strategy_matrix`
+- `calc_marketing_finance`
 - `generate_mind_map`
 - `synthesize_marketing_plan`
 - `calculate_pricing_strategy`
@@ -176,6 +177,7 @@ execute deterministically instead of asking an LLM:
 - `decide_hotspot_follow`
 - `build_research_plan`
 - `analyze_strategy_matrix`
+- `calc_marketing_finance`
 
 **Trace**: record each step's real output with status and notes, export as
 Markdown. Shows a workflow was executed, not just designed.

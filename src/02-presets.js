@@ -54,7 +54,8 @@ var LOCAL_TOOLS = {
   18:{key:'region', name:'evaluate_regional_markets', label:'区域市场'},
   19:{key:'hotspot', name:'decide_hotspot_follow', label:'热点决策'},
   20:{key:'research', name:'build_research_plan', label:'调研方案'},
-  21:{key:'mx', name:'analyze_strategy_matrix', label:'战略矩阵'}
+  21:{key:'mx', name:'analyze_strategy_matrix', label:'战略矩阵'},
+  22:{key:'fin', name:'calc_marketing_finance', label:'财务测算'}
 };
 function isLocalTool(i){ return !!LOCAL_TOOLS[i]; }
 

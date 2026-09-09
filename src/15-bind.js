@@ -274,6 +274,23 @@ function bind(){
     switchTab('cal');
   };
 
+  // ===== 营销财务测算 =====
+  $('#btnGmvCalc').onclick = calcGmv;
+  $('#btnGmvDemo').onclick = demoGmv;
+  $('#btnLtvCalc').onclick = calcLtv;
+  $('#btnLtvDemo').onclick = demoLtv;
+  $('#btnBudgetCalc').onclick = calcBudget;
+  $('#btnRadarCalc').onclick = calcRadar;
+  [['#g_pT','gmv','pT'],['#g_pC','gmv','pC'],['#g_pA','gmv','pA'],['#g_pR','gmv','pR'],
+   ['#g_nT','gmv','nT'],['#g_nC','gmv','nC'],['#g_nA','gmv','nA'],['#g_nR','gmv','nR'],
+   ['#l_aov','ltv','aov'],['#l_freq','ltv','freq'],['#l_life','ltv','life'],
+   ['#l_gm','ltv','gm'],['#l_cac','ltv','cac'],['#l_ret','ltv','ret']].forEach(function(a){
+    var e = $(a[0]);
+    if(e) e.addEventListener('input', function(){
+      fin()[a[1]][a[2]] = e.value; save();
+    });
+  });
+
   // ===== 战略矩阵 =====
   $('#btnSmDemo').onclick = demoStrategy;
   $('#btnSmExp').onclick  = exportStrategy;

@@ -162,6 +162,23 @@ function restoreAll(){
   /* 战略矩阵：回填 */
   renderStratAll();
 
+  /* 财务测算：回填 */
+  var F = fin();
+  var fg = F.gmv || {};
+  ['pT','pC','pA','pR','nT','nC','nA','nR'].forEach(function(k){
+    var e = $('#g_' + k); if(e) e.value = fg[k] || '';
+  });
+  var fl = F.ltv || {};
+  ['aov','freq','life','gm','cac','ret'].forEach(function(k){
+    var e = $('#l_' + k); if(e) e.value = fl[k] || '';
+  });
+  if($('#b_goals')) $('#b_goals').value = (F.budget||{}).goals || '';
+  if($('#b_rows'))  $('#b_rows').value  = (F.budget||{}).rows  || '';
+  if($('#r_dims'))  $('#r_dims').value  = (F.radar||{}).dims   || '';
+  if($('#r_rows'))  $('#r_rows').value  = (F.radar||{}).rows   || '';
+  if(fg.pT && fg.nT) calcGmv();
+  if(fl.aov && fl.cac) calcLtv();
+
   /* sticky 偏移同步：topbar 换行后高度变化，Tab 栏要跟着下移 */
   function syncSticky(){
     var tb = document.querySelector('.topbar');

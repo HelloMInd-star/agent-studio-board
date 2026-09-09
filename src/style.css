@@ -783,3 +783,10 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
   .bcgrow__s,.bcgrow__g,.bcgrow__m,.bcgrow__p{width:60px;}
   .towscard__b{margin-left:0;}
 }
+
+
+/* ============ 财务测算 ============ */
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px 12px;}
+@media(max-width:620px){
+  .grid4{grid-template-columns:repeat(2,1fr);}
+}

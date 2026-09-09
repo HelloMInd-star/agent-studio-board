@@ -58,6 +58,18 @@ function toolManifest(){
      description:'把缩进文本解析为树状结构，生成思维导图 SVG。第一行是中心主题，子项用空格或 Tab 缩进表示层级。确定性计算。',
      parameters:{type:'object', properties:{
        title:{type:'string'}, body:{type:'string'}}, required:['body']}},
+    {name:'calc_marketing_finance', label:'营销财务测算',
+     description:'四个高频场景：①GMV 增量拆解（逐因子替换法归因，各因子贡献之和恒等于总增量，无残差）；②LTV/CAC（毛利口径 + 回本周期 + 四档健康判定）；③预算分配矩阵（渠道×目标热力图，行和 100% 校验）；④渠道效率雷达（多维归一化，成本类维度自动反向计分）。输出图表 SVG + 结论。确定性计算。',
+     parameters:{type:'object', properties:{
+       scene:{type:'string', enum:['gmv','ltv','budget','radar']},
+       gmv:{type:'object', properties:{pT:{type:'number'},pC:{type:'number'},pA:{type:'number'},pR:{type:'number'},
+            nT:{type:'number'},nC:{type:'number'},nA:{type:'number'},nR:{type:'number'}}},
+       ltv:{type:'object', properties:{aov:{type:'number'},freq:{type:'number'},life:{type:'number'},
+            gm:{type:'number'},cac:{type:'number'},ret:{type:'number'}}},
+       budget:{type:'object', properties:{goals:{type:'string'}, rows:{type:'string'}}},
+       radar:{type:'object', properties:{dims:{type:'string'}, rows:{type:'string'}}}}, required:['scene']},
+     returns:{type:'object', properties:{
+       gmv:{type:'object'}, ratio:{type:'number'}, payback:{type:'number'}}}},
     {name:'analyze_strategy_matrix', label:'战略矩阵分析',
      description:'增强版 SWOT（每条可绑定数值/变化率/来源）+ TOWS 四象限交叉策略自动推导（SO进攻/WO补强/ST防御/WT转型，每条列出参与要素与判断依据）+ BCG 业务组合（气泡矩阵、象限判定、预算建议、组合健康度诊断）+ 版本快照迁移对比。确定性计算。',
      parameters:{type:'object', properties:{
