@@ -578,6 +578,22 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
         <button class="btn btn--ghost" id="btnCopyAll4">📋 复制全部</button>
       </div>
 
+      <label class="f"><span>📦 导出为 Agent 定义（可被编排平台导入）</span></label>
+      <div class="row" style="margin-bottom:10px">
+        <button class="btn btn--sm btn--ghost" id="btnExpStd">📐 标准 Agent JSON</button>
+        <button class="btn btn--sm btn--ghost" id="btnExpCoze">🤖 Coze 工作流</button>
+        <button class="btn btn--sm btn--ghost" id="btnExpDify">🔧 Dify DSL</button>
+      </div>
+
+      <label class="f"><span>🧾 运行记录 Trace（记录每步真实产出，形成可复现证据链）</span></label>
+      <div class="row">
+        <button class="btn btn--sm btn--ghost" id="btnTraceOpen">📝 填写执行结果</button>
+        <button class="btn btn--sm btn--ghost" id="btnTraceView">👀 查看 Trace</button>
+        <button class="btn btn--sm btn--ghost" id="btnTraceExp">📤 导出 Trace</button>
+        <button class="btn btn--sm btn--ghost" id="btnTraceClear">🗑️ 清空</button>
+      </div>
+      <p class="hint" id="traceStat" style="margin-top:6px">尚未记录任何执行结果</p>
+      <p class="hint" style="margin-top:4px">💡 工作流里若选了「⚡ 本地工具」，可点「▶ 运行」直接执行；也可手工粘贴每步产出。</p>
     </section>
 
     <!-- ===== 品牌知识库 ===== -->
@@ -759,6 +775,21 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
     <button class="btn btn--sm btn--ghost" id="btnClearHist">🗑️ 清空历史</button>
   </div>
 </div>
+<div class="mask" id="maskTrace">
+  <div class="modal">
+    <div class="modal__hd"><span>🧾 填写执行结果 · Trace</span><button class="btn btn--sm btn--ghost" id="btnCloseTrace">✕</button></div>
+    <p class="hint" style="margin-bottom:12px">
+      把每一步的真实产出贴进来，形成一份可复现的运行记录。<br>
+      这份记录能证明「流程真的跑过」，而不只是设计过。
+    </p>
+    <div id="traceList"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn btn--primary" id="btnTraceSave">💾 保存 Trace</button>
+      <button class="btn btn--ghost" id="btnTraceRunAll">⚡ 执行可运行的步骤</button>
+    </div>
+  </div>
+</div>
+
 <div class="mask" id="maskFP">
   <div class="modal">
     <div class="modal__hd"><span>🚩 报告误报 / 补充词条</span><button class="btn btn--sm btn--ghost" id="btnCloseFP">✕</button></div>
@@ -809,6 +840,7 @@ var state = {
   kbUse:true, kbScope:'all', kbMax:'5',
   scores:[],
   stratMode:'prompt',
+  trace:{},
   tool:{type:'comp', comp:{dims:'',rows:''}, stp:{rows:''}, cal:{picked:[],custom:'',lead:'30'}},
   role:{role:'',task:'',bg:'',req:'',ex:''},
   content:{title:'',kw:'',platform:'小红书',len:'800 字',style:'专业干货型',aud:'',ref:'',extra:''},
@@ -890,7 +922,16 @@ var MBTI = [
 ];
 
 var TOOLS = ['🧠 豆包 (创意)','💻 DeepSeek (代码/逻辑)','📝 通义千问 (润色/长文本)','🖥️ Ollama (本地)',
-  '🤖 扣子 Coze','⚡ Trae','🌿 Claude','🐙 GitHub','▲ Vercel','🚂 Railway','✋ 手动'];
+  '🤖 扣子 Coze','⚡ Trae','🌿 Claude','🐙 GitHub','▲ Vercel','🚂 Railway','✋ 手动',
+  '⚡ 竞品矩阵(本地函数)','⚡ STP市场选择(本地函数)','⚡ 营销日历(本地函数)','⚡ 内容体检(本地函数)'];
+/* 本地可执行的确定性工具：索引 -> 定义 */
+var LOCAL_TOOLS = {
+  11:{key:'comp', name:'analyze_competitor_matrix', label:'竞品对比矩阵'},
+  12:{key:'stp',  name:'evaluate_market_segments',  label:'STP 市场选择'},
+  13:{key:'cal',  name:'plan_marketing_calendar',   label:'营销日历倒排'},
+  14:{key:'scan', name:'check_content_health',      label:'内容体检评分'}
+};
+function isLocalTool(i){ return !!LOCAL_TOOLS[i]; }
 
 var FLOW_PRESETS = [
   {n:'📕 小红书爆款', goal:'产出 10 条可发布的小红书笔记', steps:[
@@ -2387,6 +2428,365 @@ var TOOL_DEMO = {
   cal:{custom:'品牌周年庆,10-24\n新品首发,04-08'}
 };
 
+/* ============================================================
+ * Agent 导出引擎 —— 把编排结果变成可导入的 Agent 定义
+ * 三种格式：标准 JSON / Coze workflow / Dify DSL
+ * 本地确定性函数以 tool 形式注册，供 Agent 调用
+ * ============================================================ */
+
+/* 收集当前工作流的规范化结构 */
+function flowModel(){
+  var steps = [];
+  state.flow.steps.forEach(function(s, i){
+    if(!s.t || !s.t.trim()) return;
+    steps.push({
+      idx: i,
+      no: steps.length + 1,
+      instruction: s.t.trim(),
+      tool: s.tool,
+      toolName: TOOLS[s.tool] || '手动',
+      inVar: s.inVar || '',
+      outVar: s.outVar || '',
+      fail: s.fail || 'retry',
+      gate: s.gate || 0,
+      local: isLocalTool(s.tool) ? LOCAL_TOOLS[s.tool] : null
+    });
+  });
+  return {
+    goal: state.flow.goal || ($('#f_goal') ? $('#f_goal').value : '') || '',
+    bg: state.flow.bg || ($('#f_bg') ? $('#f_bg').value : '') || '',
+    steps: steps,
+    brand: brandCtx()
+  };
+}
+
+/* 供 Agent 调用的确定性工具清单 */
+function toolManifest(){
+  return [
+    {name:'analyze_competitor_matrix', label:'竞品对比矩阵',
+     description:'输入竞品在各维度的打分(1-5)与权重，输出加权排名、机会点与威胁点。确定性计算。',
+     parameters:{type:'object', properties:{
+       dimensions:{type:'array', items:{type:'object', properties:{name:{type:'string'},weight:{type:'number'}},required:['name','weight']}},
+       competitors:{type:'array', items:{type:'object', properties:{name:{type:'string'},scores:{type:'array',items:{type:'number'}}},required:['name','scores']}}
+     }, required:['dimensions','competitors']}},
+    {name:'evaluate_market_segments', label:'STP 市场选择',
+     description:'用 GE 矩阵评估细分市场，输出优先级排序与投入建议。确定性计算。',
+     parameters:{type:'object', properties:{
+       segments:{type:'array', items:{type:'object', properties:{
+         name:{type:'string'}, attractiveness:{type:'number'}, competitiveness:{type:'number'}, size:{type:'number'}},required:['name','attractiveness','competitiveness','size']}}
+     }, required:['segments']}},
+    {name:'plan_marketing_calendar', label:'营销日历倒排',
+     description:'根据营销节点自动倒排筹备任务并计算倒计时。确定性计算。',
+     parameters:{type:'object', properties:{
+       nodes:{type:'array', items:{type:'object', properties:{name:{type:'string'},date:{type:'string'}}},required:['name','date']},
+       lead_days:{type:'number'}}, required:['nodes']}},
+    {name:'check_content_health', label:'内容体检评分',
+     description:'对文案做六维评分（合规/平台适配/钩子/CTA/可读性/品牌一致性），输出总分与改进建议。确定性计算。',
+     parameters:{type:'object', properties:{
+       text:{type:'string'}, platform:{type:'string', enum:['xhs','dy','wx','tb','bili','zhihu','weibo']}}, required:['text']}}
+  ];
+}
+
+/* ---------- 1. 标准 Agent JSON ---------- */
+function exportStd(){
+  var m = flowModel();
+  if(!m.steps.length){ toast('请先填写工作流步骤'); return null; }
+  var tools = toolManifest();
+  var usedTools = {};
+  m.steps.forEach(function(s){ if(s.local) usedTools[s.local.name] = 1; });
+
+  var obj = {
+    schema_version: '1.0',
+    name: m.goal || '未命名工作流',
+    description: m.bg || '',
+    type: 'workflow',
+    variables: m.steps.filter(function(s){ return s.outVar; })
+      .map(function(s){ return {name:s.outVar, produced_by:'step_' + s.no, type:'string'}; }),
+    tools: tools,
+    steps: m.steps.map(function(s){
+      var o = {
+        id: 'step_' + s.no,
+        instruction: s.instruction,
+        inputs: (s.inVar ? s.inVar.split(',').map(function(x){ return x.trim(); }) : []),
+        output_var: s.outVar || null,
+        on_error: s.fail,
+        quality_gate: s.gate ? {min_score: s.gate, action:'retry'} : null,
+        executor: s.local ? {type:'function', name:s.local.name} : {type:'llm', model:s.toolName}
+      };
+      return o;
+    }),
+    global_context: m.brand,
+    runtime: {deterministic_tools: Object.keys(usedTools)}
+  };
+  return {name:'agent-' + Date.now() + '.json', text: JSON.stringify(obj, null, 2)};
+}
+
+/* ---------- 2. Coze 工作流 ---------- */
+function exportCoze(){
+  var m = flowModel();
+  if(!m.steps.length){ toast('请先填写工作流步骤'); return null; }
+  var nodes = [], edges = [];
+  var startId = '900001';
+  nodes.push({
+    id: startId, type:'1', position:{x:0, y:0},
+    data:{outputs:[{name:'goal', type:'string', value:{type:'literal', content:m.goal}}], nodeMeta:{description:'开始'}}
+  });
+  var prev = startId;
+  m.steps.forEach(function(s, i){
+    var id = String(100001 + i*1000);
+    var inputs = [];
+    if(s.inVar){
+      s.inVar.split(',').forEach(function(v){
+        var nm = v.replace(/[{}]/g,'').trim();
+        if(nm) inputs.push({name:nm, type:'string'});
+      });
+    }
+    var isLocal = !!s.local;
+    nodes.push({
+      id: id,
+      type: isLocal ? '4' : '3',
+      position:{x: 260 + i*300, y: 0},
+      data:{
+        inputs: inputs,
+        outputs: s.outVar ? [{name:s.outVar, type:'string'}] : [],
+        nodeMeta:{ description: s.local ? ('本地确定性函数：' + s.local.name) : s.instruction.slice(0,60) },
+        ...(isLocal ? {
+          apiParam:[{name:s.local.name, input:inputs, output:s.outVar?[{name:s.outVar,type:'string'}]:[]}]
+        } : {
+          modelMeta:{ model:s.toolName },
+          prompt: s.instruction
+        })
+      }
+    });
+    edges.push({source:prev, target:id});
+    prev = id;
+  });
+  var endId = '900002';
+  nodes.push({id:endId, type:'2', position:{x: 260 + m.steps.length*300, y:0},
+    data:{outputs:[], nodeMeta:{description:'结束'}}});
+  edges.push({source:prev, target:endId});
+
+  var obj = {
+    type:'coze_workflow', version:'1.0',
+    workflow:{
+      name: m.goal || '未命名工作流',
+      description: m.bg || '',
+      nodes: nodes, edges: edges
+    },
+    tools: toolManifest()
+  };
+  return {name:'coze-workflow-' + Date.now() + '.json', text: JSON.stringify(obj, null, 2)};
+}
+
+/* ---------- 3. Dify DSL ---------- */
+function exportDify(){
+  var m = flowModel();
+  if(!m.steps.length){ toast('请先填写工作流步骤'); return null; }
+  var graph = {nodes:[], edges:[]};
+  var startId = 'start_' + Date.now();
+  graph.nodes.push({
+    id: startId, type:'start', position:{x:0,y:0},
+    data:{title:'开始', variables:[{variable:'goal', label:'目标', type:'text-input', required:false, default:m.goal}]}
+  });
+  var prev = startId;
+  m.steps.forEach(function(s, i){
+    var id = 'node_' + (i+1) + '_' + Date.now();
+    var isLocal = !!s.local;
+    graph.nodes.push({
+      id: id,
+      type: isLocal ? 'tool' : 'llm',
+      position:{x: 300 + i*320, y: 0},
+      data:{
+        title: '步骤 ' + s.no + ' · ' + (isLocal ? s.local.label : s.toolName),
+        desc: s.instruction.slice(0, 60),
+        ...(isLocal ? {
+          tool_name: s.local.name,
+          tool_parameters: {},
+          tool_label: s.local.label
+        } : {
+          model:{provider:'custom', name:s.toolName, mode:'chat'},
+          prompt_template:[{role:'system', text:s.instruction}],
+          vision:{enabled:false}
+        }),
+        ...(s.gate ? {quality_gate:{min_score:s.gate}} : {}),
+        ...(s.fail === 'abort' ? {error_strategy:'fail-branch'} : s.fail === 'skip' ? {error_strategy:'continue-on-error'} : {error_strategy:'retry', max_retries:2})
+      }
+    });
+    graph.edges.push({id:'e'+i, source:prev, target:id, sourceHandle:'source', targetHandle:'target'});
+    prev = id;
+  });
+  graph.nodes.push({id:'end_'+Date.now(), type:'end', position:{x:300+m.steps.length*320,y:0}, data:{title:'结束', outputs:[]}});
+  graph.edges.push({id:'e_end', source:prev, target:'end_'+Date.now()});
+
+  var obj = {
+    version:'0.1.5', kind:'app', app:{mode:'workflow', name:m.goal||'未命名工作流', description:m.bg||''},
+    workflow:{ graph: graph, features:{}, environment_variables:[], conversation_variables:[] },
+    tools: toolManifest()
+  };
+  return {name:'dify-dsl-' + Date.now() + '.yml.json', text: JSON.stringify(obj, null, 2)};
+}
+
+function downloadFile(name, text, mime){
+  try{
+    if(typeof URL === 'undefined' || !URL.createObjectURL) return false;
+    var blob = new Blob([text], {type: mime || 'application/json;charset=utf-8'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name; a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+    return true;
+  }catch(e){ return false; }
+}
+
+/* ============================================================
+ * 运行记录 Trace —— 记录每步真实产出，形成可复现证据链
+ * ============================================================ */
+function renderTraceList(){
+  var host = $('#traceList'); if(!host) return;
+  host.innerHTML = '';
+  var m = flowModel();
+  if(!m.steps.length){
+    host.innerHTML = '<p class="hint">还没有工作流步骤，先去编排几步。</p>';
+    return;
+  }
+  m.steps.forEach(function(s){
+    var rec = (state.trace && state.trace['step_' + s.no]) || null;
+    var wrapEl = document.createElement('div');
+    wrapEl.style.cssText = 'border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:10px;background:var(--bg-soft)';
+    var hd = document.createElement('div');
+    hd.style.cssText = 'font-size:12.5px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px';
+    hd.innerHTML = '<span>' + s.no + '. ' + (s.local ? '⚡ ' + s.local.label : s.toolName) + '</span>';
+    if(s.local){
+      var run = document.createElement('button');
+      run.className = 'btn btn--sm btn--ghost';
+      run.textContent = '▶ 运行';
+      run.style.marginLeft = 'auto';
+      run.onclick = function(){ runLocalStep(s, wrapEl); };
+      hd.appendChild(run);
+    }
+    wrapEl.appendChild(hd);
+
+    var inst = document.createElement('p');
+    inst.className = 'hint'; inst.style.marginBottom = '6px';
+    inst.textContent = s.instruction.slice(0, 90);
+    wrapEl.appendChild(inst);
+
+    var ta = document.createElement('textarea');
+    ta.style.minHeight = '76px';
+    ta.placeholder = s.local ? '点「▶ 运行」自动填充，也可手工粘贴产出' : '粘贴这一步的真实产出…';
+    ta.value = rec ? (rec.output || '') : '';
+    ta.className = 'traceOut';
+    wrapEl.appendChild(ta);
+
+    var st = document.createElement('div');
+    st.style.cssText = 'display:flex;gap:8px;align-items:center;margin-top:6px';
+    var sel = document.createElement('select');
+    sel.className = 'traceStatus';
+    sel.style.cssText = 'padding:4px 8px;font-size:12px;border-radius:6px;border:1px solid var(--line);background:var(--card)';
+    [['success','✅ 成功'],['partial','🟡 部分成功'],['failed','❌ 失败'],['skipped','⏭ 跳过']].forEach(function(o){
+      var op = document.createElement('option'); op.value=o[0]; op.textContent=o[1];
+      if(rec && rec.status === o[0]) op.selected = true;
+      sel.appendChild(op);
+    });
+    st.appendChild(sel);
+    var note = document.createElement('input');
+    note.type='text'; note.className='traceNote';
+    note.style.cssText = 'flex:1;padding:4px 8px;font-size:12px;border-radius:6px;border:1px solid var(--line);background:var(--card)';
+    note.placeholder = '备注（耗时、遇到的问题…）';
+    note.value = rec ? (rec.note || '') : '';
+    st.appendChild(note);
+    wrapEl.appendChild(st);
+
+    wrapEl.setAttribute('data-step', s.no);
+    host.appendChild(wrapEl);
+  });
+}
+
+/* 执行本地确定性工具，把结果填进 trace */
+function runLocalStep(s, wrapEl){
+  var out = '';
+  try{
+    if(s.local.key === 'comp'){
+      var c = calcComp();
+      out = c ? compReport(c) : '（数据不足，请先在「策略 → 计算模式 → 竞品对比矩阵」填好数据）';
+    } else if(s.local.key === 'stp'){
+      var g = calcStp();
+      out = g ? stpReport(g) : '（数据不足，请先在「策略 → 计算模式 → STP 市场选择」填好数据）';
+    } else if(s.local.key === 'cal'){
+      var k = calcCal();
+      out = k ? calReport(k) : '（数据不足，请先在「策略 → 计算模式 → 营销日历」选择节点）';
+    } else if(s.local.key === 'scan'){
+      var pv = $('#preview');
+      var txt = pv ? pv.textContent : '';
+      if(!txt || txt.indexOf('请填写字段') > -1){ out = '（请先在内容工厂生成或粘贴一段文案）'; }
+      else {
+        var pfEl = $('#c_scanpf');
+        var pfKey = pfEl ? (PLATFORM_MAP[$('#c_platform') ? $('#c_platform').value : ''] || null) : null;
+        var sc = scoreContent(txt, pfKey, {red:[],yellow:[],blue:[]});
+        out = '内容体检得分 ' + sc.total + '/100（' + sc.grade + ' 级 · ' + sc.gradeMsg + '）\n\n';
+        sc.dims.forEach(function(d){ out += '- ' + d.icon + ' ' + d.n + '：' + d.s + '/' + d.max + '　' + d.tip + '\n'; });
+      }
+    }
+  }catch(e){ out = '执行出错：' + e.message; }
+  var ta = wrapEl.querySelector('.traceOut');
+  if(ta){ ta.value = out; }
+  toast('已执行「' + s.local.label + '」');
+}
+
+function saveTrace(){
+  var recs = state.trace || (state.trace = {});
+  var items = document.querySelectorAll('#traceList > div[data-step]');
+  var n = 0;
+  [].forEach.call(items, function(el){
+    var no = el.getAttribute('data-step');
+    var out = el.querySelector('.traceOut');
+    var stSel = el.querySelector('.traceStatus');
+    var nt = el.querySelector('.traceNote');
+    if(out && (out.value || (stSel && stSel.value !== 'success'))){
+      recs['step_'+no] = {output:out.value, status:stSel?stSel.value:'success', note:nt?nt.value:'', at:new Date().toISOString()};
+      n++;
+    }
+  });
+  save(); updateTraceStat();
+  toast('已保存 ' + n + ' 条执行记录');
+}
+
+function updateTraceStat(){
+  var el = $('#traceStat'); if(!el) return;
+  var keys = Object.keys(state.trace || {});
+  var okc = keys.filter(function(k){ return (state.trace[k]||{}).status === 'success'; }).length;
+  el.textContent = keys.length
+    ? ('已记录 ' + keys.length + ' 步（✅ 成功 ' + okc + '）· 可用于导出 Trace 证明流程真实跑过')
+    : '尚未记录任何执行结果';
+}
+
+function buildTraceReport(){
+  var m = flowModel();
+  var recs = state.trace || {};
+  var out = '# 🧾 运行记录 Trace\n\n';
+  out += '**工作流**：' + (m.goal || '未命名') + '\n\n';
+  out += '**生成时间**：' + new Date().toLocaleString('zh-CN') + '\n\n';
+  var keys = Object.keys(recs);
+  var done = 0;
+  m.steps.forEach(function(s){
+    var r = recs['step_' + s.no];
+    out += '## 步骤 ' + s.no + ' · ' + (s.local ? '⚡ ' + s.local.label + '（确定性函数）' : s.toolName) + '\n\n';
+    out += '**指令**：' + s.instruction.slice(0, 120) + '\n\n';
+    if(s.outVar) out += '**输出变量**：`' + s.outVar + '`\n\n';
+    if(r){
+      done++;
+      out += '**状态**：' + ({success:'✅ 成功',partial:'🟡 部分成功',failed:'❌ 失败',skipped:'⏭ 跳过'}[r.status]||r.status) + '\n\n';
+      if(r.note) out += '**备注**：' + r.note + '\n\n';
+      out += '**产出**：\n\n```\n' + String(r.output||'').slice(0, 1600) + '\n```\n\n';
+    } else {
+      out += '**状态**：未记录\n\n';
+    }
+  });
+  out += '---\n\n**完成度**：' + done + ' / ' + m.steps.length + ' 步有记录\n\n';
+  out += '💡 这份 Trace 说明该工作流不只是设计稿，而是真实执行过并可复现。\n';
+  return out;
+}
+
 /* ================= 渲染：知识库 ================= */
 function renderKb(){
   var fh = $('#kbFolders'); fh.innerHTML = '';
@@ -3198,6 +3598,66 @@ function bind(){
   var cl = $('#cal_lead'); if(cl) cl.addEventListener('change', saveToolData);
   var cps = $('#cal_pick'); if(cps) cps.addEventListener('change', saveToolData);
 
+  // ===== Agent 导出 =====
+  $('#btnExpStd').onclick = function(){
+    var r = exportStd(); if(!r) return;
+    downloadFile(r.name, r.text);
+    setPreview('# 📐 标准 Agent JSON\n\n已导出 `' + r.name + '`\n\n```json\n' + r.text.slice(0, 2600) + (r.text.length>2600?'\n…（已截断）':'') + '\n```\n\n' +
+      '**设计要点**\n\n- `steps` 里每一步标明 `executor`：确定性计算走 `type:function`，创作类走 `type:llm`\n' +
+      '- `variables` 由各步 `output_var` 汇总，形成变量流\n- `on_error` 与 `quality_gate` 描述失败策略与质量关卡\n- `runtime.deterministic_tools` 列出本次实际用到的确定性函数\n\n' +
+      '💡 同一套编排，人看是流程，Agent 看是可执行定义。');
+    toast('已导出标准 Agent JSON');
+  };
+  $('#btnExpCoze').onclick = function(){
+    var r = exportCoze(); if(!r) return;
+    downloadFile(r.name, r.text);
+    setPreview('# 🤖 Coze 工作流\n\n已导出 `' + r.name + '`\n\n```json\n' + r.text.slice(0, 2600) + (r.text.length>2600?'\n…':'') + '\n```\n\n' +
+      '本地确定性函数导出为 Coze 的**自定义插件节点**，LLM 步骤导出为 LLM 节点。\n\n' +
+      '> 注：Coze 节点结构版本差异较大，导入前可能需要在编辑器里微调字段。');
+    toast('已导出 Coze 工作流');
+  };
+  $('#btnExpDify').onclick = function(){
+    var r = exportDify(); if(!r) return;
+    downloadFile(r.name, r.text);
+    setPreview('# 🔧 Dify DSL\n\n已导出 `' + r.name + '`\n\n```json\n' + r.text.slice(0, 2600) + (r.text.length>2600?'\n…':'') + '\n```\n\n' +
+      '确定性函数导出为 `type:tool` 节点并带 `tool_name`，LLM 步骤导出为 `type:llm` 节点。\n' +
+      '失败策略映射：abort→fail-branch，skip→continue-on-error，retry→retry。');
+    toast('已导出 Dify DSL');
+  };
+
+  // ===== Trace =====
+  $('#btnTraceOpen').onclick = function(){
+    renderTraceList();
+    $('#maskTrace').classList.add('is-on');
+  };
+  $('#btnCloseTrace').onclick = function(){ $('#maskTrace').classList.remove('is-on'); };
+  $('#maskTrace').onclick = function(e){ if(e.target === this) this.classList.remove('is-on'); };
+  $('#btnTraceSave').onclick = function(){
+    saveTrace();
+    $('#maskTrace').classList.remove('is-on');
+  };
+  $('#btnTraceRunAll').onclick = function(){
+    var els = document.querySelectorAll('#traceList > div[data-step]');
+    var n = 0;
+    [].forEach.call(els, function(el){
+      var runBtn = el.querySelector('button');
+      if(runBtn && runBtn.textContent.indexOf('运行') > -1){ runBtn.click(); n++; }
+    });
+    toast(n ? ('已执行 ' + n + ' 个本地步骤') : '本工作流没有可本地执行的步骤');
+  };
+  $('#btnTraceView').onclick = function(){
+    setPreview(buildTraceReport()); toast('已生成 Trace 报告');
+  };
+  $('#btnTraceExp').onclick = function(){
+    var txt = buildTraceReport();
+    downloadFile('trace-' + Date.now() + '.md', txt, 'text/markdown;charset=utf-8');
+    setPreview(txt); toast('已导出 Trace');
+  };
+  $('#btnTraceClear').onclick = function(){
+    if(!confirm('清空所有执行记录？')) return;
+    state.trace = {}; save(); updateTraceStat(); toast('已清空');
+  };
+
   // 评分记录
   $('#btnScoreHist').onclick = showScoreHistory;
   $('#btnScoreClear').onclick = function(){
@@ -3357,6 +3817,8 @@ function restoreAll(){
   $('#stratPromptMode').style.display = state.stratMode==='prompt' ? '' : 'none';
   $('#stratCalcMode').style.display   = state.stratMode==='calc'   ? '' : 'none';
   renderStratMode(); restoreTool(); renderToolChips();
+  state.trace = state.trace || {};
+  updateTraceStat();
   state.scores = state.scores || [];
   renderScoreTrend();
 }

@@ -190,6 +190,27 @@ Each tool exposes a **Function Schema** button that prints a JSON
 function definition - the same computation callable by an agent as a
 tool. This is the bridge between "a calculator" and "an agent skill".
 
+
+## 4.6 Agent export + execution trace
+
+The workflow builder now emits importable agent definitions instead of
+just Markdown. Three formats:
+
+| Format | File | Mapping |
+|---|---|---|
+| Standard Agent JSON | `agent-*.json` | steps with `executor:{type:function|llm}`, `variables` from `output_var`, `on_error`, `quality_gate` |
+| Coze workflow | `coze-workflow-*.json` | start/llm/plugin/end nodes + edges |
+| Dify DSL | `dify-dsl-*.yml.json` | `type:tool` vs `type:llm` nodes, `error_strategy` mapping |
+
+Local deterministic functions are registered as callable tools
+(`analyze_competitor_matrix`, `evaluate_market_segments`,
+`plan_marketing_calendar`, `check_content_health`) and can be selected
+as a step's executor, so a step runs locally instead of via an LLM.
+
+**Trace**: record the real output of each step (run local tools inline,
+or paste results manually) with status and notes. Export as Markdown —
+this shows a workflow was actually executed, not just designed.
+
 ## 5. Data
 
 - Stored in browser localStorage, key `ym_studio_v1`
