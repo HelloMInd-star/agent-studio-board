@@ -1,15 +1,18 @@
 # Y.Mine · 品牌战略到增长的完整决策链
 
-**Define the brand → validate the market → set the strategy → collect the
-result — entirely in your browser.**
+**Define the brand → validate the market → set the strategy → produce the
+content → collect the result — entirely in your browser.**
 
-A local-first decision chain for brand and growth: 19 modules, 21
-deterministic analysis functions, 70 marketing frameworks. No backend, no
-tracking, no login.
+A local-first decision chain for brand and growth: **23 tabs (24 modules)**,
+**25 deterministic calculations** (14 of them registered as orchestrable
+workflow tools), **70 marketing frameworks** rendered from 25 graphic
+skeletons, **5 SVG chart types**. No backend, no tracking, no login.
 
 Live:
-- Landing (what it does / how to use / roadmap): https://hellomind-star.github.io/agent-studio-board/landing.html
 - Workspace (the tool): https://hellomind-star.github.io/agent-studio-board/
+- Landing (what it does / how to use / roadmap): https://hellomind-star.github.io/agent-studio-board/landing.html
+- Manual (33 chapters, each opening with a user-flow strip): https://hellomind-star.github.io/agent-studio-board/manual.html
+- Design notes (architecture, decisions, mistakes, known issues): https://hellomind-star.github.io/agent-studio-board/design.html
 
 ---
 
@@ -30,27 +33,17 @@ Development is split into modules; the deployed artifact is a single file.
 
 ```
 agent-studio-board/
-├── build.py                 # merges src/ -> index.html
-├── index.html               # BUILD OUTPUT (deploy this)
+├── build.py                 # merges src/ -> index.html (see list below)
+├── index.html               # BUILD OUTPUT (deploy this) — ~820 KB single file
+├── landing.html             # product page: what it does / how to use / roadmap
+├── manual.html              # user manual: 33 chapters, 22 user-flow strips
+├── design.html              # design notes: architecture, decisions, mistakes
 ├── src/
 │   ├── index.template.html  # HTML shell with __CSS__ / __JS__ markers
+│   ├── manual.template.html # manual source
 │   ├── style.css            # all styles
-│   ├── 01-core.js           # state definition
-│   ├── 02-presets.js        # role / strategy / MBTI / workflow presets
-│   ├── 03-rules.js          # banned-word rule library (102 rules)
-│   ├── 04-store.js          # persistence, import/export
-│   ├── 05-brand.js          # brand memory + knowledge-base injection
-│   ├── 06-render.js         # chips, workflow steps, dataflow diagram
-│   ├── 07-charts.js         # hand-written SVG chart engine
-│   ├── 08-tools.js          # deterministic analysis tools
-│   ├── 09-agent.js          # agent export (JSON/Coze/Dify) + trace
-│   ├── 10-workspace.js      # agent workspace: intent routing + doc blocks
-│   ├── 11-kb.js             # knowledge base rendering
-│   ├── 12-generate.js       # generation logic
-│   ├── 13-scan.js           # 6-dimension content health scoring
-│   ├── 14-feedback.js       # false-positive reporting
-│   ├── 15-bind.js           # event binding
-│   └── 16-boot.js           # restore + bootstrap
+│   ├── MANIFEST.txt         # module index (regenerate when adding files)
+│   └── *.js                 # 38 modules, merged in the order below
 └── ym-marketing-patch.js    # optional patch for the legacy version
 ```
 
@@ -62,6 +55,24 @@ python3 build.py --check   # validate without writing
 ```
 
 `index.html` is committed so GitHub Pages works without a build step.
+
+**Merge order matters.** `build.py` holds the authoritative list; several
+modules must load before `16-boot.js` (which restores state and binds events)
+and some depend on others (e.g. `32-tonecheck` after `30-brandcore`,
+`28/29-frames*` before `27-toolmap`). The 38 modules by layer:
+
+| Layer | Modules |
+|---|---|
+| Core & storage | `01-core` state · `02-presets` presets · `03-rules` banned-word library · `04-store` persistence |
+| Render & charts | `05-brand` brand memory · `06-render` chips/steps · `07-charts` SVG engine |
+| Tools & agent | `08-tools` calculators · `09-agent` export + trace · `10-workspace` intent routing |
+| Content | `11-kb` knowledge base · `12-generate` generation · `13-scan` health scoring · `14-feedback` false-positive report |
+| Marketing modules | `17-calendar` · `18-synth` · `19-pricing` · `20-market` · `21-hotspot` · `22-research` · `23-strategy` · `24-finance` |
+| Entry & knowledge | `25-guide` scenario nav · `26-toolkit` 8 classic frameworks · `27-toolmap` 70-framework map · `28-framesvg` + `29-framecfg` skeleton engine |
+| Brand chain | `30-brandcore` · `32-tonecheck` · `33-timeline` · `36-assets` |
+| System & insight | `34-settings` · `35-insight` · `37-quarter` |
+| Content packs | `38-packs` · `39-packwiz` |
+| Bootstrap | `15-bind` event binding · `16-boot` restore + start (**must be last**) |
 
 ---
 
@@ -208,11 +219,11 @@ so rather than faking success.
 
 ---
 
-### 3.9 Frame skeleton engine (70 diagrams from 24 skeletons)
+### 3.9 Frame skeleton engine (70 diagrams from 25 skeletons)
 
 The tool map lists 70 classic marketing frameworks. Naively that would mean
 70 hand-written SVG renderers. It does not: **marketing frameworks collapse
-into ~24 graphic structures**.
+into **25 graphic structures**.
 
 ```
 quad2  grid3  radar  quadbubble  pyramid  funnel  journey  hex6
@@ -240,7 +251,7 @@ the `.svg` renders standalone.
 
 ---
 
-### 3.9b Brand Core (brandcore)
+### 3.10 Brand Core (brandcore)
 
 Replaces the old "Brand Personality" tab, which was a cocktail-flavoured
 prompt wrapper with no computation at all (it carried `flavor` / `abv`
@@ -325,7 +336,39 @@ via the `tonecheck` intent.
 
 ---
 
-### 3.12 Brand timeline (timeline)
+### 3.12 Information architecture
+
+
+**23 tabs** are grouped by **task**, not by when they were built:
+
+```
+入口     guide                                                    (1)
+想清楚   hotspot · research · strat · tkm · toolmap · persona      (6)
+算出来   strategy · pricing · market · fin                         (4)
+做出来   role · content · chart                                    (3)
+串起来   flow · agent · cal · synth · packs                        (5)
+存下来   kb · assets · timeline · settings                         (4)
+```
+
+A 24th capability — **brand tone constraint** — is not a tab: it is embedded
+in the content module, where it scores generated copy against the brand
+baseline computed by Brand Core.
+
+The group labels double as a recommended path: figure out *what* to do,
+compute *whether* it works, produce the content, wire it together, then
+keep the output. `guide` is the default landing tab for the same reason —
+23 tabs with no entry point is a list, not a workflow.
+
+The landing page and the manual mirror this exact grouping (they were
+re-aligned in v38 after the card order had drifted to "whichever round it
+was built in", which put the entry point 16th). The manual's 33 chapters
+open with a **user flow strip** (`input → steps → output`) plus a note on
+what to do before and after, so a chapter answers "when do I open this"
+rather than just "what does this do".
+
+---
+
+### 3.13 Brand timeline (timeline)
 
 Seven kinds of records already existed in the product, but each was buried
 inside its own module — nobody could see the whole picture:
@@ -389,7 +432,7 @@ doubled.
 
 ---
 
-### 3.13 System settings (settings)
+### 3.14 System settings (settings)
 
 All state lives in `localStorage`. There is `save()` / `load()` but — before
 this module — **no backup export at all**. Clear the browser cache once and the
@@ -465,33 +508,7 @@ they just get to know what it costs.
 
 ---
 
-### 3.10 Information architecture
-
-
-22 tabs are grouped by **task**, not by when they were built:
-
-```
-入口     guide
-想清楚   hotspot · research · strat · tkm · toolmap · persona
-算出来   strategy · pricing · market · fin
-做出来   role · content · chart
-串起来   flow · agent · cal · synth
-存下来   kb · assets · timeline · settings
-```
-
-The group labels double as a recommended path: figure out *what* to do,
-compute *whether* it works, produce the content, wire it together, then
-keep the output. `guide` is the default landing tab for the same reason —
-22 tabs with no entry point is a list, not a workflow.
-
-The manual mirrors this: each of the 22 module chapters opens with a
-**user flow strip** (`input → steps → output`) plus a note on what to do
-before and after, so a chapter answers "when do I open this" rather than
-just "what does this do".
-
----
-
-### 3.14 Brand asset ledger (assets)
+### 3.15 Brand asset ledger (assets)
 
 Registers **what brand assets exist and what state they are in** — Logo
 versions, material progress, and colour/type specifications.
@@ -520,7 +537,7 @@ Colour psychology cannot be verified the way LTV can, so the tool says
 
 ---
 
-### 3.15 Calendar quarter view (quarter)
+### 3.16 Calendar quarter view (quarter)
 
 Month view shows **density**; quarter view shows **rhythm**. Three months side
 by side make it visible at a glance whether three Q4 campaigns collide, or
@@ -536,7 +553,7 @@ where the gaps are.
 
 ---
 
-### 3.16 Content packs (packs)
+### 3.17 Content packs (packs)
 
 Productisation, not new capability. The four packs existed before as
 workflow presets buried in a dropdown, while the landing page showed four
@@ -574,7 +591,7 @@ against a value brand passes. The brand→copy constraint holds through the
 pack pipeline.
 
 
-### 3.17 Pack wizard: standalone window + rule-based intake (packwiz)
+### 3.18 Pack wizard: standalone window + rule-based intake (packwiz)
 
 **Three-stage full-screen modal.** Opening a pack no longer dumps six steps
 into the page. A full-screen window carries a stage indicator
@@ -618,50 +635,87 @@ collected brand/goal/limits) plus a live character counter that warns below
 read 即将推出 while the packs were already runnable. They now carry
 `data-pack` and open the corresponding pack directly.
 
+**Explicitly not built: LLM intent classification.** A second design (send
+the answer to a model, let it reply `ok` / `off_topic`) was considered and
+deferred. Rules already cover this intake surface, and a model call would
+add latency, token cost and a new failure mode for no measurable gain. It
+becomes worth revisiting only if real answers start getting rejected.
+
+---
+
+### 3.19 Design notes (`design.html`)
+
+A standalone 12-chapter document, opened from the top bar of every page:
+
+| Chapter | Contents |
+|---|---|
+| 1 | One-line positioning, and how "brand → growth" decomposes |
+| 2 | Verified numbers — every count with how it was measured |
+| 3 | Boundaries: 7 things deliberately not built, 4 that were re-framed |
+| 4 | Six-layer architecture, plus an honest answer to "is this an agent?" |
+| 5 | The 38 source files grouped by layer |
+| 6 | Core algorithms (positional dimensions, the tone-0 case, sample-size guards) |
+| 7 | All 23 tabs / 6 groups |
+| 8 | Data design (`localStorage` shape, per-module keys) |
+| 9 | Design decisions (e.g. why 70 frameworks need only 25 skeletons) |
+| 10 | **Mistakes made and how they happened** |
+| 11 | Known issues and what is deferred |
+| 12 | Interview talking points and how to handle two hard questions |
+
+Chapter 10 is the one worth reading if you read only one: it records bugs
+that shipped — an inline `onclick` that could never resolve inside the IIFE,
+a workflow dropdown whose index silently dispatched the *wrong* function, a
+storage bar that could never fire, a colour rule whose threshold disagreed
+with its own definition, and a "done" report that described work that did
+not exist. Each entry names the cause, not just the fix.
+
 ---
 
 ## 4. Data
 
 Everything lives in `localStorage` under `ym_studio_v1`. Clearing browser
-data wipes it — use "Export config" to back up.
+data wipes it — use **System settings → export backup** for a full JSON copy.
 
 Network, when enabled, sends prompts to the vendor you chose. This site has
 no server and sees nothing.
 
 ---
 
-## 5. Disclaimer
+## 5. Numbers
+
+Every figure below was counted from source, not estimated. This section is
+the single source of truth — if you add a module, update it here and in the
+landing page together.
+
+| Figure | Value | How it was counted |
+|---|---|---|
+| Tabs | **23** | unique `data-tab` values in `src/index.template.html` |
+| Groups | **6** | unique `data-group` values |
+| Modules | **24** | 23 tabs + brand tone constraint (embedded, not a tab) |
+| Deterministic calculations | **25** | 22 `calc*` functions + `analyzeBrandCore` + `tcAnalyze` + `scoreContent` |
+| Orchestrable in workflows | **14** | `LOCAL_TOOLS` indices 11–24 |
+| Source files | **38** | `src/*.js`, merged by `build.py` |
+| Frameworks mapped | **70** | `src/27-toolmap.js` — 27 done / 4 planned / 39 reference-only |
+| Graphic skeletons | **25** | distinct `s:` values in `src/29-framecfg.js` |
+| Chart types | **5** | `CHART_TYPES` in `src/07-charts.js` |
+| Manual chapters | **33** | `<h2>` in `manual.html` (22 carry a user-flow strip) |
+| Deployed artifact | **~820 KB** | `index.html`, single file, zero runtime dependencies |
+
+Two of these are worth defending explicitly:
+
+- **14 orchestrable, not 25.** Eleven calculations are called directly by
+  their own module but were never registered as workflow tools. Registering
+  them is mechanical; it has not been done because no workflow needed them.
+- **39 of 70 frameworks are reference-only.** They render a structure
+  diagram and a `看什么 / 输出什么 / 常见误用` card rather than a calculator.
+  That is a deliberate trade: a 39-item placeholder grid would be worse than
+  honest reference content.
+
+---
+
+## 6. Disclaimer
 
 The banned-word library is a review aid, not legal advice. A hit does not
 mean something is illegal. Platform rules change often — verify against the
-current official source before publishing.
-### 3.17 内容包独立窗口（39-packwiz）
-
-内容包从 Tab 内列表升级为**全屏独立窗口**，三段式：
-
-```
-① 启动前：对话式采集（2-3 题，规则校验）
-      ↓ 答案注入后续步骤
-② 执行中：分步执行，本地函数真跑
-      ↓
-③ 结果页：完成度环 + 指标卡 + 步骤分布
-```
-
-**关键设计：三段的校验方式不同，这是刻意的边界**
-
-| 阶段 | 校验 | 原因 |
-|---|---|---|
-| 启动采集 | 规则校验（疑问句/黑名单/长度/正向特征） | 答案是结构化短字段，规则适用 |
-| 中间步骤 | 只查非空 | 用户粘回的是几百字 AI 产出，规则无法判断质量，硬判只会误伤 |
-| 结果页 | 只统计完成度 | AI 产出是自由文本，不包装成图表 |
-
-**规则校验相对朴素版做了 4 处改良**（都是实测会误判才加的）：
-
-1. **疑问句加长度豁免**：`isQuestion && text.length < 15` 才算跑偏。
-   否则"目标人群是 25-35 岁白领？"这种确认语气的有效回答会被误拦。
-2. **黑名单分字段**：每个字段配自己的黑名单。全局黑名单会让
-   "我们和竞品一样做美妆"在行业题上被误判。
-3. **正向特征**：不只判断"不是什么"，也判断"像什么"（预算题要求含数字）。
-4. **连续 2 次才强拉**：第 1 次 💡 软提示，第 2 次才 ⚠️，且始终给跳过出口。
-
-**明确不做**：LLM 意图识别（方案二）。现阶段规则覆盖率够，加 LLM 只引入延迟与不确定性。触发条件：出现明显的规则误判反馈。
+current official source before publishing. Category benchmarks in Brand Core
+are experience-based reference values, not measurements from any dataset.
