@@ -67,6 +67,7 @@
       <button class="tab" data-tab="pricing"><span class="tab__name">💰 定价策略</span><span class="tab__desc">5 法 · 折扣 · 价格带</span></button>
       <button class="tab" data-tab="market"><span class="tab__name">🌏 市场与竞品</span><span class="tab__desc">区域 · 档案 · 追踪</span></button>
       <button class="tab" data-tab="fin"><span class="tab__name">💹 财务测算</span><span class="tab__desc">GMV · LTV · 预算</span></button>
+      <button class="tab" data-tab="sim"><span class="tab__name">📐 决策推演</span><span class="tab__desc">保本 · 敏感 · 迁移</span></button>
     </div>
   </div>
   <div class="tgroup" data-group="make">
@@ -1142,21 +1143,6 @@
       </div>
 
       <div class="card">
-        <div class="card__hd">🏭 行业属性 <span class="eyebrow" id="rsAttrSum" style="margin-left:auto"></span></div>
-        <p class="hint">💡 模板按<b>商业模式</b>分，行业属性按<b>「什么会杀死你」</b>分——一个 AI 制药公司和一个企业 IM 都属于 B 端，但调研重点几乎不重叠。选一类，会带入该类型的<b>致命变量</b>清单。</p>
-        <div class="chips" id="rsAttrs"></div>
-        <div class="aslist" id="rsAttrVars" style="margin-top:10px"></div>
-        <button class="btn btn--ghost btn--sm" id="btnRsAttrVar" style="margin-top:8px">➕ 添加自定义变量</button>
-      </div>
-
-      <div class="card">
-        <div class="card__hd">🛑 准入与合规门禁（一票否决）</div>
-        <p class="hint">💡 这不是打分项。<b>任何一项标「存在阻断」，后文所有测算与结论都不成立</b>——不管市场有多大。受监管行业最常见的死法是「市场很大但你进不去」。</p>
-        <p class="f__hint" style="margin:-2px 0 10px">⚠️ 本工具只提示「该确认哪些项」，<b>不构成法律意见</b>。请以主管部门规定与执业律师意见为准。</p>
-        <div class="gatelist" id="rsGates"></div>
-      </div>
-
-      <div class="card">
         <div class="card__hd">0️⃣ 待验证假设 <span class="eyebrow" id="rsAssumpCount" style="margin-left:auto"></span></div>
         <p class="hint">💡 这是整份报告<b>最关键的一节</b>。敢写「这几条我还没验证」比填满一百个数字更专业。报告会据此提示哪些结论不宜直接引用。</p>
         <div class="aslist" id="rsAssump"></div>
@@ -1354,6 +1340,43 @@
         <div class="preview" id="radarOut"><span class="ph">点「⚡ 生成雷达」</span></div>
       </div>
     </section>
+    <section class="panel" data-panel="sim">
+      <h2 class="panel__hd">📐 决策推演</h2>
+      <p class="panel__sub">战略矩阵回答<b>「你在哪」</b>，这里回答<b>「会怎样」</b>。全部是参数驱动的确定性计算——不含糊、不预测，只呈现你假设的后果。</p>
+
+      <div class="card">
+        <div class="card__hd">1️⃣ 盈亏平衡：要卖多少才不亏</div>
+        <p class="hint">💡 保本销量 Q* ＝ 固定成本 ÷（单价 − 单位变动成本）。真正有用的不是这个点，是<b>安全边际</b>（离保本多远）和<b>经营杠杆率</b>（销量波动 10% 会让利润波动多少）。</p>
+        <div class="grid4">
+          <label class="f"><span>固定成本（元）</span><input type="number" id="simF" oninput="simOnInput()" placeholder="240000"></label>
+          <label class="f"><span>单价（元）</span><input type="number" id="simP" step="0.01" oninput="simOnInput()" placeholder="39"></label>
+          <label class="f"><span>单位变动成本（元）</span><input type="number" id="simV" step="0.01" oninput="simOnInput()" placeholder="13"></label>
+          <label class="f"><span>预测销量（件）</span><input type="number" id="simQ" oninput="simOnInput()" placeholder="9000"></label>
+        </div>
+        <div class="grid4" style="margin-top:10px">
+          <label class="f"><span>产能台阶（件/档）</span><input type="number" id="simCap" oninput="simOnInput()" placeholder="5000"></label>
+          <label class="f"><span>扰动幅度 %</span><input type="number" id="simPct" step="1" oninput="simOnInput()" placeholder="10"></label>
+          <label class="f" style="flex-direction:row;align-items:center;gap:8px"><span>阶梯固定成本</span><input type="checkbox" id="simStep" onchange="simOnInput()"></label>
+          <div style="display:flex;align-items:flex-end"><button class="btn" onclick="simExport()">📥 导出推演报告</button></div>
+        </div>
+        <div id="simBeOut" style="margin-top:12px"></div>
+        <div class="chartwrap" id="simBeChart"></div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">2️⃣ 敏感性龙卷风：哪个假设错了会毁掉方案</div>
+        <p class="hint">💡 对每个变量做 ±扰动，看<b>保本点</b>被推动多少。<b>最上面那条就是你最该先去验证的假设</b>——它错了，整个方案结论就变了。这与调研方案里的「无验证路径」是同一条链的两端。</p>
+        <div id="simTorOut"></div>
+        <div class="chartwrap" id="simTorChart"></div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">3️⃣ BCG 迁移轨迹：业务到底在往哪走</div>
+        <p class="hint">💡 快照机制早已存在，但图上没画过迁移。这里按时间排序画出箭头与方向判定（进入更优 / 恶化 / 份额提升 / 增长提速）。</p>
+        <div class="chartwrap" id="simTrackChart"></div>
+      </div>
+    </section>
+
 
   </main>
   <aside>

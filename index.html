@@ -810,36 +810,6 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
 .asrow__t{flex:2;min-width:180px;border:none;background:transparent;font-size:12.5px;font-weight:600;}
 .asrow__h{flex:1.4;min-width:130px;border:none;background:transparent;font-size:11.5px;color:var(--text-2);}
 .asrow__s{font-size:11px;padding:3px 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);}
-.asrow__src{font-size:11px;padding:3px 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);max-width:150px;}
-.asrow.is-nopath{border-left-color:var(--alert);background:var(--alert-soft,#fff5f5);}
-.asrow__warn{
-  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.06em;
-  padding:2px 7px;border-radius:100px;color:var(--alert);
-  border:1px solid var(--alert-line,var(--alert));background:var(--alert-soft,#fff5f5);
-  white-space:nowrap;flex:0 0 auto;
-}
-
-/* 准入 / 合规门禁 */
-.gatelist{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;}
-.gatebox{border:1px solid var(--line);border-radius:var(--r-sm);padding:10px 12px;background:var(--card);}
-.gatebox__hd{
-  font-size:12.5px;font-weight:700;margin-bottom:8px;
-  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
-}
-.gaterow{
-  display:flex;gap:8px;align-items:center;justify-content:space-between;
-  padding:6px 0;border-top:1px solid var(--line);
-}
-.gaterow:first-of-type{border-top:none;}
-.gaterow__t{font-size:11.5px;color:var(--text-2);flex:1;line-height:1.5;}
-.gaterow__s{font-size:11px;padding:3px 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);flex:0 0 auto;}
-.gaterow.is-pass .gaterow__s{color:var(--ok);border-color:var(--ok-line);background:var(--ok-soft);}
-.gaterow.is-block .gaterow__s{color:var(--alert);border-color:var(--alert-line,var(--alert));background:var(--alert-soft,#fff5f5);}
-.gaterow.is-block .gaterow__t{color:var(--alert);font-weight:600;}
-@media(max-width:620px){
-  .gatelist{grid-template-columns:1fr;}
-  .asrow__src{max-width:100%;}
-}
 
 .seglist{display:flex;flex-direction:column;gap:7px;}
 .segrow{display:flex;gap:7px;align-items:center;flex-wrap:wrap;}
@@ -1958,6 +1928,7 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
       <button class="tab" data-tab="pricing"><span class="tab__name">💰 定价策略</span><span class="tab__desc">5 法 · 折扣 · 价格带</span></button>
       <button class="tab" data-tab="market"><span class="tab__name">🌏 市场与竞品</span><span class="tab__desc">区域 · 档案 · 追踪</span></button>
       <button class="tab" data-tab="fin"><span class="tab__name">💹 财务测算</span><span class="tab__desc">GMV · LTV · 预算</span></button>
+      <button class="tab" data-tab="sim"><span class="tab__name">📐 决策推演</span><span class="tab__desc">保本 · 敏感 · 迁移</span></button>
     </div>
   </div>
   <div class="tgroup" data-group="make">
@@ -3033,21 +3004,6 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
       </div>
 
       <div class="card">
-        <div class="card__hd">🏭 行业属性 <span class="eyebrow" id="rsAttrSum" style="margin-left:auto"></span></div>
-        <p class="hint">💡 模板按<b>商业模式</b>分，行业属性按<b>「什么会杀死你」</b>分——一个 AI 制药公司和一个企业 IM 都属于 B 端，但调研重点几乎不重叠。选一类，会带入该类型的<b>致命变量</b>清单。</p>
-        <div class="chips" id="rsAttrs"></div>
-        <div class="aslist" id="rsAttrVars" style="margin-top:10px"></div>
-        <button class="btn btn--ghost btn--sm" id="btnRsAttrVar" style="margin-top:8px">➕ 添加自定义变量</button>
-      </div>
-
-      <div class="card">
-        <div class="card__hd">🛑 准入与合规门禁（一票否决）</div>
-        <p class="hint">💡 这不是打分项。<b>任何一项标「存在阻断」，后文所有测算与结论都不成立</b>——不管市场有多大。受监管行业最常见的死法是「市场很大但你进不去」。</p>
-        <p class="f__hint" style="margin:-2px 0 10px">⚠️ 本工具只提示「该确认哪些项」，<b>不构成法律意见</b>。请以主管部门规定与执业律师意见为准。</p>
-        <div class="gatelist" id="rsGates"></div>
-      </div>
-
-      <div class="card">
         <div class="card__hd">0️⃣ 待验证假设 <span class="eyebrow" id="rsAssumpCount" style="margin-left:auto"></span></div>
         <p class="hint">💡 这是整份报告<b>最关键的一节</b>。敢写「这几条我还没验证」比填满一百个数字更专业。报告会据此提示哪些结论不宜直接引用。</p>
         <div class="aslist" id="rsAssump"></div>
@@ -3245,6 +3201,43 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
         <div class="preview" id="radarOut"><span class="ph">点「⚡ 生成雷达」</span></div>
       </div>
     </section>
+    <section class="panel" data-panel="sim">
+      <h2 class="panel__hd">📐 决策推演</h2>
+      <p class="panel__sub">战略矩阵回答<b>「你在哪」</b>，这里回答<b>「会怎样」</b>。全部是参数驱动的确定性计算——不含糊、不预测，只呈现你假设的后果。</p>
+
+      <div class="card">
+        <div class="card__hd">1️⃣ 盈亏平衡：要卖多少才不亏</div>
+        <p class="hint">💡 保本销量 Q* ＝ 固定成本 ÷（单价 − 单位变动成本）。真正有用的不是这个点，是<b>安全边际</b>（离保本多远）和<b>经营杠杆率</b>（销量波动 10% 会让利润波动多少）。</p>
+        <div class="grid4">
+          <label class="f"><span>固定成本（元）</span><input type="number" id="simF" oninput="simOnInput()" placeholder="240000"></label>
+          <label class="f"><span>单价（元）</span><input type="number" id="simP" step="0.01" oninput="simOnInput()" placeholder="39"></label>
+          <label class="f"><span>单位变动成本（元）</span><input type="number" id="simV" step="0.01" oninput="simOnInput()" placeholder="13"></label>
+          <label class="f"><span>预测销量（件）</span><input type="number" id="simQ" oninput="simOnInput()" placeholder="9000"></label>
+        </div>
+        <div class="grid4" style="margin-top:10px">
+          <label class="f"><span>产能台阶（件/档）</span><input type="number" id="simCap" oninput="simOnInput()" placeholder="5000"></label>
+          <label class="f"><span>扰动幅度 %</span><input type="number" id="simPct" step="1" oninput="simOnInput()" placeholder="10"></label>
+          <label class="f" style="flex-direction:row;align-items:center;gap:8px"><span>阶梯固定成本</span><input type="checkbox" id="simStep" onchange="simOnInput()"></label>
+          <div style="display:flex;align-items:flex-end"><button class="btn" onclick="simExport()">📥 导出推演报告</button></div>
+        </div>
+        <div id="simBeOut" style="margin-top:12px"></div>
+        <div class="chartwrap" id="simBeChart"></div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">2️⃣ 敏感性龙卷风：哪个假设错了会毁掉方案</div>
+        <p class="hint">💡 对每个变量做 ±扰动，看<b>保本点</b>被推动多少。<b>最上面那条就是你最该先去验证的假设</b>——它错了，整个方案结论就变了。这与调研方案里的「无验证路径」是同一条链的两端。</p>
+        <div id="simTorOut"></div>
+        <div class="chartwrap" id="simTorChart"></div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">3️⃣ BCG 迁移轨迹：业务到底在往哪走</div>
+        <p class="hint">💡 快照机制早已存在，但图上没画过迁移。这里按时间排序画出箭头与方向判定（进入更优 / 恶化 / 份额提升 / 增长提速）。</p>
+        <div class="chartwrap" id="simTrackChart"></div>
+      </div>
+    </section>
+
 
   </main>
   <aside>
@@ -19105,6 +19098,146 @@ function pkCountUpdate(idx, ta){
   }
 }
 
+/* ===== src/42-icons.js ===== */
+/* ============================================================
+ * 42-icons.js —— 线性图标系统（orbit 风格）
+ *
+ * 规范（与设计稿一致）：
+ *   viewBox 0 0 24 24 · stroke-width 1.5 · fill:none
+ *   stroke=currentColor（自动跟随主题与激活色）
+ *   linecap/linejoin = round
+ *
+ * 设计原则：
+ *   1. 不引外部图标库（Lucide / Feather 都要额外文件，破坏单文件零依赖）
+ *   2. 图标按业务语义重画，不套通用图形：
+ *      竞品=BCG四象限、STP=准心圈定人群、日历=跨天色条、工作流=三节点链
+ *   3. 降级：脚本缺失或 key 找不到时保留原 emoji，图标位不塌陷
+ * ============================================================ */
+(function () {
+  'use strict';
+
+  function S(inner) {
+    return '<svg class="ico" viewBox="0 0 24 24" width="18" height="18" fill="none" ' +
+      'stroke="currentColor" stroke-width="1.5" stroke-linecap="round" ' +
+      'stroke-linejoin="round" aria-hidden="true" focusable="false">' + inner + '</svg>';
+  }
+
+  /* 23 个 Tab 图标（key 与 index.template.html 的 data-tab 严格对应） */
+  var ICONS = {
+    /* ① 入口 */
+    // 开始：指南针
+    guide: S('<circle cx="12" cy="12" r="8.5"/><path d="M15.4 8.6l-2.1 5.1-5.1 2.1 2.1-5.1z"/>'),
+
+    /* ② 想清楚 */
+    // 热点决策：信号塔（发散弧 + 中心点）
+    hotspot: S('<circle cx="12" cy="14.5" r="1.2"/><path d="M12 18.5v2.5"/><path d="M8.4 13.2a5 5 0 017.2 0"/><path d="M5.8 10.4a8.6 8.6 0 0112.4 0"/>'),
+    // 调研方案：问卷纸 + 勾选项
+    research: S('<path d="M6 3.5h8.2L18 7.3V20a.5.5 0 01-.5.5H6a.5.5 0 01-.5-.5V4a.5.5 0 01.5-.5z"/><path d="M14 3.5v4h4"/><path d="M8.6 12h7"/><path d="M8.6 15.5h4.2"/><path d="M14.6 18.2l1.5 1.5 2.6-2.8"/>'),
+    // 战略矩阵：同心环 + 准心（圈定）
+    strat: S('<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.6"/><path d="M12 3.5v2.6M12 17.9v2.6M3.5 12h2.6M17.9 12h2.6"/>'),
+    // 经典工具：工具箱
+    tkm: S('<path d="M3.5 8.5h17v10.5a1 1 0 01-1 1h-15a1 1 0 01-1-1z"/><path d="M8.2 8.5V6.2a2 2 0 012-2h3.6a2 2 0 012 2v2.3"/><path d="M3.5 12.6h17"/><path d="M10.2 12.6v3.2M13.8 12.6v3.2"/>'),
+    // 工具地图：三折地图
+    toolmap: S('<path d="M3.5 6.2l5.6-2 6 2 5.4-2v13.4l-5.4 2-6-2-5.6 2z"/><path d="M9.1 4.2v13.4M15.1 6.2v13.4"/>'),
+    // 品牌内核：神庙（文化·价值·商业模型的三层隐喻）
+    persona: S('<path d="M3 10.2L12 4l9 6.2"/><path d="M3.6 10.2h16.8"/><path d="M6.8 10.5v8.6M12 10.5v8.6M17.2 10.5v8.6"/><path d="M3.4 19.6h17.2"/>'),
+
+    /* ③ 算出来 */
+    // 决策推演：两条线交叉（保本点）
+    sim: S('<path d="M4.5 4.5v15h15"/><path d="M4.5 19L19 6.5"/><path d="M4.5 15.2L15.5 10.2"/><circle cx="12.1" cy="12.6" r="1.7"/>'),
+    // 策略模板：分层 STP（逐层收窄）
+    strategy: S('<path d="M4 6.8h16"/><path d="M7 12h10"/><path d="M10 17.2h4"/><path d="M4 6.8l2.6 3M20 6.8l-2.6 3"/><path d="M7 12l2.2 3.4M17 12l-2.2 3.4"/>'),
+    // 定价策略：价签
+    pricing: S('<path d="M12.6 3.6H19.5a.9.9 0 01.9.9v6.9l-8.3 8.3-7.8-7.8z"/><circle cx="16.4" cy="7.5" r="1.3"/><path d="M8.4 15.6l4.2 4.2"/>'),
+    // 市场与竞品：地球（经纬）
+    market: S('<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5a13 13 0 010 17"/><path d="M12 3.5a13 13 0 000 17"/>'),
+    // 财务测算：上涨折线 + 箭头
+    fin: S('<path d="M4.2 17.4l5.2-5.2 3.4 3.4 7-7"/><path d="M15.4 8.6h4.4v4.4"/><path d="M4.2 20.4h15.6"/>'),
+
+    /* ④ 做出来 */
+    // 营销角色：头像 + 思维纹
+    role: S('<circle cx="12" cy="8.4" r="3.9"/><path d="M4.8 20.2a7.2 7.2 0 0114.4 0"/><path d="M12 5.6v3.4M10.4 7.6h3.2"/>'),
+    // 内容工厂：纸 + 斜置铅笔（创作）
+    content: S('<path d="M6.5 20.2l2.6-.7L19 9.6l-2.6-2.6L6.5 17z"/><path d="M15.2 5.6l2.6 2.6"/><path d="M5.4 21.6l1.6-2.6"/>'),
+    // 商业图卡：柱图
+    chart: S('<path d="M4.2 20.2h15.6"/><path d="M7.2 20.2V13M12 20.2V7.8M16.8 20.2v-4.6"/>'),
+
+    /* ⑤ 串起来 */
+    // 营销工作流：三节点链（本地 / LLM / 人工）
+    flow: S('<circle cx="5.4" cy="6.4" r="2.3"/><circle cx="5.4" cy="17.6" r="2.3"/><circle cx="18.6" cy="12" r="2.3"/><path d="M7.4 7.6l9.1 3.4M7.4 16.4l9.1-3.4"/>'),
+    // Agent 工作台：对话气泡
+    agent: S('<path d="M4.2 6.4a2 2 0 012-2h11.6a2 2 0 012 2v7.2a2 2 0 01-2 2H9.4L4.4 20z"/><path d="M8.4 10.2h.01M12 10.2h.01M15.6 10.2h.01"/>'),
+    // 营销日历：挂环 + 网格 + 跨天条
+    cal: S('<path d="M4.4 6.6h15.2v13.2H4.4z"/><path d="M8.2 3.6v4M15.8 3.6v4"/><path d="M4.4 10.4h15.2"/><path d="M7 13.6h8.4"/>'),
+    // 方案合成：剪板 + 汇总行
+    synth: S('<path d="M8.6 4.2h6.8v3H8.6z"/><path d="M6 6.4h12v13.4H6z"/><path d="M8.8 10.8h6.4M8.8 14.2h6.4M8.8 17.6h4.2"/>'),
+    // 内容包：开箱立方体
+    packs: S('<path d="M12 3.4l8 4.4v8.4L12 20.6 4 16.2V7.8z"/><path d="M4 7.8l8 4.4 8-4.4"/><path d="M12 12.2v8.4"/>'),
+
+    /* ⑥ 存下来 */
+    // 品牌知识库：三本书
+    kb: S('<path d="M4 4.6h4.6v15H4z"/><path d="M9.7 4.6h4.6v15H9.7z"/><path d="M15.6 6.2l4.4 1.2v11.6l-4.4-1.2z"/>'),
+    // 品牌资产：调色板
+    assets: S('<circle cx="12" cy="12" r="8.5"/><circle cx="9.2" cy="9.6" r="1.25"/><circle cx="14.6" cy="10.2" r="1.25"/><circle cx="10.4" cy="15" r="1.25"/>'),
+    // 品牌轨迹：时间轴 + 疏密节点
+    timeline: S('<path d="M6.8 4.2v15.6"/><circle cx="6.8" cy="8" r="2.1"/><circle cx="6.8" cy="16.2" r="2.1"/><path d="M12.4 7.4h7.6M12.4 15.6h5"/>'),
+    // 系统设置：齿轮
+    settings: S('<circle cx="12" cy="12" r="3.2"/><path d="M12 3.6v2.8M12 17.6v2.8M4.4 7.6l2.4 1.4M17.2 15l2.4 1.4M4.4 16.4l2.4-1.4M17.2 9l2.4-1.4"/>')
+  };
+
+  /* ---------- 状态圆点：替代 🔴🟡⚠️ 等语义 emoji ----------
+   * 只在 UI 徽章/状态位使用；报告正文里的 emoji 保留（用户会复制走）。
+   * 相比 emoji：渲染一致（不受系统字体影响）、可跟随主题、零体积。 */
+  var DOT_KIND = { ok: '--ok', good: '--ok', warn: '--warn', alert: '--alert', stop: '--alert', signal: '--signal', mute: '--mute' };
+
+  function dotTag(kind) {
+    var k = DOT_KIND[kind] || '--mute';
+    return '<i class="dot dot' + k + '" aria-hidden="true"></i>';
+  }
+
+  /* ---------- 应用：把 Tab 名称里的 emoji 换成 SVG ---------- */
+  function applyTabIcons() {
+    var tabs = document.querySelectorAll('.tab[data-tab]');
+    var n = 0;
+    for (var i = 0; i < tabs.length; i++) {
+      var btn = tabs[i];
+      var key = btn.getAttribute('data-tab');
+      var nm = btn.querySelector('.tab__name');
+      if (!nm || !ICONS[key]) continue;
+      if (nm.getAttribute('data-iconed') === '1') continue;
+      // 去掉开头的 emoji 与空白，只保留中文/字母数字标签
+      var label = nm.textContent.replace(/^[^一-龥A-Za-z0-9]+/, '').trim();
+      if (!label) continue;
+      nm.setAttribute('data-iconed', '1');
+      nm.innerHTML = ICONS[key] + '<span>' + label + '</span>';
+      n++;
+    }
+    return n;
+  }
+
+  /* 立即执行一次（脚本位于 body 末尾，DOM 已就绪） */
+  var applied = 0;
+  try { applied = applyTabIcons(); } catch (e) { /* 失败则保留 emoji */ }
+
+  // 兜底：若因时序问题未生效，DOMContentLoaded 与 load 各再试一次
+  if (!applied) {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function () {
+        try { applyTabIcons(); } catch (e) {}
+      });
+    }
+    window.addEventListener && window.addEventListener('load', function () {
+      try { applyTabIcons(); } catch (e) {}
+    });
+  }
+
+  // 暴露给其它模块与调试
+  window.ICONS = ICONS;
+  window.iconSvg = function (k) { return ICONS[k] || ''; };
+  window.dotTag = dotTag;
+  window.iconApplyTabs = applyTabIcons;
+})();
+
 /* ===== src/41-moretools.js ===== */
 /* ============================================================
  * 41-moretools.js —— 扩充可编排工具集（14 → 17）
@@ -19451,6 +19584,505 @@ function analyzeTimelineReport(){
   }
 })();
 
+/* ===== src/44-sim.js ===== */
+/* ============================================================
+ * 决策推演 —— 战略矩阵回答「你在哪」，决策推演回答「会怎样」
+ *
+ *  ① 盈亏平衡曲线：参数 → 保本点 / 安全边际 / 经营杠杆
+ *  ② 敏感性龙卷风：哪个假设错了会毁掉方案
+ *  ③ BCG 迁移箭头：快照之间业务位置的真实移动
+ *
+ * 设计原则（与全产品一致）：
+ *   - 只算能算的，不含糊其辞
+ *   - 模型假设明确写出，不伪装成精确
+ *   - 样本/数据不足时明说，不给假结论
+ * ============================================================ */
+
+/* ---------- 数据模型 ---------- */
+function sim(){
+  if(!state.sim) state.sim = {
+    be:{ f:240000, p:39, v:13, q:9000, step:false, cap:5000 },
+    tor:{ pct:10 }
+  };
+  return state.sim;
+}
+
+/* ---------- ① 盈亏平衡 ---------- */
+/* 线性模型：Q* = F / (P − V)
+ * 阶梯模型：固定成本随产能台阶跃升 F(Q) = F × ceil(Q / cap)
+ * 后者更接近真实（扩产要加设备/加人），但会让「保本点」变成区间而非单点 */
+function calcBreakEven(){
+  var S = sim(), b = S.be;
+  var F = +b.f || 0, P = +b.p || 0, V = +b.v || 0, Q = +b.q || 0;
+  var cm = P - V;                       // 单位贡献毛利
+
+  if(cm <= 0){
+    return { ok:false, msg:'单位贡献毛利 ≤ 0（单价不高于变动成本），此模型下永远无法保本。' };
+  }
+
+  var qStar = F / cm;                   // 保本销量
+  var rStar = qStar * P;                // 保本营收
+  var margin = Q > 0 ? (Q - qStar) / Q : 0;              // 安全边际
+  var profit = cm * Q - F;                                // 预计利润
+  var cmr = P > 0 ? cm / P : 0;                           // 贡献毛利率
+  var leverage = profit !== 0 ? (cm * Q) / profit : null; // 经营杠杆率
+
+  // 阶梯模式下，实际固定成本取决于预测销量落在第几个产能台阶
+  var tiers = 1, fEff = F, qStarStep = qStar;
+  if(b.step && +b.cap > 0){
+    tiers = Math.ceil(Q / (+b.cap)) || 1;
+    fEff = F * tiers;
+    qStarStep = fEff / cm;
+  }
+
+  return {
+    ok:true, F:F, P:P, V:V, Q:Q, cm:cm,
+    qStar:qStar, rStar:rStar, margin:margin, profit:profit,
+    cmr:cmr, leverage:leverage,
+    step:!!b.step, cap:+b.cap || 0, tiers:tiers, fEff:fEff, qStarStep:qStarStep,
+    warn: Q > 0 && Q < qStar
+  };
+}
+
+function svgBreakEven(r){
+  if(!r || !r.ok) return '<span class="ph">' + esc(r && r.msg || '填参数后生成曲线') + '</span>';
+
+  var W = 880, H = 460, padL = 78, padR = 34, padT = 58, padB = 62;
+  var pw = W - padL - padR, ph = H - padT - padB;
+
+  var qMax = Math.max(r.Q, r.qStar, r.step ? r.qStarStep : 0) * 1.25 || 100;
+  var cMax = Math.max(r.P * qMax, r.fEff + r.V * qMax) * 1.05 || 1000;
+
+  var X = function(q){ return padL + q / qMax * pw; };
+  var Y = function(c){ return padT + ph - c / cMax * ph; };
+
+  var s = '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H +
+          '" viewBox="0 0 ' + W + ' ' + H + '" font-family="PingFang SC,Microsoft YaHei,sans-serif">';
+  s += cxFrame(W, H, '盈亏平衡分析', 'BREAK-EVEN · ' + todayStr());
+
+  // 盈亏区着色
+  var y0 = Y(0);
+  s += '<rect x="' + X(r.qStar).toFixed(1) + '" y="' + padT + '" width="' +
+       Math.max(0, X(qMax) - X(r.qStar)).toFixed(1) + '" height="' + (y0 - padT).toFixed(1) +
+       '" fill="' + CX.s + '" fill-opacity="0.07"/>';
+  s += '<rect x="' + padL + '" y="' + padT + '" width="' +
+       Math.max(0, X(r.qStar) - padL).toFixed(1) + '" height="' + (y0 - padT).toFixed(1) +
+       '" fill="' + CX.t + '" fill-opacity="0.06"/>';
+
+  // 网格
+  for(var i = 1; i <= 4; i++){
+    var gy = padT + ph * i / 5;
+    s += '<line x1="' + padL + '" y1="' + gy.toFixed(1) + '" x2="' + (padL + pw) + '" y2="' + gy.toFixed(1) +
+         '" stroke="' + CX.line + '" stroke-width="1"/>';
+  }
+
+  // 收入线
+  s += '<line x1="' + X(0) + '" y1="' + Y(0) + '" x2="' + X(qMax) + '" y2="' + Y(r.P * qMax) +
+       '" stroke="' + CX.o + '" stroke-width="2.2"/>';
+  // 成本线（线性部分）
+  s += '<line x1="' + X(0) + '" y1="' + Y(r.fEff) + '" x2="' + X(qMax) + '" y2="' + Y(r.fEff + r.V * qMax) +
+       '" stroke="' + CX.t + '" stroke-width="2.2"/>';
+
+  // 阶梯成本（可选）：固定成本随产能台阶跃升
+  if(r.step && r.cap > 0){
+    s += '<polyline fill="none" stroke="' + CX.t + '" stroke-width="2.2" stroke-dasharray="5 3" points="';
+    var pts = [];
+    for(var t = 0; t <= Math.ceil(qMax / r.cap); t++){
+      var q1 = t * r.cap, q2 = Math.min((t + 1) * r.cap, qMax);
+      if(q1 > qMax) break;
+      var ft = r.F * Math.max(1, t);
+      var ft2 = r.F * (t + 1);
+      pts.push(X(q1).toFixed(1) + ',' + Y(ft + r.V * q1).toFixed(1));
+      pts.push(X(q2).toFixed(1) + ',' + Y(ft + r.V * q2).toFixed(1));
+      if(t + 1 <= Math.ceil(qMax / r.cap)){
+        pts.push(X(q2).toFixed(1) + ',' + Y(ft2 + r.V * q2).toFixed(1));
+      }
+    }
+    s += pts.join(' ') + '"/>';
+  }
+
+  // 保本点
+  var bx = X(r.step ? r.qStarStep : r.qStar), by = Y(r.P * (r.step ? r.qStarStep : r.qStar));
+  s += '<line x1="' + bx.toFixed(1) + '" y1="' + by.toFixed(1) + '" x2="' + bx.toFixed(1) + '" y2="' + y0 +
+       '" stroke="' + CX.ink + '" stroke-width="1" stroke-dasharray="3 3"/>';
+  s += '<circle cx="' + bx.toFixed(1) + '" cy="' + by.toFixed(1) + '" r="5.5" fill="' + CX.ink + '"/>';
+  s += '<text x="' + (bx + 10).toFixed(1) + '" y="' + (by - 8).toFixed(1) + '" font-size="13" font-weight="700" fill="' +
+       CX.ink + '">保本 ' + Math.round(r.step ? r.qStarStep : r.qStar).toLocaleString() + ' 件</text>';
+
+  // 预测销量位置
+  if(r.Q > 0){
+    var qx = X(r.Q);
+    s += '<line x1="' + qx.toFixed(1) + '" y1="' + padT + '" x2="' + qx.toFixed(1) + '" y2="' + y0 +
+         '" stroke="' + (r.warn ? CX.t : CX.s) + '" stroke-width="1.4" stroke-dasharray="4 3"/>';
+    s += '<text x="' + (qx + 6).toFixed(1) + '" y="' + (padT + 14) + '" font-size="12" fill="' +
+         (r.warn ? CX.t : CX.s) + '">预测 ' + Math.round(r.Q).toLocaleString() + '</text>';
+  }
+
+  // 轴
+  s += '<line x1="' + padL + '" y1="' + y0 + '" x2="' + (padL + pw) + '" y2="' + y0 + '" stroke="' + CX.ink + '"/>';
+  s += '<line x1="' + padL + '" y1="' + padT + '" x2="' + padL + '" y2="' + y0 + '" stroke="' + CX.ink + '"/>';
+  s += '<text x="' + (padL + pw / 2) + '" y="' + (H - 18) + '" font-size="12" fill="' + CX.sub +
+       '" text-anchor="middle">销量（件）</text>';
+  s += '<text x="16" y="' + (padT + ph / 2) + '" font-size="12" fill="' + CX.sub +
+       '" transform="rotate(-90 16 ' + (padT + ph / 2) + ')" text-anchor="middle">金额（元）</text>';
+
+  // 图例
+  s += '<g font-size="12">';
+  s += '<line x1="' + (padL + pw - 150) + '" y1="' + (padT - 26) + '" x2="' + (padL + pw - 126) + '" y2="' +
+       (padT - 26) + '" stroke="' + CX.o + '" stroke-width="2.2"/>';
+  s += '<text x="' + (padL + pw - 120) + '" y="' + (padT - 22) + '" fill="' + CX.sub + '">收入</text>';
+  s += '<line x1="' + (padL + pw - 80) + '" y1="' + (padT - 26) + '" x2="' + (padL + pw - 56) + '" y2="' +
+       (padT - 26) + '" stroke="' + CX.t + '" stroke-width="2.2"/>';
+  s += '<text x="' + (padL + pw - 50) + '" y="' + (padT - 22) + '" fill="' + CX.sub + '">总成本</text>';
+  s += '</g>';
+
+  s += '</svg>';
+  return s;
+}
+
+/* ---------- ② 敏感性龙卷风 ---------- */
+/* 对每个变量做 ±pct% 扰动，看保本销量 Q* 变化幅度，按跨度降序 */
+function calcTornado(){
+  var S = sim(), b = S.be, pct = (+S.tor.pct || 10) / 100;
+  var F = +b.f || 0, P = +b.p || 0, V = +b.v || 0;
+  var cm = P - V;
+  if(cm <= 0) return null;
+
+  var base = F / cm;
+  var vars = [
+    { k:'p', n:'单价',        lo:P * (1 - pct), hi:P * (1 + pct) },
+    { k:'v', n:'单位变动成本', lo:V * (1 - pct), hi:V * (1 + pct) },
+    { k:'f', n:'固定成本',     lo:F * (1 - pct), hi:F * (1 + pct) }
+  ];
+
+  var rows = vars.map(function(x){
+    var qLo, qHi;
+    if(x.k === 'p'){ qLo = F / (x.lo - V); qHi = F / (x.hi - V); }
+    else if(x.k === 'v'){ qLo = F / (P - x.lo); qHi = F / (P - x.hi); }
+    else { qLo = x.lo / cm; qHi = x.hi / cm; }
+    // 保本销量上升 = 更不利
+    var dLo = base ? (qLo - base) / base : 0;
+    var dHi = base ? (qHi - base) / base : 0;
+    return {
+      k:x.k, n:x.n,
+      dLo:dLo, dHi:dHi,
+      span:Math.abs(dHi) + Math.abs(dLo),
+      worst:Math.max(dLo, dHi)      // 最不利方向（保本点被推高）
+    };
+  });
+
+  rows.sort(function(a, c){ return c.span - a.span; });
+  return { base:base, pct:(+S.tor.pct || 10), rows:rows };
+}
+
+function svgTornado(t){
+  if(!t) return '<span class="ph">贡献毛利 ≤ 0，无法做敏感性分析</span>';
+
+  var W = 880, rowH = 46, padL = 130, padR = 40, padT = 58, padB = 54;
+  var H = padT + t.rows.length * rowH + padB;
+  var pw = W - padL - padR;
+  var cx = padL + pw / 2;
+
+  var maxSpan = t.rows.reduce(function(a, r){ return Math.max(a, r.span); }, 0.001);
+  var half = pw / 2;
+
+  var s = '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H +
+          '" viewBox="0 0 ' + W + ' ' + H + '" font-family="PingFang SC,Microsoft YaHei,sans-serif">';
+  s += cxFrame(W, H, '敏感性分析（龙卷风）', 'TORNADO · 目标：保本销量 Q* · 扰动 ±' + t.pct + '%');
+
+  // 中轴
+  s += '<line x1="' + cx + '" y1="' + (padT - 6) + '" x2="' + cx + '" y2="' + (H - padB + 6) +
+       '" stroke="' + CX.ink + '" stroke-width="1"/>';
+  s += '<text x="' + cx + '" y="' + (padT - 14) + '" font-size="11" fill="' + CX.mute +
+       '" text-anchor="middle">基准 ' + Math.round(t.base).toLocaleString() + ' 件</text>';
+
+  t.rows.forEach(function(r, i){
+    var y = padT + i * rowH;
+    var wLo = Math.abs(r.dLo) / maxSpan * half;
+    var wHi = Math.abs(r.dHi) / maxSpan * half;
+    var top = r === t.rows[0];
+
+    // 左（变量降 → 保本点变化）
+    s += '<rect x="' + (cx - wLo).toFixed(1) + '" y="' + (y + 6) + '" width="' + wLo.toFixed(1) +
+         '" height="26" fill="' + CX.o + '" fill-opacity="' + (top ? 0.85 : 0.45) + '"/>';
+    // 右（变量升 → 保本点变化）
+    s += '<rect x="' + cx + '" y="' + (y + 6) + '" width="' + wHi.toFixed(1) +
+         '" height="26" fill="' + CX.t + '" fill-opacity="' + (top ? 0.85 : 0.45) + '"/>';
+
+    s += '<text x="' + (padL - 12) + '" y="' + (y + 24) + '" font-size="13" fill="' + CX.ink +
+         '" text-anchor="end" font-weight="' + (top ? 700 : 400) + '">' + esc(r.n) + '</text>';
+
+    // 数值标注（取幅度更大的一侧）
+    var showLo = Math.abs(r.dLo) >= Math.abs(r.dHi);
+    var lbl = (showLo ? (r.dLo >= 0 ? '+' : '') + (r.dLo * 100).toFixed(1)
+                      : (r.dHi >= 0 ? '+' : '') + (r.dHi * 100).toFixed(1)) + '%';
+    var lx = showLo ? (cx - wLo - 8) : (cx + wHi + 8);
+    s += '<text x="' + lx.toFixed(1) + '" y="' + (y + 24) + '" font-size="12" fill="' + CX.sub +
+         '" text-anchor="' + (showLo ? 'end' : 'start') + '">' + lbl + '</text>';
+  });
+
+  s += '<text x="' + padL + '" y="' + (H - 20) + '" font-size="11" fill="' + CX.mute +
+       '">横条越长 = 该变量对保本点影响越大。最上面一条是你最该去验证的假设。</text>';
+  s += '</svg>';
+  return s;
+}
+
+/* ---------- ③ BCG 迁移箭头 ---------- */
+function svgBcgTrack(){
+  var mx = state.mx;
+  var snaps = (mx && mx.snaps) ? mx.snaps.slice().sort(function(a, c){
+    return String(a.date || '').localeCompare(String(c.date || ''));
+  }) : [];
+
+  if(snaps.length < 2){
+    return '<span class="ph">至少保存 2 个战略快照（在「策略模板 → BCG → 保存快照」），这里会画出业务位置的迁移路径</span>';
+  }
+
+  var W = 880, H = 520, padL = 76, padR = 40, padT = 56, padB = 66;
+  var pw = W - padL - padR, ph = H - padT - padB;
+
+  // 汇总所有快照中的业务，取坐标范围
+  var all = [];
+  snaps.forEach(function(sn){
+    (sn.bcg || []).forEach(function(r){
+      if(r && r.n) all.push({ n:String(r.n).trim(), growth:+r.growth || 0, share:+r.share || 0, d:sn.date });
+    });
+  });
+  if(!all.length) return '<span class="ph">快照里没有 BCG 业务数据</span>';
+
+  var gMax = Math.max.apply(null, all.map(function(a){ return a.growth; }).concat([10])) * 1.15;
+  var gMin = Math.min.apply(null, all.map(function(a){ return a.growth; }).concat([0]));
+  if(gMax === gMin) gMax = gMin + 10;
+  var mMax = Math.max.apply(null, all.map(function(a){ return a.share; }).concat([1.5])) * 1.15;
+
+  var X = function(v){ return padL + Math.max(0, Math.min(mMax, v)) / mMax * pw; };
+  var Y = function(v){ return padT + ph - (Math.max(gMin, Math.min(gMax, v)) - gMin) / (gMax - gMin) * ph; };
+
+  var s = '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H +
+          '" viewBox="0 0 ' + W + ' ' + H + '" font-family="PingFang SC,Microsoft YaHei,sans-serif">';
+  s += cxFrame(W, H, 'BCG 迁移轨迹', 'MOVEMENT · ' + snaps.length + ' 个快照 · ' + todayStr());
+
+  // 象限参考（用最后一个快照的模式，默认 ratio 阈值 1）
+  var last = snaps[snaps.length - 1];
+  var mTh = (last.bcgMode === 'pct') ? 50 : 1;
+  var gs = all.map(function(a){ return a.growth; }).sort(function(a, b){ return a - b; });
+  var gTh = gs[Math.floor(gs.length / 2)] || 10;
+
+  s += '<line x1="' + X(mTh).toFixed(1) + '" y1="' + padT + '" x2="' + X(mTh).toFixed(1) + '" y2="' + (padT + ph) +
+       '" stroke="' + CX.line + '" stroke-width="1" stroke-dasharray="4 4"/>';
+  s += '<line x1="' + padL + '" y1="' + Y(gTh).toFixed(1) + '" x2="' + (padL + pw) + '" y2="' + Y(gTh).toFixed(1) +
+       '" stroke="' + CX.line + '" stroke-width="1" stroke-dasharray="4 4"/>';
+
+  // 按业务名分组，画路径
+  var byName = {};
+  all.forEach(function(a){
+    if(!byName[a.n]) byName[a.n] = [];
+    byName[a.n].push(a);
+  });
+
+  var colors = [CX.o, CX.s, CX.w, CX.t, CX.brand];
+  var ci = 0, legend = [];
+  Object.keys(byName).forEach(function(n){
+    var pts = byName[n].sort(function(a, c){ return String(a.d).localeCompare(String(c.d)); });
+    if(pts.length < 2) return;
+    var col = colors[ci % colors.length]; ci++;
+
+    for(var i = 1; i < pts.length; i++){
+      var a = pts[i - 1], b2 = pts[i];
+      var x1 = X(a.share), y1 = Y(a.growth), x2 = X(b2.share), y2 = Y(b2.growth);
+      var dx = x2 - x1, dy = y2 - y1;
+      var len = Math.sqrt(dx * dx + dy * dy) || 1;
+      var ux = dx / len, uy = dy / len;
+      var ex = x2 - ux * 9, ey = y2 - uy * 9;
+
+      s += '<line x1="' + x1.toFixed(1) + '" y1="' + y1.toFixed(1) + '" x2="' + ex.toFixed(1) + '" y2="' + ey.toFixed(1) +
+           '" stroke="' + col + '" stroke-width="2"/>';
+      // 箭头
+      s += '<polygon points="' + x2.toFixed(1) + ',' + y2.toFixed(1) + ' ' +
+           (ex - uy * 4).toFixed(1) + ',' + (ey + ux * 4).toFixed(1) + ' ' +
+           (ex + uy * 4).toFixed(1) + ',' + (ey - ux * 4).toFixed(1) + '" fill="' + col + '"/>';
+    }
+
+    pts.forEach(function(p, idx){
+      var x = X(p.share), y = Y(p.growth);
+      s += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + (idx === pts.length - 1 ? 6 : 4) +
+           '" fill="' + (idx === pts.length - 1 ? col : CX.paper) + '" stroke="' + col + '" stroke-width="2"/>';
+      if(idx === pts.length - 1){
+        s += '<text x="' + (x + 10).toFixed(1) + '" y="' + (y + 4).toFixed(1) + '" font-size="12" fill="' +
+             CX.ink + '" font-weight="600">' + esc(n) + '</text>';
+      }
+    });
+
+    // 判定方向
+    var f0 = pts[0], f1 = pts[pts.length - 1];
+    var better = (f1.share - f0.share), betterG = (f1.growth - f0.growth);
+    var verdict = '持平';
+    if(better > 0.02 && betterG > 0.02) verdict = '进入更优';
+    else if(better < -0.02 && betterG < -0.02) verdict = '恶化';
+    else if(better > 0.02) verdict = '份额提升';
+    else if(betterG > 0.02) verdict = '增长提速';
+    legend.push({ n:n, c:col, v:verdict });
+  });
+
+  // 轴
+  s += '<line x1="' + padL + '" y1="' + (padT + ph) + '" x2="' + (padL + pw) + '" y2="' + (padT + ph) +
+       '" stroke="' + CX.ink + '"/>';
+  s += '<line x1="' + padL + '" y1="' + padT + '" x2="' + padL + '" y2="' + (padT + ph) + '" stroke="' + CX.ink + '"/>';
+  s += '<text x="' + (padL + pw / 2) + '" y="' + (H - 18) + '" font-size="12" fill="' + CX.sub +
+       '" text-anchor="middle">相对份额 →</text>';
+  s += '<text x="16" y="' + (padT + ph / 2) + '" font-size="12" fill="' + CX.sub +
+       '" transform="rotate(-90 16 ' + (padT + ph / 2) + ')" text-anchor="middle">市场增长率 →</text>';
+
+  // 图例
+  var ly = padT + 2;
+  legend.forEach(function(l){
+    s += '<circle cx="' + (padL + pw - 12) + '" cy="' + (ly + 6) + '" r="4.5" fill="' + l.c + '"/>';
+    s += '<text x="' + (padL + pw - 22) + '" y="' + (ly + 10) + '" font-size="11" fill="' + CX.sub +
+         '" text-anchor="end">' + esc(l.n) + ' · ' + l.v + '</text>';
+    ly += 18;
+  });
+
+  s += '</svg>';
+  return s;
+}
+
+/* ---------- 渲染 ---------- */
+function renderSimAll(){
+  var S = sim(), b = S.be;
+  var setv = function(id, v){ var e = $(id); if(e) e.value = v; };
+  setv('#simF', b.f); setv('#simP', b.p); setv('#simV', b.v); setv('#simQ', b.q);
+  setv('#simCap', b.cap);
+  var st = $('#simStep'); if(st) st.checked = !!b.step;
+  var tp = $('#simPct'); if(tp) tp.value = S.tor.pct;
+
+  renderSimBe();
+  renderSimTor();
+  renderSimTrack();
+}
+
+function renderSimBe(){
+  var r = calcBreakEven();
+  var out = $('#simBeOut');
+  if(!r.ok){
+    if(out) out.innerHTML = '<div class="warnbox">⚠ ' + esc(r.msg) + '</div>';
+    var c0 = $('#simBeChart'); if(c0) c0.innerHTML = '<span class="ph">—</span>';
+    return;
+  }
+  if(out){
+    var h = '<div class="kvlist">';
+    h += '<div class="kv"><span>保本销量</span><b>' + Math.round(r.qStar).toLocaleString() + ' 件</b></div>';
+    h += '<div class="kv"><span>保本营收</span><b>¥' + Math.round(r.rStar).toLocaleString() + '</b></div>';
+    h += '<div class="kv"><span>安全边际</span><b class="' + (r.margin < 0 ? 'bad' : (r.margin < 0.15 ? 'warn' : 'good')) +
+         '">' + (r.margin * 100).toFixed(1) + '%</b></div>';
+    h += '<div class="kv"><span>预计利润</span><b class="' + (r.profit < 0 ? 'bad' : 'good') + '">¥' +
+         Math.round(r.profit).toLocaleString() + '</b></div>';
+    h += '<div class="kv"><span>贡献毛利率</span><b>' + (r.cmr * 100).toFixed(1) + '%</b></div>';
+    h += '<div class="kv"><span>经营杠杆率</span><b>' +
+         (r.leverage === null ? '—' : r.leverage.toFixed(2)) + '</b></div>';
+    h += '</div>';
+
+    if(r.step){
+      h += '<div class="note">阶梯模式：预测销量落在第 <b>' + r.tiers + '</b> 个产能台阶，' +
+           '实际固定成本 ¥' + Math.round(r.fEff).toLocaleString() +
+           '，保本点升至 <b>' + Math.round(r.qStarStep).toLocaleString() + '</b> 件。</div>';
+    }
+    if(r.warn){
+      h += '<div class="warnbox">⚠ 预测销量低于保本点，此方案在当前参数下会亏损。</div>';
+    }
+    if(r.leverage !== null && Math.abs(r.leverage) > 3){
+      h += '<div class="note">经营杠杆率 ' + r.leverage.toFixed(2) +
+           '：销量每波动 10%，利润约波动 ' + Math.abs(r.leverage * 10).toFixed(0) + '%。高杠杆意味着高弹性，也意味着高风险。</div>';
+    }
+    out.innerHTML = h;
+  }
+  var c = $('#simBeChart'); if(c) c.innerHTML = svgBreakEven(r);
+}
+
+function renderSimTor(){
+  var t = calcTornado();
+  var out = $('#simTorOut');
+  if(!t){
+    if(out) out.innerHTML = '<div class="warnbox">⚠ 单位贡献毛利 ≤ 0，无法做敏感性分析。</div>';
+    var c0 = $('#simTorChart'); if(c0) c0.innerHTML = '<span class="ph">—</span>';
+    return;
+  }
+  if(out){
+    var h = '<div class="note">对三个变量各做 ±' + t.pct + '% 扰动，看<b>保本销量</b>被推动多少。' +
+            '最上面一条是最该先去验证的假设——它错了，整个方案的结论就变了。</div>';
+    h += '<div class="kvlist">';
+    t.rows.forEach(function(r, i){
+      h += '<div class="kv"><span>' + (i === 0 ? '🔴 最敏感 · ' : '') + esc(r.n) + '</span><b>跨度 ' +
+           (r.span * 100).toFixed(1) + '%</b></div>';
+    });
+    h += '</div>';
+    out.innerHTML = h;
+  }
+  var c = $('#simTorChart'); if(c) c.innerHTML = svgTornado(t);
+}
+
+function renderSimTrack(){
+  var c = $('#simTrackChart');
+  if(c) c.innerHTML = svgBcgTrack();
+}
+
+/* ---------- 交互 ---------- */
+function simOnInput(){
+  var S = sim();
+  var g = function(id){ var e = $(id); return e ? e.value : ''; };
+  S.be.f = +g('#simF') || 0;
+  S.be.p = +g('#simP') || 0;
+  S.be.v = +g('#simV') || 0;
+  S.be.q = +g('#simQ') || 0;
+  S.be.cap = +g('#simCap') || 0;
+  var st = $('#simStep'); S.be.step = st ? !!st.checked : false;
+  var tp = $('#simPct'); S.tor.pct = +g('#simPct') || 10;
+  save();
+  renderSimBe();
+  renderSimTor();
+}
+
+function simExport(){
+  var r = calcBreakEven(), t = calcTornado();
+  var md = '# 决策推演报告\n\n生成日期：' + todayStr() + '\n\n';
+  md += '## 一、盈亏平衡\n\n';
+  if(r.ok){
+    md += '- 固定成本：¥' + r.F.toLocaleString() + '\n';
+    md += '- 单价：¥' + r.P + ' / 单位变动成本：¥' + r.V + '\n';
+    md += '- 单位贡献毛利：¥' + r.cm.toFixed(2) + '（贡献毛利率 ' + (r.cmr * 100).toFixed(1) + '%）\n';
+    md += '- **保本销量：' + Math.round(r.qStar).toLocaleString() + ' 件**（保本营收 ¥' + Math.round(r.rStar).toLocaleString() + '）\n';
+    md += '- 预测销量：' + Math.round(r.Q).toLocaleString() + ' 件\n';
+    md += '- 安全边际：' + (r.margin * 100).toFixed(1) + '%\n';
+    md += '- 预计利润：¥' + Math.round(r.profit).toLocaleString() + '\n';
+    md += '- 经营杠杆率：' + (r.leverage === null ? '—' : r.leverage.toFixed(2)) + '\n';
+    if(r.step) md += '- 阶梯模式：第 ' + r.tiers + ' 个产能台阶，保本点 ' + Math.round(r.qStarStep).toLocaleString() + ' 件\n';
+    if(r.warn) md += '\n> ⚠ 预测销量低于保本点，当前参数下会亏损。\n';
+  } else {
+    md += r.msg + '\n';
+  }
+  md += '\n## 二、敏感性分析\n\n';
+  if(t){
+    md += '扰动幅度 ±' + t.pct + '%，目标变量：保本销量（基准 ' + Math.round(t.base).toLocaleString() + ' 件）\n\n';
+    md += '| 变量 | 降低 ' + t.pct + '% | 提高 ' + t.pct + '% | 影响跨度 |\n|---|---|---|---|\n';
+    t.rows.forEach(function(x){
+      md += '| ' + x.n + ' | ' + (x.dLo * 100).toFixed(1) + '% | ' + (x.dHi * 100).toFixed(1) + '% | ' +
+             (x.span * 100).toFixed(1) + '% |\n';
+    });
+    md += '\n最敏感变量：**' + t.rows[0].n + '**——优先验证它。\n';
+  }
+  md += '\n## 三、模型假设与边界\n\n';
+  md += '- 收入与变动成本按线性处理；真实场景可能存在规模效应或阶梯成本（已提供阶梯开关）。\n';
+  md += '- 敏感性分析仅测试单变量扰动，未考虑变量之间的联动（如降价可能同时推高销量）。\n';
+  md += '- 所有数字取决于你填入的估算值，**本报告不预测未来，只呈现假设的后果**。\n';
+
+  downloadFile('决策推演报告_' + todayStr() + '.md', md, 'text/markdown');
+  toast('已导出决策推演报告');
+}
+
+/* ---------- 注册到全局（供 HTML 内联调用） ---------- */
+window.renderSimAll = renderSimAll;
+window.simOnInput = simOnInput;
+window.simExport = simExport;
+
 /* ===== src/16-boot.js ===== */
 /* ================= 回填 ================= */
 function restoreAll(){
@@ -19641,6 +20273,7 @@ function restoreAll(){
 
   /* 战略矩阵：回填 */
   renderStratAll();
+  if(window.renderSimAll) renderSimAll();
 
   /* 财务测算：回填 */
   var F = fin();

@@ -803,36 +803,6 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
 .asrow__t{flex:2;min-width:180px;border:none;background:transparent;font-size:12.5px;font-weight:600;}
 .asrow__h{flex:1.4;min-width:130px;border:none;background:transparent;font-size:11.5px;color:var(--text-2);}
 .asrow__s{font-size:11px;padding:3px 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);}
-.asrow__src{font-size:11px;padding:3px 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);max-width:150px;}
-.asrow.is-nopath{border-left-color:var(--alert);background:var(--alert-soft,#fff5f5);}
-.asrow__warn{
-  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.06em;
-  padding:2px 7px;border-radius:100px;color:var(--alert);
-  border:1px solid var(--alert-line,var(--alert));background:var(--alert-soft,#fff5f5);
-  white-space:nowrap;flex:0 0 auto;
-}
-
-/* 准入 / 合规门禁 */
-.gatelist{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;}
-.gatebox{border:1px solid var(--line);border-radius:var(--r-sm);padding:10px 12px;background:var(--card);}
-.gatebox__hd{
-  font-size:12.5px;font-weight:700;margin-bottom:8px;
-  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
-}
-.gaterow{
-  display:flex;gap:8px;align-items:center;justify-content:space-between;
-  padding:6px 0;border-top:1px solid var(--line);
-}
-.gaterow:first-of-type{border-top:none;}
-.gaterow__t{font-size:11.5px;color:var(--text-2);flex:1;line-height:1.5;}
-.gaterow__s{font-size:11px;padding:3px 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);flex:0 0 auto;}
-.gaterow.is-pass .gaterow__s{color:var(--ok);border-color:var(--ok-line);background:var(--ok-soft);}
-.gaterow.is-block .gaterow__s{color:var(--alert);border-color:var(--alert-line,var(--alert));background:var(--alert-soft,#fff5f5);}
-.gaterow.is-block .gaterow__t{color:var(--alert);font-weight:600;}
-@media(max-width:620px){
-  .gatelist{grid-template-columns:1fr;}
-  .asrow__src{max-width:100%;}
-}
 
 .seglist{display:flex;flex-direction:column;gap:7px;}
 .segrow{display:flex;gap:7px;align-items:center;flex-wrap:wrap;}

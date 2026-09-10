@@ -187,6 +187,7 @@ function restoreAll(){
 
   /* 战略矩阵：回填 */
   renderStratAll();
+  if(window.renderSimAll) renderSimAll();
 
   /* 财务测算：回填 */
   var F = fin();
