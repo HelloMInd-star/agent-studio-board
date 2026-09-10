@@ -354,6 +354,35 @@ record is clickable and **jumps back to its source**. Calendar actions carry an
 event's edit dialog. Other types can only jump to module level, because their
 records have no stable id. That limit is shown as-is rather than papered over.
 
+#### Insights and export (batch 3)
+
+Four deterministic aggregations over the same record set — no new data, no
+guessing:
+
+| card | what is computed | guard |
+|---|---|---|
+| 30-day activity | per-day record counts, mini bar chart | empty state when no records |
+| content quality | least-squares slope over `state.scores` | **n < 5 → "insufficient sample"**, no trend claimed |
+| execution rate | `done / total`, overdue = unfinished past planned date | n/a when no events |
+| follow-up gaps | days since last record per type vs threshold | thresholds are heuristics, disclosed in UI |
+
+The sample-size guard matters: a regression over 3 points produces a number,
+but not a *conclusion*. The module shows the latest score and refuses to
+describe a trend until enough observations exist.
+
+**Calendar export** implements two RFC-ish details that are easy to get wrong:
+
+- iCal `DTEND` is **exclusive** for all-day events. A single-day event on
+  `09-04` must emit `DTEND;VALUE=DATE:20260905`; a range ending `09-08` emits
+  `20260909`. Getting this wrong shifts every event by a day.
+- RFC 5545 requires lines ≤ 75 octets; longer ones are folded with CRLF and
+  the continuation starts with a space. Chinese counts as 3 bytes, so the
+  folder measures UTF-8 bytes and folds at 70 to leave margin.
+
+CSV export prepends a UTF-8 BOM (`\uFEFF`) — without it Excel renders Chinese
+as mojibake. Fields containing `,` `"` or newlines are quoted and inner quotes
+doubled.
+
 ---
 
 ### 3.13 System settings (settings)

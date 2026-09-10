@@ -679,12 +679,20 @@
       <p class="panel__sub">把散落在 7 个模块的记录汇成一条时间线：营销动作、竞品动态、内容评分、战略快照、执行记录、生成留痕、对话记录。只读聚合，不新增数据。</p>
 
       <div class="card">
+        <div class="card__hd">📈 趋势洞察 <span class="eyebrow" style="margin-left:auto">自动计算 · 只读</span></div>
+        <div class="card__bd">
+          <div class="insgrid" id="tlInsight"></div>
+        </div>
+      </div>
+
+      <div class="card">
         <div class="card__hd">🧭 按类型筛选 <span class="eyebrow" style="margin-left:auto">点标签切换</span></div>
         <div class="card__bd">
           <div class="tlstats" id="tlStats"></div>
           <div class="tlbar">
             <input type="text" id="tlSearch" placeholder="🔍 搜索记录内容（标题 / 摘要）" autocomplete="off" />
-            <button class="btn btn--sm btn--ghost" id="btnTlExport">📤 导出时间线</button>
+            <button class="btn btn--sm btn--ghost" id="btnTlExport">📤 导出 Markdown</button>
+            <button class="btn btn--sm btn--ghost" id="btnTlCsv">📊 导出 CSV</button>
           </div>
           <div class="hint" style="margin-top:-6px;margin-bottom:10px">
             💡 记录由各模块自动沉淀，无需手动填写。这里只是把它们汇总呈现。
@@ -859,6 +867,13 @@
         <span><i style="background:var(--ok)"></i>已完成</span>
         <span><i style="background:var(--alert)"></i>已延期</span>
         <span style="margin-left:auto">💡 点日历上的事件可直接改状态</span>
+      </div>
+
+      <div class="calexport">
+        <span class="eyebrow">导出</span>
+        <button class="btn btn--sm btn--ghost" id="btnCalIcs">📅 iCal（.ics）</button>
+        <button class="btn btn--sm btn--ghost" id="btnCalCsv">📊 CSV（Excel）</button>
+        <span class="hint">iCal 可导入手机日历 / Outlook / 苹果日历；CSV 带 BOM，Excel 双击打开中文不乱码。跨天事件会按 iCal 规则写入结束日（结束日不含当天）。</span>
       </div>
 
       <div class="evlist" id="evList"></div>
