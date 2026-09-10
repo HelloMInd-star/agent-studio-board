@@ -226,6 +226,7 @@ a:hover{text-decoration:underline;}
       <a href="#timeline">🕐 品牌轨迹</a>
       <a href="#assets">🎨 品牌资产</a>
       <a href="#settings">⚙️ 系统设置</a>
+      <a href="#icons">✏️ 线性图标</a>
     </div>
     <div class="mgroup">
       <div class="mgroup__t">附录</div>
@@ -237,7 +238,7 @@ a:hover{text-decoration:underline;}
   <main class="mmain">
     <div class="mhero">
       <h1>使用手册</h1>
-      <p>16 个功能模块，每个都写清楚<b>解决什么问题、怎么用、注意什么</b>。
+      <p>24 个功能模块，每个都写清楚<b>解决什么问题、怎么用、注意什么</b>。
       左侧目录可跳转，滚动时会自动高亮当前章节。</p>
     </div>
 
@@ -1159,6 +1160,30 @@ a:hover{text-decoration:underline;}
           <tr><td>📥 导入 JSON</td><td>恢复台账（会覆盖当前内容，导入前有二次确认）</td></tr>
         </table>
       </div>
+    </section>
+
+    <section class="msec" id="icons">
+      <h2><span class="ico">✏️</span>线性图标系统</h2>
+      <div class="mflow" data-flow="icons">
+        <div class="mflow__hd">设计原则</div>
+        <div class="mflow__steps"><span class="mfl__step">统一 24×24 画布</span><span class="mfl__arrow">→</span><span class="mfl__step">1.5px 描边</span><span class="mfl__arrow">→</span><span class="mfl__step">跟随 currentColor</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">自动适配深浅色</span></div>
+        <div class="mflow__note">不引外部图标库（Lucide / Feather 都要额外文件，破坏单文件零依赖）。</div>
+      </div>
+      <p>23 个 Tab 的图标由 emoji 换成了<b>手写线性 SVG</b>。原因是 emoji 在不同系统上长得不一样、不跟随主题色，
+      放在一个强调"确定性"的工具里显得不精确。</p>
+      <p>图标按<b>业务语义</b>重画，不是套通用图形：</p>
+      <div class="mgrid">
+        <div class="mcard"><div class="mcard__t">⚔️ 竞品矩阵</div><div class="mcard__d">四象限 + 4 个定位点——就是 BCG 本身</div></div>
+        <div class="mcard"><div class="mcard__t">🎯 STP</div><div class="mcard__d">同心环 + 准心 + 高亮弧，表示圈定人群</div></div>
+        <div class="mcard"><div class="mcard__t">📅 营销日历</div><div class="mcard__d">挂环 + 网格 + 跨天色条，呼应起止区间</div></div>
+        <div class="mcard"><div class="mcard__t">🔗 营销工作流</div><div class="mcard__d">三节点链，对应本地 / LLM / 人工三类步骤</div></div>
+        <div class="mcard"><div class="mcard__t">🏛️ 品牌内核</div><div class="mcard__d">神庙：顶檐 + 立柱 + 基座，隐喻三层结构</div></div>
+        <div class="mcard"><div class="mcard__t">🕐 品牌轨迹</div><div class="mcard__d">竖轴 + 疏密不同的节点，表示事件密度</div></div>
+      </div>
+      <p><b>状态圆点</b>：表格里的 🔴🟡⚠️ 换成了 CSS 圆点（<code>.dot--ok / warn / alert / signal</code>）。
+      好处是渲染一致、跟随主题、不占体积。</p>
+      <p><b>但报告正文里的 emoji 保留</b>——你复制走的内容里，CSS 类不会跟着走，换成圆点反而看不了了。</p>
+      <p><b>降级</b>：图标脚本万一加载失败，原来的 emoji 会留着，Tab 栏不会变成一片空白方块。</p>
     </section>
 
     <section class="msec" id="settings">

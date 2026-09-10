@@ -63,6 +63,7 @@ MODULES = [
     '38-packs.js',        # 内容包：工作流预设产品化，本地函数优先 + 结果可视化（须在 workspace 后）
     '39-packwiz.js',      # 内容包独立窗口：全屏模态 + 启动前对话式采集 + AI 步骤引导（须在 packs 后）
     '41-moretools.js',    # 扩充可编排工具集：A/B标题/资产审计/轨迹洞察（须在 tonecheck·insight·assets 后）
+    '42-icons.js',        # 线性图标系统：23 个 Tab 的 1.5px SVG + 状态圆点（须在 boot 前、DOM 就绪后）
     '16-boot.js',       # 回填 + 启动（最后，含 })();）
 ]
 

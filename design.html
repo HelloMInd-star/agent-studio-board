@@ -83,6 +83,8 @@
   <a href="#s10">10 · 踩过的坑</a>
   <a href="#s11">11 · 已知问题</a>
   <a href="#s12">12 · 面试线索</a>
+  <div class="grp">视觉</div>
+  <a href="#s13">13 · 线性图标</a>
 </nav>
 
 <main class="main">
@@ -185,7 +187,7 @@
 
 <section id="s5">
 <h3 class="sec">5 · 代码结构</h3>
-<p>38 个源文件按职责分层，构建时由 <code>build.py</code> 合并成单文件 <code>index.html</code>。</p>
+<p>41 个源文件按职责分层，构建时由 <code>build.py</code> 合并成单文件 <code>index.html</code>。</p>
 <table>
 <tr><th>层</th><th>文件</th><th>职责</th></tr>
 <tr><td>核心</td><td>01-core / 02-presets / 03-rules / 04-store / 05-brand / 06-render</td><td>状态、预设、规则、存储、渲染</td></tr>
@@ -318,6 +320,35 @@
 <div class="foot">
   本文件由项目实际状态逐项核查生成 · 数字均为统计得出，非估算 · 随代码变更需同步更新
 </div>
+
+
+<h2 id="s13">13 · 线性图标</h2>
+
+<p>23 个 Tab 原本用 emoji 做标签。问题有三：不同操作系统渲染不一致、无法跟随主题色、
+在强调"确定性"的工具里显得不精确。</p>
+
+<table>
+<tr><th>项</th><th>做法</th></tr>
+<tr><td>画布</td><td><code>viewBox 0 0 24 24</code>，统一视觉重量</td></tr>
+<tr><td>描边</td><td><code>stroke-width:1.5</code>、<code>fill:none</code>、圆头圆角</td></tr>
+<tr><td>取色</td><td><code>stroke="currentColor"</code>——自动继承激活态与深色档</td></tr>
+<tr><td>体积</td><td>23 个手写路径约 6 KB，无外部依赖</td></tr>
+</table>
+
+<p><b>为什么不用 Lucide / Feather。</b> 两者要么额外引文件、要么内联大体积 sprite，
+都会破坏"单文件、零依赖"这条底线。手写 23 个的成本远低于收益损失。</p>
+
+<p><b>图标按业务语义重画</b>，而不是套通用图形：竞品矩阵画成 BCG 四象限本身，
+日历画成带跨天色条的月历（呼应起止区间功能），工作流画成三节点链
+（对应本地 / LLM / 人工三类步骤），品牌内核画成神庙（顶檐—立柱—基座，隐喻三层结构）。</p>
+
+<p><b>状态圆点。</b> 表格中的 <code>🔴🟡⚠️</code> 改为 CSS 圆点
+<code>.dot--ok / warn / alert / signal</code>，渲染一致、跟随主题、零体积。
+但<b>报告正文里的 emoji 保留</b>——用户会把报告复制进文档，CSS 类在复制后不生效，
+换成圆点反而看不了。</p>
+
+<p><b>降级。</b> 图标脚本若加载失败，原 emoji 保留，Tab 栏不会塌成一片空白方块。
+这类"看起来是装饰、实际影响可用性"的兜底，在这个项目里是硬性要求。</p>
 
 </main>
 </div>

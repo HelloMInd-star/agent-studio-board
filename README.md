@@ -43,7 +43,7 @@ agent-studio-board/
 │   ├── manual.template.html # manual source
 │   ├── style.css            # all styles
 │   ├── MANIFEST.txt         # module index (regenerate when adding files)
-│   └── *.js                 # 38 modules, merged in the order below
+│   └── *.js                 # 41 modules, merged in the order below
 └── ym-marketing-patch.js    # optional patch for the legacy version
 ```
 
@@ -59,7 +59,7 @@ python3 build.py --check   # validate without writing
 **Merge order matters.** `build.py` holds the authoritative list; several
 modules must load before `16-boot.js` (which restores state and binds events)
 and some depend on others (e.g. `32-tonecheck` after `30-brandcore`,
-`28/29-frames*` before `27-toolmap`). The 38 modules by layer:
+`28/29-frames*` before `27-toolmap`). The 41 modules by layer:
 
 | Layer | Modules |
 |---|---|
@@ -71,7 +71,10 @@ and some depend on others (e.g. `32-tonecheck` after `30-brandcore`,
 | Entry & knowledge | `25-guide` scenario nav · `26-toolkit` 8 classic frameworks · `27-toolmap` 70-framework map · `28-framesvg` + `29-framecfg` skeleton engine |
 | Brand chain | `30-brandcore` · `32-tonecheck` · `33-timeline` · `36-assets` |
 | System & insight | `34-settings` · `35-insight` · `37-quarter` |
+| Calendar views | `40-calview` week / day / kanban + five-view dispatch |
 | Content packs | `38-packs` · `39-packwiz` |
+| Extended tools | `41-moretools` A/B titles · asset audit · timeline insight |
+| Icons | `42-icons` 23 line SVGs + status dots (**no icon library**) |
 | Bootstrap | `15-bind` event binding · `16-boot` restore + start (**must be last**) |
 
 ---
@@ -653,7 +656,7 @@ A standalone 12-chapter document, opened from the top bar of every page:
 | 2 | Verified numbers — every count with how it was measured |
 | 3 | Boundaries: 7 things deliberately not built, 4 that were re-framed |
 | 4 | Six-layer architecture, plus an honest answer to "is this an agent?" |
-| 5 | The 38 source files grouped by layer |
+| 5 | The 41 source files grouped by layer |
 | 6 | Core algorithms (positional dimensions, the tone-0 case, sample-size guards) |
 | 7 | All 23 tabs / 6 groups |
 | 8 | Data design (`localStorage` shape, per-module keys) |
@@ -773,3 +776,35 @@ The banned-word library is a review aid, not legal advice. A hit does not
 mean something is illegal. Platform rules change often — verify against the
 current official source before publishing. Category benchmarks in Brand Core
 are experience-based reference values, not measurements from any dataset.
+
+### 3.23 Line icon system (`42-icons.js`)
+
+The 23 tabs used to be labelled with emoji. Emoji render differently per OS,
+ignore the theme, and look out of place next to a precision-tool UI. They are
+now inline SVG drawn to one spec: `viewBox 0 0 24 24`, `stroke-width:1.5`,
+`fill:none`, `stroke="currentColor"` — so an icon inherits the tab's colour
+and flips correctly in dark mode.
+
+No icon library is used. Lucide or Feather would mean shipping an extra file
+(or inlining a large sprite), which breaks the single-file, zero-dependency
+constraint. Twenty-three hand-drawn paths cost ~6 KB.
+
+The icons are drawn from the domain, not from a generic set:
+
+| Tab | Drawn as | Why not a generic icon |
+|---|---|---|
+| Competitor matrix | Four quadrants + four plotted points | That *is* the BCG matrix |
+| STP | Concentric rings + crosshair + highlighted arc | "Selecting" a segment |
+| Calendar | Hanger loops, grid, and a cross-day bar | Matches the date-range feature |
+| Workflow | Three linked nodes (local / LLM / human) | Mirrors the three step kinds |
+| Brand Core | Temple: pediment, columns, base | Culture → value → tone, stacked |
+| Timeline | Vertical axis with unevenly spaced nodes | Event *density* over time |
+
+**Status dots.** `🔴🟡⚠️` in table cells are replaced by
+`<i class="dot dot--ok">` CSS circles. They render identically everywhere,
+follow the theme, and add no payload. Report bodies keep their emoji on
+purpose — users copy those into documents, and a CSS class does not survive
+a copy-paste.
+
+**Fallback.** If `42-icons.js` fails to load, the original emoji stay and the
+tab bar never collapses to empty boxes.
