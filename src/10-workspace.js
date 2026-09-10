@@ -418,7 +418,9 @@ function matchIntent(text){
 /* ---------- 对话 ---------- */
 function pushMsg(role, text, tag){
   state.chat = state.chat || [];
-  state.chat.push({role:role, text:text, tag:tag||'', at:new Date().toLocaleTimeString('zh-CN')});
+  // 补 d 字段：历史上只存了时分秒，跨天后无法定位日期。
+  // 旧数据无 d —— 品牌轨迹会如实标注「日期未知」，不编造。
+  state.chat.push({role:role, text:text, tag:tag||'', at:new Date().toLocaleTimeString('zh-CN'), d:ymd(new Date())});
   if(state.chat.length > 60) state.chat = state.chat.slice(-60);
   renderChat(); save();
 }

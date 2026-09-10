@@ -90,6 +90,7 @@
     <span class="tgroup__lb">存下来</span>
     <div class="tgroup__tabs">
       <button class="tab" data-tab="kb"><span class="tab__name">📚 品牌知识库</span><span class="tab__desc">卖点 · 竞品 · 违禁词</span></button>
+      <button class="tab" data-tab="timeline"><span class="tab__name">🕐 品牌轨迹</span><span class="tab__desc">7 类记录 · 时间线</span></button>
     </div>
   </div>
 </nav>
@@ -667,6 +668,29 @@
           <div id="docView" style="display:none"></div>
         </div>
       </div>
+    </section>
+
+
+    <!-- ===== 品牌轨迹 ===== -->
+    <section class="panel" data-panel="timeline">
+      <h2 class="panel__hd">🕐 品牌轨迹</h2>
+      <p class="panel__sub">把散落在 7 个模块的记录汇成一条时间线：营销动作、竞品动态、内容评分、战略快照、执行记录、生成留痕、对话记录。只读聚合，不新增数据。</p>
+
+      <div class="card">
+        <div class="card__hd">🧭 按类型筛选 <span class="eyebrow" style="margin-left:auto">点标签切换</span></div>
+        <div class="card__bd">
+          <div class="tlstats" id="tlStats"></div>
+          <div class="tlbar">
+            <input type="text" id="tlSearch" placeholder="🔍 搜索记录内容（标题 / 摘要）" autocomplete="off" />
+            <button class="btn btn--sm btn--ghost" id="btnTlExport">📤 导出时间线</button>
+          </div>
+          <div class="hint" style="margin-top:-6px;margin-bottom:10px">
+            💡 记录由各模块自动沉淀，无需手动填写。这里只是把它们汇总呈现。
+          </div>
+        </div>
+      </div>
+
+      <div id="tlList"></div>
     </section>
 
     <!-- ===== 商业图卡 ===== -->

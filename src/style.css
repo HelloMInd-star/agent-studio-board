@@ -1101,3 +1101,58 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
   font-size:11.5px;color:var(--text-2);line-height:1.6;
 }
 .tcbase__info .hint{margin-top:4px;}
+
+/* ===== 品牌轨迹（统一时间线） ===== */
+.tlstats{
+  display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 14px;
+}
+.tlstat{
+  font-size:11.5px;padding:5px 13px;border-radius:20px;cursor:pointer;
+  border:1px solid var(--line);color:var(--text-3);
+  background:transparent;transition:all .18s;user-select:none;
+}
+.tlstat:hover{color:var(--text-1);border-color:var(--brand);}
+.tlstat.is-on{
+  background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600;
+}
+.tlbar{
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px;
+}
+.tlbar input{
+  flex:1;min-width:180px;padding:8px 14px;border-radius:10px;
+  border:1px solid var(--line);background:var(--bg-0, transparent);
+  color:var(--text-1);font-size:13px;outline:none;
+}
+.tlbar input:focus{border-color:var(--brand);}
+.tlday{
+  font-size:11.5px;font-weight:600;color:var(--text-3);
+  margin:16px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--line);
+  letter-spacing:.3px;
+}
+.tlday__note{font-weight:400;opacity:.7;font-size:10.5px;}
+.tlitem{
+  border-left:2px solid var(--line);padding:8px 0 8px 13px;margin-bottom:9px;
+  transition:border-color .18s;
+}
+.tlitem:hover{border-left-color:var(--brand);}
+.tlitem__hd{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
+.tlitem__em{font-size:14px;flex-shrink:0;}
+.tlitem__t{font-size:13px;color:var(--text-1);flex:1;min-width:0;word-break:break-word;}
+.tlitem__time{font-size:10.5px;color:var(--text-3);flex-shrink:0;}
+.tlitem__bd{margin-top:4px;}
+.tlitem__meta{
+  display:inline-block;font-size:10.5px;padding:1px 8px;border-radius:8px;
+  background:rgba(127,127,127,.1);color:var(--text-3);
+}
+.tlitem__txt{
+  margin-top:5px;font-size:11.5px;color:var(--text-2);line-height:1.6;
+  word-break:break-word;
+}
+/* 七类左侧色条 */
+.tl--cal  {border-left-color:var(--brand);}
+.tl--rival{border-left-color:#f59e0b;}
+.tl--score{border-left-color:#10b981;}
+.tl--snap {border-left-color:#8b5cf6;}
+.tl--trace{border-left-color:#06b6d4;}
+.tl--hist {border-left-color:#64748b;}
+.tl--chat {border-left-color:#ec4899;}

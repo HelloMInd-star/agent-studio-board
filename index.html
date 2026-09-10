@@ -1109,6 +1109,61 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
 }
 .tcbase__info .hint{margin-top:4px;}
 
+/* ===== 品牌轨迹（统一时间线） ===== */
+.tlstats{
+  display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 14px;
+}
+.tlstat{
+  font-size:11.5px;padding:5px 13px;border-radius:20px;cursor:pointer;
+  border:1px solid var(--line);color:var(--text-3);
+  background:transparent;transition:all .18s;user-select:none;
+}
+.tlstat:hover{color:var(--text-1);border-color:var(--brand);}
+.tlstat.is-on{
+  background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600;
+}
+.tlbar{
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px;
+}
+.tlbar input{
+  flex:1;min-width:180px;padding:8px 14px;border-radius:10px;
+  border:1px solid var(--line);background:var(--bg-0, transparent);
+  color:var(--text-1);font-size:13px;outline:none;
+}
+.tlbar input:focus{border-color:var(--brand);}
+.tlday{
+  font-size:11.5px;font-weight:600;color:var(--text-3);
+  margin:16px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--line);
+  letter-spacing:.3px;
+}
+.tlday__note{font-weight:400;opacity:.7;font-size:10.5px;}
+.tlitem{
+  border-left:2px solid var(--line);padding:8px 0 8px 13px;margin-bottom:9px;
+  transition:border-color .18s;
+}
+.tlitem:hover{border-left-color:var(--brand);}
+.tlitem__hd{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
+.tlitem__em{font-size:14px;flex-shrink:0;}
+.tlitem__t{font-size:13px;color:var(--text-1);flex:1;min-width:0;word-break:break-word;}
+.tlitem__time{font-size:10.5px;color:var(--text-3);flex-shrink:0;}
+.tlitem__bd{margin-top:4px;}
+.tlitem__meta{
+  display:inline-block;font-size:10.5px;padding:1px 8px;border-radius:8px;
+  background:rgba(127,127,127,.1);color:var(--text-3);
+}
+.tlitem__txt{
+  margin-top:5px;font-size:11.5px;color:var(--text-2);line-height:1.6;
+  word-break:break-word;
+}
+/* 七类左侧色条 */
+.tl--cal  {border-left-color:var(--brand);}
+.tl--rival{border-left-color:#f59e0b;}
+.tl--score{border-left-color:#10b981;}
+.tl--snap {border-left-color:#8b5cf6;}
+.tl--trace{border-left-color:#06b6d4;}
+.tl--hist {border-left-color:#64748b;}
+.tl--chat {border-left-color:#ec4899;}
+
 </style>
 </head>
 <body>
@@ -1193,6 +1248,7 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
     <span class="tgroup__lb">存下来</span>
     <div class="tgroup__tabs">
       <button class="tab" data-tab="kb"><span class="tab__name">📚 品牌知识库</span><span class="tab__desc">卖点 · 竞品 · 违禁词</span></button>
+      <button class="tab" data-tab="timeline"><span class="tab__name">🕐 品牌轨迹</span><span class="tab__desc">7 类记录 · 时间线</span></button>
     </div>
   </div>
 </nav>
@@ -1770,6 +1826,29 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
           <div id="docView" style="display:none"></div>
         </div>
       </div>
+    </section>
+
+
+    <!-- ===== 品牌轨迹 ===== -->
+    <section class="panel" data-panel="timeline">
+      <h2 class="panel__hd">🕐 品牌轨迹</h2>
+      <p class="panel__sub">把散落在 7 个模块的记录汇成一条时间线：营销动作、竞品动态、内容评分、战略快照、执行记录、生成留痕、对话记录。只读聚合，不新增数据。</p>
+
+      <div class="card">
+        <div class="card__hd">🧭 按类型筛选 <span class="eyebrow" style="margin-left:auto">点标签切换</span></div>
+        <div class="card__bd">
+          <div class="tlstats" id="tlStats"></div>
+          <div class="tlbar">
+            <input type="text" id="tlSearch" placeholder="🔍 搜索记录内容（标题 / 摘要）" autocomplete="off" />
+            <button class="btn btn--sm btn--ghost" id="btnTlExport">📤 导出时间线</button>
+          </div>
+          <div class="hint" style="margin-top:-6px;margin-bottom:10px">
+            💡 记录由各模块自动沉淀，无需手动填写。这里只是把它们汇总呈现。
+          </div>
+        </div>
+      </div>
+
+      <div id="tlList"></div>
     </section>
 
     <!-- ===== 商业图卡 ===== -->
@@ -5080,7 +5159,9 @@ function matchIntent(text){
 /* ---------- 对话 ---------- */
 function pushMsg(role, text, tag){
   state.chat = state.chat || [];
-  state.chat.push({role:role, text:text, tag:tag||'', at:new Date().toLocaleTimeString('zh-CN')});
+  // 补 d 字段：历史上只存了时分秒，跨天后无法定位日期。
+  // 旧数据无 d —— 品牌轨迹会如实标注「日期未知」，不编造。
+  state.chat.push({role:role, text:text, tag:tag||'', at:new Date().toLocaleTimeString('zh-CN'), d:ymd(new Date())});
   if(state.chat.length > 60) state.chat = state.chat.slice(-60);
   renderChat(); save();
 }
@@ -6147,8 +6228,16 @@ function bind(){
       if(k === 'synth') renderSynthSources();
       // 切到日历时重渲染（其他模块可能刚推送了任务进来）
       if(k === 'cal') renderCal();
+      // 切到品牌轨迹时重采（7 类记录可能刚在其他模块产生）
+      if(k === 'timeline') renderTimeline();
     };
   });
+
+  // 品牌轨迹：搜索 + 导出
+  var tlS = $('#tlSearch');
+  if(tlS) tlS.oninput = function(){ tlQ = this.value.trim(); renderTimeline(); };
+  var tlE = $('#btnTlExport');
+  if(tlE) tlE.onclick = function(){ exportTimeline(); };
 
   // 主题
   $('#btnTheme').onclick = function(){
@@ -6765,14 +6854,36 @@ var EV_STATUS = {
 };
 var EV_PRI = {high:{n:'高',cls:'pri--high'}, mid:{n:'中',cls:'pri--mid'}, low:{n:'低',cls:'pri--low'}};
 
+/* 固定公历节日（每年日期不变） */
 var CAL_NODES_LIB = [
   {n:'元旦', md:'01-01'}, {n:'年货节', md:'01-20'}, {n:'情人节', md:'02-14'},
-  {n:'春节', md:'02-17'}, {n:'妇女节', md:'03-08'}, {n:'五一', md:'05-01'},
-  {n:'母亲节', md:'05-10'}, {n:'618 大促', md:'06-18'}, {n:'818 大促', md:'08-18'},
-  {n:'七夕', md:'08-19'}, {n:'开学季', md:'09-01'}, {n:'99 大促', md:'09-09'},
-  {n:'中秋', md:'09-25'}, {n:'国庆', md:'10-01'}, {n:'双 11', md:'11-11'},
+  {n:'妇女节', md:'03-08'}, {n:'五一', md:'05-01'},
+  {n:'618 大促', md:'06-18'}, {n:'818 大促', md:'08-18'},
+  {n:'开学季', md:'09-01'}, {n:'99 大促', md:'09-09'},
+  {n:'国庆', md:'10-01'}, {n:'双 11', md:'11-11'},
   {n:'双 12', md:'12-12'}, {n:'圣诞', md:'12-25'}
 ];
+
+/* 农历节日：按年查表
+ * 背景：农历日期每年不同。此前把春节/中秋/七夕等写死为某一年的值，
+ *       次年「顺延到明年」仍沿用旧月日，会出现 11 天级别的错位
+ *      （如 2027 春节是 02-06，旧逻辑会得到 02-17）。
+ * 下表已用 zhdate 库逐条核对（2026-2030）。超出范围回退到 2026 并标注。 */
+var LUNAR_FEST = {
+  2026:{春节:'02-17', 元宵:'03-03', 端午:'06-19', 七夕:'08-19', 中秋:'09-25', 重阳:'10-18'},
+  2027:{春节:'02-06', 元宵:'02-20', 端午:'06-09', 七夕:'08-08', 中秋:'09-15', 重阳:'10-08'},
+  2028:{春节:'01-26', 元宵:'02-09', 端午:'05-28', 七夕:'08-26', 中秋:'10-03', 重阳:'10-26'},
+  2029:{春节:'02-13', 元宵:'02-27', 端午:'06-16', 七夕:'08-16', 中秋:'09-22', 重阳:'10-16'},
+  2030:{春节:'02-03', 元宵:'02-17', 端午:'06-05', 七夕:'08-05', 中秋:'09-12', 重阳:'10-05'}
+};
+
+/* 浮动节日：某月第 N 个星期几（母亲节=5月第2个周日，父亲节=6月第3个周日） */
+function nthWeekday(y, m, nth, wd){
+  var d = new Date(y, m - 1, 1);
+  var add = (wd - d.getDay() + 7) % 7;
+  d.setDate(1 + add + (nth - 1) * 7);
+  return ymd(d).slice(5);   // 只取 MM-DD
+}
 
 /* ---------- 日期工具 ---------- */
 function ymd(d){
@@ -6939,23 +7050,50 @@ function saveCalEvent(){
 /* ---------- 节点库 ---------- */
 function renderNodeChips(){
   var host = $('#nodeChips'); if(!host) return;
-  var y = today0().getFullYear();
+  // 用当前查看的年份（而不是今年），翻到哪年就给哪年的节日
+  var y = (state.cal && state.cal.y) || today0().getFullYear();
+  var lf = LUNAR_FEST[y];
+  var outOfRange = !lf;
+  if(!lf) lf = LUNAR_FEST[2026];
   host.innerHTML = '';
-  CAL_NODES_LIB.forEach(function(n){
+
+  var list = CAL_NODES_LIB.slice();
+  Object.keys(lf).forEach(function(k){ list.push({n:k, md:lf[k], lunar:true}); });
+  list.push({n:'母亲节', md:nthWeekday(y, 5, 2, 0)});
+  list.push({n:'父亲节', md:nthWeekday(y, 6, 3, 0)});
+
+  var tip = document.createElement('div');
+  tip.className = 'hint';
+  tip.style.cssText = 'width:100%;margin-bottom:8px';
+  tip.textContent = outOfRange
+    ? '⚠️ ' + y + ' 年农历节日表未内置，暂按 2026 年显示，请手动核对日期。'
+    : '📌 ' + y + ' 年节日（农历已按年校准，浮动节日按规则计算）';
+  host.appendChild(tip);
+
+  list.forEach(function(n){
     var b = document.createElement('button');
-    b.className = 'chip';
-    b.textContent = n.n + ' · ' + n.md.replace('-','/');
+    b.className = 'chip' + (n.lunar ? ' chip--lunar' : '');
+    b.textContent = n.n + ' · ' + n.md.replace('-','/') + (n.lunar ? ' 农历' : '');
     b.onclick = function(){
       var mm = n.md.split('-');
-      var dt = new Date(y, parseInt(mm[0],10)-1, parseInt(mm[1],10));
-      if(dt < today0()) dt = new Date(y+1, parseInt(mm[0],10)-1, parseInt(mm[1],10));
+      var mo = parseInt(mm[0],10), da = parseInt(mm[1],10);
+      var dt = new Date(y, mo - 1, da);
+      if(dt < today0()){
+        // 已过去则顺延一年；农历节日必须查次年的表，不能沿用旧月日
+        if(n.lunar && LUNAR_FEST[y+1] && LUNAR_FEST[y+1][n.n]){
+          var nm = LUNAR_FEST[y+1][n.n].split('-');
+          dt = new Date(y+1, parseInt(nm[0],10)-1, parseInt(nm[1],10));
+        } else {
+          dt = new Date(y+1, mo - 1, da);
+        }
+      }
       state.cal.events.push({
         id:'ev' + Date.now() + Math.floor(Math.random()*100),
         title:n.n, date:ymd(dt), pri:'mid', status:'todo', link:'', note:'来自节点库'
       });
       save(); renderCal();
       $('#maskNode').classList.remove('is-on');
-      toast('已添加「' + n.n + '」');
+      toast('已添加「' + n.n + '」· ' + ymd(dt));
     };
     host.appendChild(b);
   });
@@ -13670,6 +13808,217 @@ if(typeof LOCAL_TOOLS !== 'undefined'){
   if(typeof TOOLS !== 'undefined' && TOOLS.indexOf('⚡ 品牌调性(本地函数)') < 0){
     TOOLS.push('⚡ 品牌调性(本地函数)');
   }
+}
+
+/* ===== src/33-timeline.js ===== */
+/* ============================================================
+ * 33-timeline.js —— 品牌轨迹
+ * 把散落在 7 个模块的记录，统一成一条可筛选的时间线。
+ * 设计原则：只读聚合，不新增能力，不改现有数据结构。
+ *
+ *   ① 📅 营销动作  state.cal.events      ymd        YYYY-MM-DD
+ *   ② 📡 竞品动态  state.rivals[].events ymd        YYYY-MM-DD
+ *   ③ 🩺 内容评分  state.scores[].d      locale     YYYY/M/D H:M:S
+ *   ④ 🎯 战略快照  state.mx.snaps[].date ymd        YYYY-MM-DD
+ *   ⑤ ⚙️ 执行记录  state.trace{}.at      ISO        YYYY-MM-DDTHH:MM:SS
+ *   ⑥ 📝 生成留痕  state.history[].d     locale     YYYY/M/D H:M:S
+ *   ⑦ 💬 对话记录  state.chat[].at       time only  HH:MM:SS  ← 无日期
+ *
+ * 难点：4 种时间格式需归一化；第 ⑦ 类历史上只存了时分秒，
+ *       日期无法恢复，本模块如实标注「日期未知」而非编造。
+ * ============================================================ */
+
+var TL_TYPES = [
+  {k:'cal',   n:'营销动作', em:'📅', jump:'cal'},
+  {k:'rival', n:'竞品动态', em:'📡', jump:'market'},
+  {k:'score', n:'内容评分', em:'🩺', jump:'content'},
+  {k:'snap',  n:'战略快照', em:'🎯', jump:'strat'},
+  {k:'trace', n:'执行记录', em:'⚙️', jump:'flow'},
+  {k:'hist',  n:'生成留痕', em:'📝', jump:'agent'},
+  {k:'chat',  n:'对话记录', em:'💬', jump:'agent'}
+];
+
+/* ---------- 时间归一化 ---------- */
+/* 4 种格式 → YYYY-MM-DD；无法解析（如只有时分秒）返回空串 */
+function tlDay(s){
+  if(!s) return '';
+  var m = String(s).trim().match(/(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
+  if(!m) return '';
+  return m[1] + '-' + String(m[2]).padStart(2,'0') + '-' + String(m[3]).padStart(2,'0');
+}
+function tlTime(s){
+  if(!s) return '';
+  var m = String(s).match(/(\d{1,2}):(\d{2})/);
+  return m ? String(m[1]).padStart(2,'0') + ':' + m[2] : '';
+}
+
+/* ---------- 采集 7 类 ---------- */
+function tlCollect(){
+  var out = [];
+
+  /* ① 营销动作 */
+  ((state.cal && state.cal.events) || []).forEach(function(e){
+    var st = (typeof EV_STATUS !== 'undefined' && EV_STATUS[e.status]) ? EV_STATUS[e.status].n : (e.status || '');
+    var pr = (typeof EV_PRI !== 'undefined' && EV_PRI[e.pri]) ? EV_PRI[e.pri].n : '';
+    out.push({k:'cal', day:tlDay(e.date), time:'',
+      t:e.title || '未命名事件',
+      meta:[st, pr].filter(Boolean).join(' · '),
+      txt:e.note || ''});
+  });
+
+  /* ② 竞品动态 */
+  (state.rivals || []).forEach(function(r){
+    (r.events || []).forEach(function(e){
+      out.push({k:'rival', day:tlDay(e.date), time:'',
+        t:(r.name || '竞品') + '：' + (e.text || ''),
+        meta:'竞品动态', txt:''});
+    });
+  });
+
+  /* ③ 内容评分 */
+  (state.scores || []).forEach(function(s){
+    out.push({k:'score', day:tlDay(s.d), time:tlTime(s.d),
+      t:(s.title ? s.title + ' · ' : '') + '体检 ' + (s.total != null ? s.total : '?') + ' 分（' + (s.grade || '') + '）',
+      meta:s.platform || '', txt:s.gradeMsg || ''});
+  });
+
+  /* ④ 战略快照 */
+  ((state.mx && state.mx.snaps) || []).forEach(function(s){
+    out.push({k:'snap', day:tlDay(s.date), time:'',
+      t:'战略快照：' + (s.name || '未命名'),
+      meta:(s.bcg && s.bcg.length) ? (s.bcg.length + ' 个业务') : '', txt:''});
+  });
+
+  /* ⑤ 执行记录（step_N → flowModel 拿步骤名） */
+  var tr = state.trace || {};
+  var steps = [];
+  try{ steps = flowModel().steps || []; }catch(err){ steps = []; }
+  Object.keys(tr).forEach(function(key){
+    var rec = tr[key] || {};
+    var no = parseInt(String(key).replace('step_',''), 10);
+    var st = null;
+    steps.forEach(function(s){ if(s.no === no) st = s; });
+    out.push({k:'trace', day:tlDay(rec.at), time:tlTime(rec.at),
+      t:'执行：' + (st ? st.instruction : ('步骤 ' + no)),
+      meta:rec.status === 'success' ? '✅ 成功' : (rec.status || ''),
+      txt:rec.output || rec.note || ''});
+  });
+
+  /* ⑥ 生成留痕 */
+  (state.history || []).forEach(function(h){
+    out.push({k:'hist', day:tlDay(h.d), time:tlTime(h.d),
+      t:h.t || '生成记录', meta:'生成留痕',
+      txt:(typeof h.p === 'string') ? h.p.slice(0, 200) : ''});
+  });
+
+  /* ⑦ 对话记录 —— at 只有时分秒；新数据带 d 字段 */
+  (state.chat || []).forEach(function(c){
+    var full = String(c.text || '');
+    out.push({k:'chat', day:tlDay(c.d), time:tlTime(c.at),
+      t:(c.role === 'user' ? '提问：' : '回复：') + full.slice(0, 80),
+      meta:c.tag || '', txt:full.length > 80 ? full : ''});
+  });
+
+  return out;
+}
+
+/* ---------- 渲染 ---------- */
+var tlFilter = 'all';
+var tlQ = '';
+
+function renderTimeline(){
+  var host = $('#tlList');
+  if(!host) return;
+  var all = tlCollect();
+
+  /* 统计 + 筛选条 */
+  var cnt = {};
+  TL_TYPES.forEach(function(t){ cnt[t.k] = 0; });
+  all.forEach(function(r){ if(cnt[r.k] != null) cnt[r.k]++; });
+
+  var sh = $('#tlStats');
+  if(sh){
+    var h = '<span class="tlstat' + (tlFilter === 'all' ? ' is-on' : '') + '" data-f="all">全部 ' + all.length + '</span>';
+    TL_TYPES.forEach(function(t){
+      h += '<span class="tlstat' + (tlFilter === t.k ? ' is-on' : '') + '" data-f="' + t.k + '">' +
+           t.em + ' ' + t.n + ' ' + cnt[t.k] + '</span>';
+    });
+    sh.innerHTML = h;
+    [].forEach.call(sh.querySelectorAll('.tlstat'), function(el){
+      el.onclick = function(){ tlFilter = el.getAttribute('data-f'); renderTimeline(); };
+    });
+  }
+
+  /* 筛选 */
+  var list = all.filter(function(r){ return tlFilter === 'all' || r.k === tlFilter; });
+  if(tlQ){
+    var q = tlQ.toLowerCase();
+    list = list.filter(function(r){
+      return String(r.t).toLowerCase().indexOf(q) >= 0 ||
+             String(r.txt).toLowerCase().indexOf(q) >= 0;
+    });
+  }
+
+  /* 排序：有日期的倒序在前，无日期的（chat 旧数据）排最后并标注 */
+  var dated = list.filter(function(r){ return r.day; }).sort(function(a, b){
+    if(a.day !== b.day) return a.day < b.day ? 1 : -1;
+    return (a.time || '') < (b.time || '') ? 1 : -1;
+  });
+  var undated = list.filter(function(r){ return !r.day; });
+  list = dated.concat(undated);
+
+  if(!list.length){
+    host.innerHTML = all.length
+      ? '<div class="calempty">当前筛选下没有记录<br>换个类型或清空搜索词</div>'
+      : '<div class="calempty">还没有任何记录<br>去各模块产出内容后，这里会自动汇总成一条时间线</div>';
+    return;
+  }
+
+  /* 按日期分组 */
+  var h = '', curDay = '';
+  list.forEach(function(r){
+    var t = TL_TYPES.filter(function(x){ return x.k === r.k; })[0] || {em:'•', n:r.k};
+    var dayLabel = r.day ? r.day : '日期未知';
+    if(dayLabel !== curDay){
+      curDay = dayLabel;
+      h += '<div class="tlday">' + esc(dayLabel) +
+           (r.day ? '' : ' <span class="tlday__note">（该记录仅保存了时分秒）</span>') + '</div>';
+    }
+    h += '<div class="tlitem tl--' + r.k + '">';
+    h += '<div class="tlitem__hd"><span class="tlitem__em">' + t.em + '</span>';
+    h += '<span class="tlitem__t">' + esc(r.t) + '</span>';
+    if(r.time) h += '<span class="tlitem__time mono">' + esc(r.time) + '</span>';
+    h += '</div>';
+    if(r.meta || r.txt){
+      h += '<div class="tlitem__bd">';
+      if(r.meta) h += '<span class="tlitem__meta">' + esc(r.meta) + '</span>';
+      if(r.txt) h += '<div class="tlitem__txt">' + esc(String(r.txt).slice(0, 300)) + '</div>';
+      h += '</div>';
+    }
+    h += '</div>';
+  });
+  host.innerHTML = h;
+}
+
+/* ---------- 导出（只读，不改数据） ---------- */
+function exportTimeline(){
+  var all = tlCollect().sort(function(a, b){
+    if(a.day !== b.day) return a.day < b.day ? 1 : -1;
+    return 0;
+  });
+  if(!all.length){ toast('还没有可导出的记录'); return; }
+  var m = '# 🕐 品牌轨迹\n\n';
+  m += '> 由本地工作台聚合 · ' + new Date().toLocaleString('zh-CN') + ' · 共 ' + all.length + ' 条\n\n';
+  var curDay = '';
+  all.forEach(function(r){
+    var t = TL_TYPES.filter(function(x){ return x.k === r.k; })[0] || {em:'•', n:r.k};
+    var d = r.day || '日期未知';
+    if(d !== curDay){ curDay = d; m += '\n## ' + d + '\n\n'; }
+    m += '- ' + t.em + ' **' + t.n + '**　' + r.t + (r.time ? '（' + r.time + '）' : '') + '\n';
+    if(r.meta) m += '  - ' + r.meta + '\n';
+  });
+  downloadFile('brand-timeline-' + Date.now() + '.md', m, 'text/markdown;charset=utf-8');
+  toast('已导出 ' + all.length + ' 条记录');
 }
 
 /* ===== src/16-boot.js ===== */

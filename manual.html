@@ -222,6 +222,7 @@ a:hover{text-decoration:underline;}
       <a href="#agent">🤖 Agent 导出</a>
       <a href="#toolkit">🧰 经典工具箱</a>
       <a href="#toolmap">🗺️ 工具地图</a>
+      <a href="#timeline">🕐 品牌轨迹</a>
     </div>
     <div class="mgroup">
       <div class="mgroup__t">附录</div>
@@ -891,6 +892,44 @@ a:hover{text-decoration:underline;}
         <b>一处修正</b>：原始清单标「6 已做 / 61 待做」。
         逐条核对后发现 <b>25 个其实已经实现</b>——旧清单严重过时。
         现在的状态是重新核过的。
+      </div>
+    </section>
+
+    <!-- ============ 品牌轨迹 ============ -->
+    <section class="msec" id="timeline">
+      <h2><span class="ico">🕐</span>品牌轨迹</h2>
+      <div class="mflow" data-flow="timeline">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">在各模块正常产出</span><span class="mfl__arrow">→</span><span class="mfl__step">记录自动沉淀</span><span class="mfl__arrow">→</span><span class="mfl__step">这里按日汇总成时间线</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">按类型筛选 / 搜索 / 导出</span></div>
+        <div class="mflow__note">只读聚合：不新增数据，只把散落各处的记录显性化。</div>
+      </div>
+      <p>产品里一直存在 <b>7 类记录</b>，但它们各自藏在模块内部、互相看不见。
+      品牌轨迹做的唯一一件事，就是把它们汇成一条时间线。</p>
+      <div class="mtable">
+        <table>
+          <tr><th>类型</th><th>内容</th><th>来源模块</th></tr>
+          <tr><td>📅 营销动作</td><td>排期、状态、优先级</td><td>营销日历</td></tr>
+          <tr><td>📡 竞品动态</td><td>降价、代言、上新等</td><td>市场与竞品</td></tr>
+          <tr><td>🩺 内容评分</td><td>每次体检的得分与等级</td><td>内容工厂</td></tr>
+          <tr><td>🎯 战略快照</td><td>SWOT / BCG 的版本存档</td><td>战略矩阵</td></tr>
+          <tr><td>⚙️ 执行记录</td><td>工作流每步的真实产出</td><td>营销工作流</td></tr>
+          <tr><td>📝 生成留痕</td><td>历史生成内容</td><td>各生成模块</td></tr>
+          <tr><td>💬 对话记录</td><td>与工作台的问答</td><td>Agent 工作台</td></tr>
+        </table>
+      </div>
+      <h3>4 种时间格式归一</h3>
+      <p>这 7 类数据的时间戳用了 <b>4 种不同格式</b>（<code>YYYY-MM-DD</code>、
+      <code>YYYY/M/D H:M:S</code>、ISO、以及<b>只有时分秒</b>），
+      直接排序会乱。模块内部统一归一到 <code>YYYY-MM-DD</code> 后再按日分组、倒序排列。</p>
+      <div class="mnote is-warn">
+        <b>一处如实标注</b>：对话记录历史上只保存了 <code>HH:MM:SS</code>，
+        没有日期，<b>技术上无法恢复</b>。已在写入侧补了日期字段（新记录正常），
+        但旧记录仍然没有——时间线会把它们标为<b>「日期未知」</b>并排在最后，
+        而不是假装发生在今天。
+      </div>
+      <div class="mnote is-ok">
+        <b>只读</b>：本模块不写入、不修改任何现有数据，只读取并呈现。
+        点「📤 导出时间线」可导出 Markdown。
       </div>
     </section>
 

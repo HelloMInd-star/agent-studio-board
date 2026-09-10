@@ -321,9 +321,38 @@ via the `tonecheck` intent.
 
 ---
 
+### 3.12 Brand timeline (timeline)
+
+Seven kinds of records already existed in the product, but each was buried
+inside its own module — nobody could see the whole picture:
+
+| # | source | stored as | time format |
+|---|---|---|---|
+| 1 | marketing actions | `state.cal.events` | `YYYY-MM-DD` |
+| 2 | competitor moves | `state.rivals[].events` | `YYYY-MM-DD` |
+| 3 | content scores | `state.scores[].d` | `YYYY/M/D H:M:S` |
+| 4 | strategy snapshots | `state.mx.snaps[].date` | `YYYY-MM-DD` |
+| 5 | workflow runs | `state.trace{}.at` | ISO `YYYY-MM-DDTHH:MM:SS` |
+| 6 | generation history | `state.history[].d` | `YYYY/M/D H:M:S` |
+| 7 | chat | `state.chat[].at` | **time only** `HH:MM:SS` |
+
+The hard part is not rendering — it is that these use **four different time
+formats**, so `tlDay()` normalises all of them to `YYYY-MM-DD`.
+
+One case cannot be fixed, and is therefore not faked: chat messages were
+historically stored with `HH:MM:SS` only, so their date is unrecoverable.
+`pushMsg()` now also writes a `d` field (new records are correct), but old
+records have no date — the timeline marks them **"date unknown"** and sorts
+them last, instead of pretending they happened today.
+
+Read-only by design: it changes no existing data structure. Export to Markdown.
+
+---
+
 ### 3.10 Information architecture
 
-19 tabs are grouped by **task**, not by when they were built:
+
+20 tabs are grouped by **task**, not by when they were built:
 
 ```
 入口     guide

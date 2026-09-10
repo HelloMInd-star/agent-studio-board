@@ -11,14 +11,36 @@ var EV_STATUS = {
 };
 var EV_PRI = {high:{n:'高',cls:'pri--high'}, mid:{n:'中',cls:'pri--mid'}, low:{n:'低',cls:'pri--low'}};
 
+/* 固定公历节日（每年日期不变） */
 var CAL_NODES_LIB = [
   {n:'元旦', md:'01-01'}, {n:'年货节', md:'01-20'}, {n:'情人节', md:'02-14'},
-  {n:'春节', md:'02-17'}, {n:'妇女节', md:'03-08'}, {n:'五一', md:'05-01'},
-  {n:'母亲节', md:'05-10'}, {n:'618 大促', md:'06-18'}, {n:'818 大促', md:'08-18'},
-  {n:'七夕', md:'08-19'}, {n:'开学季', md:'09-01'}, {n:'99 大促', md:'09-09'},
-  {n:'中秋', md:'09-25'}, {n:'国庆', md:'10-01'}, {n:'双 11', md:'11-11'},
+  {n:'妇女节', md:'03-08'}, {n:'五一', md:'05-01'},
+  {n:'618 大促', md:'06-18'}, {n:'818 大促', md:'08-18'},
+  {n:'开学季', md:'09-01'}, {n:'99 大促', md:'09-09'},
+  {n:'国庆', md:'10-01'}, {n:'双 11', md:'11-11'},
   {n:'双 12', md:'12-12'}, {n:'圣诞', md:'12-25'}
 ];
+
+/* 农历节日：按年查表
+ * 背景：农历日期每年不同。此前把春节/中秋/七夕等写死为某一年的值，
+ *       次年「顺延到明年」仍沿用旧月日，会出现 11 天级别的错位
+ *      （如 2027 春节是 02-06，旧逻辑会得到 02-17）。
+ * 下表已用 zhdate 库逐条核对（2026-2030）。超出范围回退到 2026 并标注。 */
+var LUNAR_FEST = {
+  2026:{春节:'02-17', 元宵:'03-03', 端午:'06-19', 七夕:'08-19', 中秋:'09-25', 重阳:'10-18'},
+  2027:{春节:'02-06', 元宵:'02-20', 端午:'06-09', 七夕:'08-08', 中秋:'09-15', 重阳:'10-08'},
+  2028:{春节:'01-26', 元宵:'02-09', 端午:'05-28', 七夕:'08-26', 中秋:'10-03', 重阳:'10-26'},
+  2029:{春节:'02-13', 元宵:'02-27', 端午:'06-16', 七夕:'08-16', 中秋:'09-22', 重阳:'10-16'},
+  2030:{春节:'02-03', 元宵:'02-17', 端午:'06-05', 七夕:'08-05', 中秋:'09-12', 重阳:'10-05'}
+};
+
+/* 浮动节日：某月第 N 个星期几（母亲节=5月第2个周日，父亲节=6月第3个周日） */
+function nthWeekday(y, m, nth, wd){
+  var d = new Date(y, m - 1, 1);
+  var add = (wd - d.getDay() + 7) % 7;
+  d.setDate(1 + add + (nth - 1) * 7);
+  return ymd(d).slice(5);   // 只取 MM-DD
+}
 
 /* ---------- 日期工具 ---------- */
 function ymd(d){
@@ -185,23 +207,50 @@ function saveCalEvent(){
 /* ---------- 节点库 ---------- */
 function renderNodeChips(){
   var host = $('#nodeChips'); if(!host) return;
-  var y = today0().getFullYear();
+  // 用当前查看的年份（而不是今年），翻到哪年就给哪年的节日
+  var y = (state.cal && state.cal.y) || today0().getFullYear();
+  var lf = LUNAR_FEST[y];
+  var outOfRange = !lf;
+  if(!lf) lf = LUNAR_FEST[2026];
   host.innerHTML = '';
-  CAL_NODES_LIB.forEach(function(n){
+
+  var list = CAL_NODES_LIB.slice();
+  Object.keys(lf).forEach(function(k){ list.push({n:k, md:lf[k], lunar:true}); });
+  list.push({n:'母亲节', md:nthWeekday(y, 5, 2, 0)});
+  list.push({n:'父亲节', md:nthWeekday(y, 6, 3, 0)});
+
+  var tip = document.createElement('div');
+  tip.className = 'hint';
+  tip.style.cssText = 'width:100%;margin-bottom:8px';
+  tip.textContent = outOfRange
+    ? '⚠️ ' + y + ' 年农历节日表未内置，暂按 2026 年显示，请手动核对日期。'
+    : '📌 ' + y + ' 年节日（农历已按年校准，浮动节日按规则计算）';
+  host.appendChild(tip);
+
+  list.forEach(function(n){
     var b = document.createElement('button');
-    b.className = 'chip';
-    b.textContent = n.n + ' · ' + n.md.replace('-','/');
+    b.className = 'chip' + (n.lunar ? ' chip--lunar' : '');
+    b.textContent = n.n + ' · ' + n.md.replace('-','/') + (n.lunar ? ' 农历' : '');
     b.onclick = function(){
       var mm = n.md.split('-');
-      var dt = new Date(y, parseInt(mm[0],10)-1, parseInt(mm[1],10));
-      if(dt < today0()) dt = new Date(y+1, parseInt(mm[0],10)-1, parseInt(mm[1],10));
+      var mo = parseInt(mm[0],10), da = parseInt(mm[1],10);
+      var dt = new Date(y, mo - 1, da);
+      if(dt < today0()){
+        // 已过去则顺延一年；农历节日必须查次年的表，不能沿用旧月日
+        if(n.lunar && LUNAR_FEST[y+1] && LUNAR_FEST[y+1][n.n]){
+          var nm = LUNAR_FEST[y+1][n.n].split('-');
+          dt = new Date(y+1, parseInt(nm[0],10)-1, parseInt(nm[1],10));
+        } else {
+          dt = new Date(y+1, mo - 1, da);
+        }
+      }
       state.cal.events.push({
         id:'ev' + Date.now() + Math.floor(Math.random()*100),
         title:n.n, date:ymd(dt), pri:'mid', status:'todo', link:'', note:'来自节点库'
       });
       save(); renderCal();
       $('#maskNode').classList.remove('is-on');
-      toast('已添加「' + n.n + '」');
+      toast('已添加「' + n.n + '」· ' + ymd(dt));
     };
     host.appendChild(b);
   });

@@ -11,8 +11,16 @@ function bind(){
       if(k === 'synth') renderSynthSources();
       // 切到日历时重渲染（其他模块可能刚推送了任务进来）
       if(k === 'cal') renderCal();
+      // 切到品牌轨迹时重采（7 类记录可能刚在其他模块产生）
+      if(k === 'timeline') renderTimeline();
     };
   });
+
+  // 品牌轨迹：搜索 + 导出
+  var tlS = $('#tlSearch');
+  if(tlS) tlS.oninput = function(){ tlQ = this.value.trim(); renderTimeline(); };
+  var tlE = $('#btnTlExport');
+  if(tlE) tlE.onclick = function(){ exportTimeline(); };
 
   // 主题
   $('#btnTheme').onclick = function(){
