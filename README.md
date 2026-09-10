@@ -828,3 +828,40 @@ The banned-word library is a review aid, not legal advice. A hit does not
 mean something is illegal. Platform rules change often — verify against the
 current official source before publishing. Category benchmarks in Brand Core
 are experience-based reference values, not measurements from any dataset.
+
+### 3.23 Research: industry attributes, access gates, evidence chain (`22-research.js`)
+
+Three additions to the research module. The framing decision: **research is a
+decision instrument, not a questionnaire generator.**
+
+**① Industry attributes — classified by what kills you, not by business model.**
+
+Templates are organised by business model (consumer / app / offline / b2b).
+That puts an AI drug-discovery company and an enterprise IM tool in the same
+bucket, although almost nothing about their research overlaps. Attributes
+classify by *risk source* instead:
+
+| Attribute | Core risk | Sample variables |
+|---|---|---|
+| ⚙️ Tech-driven | the technology gets bypassed | maturity · substitution path · patent FTO · open-source contagion |
+| 🛒 Consumer retail | channel cost eats the margin | channel mix · repeat rate · price band · inventory turnover |
+| 🏪 Offline service | unit model fails before scaling | catchment radius · per-m² / per-head · fulfilment density |
+| ⚖️ Regulated | **the market is large but you cannot enter** | licences · advertising limits · data compliance · platform category permits |
+
+Two templates (`tech`, `reg`) were added — those two categories had **zero
+coverage** before.
+
+**② Access / compliance gates — veto, not a score.** Four groups
+(licences, advertising, data & privacy, IP). Any single item marked
+*blocking* raises a banner at the **top** of the report and voids every
+calculation below it, regardless of how attractive the market looks.
+*Unconfirmed ≠ passed* is stated explicitly. The tool gives a checklist of
+what to confirm and carries a disclaimer — it does **not** give legal advice.
+
+**③ Evidence chain for assumptions — no path means red.** Each assumption can
+name the kernel that is supposed to verify it. An assumption with **neither a
+source nor a verification method** is flagged *no verification path* and
+listed separately in the report. Listing an assumption with no way to check it
+is worse than not writing it, because it looks like settled thinking. This
+turns six parallel kernels into a loop: the assumption names the kernel, the
+kernel result updates the assumption.

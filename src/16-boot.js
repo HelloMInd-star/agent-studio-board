@@ -146,6 +146,25 @@ function restoreAll(){
       rt.appendChild(b);
     });
   }
+  /* 调研方案：行业属性 chips（V47） */
+  var ra = $('#rsAttrs');
+  if(ra){
+    ra.innerHTML = '';
+    Object.keys(RS_ATTRS).forEach(function(k){
+      var A = RS_ATTRS[k];
+      var b = document.createElement('button');
+      b.className = 'chip' + (rs().attr === k ? ' is-on' : '');
+      b.textContent = A.icon + ' ' + A.n;
+      b.title = A.desc;
+      b.onclick = function(){
+        [].forEach.call(ra.children, function(x){ x.classList.remove('is-on'); });
+        b.classList.add('is-on');
+        rsApplyAttr(k);
+      };
+      ra.appendChild(b);
+    });
+  }
+
   var R0 = rs();
   if(!R0.assumptions.length && !R0.segs.length) applyTpl(R0.tpl || 'consumer');
   else renderRsAll();

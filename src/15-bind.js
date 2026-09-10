@@ -365,6 +365,7 @@ function bind(){
   $('#btnRsSeg').onclick = addSeg;
   $('#btnRsGen').onclick = renderRsReport;
   $('#btnRsExp').onclick = exportRsReport;
+  var bav = $('#btnRsAttrVar'); if(bav) bav.onclick = rsAddAttrVar;
   ['rs_users','rs_arpu','rs_samr','rs_somr'].forEach(function(id){
     var e = $('#' + id);
     if(e) e.addEventListener('input', function(){ calcTAM(); });

@@ -1142,6 +1142,21 @@
       </div>
 
       <div class="card">
+        <div class="card__hd">🏭 行业属性 <span class="eyebrow" id="rsAttrSum" style="margin-left:auto"></span></div>
+        <p class="hint">💡 模板按<b>商业模式</b>分，行业属性按<b>「什么会杀死你」</b>分——一个 AI 制药公司和一个企业 IM 都属于 B 端，但调研重点几乎不重叠。选一类，会带入该类型的<b>致命变量</b>清单。</p>
+        <div class="chips" id="rsAttrs"></div>
+        <div class="aslist" id="rsAttrVars" style="margin-top:10px"></div>
+        <button class="btn btn--ghost btn--sm" id="btnRsAttrVar" style="margin-top:8px">➕ 添加自定义变量</button>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">🛑 准入与合规门禁（一票否决）</div>
+        <p class="hint">💡 这不是打分项。<b>任何一项标「存在阻断」，后文所有测算与结论都不成立</b>——不管市场有多大。受监管行业最常见的死法是「市场很大但你进不去」。</p>
+        <p class="f__hint" style="margin:-2px 0 10px">⚠️ 本工具只提示「该确认哪些项」，<b>不构成法律意见</b>。请以主管部门规定与执业律师意见为准。</p>
+        <div class="gatelist" id="rsGates"></div>
+      </div>
+
+      <div class="card">
         <div class="card__hd">0️⃣ 待验证假设 <span class="eyebrow" id="rsAssumpCount" style="margin-left:auto"></span></div>
         <p class="hint">💡 这是整份报告<b>最关键的一节</b>。敢写「这几条我还没验证」比填满一百个数字更专业。报告会据此提示哪些结论不宜直接引用。</p>
         <div class="aslist" id="rsAssump"></div>

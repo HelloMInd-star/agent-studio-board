@@ -70,7 +70,138 @@ var RS_TEMPLATES = {
       {n:'渠道伙伴', pct:15, who:'代理/集成商', need:'可分润 + 易交付'}
     ],
     axes:['标准化 ←→ 定制', '轻量 ←→ 重度']
+  },
+  tech: {
+    n:'技术驱动 / 硬科技', icon:'⚙️',
+    assumptions:[
+      '目标技术路线在工程上可实现且成本可控',
+      '存在愿意为技术溢价付费的客户（而非只要便宜）',
+      '技术领先窗口足以收回研发投入',
+      '不存在绕开我们方案的替代技术路径',
+      '专利与技术秘密能形成有效壁垒'
+    ],
+    segs:[
+      {n:'早期采用者', pct:20, who:'愿意试错的技术尝鲜者', need:'领先性 + 技术话语权'},
+      {n:'实用主流', pct:60, who:'要稳定产出的规模客户', need:'可靠 + 可集成 + 有案例'},
+      {n:'保守跟随', pct:20, who:'等行业验证后再入场', need:'低风险 + 标准化 + 服务保障'}
+    ],
+    axes:['前沿 ←→ 成熟', '自研 ←→ 集成']
+  },
+  reg: {
+    n:'受监管行业', icon:'⚖️',
+    assumptions:[
+      '所需资质牌照可在合理周期内取得',
+      '宣传口径在合规边界内仍有足够表达空间',
+      '合规成本不会吞噬该品类的毛利结构',
+      '监管趋势稳定，业务不会因政策收紧而停摆',
+      '目标渠道允许该类目经营（含平台类目资质）'
+    ],
+    segs:[
+      {n:'合规敏感型', pct:40, who:'高度关注资质与安全', need:'权威背书 + 可验证依据'},
+      {n:'效果导向型', pct:40, who:'在合规前提下追求效果', need:'明确效果 + 合理预期'},
+      {n:'价格敏感型', pct:20, who:'以价格为主要决策因素', need:'性价比 + 基础保障'}
+    ],
+    axes:['合规优先 ←→ 效果优先', '大众 ←→ 专业']
   }
+};
+
+/* ---------- 行业属性：按「什么会杀死你」分类，而非商业模式 ----------
+ * 说明：模板（consumer/app/offline/b2b）按商业模式分，会把「AI 药物研发」
+ *       和「企业 IM」归到同一类。真正决定调研重点的是行业属性。
+ * ------------------------------------------------------------------ */
+var RS_ATTRS = {
+  tech: {
+    n:'技术驱动', icon:'⚙️',
+    desc:'核心风险是「技术被绕过」，而非需求不存在',
+    vars:[
+      '技术成熟度：处于实验室 / 试点 / 可商用哪一阶段',
+      '技术替代路径：是否存在绕开我们方案的替代技术路线',
+      '研发投入强度：维持领先需要多少持续投入，能否长期负担',
+      '生态锁定：是否依赖单一平台 / 框架，有无被卡脖子风险',
+      '专利 FTO：技术路线是否可能侵犯他人有效专利',
+      '开源协议传染性：是否引入 GPL 类协议污染闭源产品'
+    ]
+  },
+  retail: {
+    n:'消费零售', icon:'🛒',
+    desc:'核心风险是「渠道成本吃掉毛利」',
+    vars:[
+      '渠道结构：线上 / 线下占比，主流渠道的入场成本与账期',
+      '复购与留存：首购后 90 天复购率是多少',
+      '价格带：所处价格带的竞争激烈度与毛利空间',
+      '货架心智：用户在什么场景下第一个想到谁',
+      '库存周转：滞销与折旧风险有多高'
+    ]
+  },
+  service: {
+    n:'服务线下', icon:'🏪',
+    desc:'核心风险是「单店模型跑不通却已扩张」',
+    vars:[
+      '选址半径：目标客群密度是否支撑模型',
+      '坪效 / 人效：是否达到行业基准线',
+      '履约密度：订单密度能否覆盖固定成本',
+      '口碑传导：获客是否高度依赖本地口碑与复购',
+      '人员可复制性：服务质量是否依赖个别员工'
+    ]
+  },
+  reg: {
+    n:'受监管行业', icon:'⚖️',
+    desc:'核心风险是「市场很大，但你根本进不去」',
+    vars:[
+      '资质牌照：开展业务必需的证照清单及获取周期',
+      '广告合规：该品类的宣传限制（功效 / 数据 / 代言 / 比较）',
+      '数据合规：个人信息收集、存储、跨境的要求',
+      '平台类目资质：进入主流电商 / 内容平台的准入证明',
+      '外资准入限制（如涉及境外资本）',
+      '行业特殊规定：如医疗、金融、教育、食品、化妆品的专门要求'
+    ]
+  }
+};
+
+/* ---------- 准入 / 合规门禁：一票否决，不参与打分 ----------
+ * 边界：本工具只提供「该确认哪些项」的清单，不给法律意见。
+ *       任何一项标「存在阻断」都会在报告顶部阻断，不因分数高而放行。
+ * ------------------------------------------------------------------ */
+var RS_GATES = {
+  lic: {n:'准入资质', icon:'📜', items:[
+    '业务所需牌照 / 许可证已确认且可获取',
+    '若涉及境外资本，外资准入限制已核查',
+    '进入目标平台所需的类目资质已确认',
+    '经营场所 / 生产环节的合规要求已确认'
+  ]},
+  ad: {n:'宣传合规', icon:'📣', items:[
+    '功效 / 性能宣称有可出示的依据',
+    '未使用极限词与绝对化用语',
+    '数据引用标明来源且未误导',
+    '特殊品类的广告限制已核查（医疗 / 金融 / 教育 / 食品等）'
+  ]},
+  data: {n:'数据与隐私', icon:'🔒', items:[
+    '个人信息收集具备告知与同意机制',
+    '数据存储与共享范围已明确',
+    '数据出境（如涉及）已完成评估',
+    '未成年人保护（如涉及）已考虑'
+  ]},
+  ip: {n:'知识产权', icon:'💡', items:[
+    '商标与域名的可用性已检索',
+    '技术路线已做专利 FTO 检索',
+    '开源协议合规已确认（含传染性）',
+    '内容 / 设计素材的授权链完整'
+  ]}
+};
+
+var RS_GATE_ST = {unknown:'未确认', pass:'已确认通过', block:'存在阻断'};
+
+/* ---------- 假设的证据来源（把 6 个内核串成闭环）---------- */
+var RS_SRC = {
+  '':'未指定',
+  tam:'内核1 市场测算',
+  cross:'内核2 竞品×画像',
+  seg:'内核3 用户分层',
+  wtp:'内核4 定价验证',
+  feas:'内核5 可行性',
+  attr:'行业专属变量',
+  gate:'准入 / 合规门禁',
+  ext:'外部资料（报告 / 访谈 / 财报）'
 };
 
 /* ---------- 当前调研数据（挂在 state 上） ---------- */
@@ -84,12 +215,149 @@ function rs(){
     segs:[],         // 分层（从模板带入，可改）
     wtp:{prices:'0,9.9,19,39,99', counts:'8,22,28,12,10', target:'19'},
     feas:{stages:'', risks:''},
+    attr:'',                    // 行业属性：tech / retail / service / reg
+    attrVars:[],                // [{text, status:'todo'|'done'|'na'}]
+    gates:{},                   // {lic:[status...], ad:[...], data:[...], ip:[...]}
     ver:{
       market:{users:'万人', note:'目标市场总人数'},
       arpu:{users:'元/年', note:'年均付费'}
     }
   };
-  return state.research;
+  // 字段兜底：旧存档或异常数据可能缺字段，避免后续读取时崩溃
+  var R = state.research;
+  if(!Array.isArray(R.assumptions)) R.assumptions = [];
+  if(!Array.isArray(R.rivals))      R.rivals = [];
+  if(!Array.isArray(R.segs))        R.segs = [];
+  if(!Array.isArray(R.attrVars))    R.attrVars = [];
+  if(!R.market || typeof R.market !== 'object') R.market = {};
+  if(!R.wtp   || typeof R.wtp   !== 'object')   R.wtp = {prices:'0,9.9,19,39,99', counts:'', target:''};
+  if(!R.feas  || typeof R.feas  !== 'object')   R.feas = {stages:'', risks:''};
+  if(!R.gates || typeof R.gates !== 'object')   R.gates = {};
+  return R;
+}
+
+/* ---------- 行业属性切换：带入该类「致命变量」清单 ---------- */
+function rsApplyAttr(k){
+  var A = RS_ATTRS[k]; var R = rs();
+  R.attr = k || '';
+  if(!A){ R.attrVars = []; }
+  else {
+    // 保留已填写的自定义项，避免切属性时丢数据
+    var custom = (R.attrVars||[]).filter(function(v){ return v.custom; });
+    R.attrVars = A.vars.map(function(t){ return {text:t, status:'todo'}; }).concat(custom);
+  }
+  save();
+  renderRsAttr(); renderRsReport();
+  if(A) toast('已带入「' + A.n + '」的 ' + A.vars.length + ' 项致命变量');
+}
+
+/* ---------- 行业属性与致命变量渲染 ---------- */
+function renderRsAttr(){
+  var host = $('#rsAttrVars'); var sum = $('#rsAttrSum'); var R = rs();
+  if(!host) return;
+  var A = RS_ATTRS[R.attr];
+  if(!A){
+    host.innerHTML = '<span class="ph">选择行业属性后，会带入该类型的「致命变量」清单</span>';
+    if(sum) sum.textContent = '';
+    return;
+  }
+  host.innerHTML = '';
+  var ST = {todo:'待确认', doing:'进行中', done:'已确认', na:'不适用'};
+  R.attrVars.forEach(function(v, i){
+    var row = document.createElement('div');
+    row.className = 'asrow is-' + v.status;
+    row.innerHTML =
+      '<span class="asrow__st">' + (ST[v.status]||'待确认') + '</span>' +
+      '<input type="text" class="asrow__t" value="' + esc(v.text) + '" placeholder="变量描述">' +
+      '<select class="asrow__s">' +
+        ['todo','doing','done','na'].map(function(k){
+          return '<option value="' + k + '"' + (v.status===k?' selected':'') + '>' + ST[k] + '</option>';
+        }).join('') +
+      '</select>' +
+      '<button class="btn btn--sm btn--ghost" data-atvdel="' + i + '">✕</button>';
+    host.appendChild(row);
+    row.querySelector('.asrow__t').addEventListener('input', function(){ v.text = this.value; save(); });
+    row.querySelector('.asrow__s').addEventListener('change', function(){
+      v.status = this.value; save(); renderRsAttr(); renderRsReport();
+    });
+  });
+  [].forEach.call(host.querySelectorAll('[data-atvdel]'), function(b){
+    b.onclick = function(){
+      R.attrVars.splice(parseInt(b.getAttribute('data-atvdel'),10), 1);
+      save(); renderRsAttr();
+    };
+  });
+  if(sum){
+    var d = R.attrVars.filter(function(v){ return v.status === 'done'; }).length;
+    sum.textContent = d + ' / ' + R.attrVars.length + ' 已确认';
+  }
+}
+function rsAddAttrVar(){
+  var R = rs();
+  if(!R.attrVars) R.attrVars = [];
+  R.attrVars.push({text:'', status:'todo', custom:true});
+  save(); renderRsAttr();
+}
+
+/* ---------- 准入 / 合规门禁渲染（一票否决） ---------- */
+function renderRsGates(){
+  var host = $('#rsGates'); var R = rs();
+  if(!host) return;
+  if(!R.gates) R.gates = {};
+  host.innerHTML = '';
+  Object.keys(RS_GATES).forEach(function(gk){
+    var G = RS_GATES[gk];
+    var arr = R.gates[gk];
+    if(!arr || arr.length !== G.items.length){
+      arr = G.items.map(function(){ return 'unknown'; });
+      R.gates[gk] = arr;
+    }
+    var box = document.createElement('div');
+    box.className = 'gatebox';
+    var blocked = arr.filter(function(s){ return s === 'block'; }).length;
+    box.innerHTML = '<div class="gatebox__hd">' + G.icon + ' ' + G.n +
+      (blocked ? ' <span class="pill pill--alert">存在阻断 ' + blocked + '</span>' : '') + '</div>';
+    G.items.forEach(function(it, i){
+      var row = document.createElement('div');
+      row.className = 'gaterow is-' + arr[i];
+      row.innerHTML =
+        '<span class="gaterow__t">' + esc(it) + '</span>' +
+        '<select class="gaterow__s">' +
+          ['unknown','pass','block'].map(function(k){
+            return '<option value="' + k + '"' + (arr[i]===k?' selected':'') + '>' + RS_GATE_ST[k] + '</option>';
+          }).join('') +
+        '</select>';
+      box.appendChild(row);
+      row.querySelector('.gaterow__s').addEventListener('change', function(){
+        arr[i] = this.value; save(); renderRsGates(); renderRsReport();
+      });
+    });
+    host.appendChild(box);
+  });
+}
+
+/* ---------- 门禁汇总：有阻断则一票否决 ---------- */
+function rsGateVerdict(){
+  var R = rs(); if(!R.gates) return {block:[], pending:0, total:0};
+  var block = [], pending = 0, total = 0;
+  Object.keys(RS_GATES).forEach(function(gk){
+    var G = RS_GATES[gk]; var arr = R.gates[gk] || [];
+    G.items.forEach(function(it, i){
+      total++;
+      var s = arr[i] || 'unknown';
+      if(s === 'block') block.push(G.n + '：' + it);
+      else if(s === 'unknown') pending++;
+    });
+  });
+  return {block:block, pending:pending, total:total};
+}
+
+/* ---------- 假设证据链：无验证路径的假设 ---------- */
+function rsAsmNoPath(){
+  var R = rs();
+  return (R.assumptions||[]).filter(function(a){
+    return !a.src && !(a.how || '').trim();
+  });
 }
 
 /* ---------- 模板切换：带入骨架 ---------- */
@@ -120,24 +388,32 @@ function renderAssump(){
   }
   var ST = {todo:'待验证', doing:'验证中', done:'已验证', fail:'已推翻'};
   R.assumptions.forEach(function(a, i){
+    var nopath = !a.src && !(a.how || '').trim();
     var row = document.createElement('div');
-    row.className = 'asrow is-' + a.status;
+    row.className = 'asrow is-' + a.status + (nopath ? ' is-nopath' : '');
     row.innerHTML =
       '<span class="asrow__st">' + (ST[a.status]||'待验证') + '</span>' +
       '<input type="text" class="asrow__t" value="' + esc(a.text) + '" placeholder="假设描述">' +
       '<input type="text" class="asrow__h" value="' + esc(a.how) + '" placeholder="验证方式（如：问卷 Q3 / 50 份）">' +
+      '<select class="asrow__src" title="证据来源">' +
+        Object.keys(RS_SRC).map(function(k){
+          return '<option value="' + k + '"' + (a.src===k?' selected':'') + '>' + RS_SRC[k] + '</option>';
+        }).join('') +
+      '</select>' +
       '<select class="asrow__s">' +
         ['todo','doing','done','fail'].map(function(k){
           return '<option value="' + k + '"' + (a.status===k?' selected':'') + '>' + (ST[k]) + '</option>';
         }).join('') +
       '</select>' +
+      (nopath ? '<span class="asrow__warn" title="既没选证据来源，也没填验证方式">无验证路径</span>' : '') +
       '<button class="btn btn--sm btn--ghost" data-asdel="' + i + '">✕</button>';
     host.appendChild(row);
     var ti = row.querySelector('.asrow__t'), hi = row.querySelector('.asrow__h'),
-        si = row.querySelector('.asrow__s');
+        si = row.querySelector('.asrow__s'), ci = row.querySelector('.asrow__src');
     ti.addEventListener('input', function(){ a.text = ti.value; save(); });
-    hi.addEventListener('input', function(){ a.how = hi.value; save(); });
+    hi.addEventListener('input', function(){ a.how = hi.value; save(); renderAssump(); renderRsReport(); });
     si.addEventListener('change', function(){ a.status = si.value; save(); renderAssump(); renderRsReport(); });
+    ci.addEventListener('change', function(){ a.src = ci.value; save(); renderAssump(); renderRsReport(); });
   });
   [].forEach.call(host.querySelectorAll('[data-asdel]'), function(b){
     b.onclick = function(){
@@ -149,11 +425,14 @@ function renderAssump(){
   var c = $('#rsAssumpCount');
   if(c){
     var done = R.assumptions.filter(function(a){ return a.status === 'done'; }).length;
-    c.textContent = done + ' / ' + R.assumptions.length + ' 已验证';
+    var nopath = rsAsmNoPath().length;
+    var html = done + ' / ' + R.assumptions.length + ' 已验证';
+    if(nopath) html += ' · <b style="color:var(--alert)">⚠️ ' + nopath + ' 项无验证路径</b>';
+    c.innerHTML = html;
   }
 }
 function addAssump(){
-  rs().assumptions.push({text:'', how:'', status:'todo'});
+  rs().assumptions.push({text:'', how:'', src:'', status:'todo'});
   save(); renderAssump();
 }
 
@@ -499,27 +778,74 @@ function buildResearchReport(){
   out.push('---');
   out.push('');
 
+  /* 门禁：一票否决，放在最前面，不占编号 */
+  var gv = rsGateVerdict();
+  if(gv.block.length){
+    out.push('## 🛑 准入 / 合规阻断');
+    out.push('');
+    out.push('**以下 ' + gv.block.length + ' 项存在阻断，后文所有测算与结论在阻断解除前不成立。**');
+    out.push('');
+    gv.block.forEach(function(b){ out.push('- ' + b); });
+    out.push('');
+    out.push('> 本工具只提示「该确认哪些项」，不构成法律意见。请以主管部门规定与执业律师意见为准。');
+    out.push('');
+    out.push('---');
+    out.push('');
+  } else if(gv.total && gv.pending){
+    out.push('> ⚠️ 准入 / 合规门禁共 ' + gv.total + ' 项，尚有 **' + gv.pending + ' 项未确认**。未确认不等于通过。');
+    out.push('');
+  }
+
   /* 0 假设 */
   out.push('## 0. 待验证假设');
   out.push('');
   if(R.assumptions.length){
     var ST = {todo:'待验证', doing:'验证中', done:'已验证', fail:'已推翻'};
-    out.push('| 状态 | 假设 | 验证方式 |');
-    out.push('|---|---|---|');
+    out.push('| 状态 | 假设 | 证据来源 | 验证方式 |');
+    out.push('|---|---|---|---|');
     R.assumptions.forEach(function(a){
-      out.push('| ' + (ST[a.status]||'待验证') + ' | ' + (a.text||'—') + ' | ' + (a.how||'—') + ' |');
+      out.push('| ' + (ST[a.status]||'待验证') + ' | ' + (a.text||'—') +
+               ' | ' + (RS_SRC[a.src] || (a.how ? '外部资料' : '—')) + ' | ' + (a.how||'—') + ' |');
     });
     var un = R.assumptions.filter(function(a){ return a.status !== 'done'; }).length;
+    var np = rsAsmNoPath();
     out.push('');
     if(un){
       out.push('⚠️ **尚有 ' + un + ' 条假设未验证。** 报告中的相关结论应视为待验证，不宜直接对外引用。');
     } else {
       out.push('✅ 所有假设均已验证。');
     }
+    if(np.length){
+      out.push('');
+      out.push('🔴 **' + np.length + ' 条假设没有验证路径**（既未指定证据来源，也未填验证方式）：');
+      out.push('');
+      np.forEach(function(a){ out.push('- ' + (a.text || '（未命名假设）')); });
+      out.push('');
+      out.push('> 列了假设但没有任何证据来源，等于把判断悬空。请为每条假设指定「用哪个内核 / 哪份资料去验证」，或明确删除。');
+    }
   } else {
     out.push('*未填写假设清单。*');
   }
   out.push('');
+
+  /* 行业专属变量 */
+  var A = RS_ATTRS[R.attr];
+  if(A && (R.attrVars||[]).length){
+    out.push('## 0b. 行业专属变量（' + A.n + '）');
+    out.push('');
+    out.push('> ' + A.desc);
+    out.push('');
+    var AST = {todo:'待确认', doing:'进行中', done:'已确认', na:'不适用'};
+    out.push('| 状态 | 变量 |');
+    out.push('|---|---|');
+    R.attrVars.forEach(function(v){
+      out.push('| ' + (AST[v.status]||'待确认') + ' | ' + (v.text||'—') + ' |');
+    });
+    var au = R.attrVars.filter(function(v){ return v.status === 'todo' || v.status === 'doing'; }).length;
+    out.push('');
+    if(au) out.push('⚠️ **' + au + ' 项致命变量未确认。** 这类变量决定项目生死，优先于市场测算。');
+    out.push('');
+  }
 
   /* 1 市场 */
   var tam = calcTAM();
@@ -642,5 +968,6 @@ function exportRsReport(){
 
 /* ---------- 统一渲染 ---------- */
 function renderRsAll(){
-  renderAssump(); renderSegs(); renderCross(); calcTAM(); calcWTP(); renderRsReport();
+  renderAssump(); renderSegs(); renderCross(); calcTAM(); calcWTP();
+  renderRsAttr(); renderRsGates(); renderRsReport();
 }
