@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Y.Mine · 品牌战略到增长的完整决策链（全程本地运行）</title>
-<meta name="description" content="定义品牌、验证市场、制定策略、回收结果的完整决策链。24 个模块、21 个确定性分析函数，全部在浏览器里跑完，数据不出本地。">
+<meta name="description" content="定义品牌、验证市场、制定策略、回收结果的完整决策链。24 个模块、25 个确定性计算（其中 14 个可被工作流编排），全部在浏览器里跑完，数据不出本地。">
 <style>
 :root{
   --brand:#4f46e5; --brand2:#7c3aed;
@@ -165,6 +165,11 @@ a{color:inherit;text-decoration:none;}
 
 /* ===== 模块卡片 ===== */
 .mods{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;}
+.modgrp{grid-column:1/-1;display:flex;align-items:center;gap:12px;margin:22px 0 0;}
+.modgrp:first-child{margin-top:0;}
+.modgrp__lb{font-size:15px;font-weight:800;color:var(--brand);letter-spacing:.5px;white-space:nowrap;}
+.modgrp__n{font-size:11px;font-weight:600;color:var(--brand);padding:2px 10px;border-radius:20px;background:var(--brand-soft);white-space:nowrap;}
+.modgrp__line{flex:1;height:1px;background:linear-gradient(90deg,var(--line-strong),transparent);}
 .mod{
   background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);
   padding:20px;box-shadow:var(--shadow-sm);transition:var(--t-fast);
@@ -316,7 +321,7 @@ a{color:inherit;text-decoration:none;}
     <a class="btn btn--ghost" href="manual.html">📖 使用手册</a>
   </div>
   <div class="hero__stats">
-    <div class="hero__stat"><b>22</b><span>个功能模块</span></div>
+    <div class="hero__stat"><b>24</b><span>个功能模块</span></div>
     <div class="hero__stat"><b>21</b><span>个确定性分析函数</span></div>
     <div class="hero__stat"><b>102</b><span>条可溯源违禁词规则</span></div>
     <div class="hero__stat"><b>0</b><span>条数据上传</span></div>
@@ -438,8 +443,8 @@ a{color:inherit;text-decoration:none;}
     <div class="sec__hd">
       <div class="eyebrow">Modules</div>
       <h2>二十四个模块，六个分组</h2>
-      <p>24 个模块按任务分成六组——<b>入口 · 想清楚 · 算出来 · 做出来 · 串起来 · 存下来</b>，
-      对应营销人真实的工作顺序，不是功能堆砌。每张卡片写清输入、处理、输出。</p>
+      <p>24 个模块（<b>23 个 Tab</b> + 品牌调性约束）按任务分成六组——<b>入口 · 想清楚 · 算出来 · 做出来 · 串起来 · 存下来</b>，
+      与工作台内的分组完全一致。顺序对应营销人真实的工作动线，不是功能堆砌。每张卡片写清输入、处理、输出。</p>
       <div class="mflow" style="max-width:760px;margin:16px auto 4px">
         <div class="mflow__hd">推荐动线</div>
         <div class="mflow__steps">
@@ -454,7 +459,136 @@ a{color:inherit;text-decoration:none;}
       </div>
     </div>
     <div class="mods">
+      <div class="modgrp">
+        <span class="modgrp__lb">入口</span>
+        <span class="modgrp__n">1 个</span>
+        <span class="modgrp__line"></span>
+      </div>
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">🧭</span><span class="mod__name">开始（流程导航）</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">解决「23 个 Tab 不知道点哪个」。四场景动线 + 对话式入口，<b>默认打开页</b>。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">选场景，或说一句话（如"我想做竞品分析"）</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">关键词匹配路由 · 不命中则诚实兜底，不硬猜</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">该去哪一步 + 一键跳转 + 进度保存</span></div>
+        </div>
+      </div>
 
+      <div class="modgrp">
+        <span class="modgrp__lb">想清楚</span>
+        <span class="modgrp__n">6 个</span>
+        <span class="modgrp__line"></span>
+      </div>
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">📡</span><span class="mod__name">热点决策</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">判断一个热点该不该跟、怎么跟。<b>做决策辅助，不做事实核查。</b></p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">热点描述 + 五维自评（相关性/时效/风险/契合/转化）</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">加权打分 + 8 类敏感话题识别 + 矛盾校验</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">四档结论 + 风险预警 + 跟进角度建议</span></div>
+        </div>
+      </div>
+
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">📐</span><span class="mod__name">调研方案</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">引导式营销调研：<b>先写清楚哪些假设还没验证</b>，再算市场、找空白、验定价。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">选模板 → 假设/市场/竞品×画像/分层/定价问卷数据</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">TAM·SAM·SOM 测算 · 交叉矩阵找空白格 · WTP 曲线</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">完整调研方案 + 未验证假设警告</span></div>
+        </div>
+      </div>
+
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">🎯</span><span class="mod__name">战略矩阵</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">增强版 SWOT + BCG。解决传统分析<b>静态 / 主观 / 孤岛</b>三个问题。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">SWOT 四象限条目（可绑数值/变化/来源）+ 业务线销售数据</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">TOWS 四象限交叉推导 + BCG 气泡判定 + 组合健康度诊断</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">4 条策略（含判断依据）+ 预算建议 + 可推送日历</span></div>
+        </div>
+      </div>
+
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">🧰</span><span class="mod__name">经典工具箱</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">8 个咨询级框架，全部可算可出图：波特五力 · PEST · 安索夫 · GE 九宫格 · 价值链 · 用户旅程 · OGSM · 感知地图。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">各框架的维度打分或结构化数据</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">行业吸引力 / 净环境分 / 性价比 / 九宫格 / 效率比 / 情绪曲线</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">5 种 SVG 图 + 可执行结论</span></div>
+        </div>
+      </div>
+
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">🗺️</span><span class="mod__name">工具地图</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">70 个经典营销框架全景。已实现 27 个直接跳转，未实现的提供<b>方法论速查</b>（看什么 / 输出什么 / 常见误用），<b>没有空壳卡片</b>。<b>全部 70 个都配了结构示意图</b>——点开即可看到这个框架长什么样。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">分类筛选 / 状态筛选 / 搜索</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">三态分类：已实现 / 部分覆盖 / 方法论速查</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">70 张卡片，每张都有内容 + 结构示意图（可导出 SVG）</span></div>
+        </div>
+      </div>
+
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">🏛️</span><span class="mod__name">品牌内核</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">三层定义品牌（文化 → 价值 → 调性），并检测它与商业模式的自洽性。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">使命/愿景/价值观 · 价值层级 · 10 维度打分 · 收入模式与变现策略</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">主战场识别 · 撕裂检测 · 抽象度检测 · 变现调性冲突 · 品类禁忌</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">价值曲线图 + 品牌信条 + 诊断结论</span></div>
+        </div>
+      </div>
+
+      <div class="modgrp">
+        <span class="modgrp__lb">算出来</span>
+        <span class="modgrp__n">4 个</span>
+        <span class="modgrp__line"></span>
+      </div>
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">📊</span><span class="mod__name">策略模板</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">双模式：提示词交给 AI 展开，计算模式本地算出结论。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">竞品打分 / 细分市场 / 营销节点</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v"><code>analyze_competitor_matrix</code> 等确定性函数</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">加权排名、机会点、优先级建议</span></div>
+        </div>
+      </div>
+
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">💰</span><span class="mod__name">定价策略</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">五种定价法对比 + 促销折扣保本测算 + 价格带图。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">单位成本、目标毛利率、固定成本、竞品价格带、感知价值</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">成本加成 / 竞品锚定 / 价值 / 渗透 / 撇脂 五法并行计算</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">各法价格 + 盈亏平衡销量 + 折扣保本倍数 + 价格带图</span></div>
+        </div>
+      </div>
+
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">🌏</span><span class="mod__name">市场与竞品</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">区域市场优先级 + 竞品档案与动态追踪。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">各区域体量/吸引力/竞争力；竞品档案与动态（人工录入）</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">复用 GE 矩阵判定，与 STP 同一套口径</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">优先级排序 + 四象限分层 + 竞品情报台账</span></div>
+        </div>
+      </div>
+
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">💹</span><span class="mod__name">财务测算</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">四个高频场景。值钱的是<b>计算模型</b>，图表只是呈现。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">GMV 两期因子 / 客单与 CAC / 渠道×目标预算 / 渠道多维指标</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">逐因子替换法归因 · 毛利口径 LTV · 行和校验 · 成本反向计分</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">瀑布图 / 仪表盘 / 热力矩阵 / 雷达图 + 结论</span></div>
+        </div>
+      </div>
+
+      <div class="modgrp">
+        <span class="modgrp__lb">做出来</span>
+        <span class="modgrp__n">4 个</span>
+        <span class="modgrp__line"></span>
+      </div>
       <div class="mod">
         <div class="mod__hd"><span class="mod__ico">🧠</span><span class="mod__name">营销角色</span><span class="mod__tag is-done">已完成</span></div>
         <p class="mod__desc">8 个营销专家角色的结构化提示词拼装。</p>
@@ -476,6 +610,16 @@ a{color:inherit;text-decoration:none;}
       </div>
 
       <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">🖼️</span><span class="mod__name">商业图卡</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">手写 SVG，咨询提案版式，零依赖。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">SWOT / 定位坐标 / 画像字段 / 漏斗数值 / 缩进树</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">纯前端生成 SVG，不加载任何图表库</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">SVG（可编辑）/ PNG（2 倍图）</span></div>
+        </div>
+      </div>
+
+      <div class="mod">
         <div class="mod__hd"><span class="mod__ico">🎭</span><span class="mod__name">品牌调性约束</span><span class="mod__tag is-done">已完成</span></div>
         <p class="mod__desc">把品牌内核变成内容体检的评分基准。同一句文案，不同品牌不同结论。</p>
         <div class="io">
@@ -485,26 +629,11 @@ a{color:inherit;text-decoration:none;}
         </div>
       </div>
 
-      <div class="mod">
-        <div class="mod__hd"><span class="mod__ico">📊</span><span class="mod__name">策略模板</span><span class="mod__tag is-done">已完成</span></div>
-        <p class="mod__desc">双模式：提示词交给 AI 展开，计算模式本地算出结论。</p>
-        <div class="io">
-          <div class="io__row"><span class="io__k">输入</span><span class="io__v">竞品打分 / 细分市场 / 营销节点</span></div>
-          <div class="io__row"><span class="io__k">处理</span><span class="io__v"><code>analyze_competitor_matrix</code> 等确定性函数</span></div>
-          <div class="io__row"><span class="io__k">输出</span><span class="io__v">加权排名、机会点、优先级建议</span></div>
-        </div>
+      <div class="modgrp">
+        <span class="modgrp__lb">串起来</span>
+        <span class="modgrp__n">5 个</span>
+        <span class="modgrp__line"></span>
       </div>
-
-      <div class="mod">
-        <div class="mod__hd"><span class="mod__ico">🏛️</span><span class="mod__name">品牌内核</span><span class="mod__tag is-done">已完成</span></div>
-        <p class="mod__desc">三层定义品牌（文化 → 价值 → 调性），并检测它与商业模式的自洽性。</p>
-        <div class="io">
-          <div class="io__row"><span class="io__k">输入</span><span class="io__v">使命/愿景/价值观 · 价值层级 · 10 维度打分 · 收入模式与变现策略</span></div>
-          <div class="io__row"><span class="io__k">处理</span><span class="io__v">主战场识别 · 撕裂检测 · 抽象度检测 · 变现调性冲突 · 品类禁忌</span></div>
-          <div class="io__row"><span class="io__k">输出</span><span class="io__v">价值曲线图 + 品牌信条 + 诊断结论</span></div>
-        </div>
-      </div>
-
       <div class="mod">
         <div class="mod__hd"><span class="mod__ico">🔗</span><span class="mod__name">工作流</span><span class="mod__tag is-done">已完成</span></div>
         <p class="mod__desc">6 步编排 + 变量流校验 + 三种格式导出。</p>
@@ -516,165 +645,12 @@ a{color:inherit;text-decoration:none;}
       </div>
 
       <div class="mod">
-        <div class="mod__hd"><span class="mod__ico">📦</span><span class="mod__name">内容包</span><span class="mod__tag is-done">已完成</span></div>
-        <p class="mod__desc">4 个场景包，独立全屏窗口运行。开始前先问 3 个问题，答案会注入每一步的提示词。<b>全部免费</b>。</p>
-        <div class="io">
-          <div class="io__row"><span class="io__k">输入</span><span class="io__v">对话采集 3 题（品牌 / 目标 / 限制）→ 按步骤跑</span></div>
-          <div class="io__row"><span class="io__k">处理</span><span class="io__v">⚡ 本地函数真跑；🤖 步骤给可复制提示词，跑完粘回</span></div>
-          <div class="io__row"><span class="io__k">输出</span><span class="io__v">完成度环形图 + 真实指标卡 + Markdown 导出</span></div>
-          <div class="io__row"><span class="io__k">采集</span><span class="io__v">纯前端规则判跑偏（不调 LLM），含疑问句长度豁免与容忍机制</span></div>
-        </div>
-      </div>
-
-      <div class="mod">
-        <div class="mod__hd"><span class="mod__ico">📚</span><span class="mod__name">品牌知识库</span><span class="mod__tag is-done">已完成</span></div>
-        <p class="mod__desc">沉淀品牌资产、竞品素材、用户原声、违禁词。</p>
-        <div class="io">
-          <div class="io__row"><span class="io__k">输入</span><span class="io__v">五个预设文件夹下的文档</span></div>
-          <div class="io__row"><span class="io__k">处理</span><span class="io__v">生成时作为参考资料注入，可设范围与条数</span></div>
-          <div class="io__row"><span class="io__k">输出</span><span class="io__v">真正影响产出的上下文（不是记事本）</span></div>
-        </div>
-      </div>
-
-      <div class="mod">
-        <div class="mod__hd"><span class="mod__ico">🕐</span><span class="mod__name">品牌轨迹</span><span class="mod__tag is-done">已完成</span></div>
-        <p class="mod__desc">把散落在 7 个模块的记录汇成<b>一条时间线</b>。此前这些记录各自藏在模块内部、互相看不见，这里只做聚合呈现，<b>不新增数据</b>。</p>
-        <div class="io">
-          <div class="io__row"><span class="io__k">输入</span><span class="io__v">7 类已有记录：营销动作 / 竞品动态 / 内容评分 / 战略快照 / 执行记录 / 生成留痕 / 对话</span></div>
-          <div class="io__row"><span class="io__k">处理</span><span class="io__v">4 种时间格式归一 · 按日分组 · 类型筛选与搜索</span></div>
-          <div class="io__row"><span class="io__k">输出</span><span class="io__v">统一时间线（可导出 MD / CSV）· 每条记录可点击<b>溯源回来源模块</b> · 诚实标注无法恢复的日期</span></div>
-          <div class="io__row"><span class="io__k">洞察</span><span class="io__v">30 天活跃度柱图 · 内容质量回归趋势 · 执行完成率与逾期 · 各类跟进提醒</span></div>
-        </div>
-      </div>
-
-      <div class="mod">
-        <div class="mod__hd"><span class="mod__ico">🎨</span><span class="mod__name">品牌资产台账</span><span class="mod__tag is-done">已完成</span></div>
-        <p class="mod__desc">登记「品牌有什么资产、现在什么状态」。<b>不做设计功能</b>——这里管的是 Logo 版本、物料进度与色值规范，以及能不能一键交付给设计 / 供应商。</p>
-        <div class="io">
-          <div class="io__row"><span class="io__k">输入</span><span class="io__v">色值 HEX · 字体规范 · 使用禁忌 · Logo 版本（名称/用途/状态）· 物料（类型/负责人/截止）</span></div>
-          <div class="io__row"><span class="io__k">处理</span><span class="io__v">HEX→HSL 换算出色彩性格读数；与品牌内核定位做<b>匹配提示</b>（经验值，非硬科学）</span></div>
-          <div class="io__row"><span class="io__k">输出</span><span class="io__v">品牌规范 Markdown（可直接发供应商）· 物料 CSV · JSON 备份 / 恢复</span></div>
-          <div class="io__row"><span class="io__k">明确不做</span><span class="io__v">画 Logo、排版、图片编辑——那是设计工具，会摧毁「零依赖单文件」</span></div>
-        </div>
-      </div>
-
-      <div class="mod">
-        <div class="mod__hd"><span class="mod__ico">⚙️</span><span class="mod__name">系统设置</span><span class="mod__tag is-done">已完成</span></div>
-        <p class="mod__desc">全部数据只存在本地浏览器，<b>不上传服务器</b>——这既意味着数据不外泄，也意味着<b>清缓存会丢失</b>。所以备份导出不是附加功能，而是隐私承诺的<b>必需配套</b>。</p>
-        <div class="io">
-          <div class="io__row"><span class="io__k">输入</span><span class="io__v">当前全部状态（localStorage）</span></div>
-          <div class="io__row"><span class="io__k">处理</span><span class="io__v">全量序列化 · 存储占用统计 · 主题 / 品牌基准 / 默认打开 / 联网开关</span></div>
-          <div class="io__row"><span class="io__k">输出</span><span class="io__v">备份 JSON（导出 / 恢复）· 占用百分比条 · 设置持久化</span></div>
-        </div>
-      </div>
-
-      <div class="mod">
-        <div class="mod__hd"><span class="mod__ico">🖼️</span><span class="mod__name">商业图卡</span><span class="mod__tag is-done">已完成</span></div>
-        <p class="mod__desc">手写 SVG，咨询提案版式，零依赖。</p>
-        <div class="io">
-          <div class="io__row"><span class="io__k">输入</span><span class="io__v">SWOT / 定位坐标 / 画像字段 / 漏斗数值 / 缩进树</span></div>
-          <div class="io__row"><span class="io__k">处理</span><span class="io__v">纯前端生成 SVG，不加载任何图表库</span></div>
-          <div class="io__row"><span class="io__k">输出</span><span class="io__v">SVG（可编辑）/ PNG（2 倍图）</span></div>
-        </div>
-      </div>
-
-      <div class="mod">
         <div class="mod__hd"><span class="mod__ico">💬</span><span class="mod__name">Agent 工作台</span><span class="mod__tag is-done">已完成</span></div>
         <p class="mod__desc">左边对话下达任务，右边文档沉淀产出。</p>
         <div class="io">
           <div class="io__row"><span class="io__k">输入</span><span class="io__v">自然语言，如「做个竞品分析」</span></div>
           <div class="io__row"><span class="io__k">处理</span><span class="io__v">意图路由 → 调本地函数真执行，不装</span></div>
           <div class="io__row"><span class="io__k">输出</span><span class="io__v">结果 + 可编辑文档块，能引用回对话</span></div>
-        </div>
-      </div>
-
-      <div class="mod">
-        <div class="mod__hd"><span class="mod__ico">🧰</span><span class="mod__name">经典工具箱</span><span class="mod__tag is-done">已完成</span></div>
-        <p class="mod__desc">8 个咨询级框架，全部可算可出图：波特五力 · PEST · 安索夫 · GE 九宫格 · 价值链 · 用户旅程 · OGSM · 感知地图。</p>
-        <div class="io">
-          <div class="io__row"><span class="io__k">输入</span><span class="io__v">各框架的维度打分或结构化数据</span></div>
-          <div class="io__row"><span class="io__k">处理</span><span class="io__v">行业吸引力 / 净环境分 / 性价比 / 九宫格 / 效率比 / 情绪曲线</span></div>
-          <div class="io__row"><span class="io__k">输出</span><span class="io__v">8 种 SVG 图 + 可执行结论</span></div>
-        </div>
-      </div>
-
-      <div class="mod">
-        <div class="mod__hd"><span class="mod__ico">🗺️</span><span class="mod__name">工具地图</span><span class="mod__tag is-done">已完成</span></div>
-        <p class="mod__desc">70 个经典营销框架全景。已实现 27 个直接跳转，未实现的提供<b>方法论速查</b>（看什么 / 输出什么 / 常见误用），<b>没有空壳卡片</b>。<b>全部 70 个都配了结构示意图</b>——点开即可看到这个框架长什么样。</p>
-        <div class="io">
-          <div class="io__row"><span class="io__k">输入</span><span class="io__v">分类筛选 / 状态筛选 / 搜索</span></div>
-          <div class="io__row"><span class="io__k">处理</span><span class="io__v">三态分类：已实现 / 部分覆盖 / 方法论速查</span></div>
-          <div class="io__row"><span class="io__k">输出</span><span class="io__v">70 张卡片，每张都有内容 + 结构示意图（可导出 SVG）</span></div>
-        </div>
-      </div>
-
-      <div class="mod">
-        <div class="mod__hd"><span class="mod__ico">🧭</span><span class="mod__name">开始（流程导航）</span><span class="mod__tag is-done">已完成</span></div>
-        <p class="mod__desc">解决「16 个 Tab 不知道点哪个」。四场景动线 + 对话式入口，<b>默认打开页</b>。</p>
-        <div class="io">
-          <div class="io__row"><span class="io__k">输入</span><span class="io__v">选场景，或说一句话（如"我想做竞品分析"）</span></div>
-          <div class="io__row"><span class="io__k">处理</span><span class="io__v">关键词匹配路由 · 不命中则诚实兜底，不硬猜</span></div>
-          <div class="io__row"><span class="io__k">输出</span><span class="io__v">该去哪一步 + 一键跳转 + 进度保存</span></div>
-        </div>
-      </div>
-
-      <div class="mod">
-        <div class="mod__hd"><span class="mod__ico">💹</span><span class="mod__name">财务测算</span><span class="mod__tag is-done">已完成</span></div>
-        <p class="mod__desc">四个高频场景。值钱的是<b>计算模型</b>，图表只是呈现。</p>
-        <div class="io">
-          <div class="io__row"><span class="io__k">输入</span><span class="io__v">GMV 两期因子 / 客单与 CAC / 渠道×目标预算 / 渠道多维指标</span></div>
-          <div class="io__row"><span class="io__k">处理</span><span class="io__v">逐因子替换法归因 · 毛利口径 LTV · 行和校验 · 成本反向计分</span></div>
-          <div class="io__row"><span class="io__k">输出</span><span class="io__v">瀑布图 / 仪表盘 / 热力矩阵 / 雷达图 + 结论</span></div>
-        </div>
-      </div>
-
-      <div class="mod">
-        <div class="mod__hd"><span class="mod__ico">🎯</span><span class="mod__name">战略矩阵</span><span class="mod__tag is-done">已完成</span></div>
-        <p class="mod__desc">增强版 SWOT + BCG。解决传统分析<b>静态 / 主观 / 孤岛</b>三个问题。</p>
-        <div class="io">
-          <div class="io__row"><span class="io__k">输入</span><span class="io__v">SWOT 四象限条目（可绑数值/变化/来源）+ 业务线销售数据</span></div>
-          <div class="io__row"><span class="io__k">处理</span><span class="io__v">TOWS 四象限交叉推导 + BCG 气泡判定 + 组合健康度诊断</span></div>
-          <div class="io__row"><span class="io__k">输出</span><span class="io__v">4 条策略（含判断依据）+ 预算建议 + 可推送日历</span></div>
-        </div>
-      </div>
-
-      <div class="mod">
-        <div class="mod__hd"><span class="mod__ico">📐</span><span class="mod__name">调研方案</span><span class="mod__tag is-done">已完成</span></div>
-        <p class="mod__desc">引导式营销调研：<b>先写清楚哪些假设还没验证</b>，再算市场、找空白、验定价。</p>
-        <div class="io">
-          <div class="io__row"><span class="io__k">输入</span><span class="io__v">选模板 → 假设/市场/竞品×画像/分层/定价问卷数据</span></div>
-          <div class="io__row"><span class="io__k">处理</span><span class="io__v">TAM·SAM·SOM 测算 · 交叉矩阵找空白格 · WTP 曲线</span></div>
-          <div class="io__row"><span class="io__k">输出</span><span class="io__v">完整调研方案 + 未验证假设警告</span></div>
-        </div>
-      </div>
-
-      <div class="mod">
-        <div class="mod__hd"><span class="mod__ico">📡</span><span class="mod__name">热点决策</span><span class="mod__tag is-done">已完成</span></div>
-        <p class="mod__desc">判断一个热点该不该跟、怎么跟。<b>做决策辅助，不做事实核查。</b></p>
-        <div class="io">
-          <div class="io__row"><span class="io__k">输入</span><span class="io__v">热点描述 + 五维自评（相关性/时效/风险/契合/转化）</span></div>
-          <div class="io__row"><span class="io__k">处理</span><span class="io__v">加权打分 + 8 类敏感话题识别 + 矛盾校验</span></div>
-          <div class="io__row"><span class="io__k">输出</span><span class="io__v">四档结论 + 风险预警 + 跟进角度建议</span></div>
-        </div>
-      </div>
-
-      <div class="mod">
-        <div class="mod__hd"><span class="mod__ico">🌏</span><span class="mod__name">市场与竞品</span><span class="mod__tag is-done">已完成</span></div>
-        <p class="mod__desc">区域市场优先级 + 竞品档案与动态追踪。</p>
-        <div class="io">
-          <div class="io__row"><span class="io__k">输入</span><span class="io__v">各区域体量/吸引力/竞争力；竞品档案与动态（人工录入）</span></div>
-          <div class="io__row"><span class="io__k">处理</span><span class="io__v">复用 GE 矩阵判定，与 STP 同一套口径</span></div>
-          <div class="io__row"><span class="io__k">输出</span><span class="io__v">优先级排序 + 四象限分层 + 竞品情报台账</span></div>
-        </div>
-      </div>
-
-      <div class="mod">
-        <div class="mod__hd"><span class="mod__ico">💰</span><span class="mod__name">定价策略</span><span class="mod__tag is-done">已完成</span></div>
-        <p class="mod__desc">五种定价法对比 + 促销折扣保本测算 + 价格带图。</p>
-        <div class="io">
-          <div class="io__row"><span class="io__k">输入</span><span class="io__v">单位成本、目标毛利率、固定成本、竞品价格带、感知价值</span></div>
-          <div class="io__row"><span class="io__k">处理</span><span class="io__v">成本加成 / 竞品锚定 / 价值 / 渗透 / 撇脂 五法并行计算</span></div>
-          <div class="io__row"><span class="io__k">输出</span><span class="io__v">各法价格 + 盈亏平衡销量 + 折扣保本倍数 + 价格带图</span></div>
         </div>
       </div>
 
@@ -696,6 +672,64 @@ a{color:inherit;text-decoration:none;}
           <div class="io__row"><span class="io__k">输入</span><span class="io__v">8 个数据源（品牌/STP/竞品/体检/日历/知识库/工作流/工作台）</span></div>
           <div class="io__row"><span class="io__k">处理</span><span class="io__v">实时采集 → 八章聚合 → <code>synthesize_marketing_plan</code></span></div>
           <div class="io__row"><span class="io__k">输出</span><span class="io__v">整合方案 + 缺口诊断 + 下一步建议</span></div>
+        </div>
+      </div>
+
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">📦</span><span class="mod__name">内容包</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">4 个场景包，独立全屏窗口运行。开始前先问 3 个问题，答案会注入每一步的提示词。<b>全部免费</b>。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">对话采集 3 题（品牌 / 目标 / 限制）→ 按步骤跑</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">⚡ 本地函数真跑；🤖 步骤给可复制提示词，跑完粘回</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">完成度环形图 + 真实指标卡 + Markdown 导出</span></div>
+          <div class="io__row"><span class="io__k">采集</span><span class="io__v">纯前端规则判跑偏（不调 LLM），含疑问句长度豁免与容忍机制</span></div>
+        </div>
+      </div>
+
+      <div class="modgrp">
+        <span class="modgrp__lb">存下来</span>
+        <span class="modgrp__n">4 个</span>
+        <span class="modgrp__line"></span>
+      </div>
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">📚</span><span class="mod__name">品牌知识库</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">沉淀品牌资产、竞品素材、用户原声、违禁词。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">五个预设文件夹下的文档</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">生成时作为参考资料注入，可设范围与条数</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">真正影响产出的上下文（不是记事本）</span></div>
+        </div>
+      </div>
+
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">🎨</span><span class="mod__name">品牌资产台账</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">登记「品牌有什么资产、现在什么状态」。<b>不做设计功能</b>——这里管的是 Logo 版本、物料进度与色值规范，以及能不能一键交付给设计 / 供应商。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">色值 HEX · 字体规范 · 使用禁忌 · Logo 版本（名称/用途/状态）· 物料（类型/负责人/截止）</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">HEX→HSL 换算出色彩性格读数；与品牌内核定位做<b>匹配提示</b>（经验值，非硬科学）</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">品牌规范 Markdown（可直接发供应商）· 物料 CSV · JSON 备份 / 恢复</span></div>
+          <div class="io__row"><span class="io__k">明确不做</span><span class="io__v">画 Logo、排版、图片编辑——那是设计工具，会摧毁「零依赖单文件」</span></div>
+        </div>
+      </div>
+
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">🕐</span><span class="mod__name">品牌轨迹</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">把散落在 7 个模块的记录汇成<b>一条时间线</b>。此前这些记录各自藏在模块内部、互相看不见，这里只做聚合呈现，<b>不新增数据</b>。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">7 类已有记录：营销动作 / 竞品动态 / 内容评分 / 战略快照 / 执行记录 / 生成留痕 / 对话</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">4 种时间格式归一 · 按日分组 · 类型筛选与搜索</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">统一时间线（可导出 MD / CSV）· 每条记录可点击<b>溯源回来源模块</b> · 诚实标注无法恢复的日期</span></div>
+          <div class="io__row"><span class="io__k">洞察</span><span class="io__v">30 天活跃度柱图 · 内容质量回归趋势 · 执行完成率与逾期 · 各类跟进提醒</span></div>
+        </div>
+      </div>
+
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">⚙️</span><span class="mod__name">系统设置</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">全部数据只存在本地浏览器，<b>不上传服务器</b>——这既意味着数据不外泄，也意味着<b>清缓存会丢失</b>。所以备份导出不是附加功能，而是隐私承诺的<b>必需配套</b>。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">当前全部状态（localStorage）</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">全量序列化 · 存储占用统计 · 主题 / 品牌基准 / 默认打开 / 联网开关</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">备份 JSON（导出 / 恢复）· 占用百分比条 · 设置持久化</span></div>
         </div>
       </div>
 
@@ -753,7 +787,7 @@ a{color:inherit;text-decoration:none;}
       </div>
       <div class="road__row">
         <span class="road__dot is-no"></span><span class="road__st is-no">明确不做</span>
-        <div class="road__t"><b>3D 图表与 ECharts</b><span>3D 会扭曲数据比例（近大远小），不适合财务测算；ECharts 完整包 1MB+，引入即破坏「零依赖」。所有图表手写 SVG，共 9 种，全部可导出</span></div>
+        <div class="road__t"><b>3D 图表与 ECharts</b><span>3D 会扭曲数据比例（近大远小），不适合财务测算；ECharts 完整包 1MB+，引入即破坏「零依赖」。所有图表手写 SVG——商业图卡 5 种、经典工具箱 8 种，另有财务/定价/排期/品牌内核等专用图，零图表库，全部可导出</span></div>
       </div>
       <div class="road__row">
         <span class="road__dot is-no"></span><span class="road__st is-no">不做</span>
@@ -793,7 +827,7 @@ a{color:inherit;text-decoration:none;}
       </div>
       <div class="trade__c">
         <h4>📦 开发拆分，发布合并</h4>
-        <p>源码拆成 18 个模块便于阅读，构建合并成单文件便于部署。既保留零依赖、双击即开的特性，又不牺牲代码可维护性。</p>
+        <p>源码拆成 38 个源文件便于阅读，构建合并成单文件便于部署。既保留零依赖、双击即开的特性，又不牺牲代码可维护性。</p>
       </div>
       <div class="trade__c">
         <h4>🤖 工具即 Function</h4>

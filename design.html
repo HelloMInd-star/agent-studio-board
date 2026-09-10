@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>设计说明 · Y.Mine Agent Studio</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Segoe UI','PingFang SC',system-ui,sans-serif;background:#f7f8fa;color:#1f2329;line-height:1.75;}
+  .layout{display:flex;max-width:1400px;margin:0 auto;align-items:flex-start;}
+  /* 侧边导航 */
+  .side{width:250px;flex:0 0 250px;position:sticky;top:0;height:100vh;overflow-y:auto;
+        background:#fff;border-right:1px solid #e5e6eb;padding:24px 0;}
+  .side h1{font-size:15px;font-weight:700;padding:0 20px 4px;color:#1f2329;}
+  .side .sub{font-size:11px;color:#8f959e;padding:0 20px 16px;}
+  .side a{display:block;padding:7px 20px;font-size:13px;color:#4e5969;text-decoration:none;
+          border-left:3px solid transparent;transition:all .15s;}
+  .side a:hover{background:#f2f3f5;color:#1f2329;}
+  .side a.on{border-left-color:#4f46e5;color:#4f46e5;background:#f5f4ff;font-weight:600;}
+  .side .grp{font-size:11px;color:#a9aeb8;padding:14px 20px 4px;letter-spacing:.5px;}
+  /* 正文 */
+  .main{flex:1;min-width:0;padding:36px 44px 100px;}
+  .hero{background:linear-gradient(135deg,#4f46e5,#7c73f0);color:#fff;border-radius:14px;
+        padding:30px 34px;margin-bottom:26px;}
+  .hero h2{font-size:23px;font-weight:700;margin-bottom:8px;}
+  .hero p{font-size:14px;opacity:.92;}
+  .hero .tags{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;}
+  .hero .tags span{background:rgba(255,255,255,.18);padding:3px 12px;border-radius:20px;font-size:12px;}
+  section{margin-bottom:38px;scroll-margin-top:16px;}
+  h3.sec{font-size:19px;font-weight:700;padding-bottom:9px;margin-bottom:16px;border-bottom:2px solid #4f46e5;display:inline-block;}
+  h4{font-size:15px;font-weight:650;margin:20px 0 8px;color:#1f2329;}
+  p{margin-bottom:11px;font-size:14px;color:#33383f;}
+  ul{margin:0 0 12px 20px;}li{font-size:14px;margin-bottom:5px;color:#33383f;}
+  table{width:100%;border-collapse:collapse;margin:12px 0 16px;font-size:13px;background:#fff;
+        border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+  th{background:#f2f3f5;text-align:left;padding:9px 12px;font-weight:600;color:#4e5969;border-bottom:1px solid #e5e6eb;}
+  td{padding:8px 12px;border-bottom:1px solid #f0f1f3;color:#33383f;vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  code{background:#f2f3f5;padding:1px 6px;border-radius:4px;font-size:12.5px;
+       font-family:'SF Mono',Consolas,monospace;color:#c7254e;}
+  pre{background:#1f2329;color:#e8e8f0;padding:14px 16px;border-radius:8px;overflow-x:auto;
+      font-size:12.5px;font-family:'SF Mono',Consolas,monospace;margin:10px 0 16px;line-height:1.65;}
+  pre code{background:none;color:inherit;padding:0;}
+  .box{background:#fff;border:1px solid #e5e6eb;border-radius:10px;padding:16px 20px;margin:12px 0;
+       border-left:4px solid #4f46e5;}
+  .box.warn{border-left-color:#f59e0b;background:#fffbf5;}
+  .box.ok{border-left-color:#10b981;background:#f5fdf9;}
+  .box .t{font-weight:650;font-size:14px;margin-bottom:6px;}
+  .kv{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin:14px 0;}
+  .kv div{background:#fff;border:1px solid #e5e6eb;border-radius:9px;padding:12px 14px;}
+  .kv b{display:block;font-size:21px;color:#4f46e5;font-weight:700;line-height:1.2;}
+  .kv span{font-size:12px;color:#8f959e;}
+  .lay{border:1px solid #e5e6eb;border-radius:10px;overflow:hidden;margin:14px 0;background:#fff;}
+  .lay .row{display:flex;border-bottom:1px solid #f0f1f3;}
+  .lay .row:last-child{border-bottom:none;}
+  .lay .lbl{width:120px;flex:0 0 120px;background:#fafbfc;padding:12px 14px;font-size:12.5px;
+            font-weight:600;color:#4e5969;border-right:1px solid #f0f1f3;}
+  .lay .val{padding:12px 16px;font-size:13px;color:#33383f;}
+  .foot{margin-top:44px;padding-top:18px;border-top:1px solid #e5e6eb;font-size:12px;color:#8f959e;}
+  @media(max-width:900px){.layout{flex-direction:column;}.side{position:static;width:100%;height:auto;
+    border-right:none;border-bottom:1px solid #e5e6eb;}.main{padding:22px 18px 60px;}}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav class="side">
+  <h1>设计说明</h1>
+  <div class="sub">Y.Mine Agent Studio</div>
+  <div class="grp">定位</div>
+  <a href="#s1">1 · 一句话定位</a>
+  <a href="#s2">2 · 真实数据核查</a>
+  <a href="#s3">3 · 边界：做与不做</a>
+  <div class="grp">架构</div>
+  <a href="#s4">4 · 整体分层</a>
+  <a href="#s5">5 · 代码结构</a>
+  <a href="#s6">6 · 核心算法</a>
+  <div class="grp">功能</div>
+  <a href="#s7">7 · 模块清单</a>
+  <a href="#s8">8 · 数据设计</a>
+  <div class="grp">决策</div>
+  <a href="#s9">9 · 设计决策</a>
+  <a href="#s10">10 · 踩过的坑</a>
+  <a href="#s11">11 · 已知问题</a>
+  <a href="#s12">12 · 面试线索</a>
+</nav>
+
+<main class="main">
+
+<div class="hero">
+  <h2>品牌战略到增长的完整决策链</h2>
+  <p>定义品牌 → 验证市场 → 制定策略 → 执行传播 → 回收结果，全程在浏览器本地运行。</p>
+  <div class="tags">
+    <span>零后端</span><span>零依赖</span><span>单文件 840KB</span>
+    <span>25 个确定性计算</span><span>70 个框架</span>
+  </div>
+</div>
+
+<section id="s1">
+<h3 class="sec">1 · 一句话定位</h3>
+<p><b>一个把营销方法论封装成确定性工具的本地工作台。</b></p>
+<p>拆解这句定位，它同时回答了三件事：</p>
+<ul>
+  <li><b>完整决策链</b> —— 不是工具集合，是有方向的一条链。品牌是输入、营销是输出、复盘是回写。</li>
+  <li><b>确定性</b> —— 能算的不交给模型。每个建议都能回答"凭什么这么建议"。</li>
+  <li><b>本地运行</b> —— 数据不出浏览器，联网默认关闭、由用户自主开启。</li>
+</ul>
+<div class="box">
+  <div class="t">为什么是"品牌 → 增长"而不是"营销工具箱"</div>
+  <p>品牌和营销不是两件事，是一条链的两端：<b>品牌是输入，营销是输出，复盘是回写</b>。缺任何一段，链就断了——没有品牌内核，营销就是"什么火蹭什么"；没有营销执行，品牌只是文档里的三句话；没有复盘回写，市场变了品牌还停在原地。</p>
+  <p>这条链的关键接缝在「品牌内核 → 内容生成」：品牌算出来的调性、价值主张、品类禁忌，必须真正约束内容生产。这一处焊死后，"品牌驱动营销"才从说法变成事实。</p>
+</div>
+</section>
+
+<section id="s2">
+<h3 class="sec">2 · 真实数据核查</h3>
+<p>以下数字均为逐项统计得出，非估算：</p>
+<div class="kv">
+  <div><b>24</b><span>个模块（23 Tab + 调性约束）</span></div>
+  <div><b>23</b><span>个 Tab，分 6 组</span></div>
+  <div><b>38</b><span>个源文件 / 14220 行</span></div>
+  <div><b>25</b><span>个确定性计算函数</span></div>
+  <div><b>14</b><span>个可被工作流编排</span></div>
+  <div><b>70</b><span>个营销框架</span></div>
+  <div><b>25</b><span>种 SVG 骨架</span></div>
+  <div><b>840</b><span>KB 单文件产物</span></div>
+</div>
+<table>
+<tr><th>项</th><th>数值</th><th>统计方式</th></tr>
+<tr><td>Tab 数</td><td>23</td><td><code>data-tab</code> 唯一值</td></tr>
+<tr><td>分组</td><td>6</td><td><code>data-group</code> 去重（entry/think/calc/make/chain/keep）</td></tr>
+<tr><td>确定性计算</td><td>25</td><td>22 个 <code>calc*</code> + <code>analyzeBrandCore</code> + <code>tcAnalyze</code> + <code>scoreContent</code></td></tr>
+<tr><td>可编排函数</td><td>14</td><td><code>LOCAL_TOOLS</code> 索引 11–24</td></tr>
+<tr><td>框架总数</td><td>70</td><td>工具地图条目数</td></tr>
+<tr><td>框架状态</td><td>27 / 4 / 39</td><td>已实现 / 部分覆盖 / 方法论速查</td></tr>
+<tr><td>SVG 骨架</td><td>25 种</td><td><code>framesvg.js</code> 渲染函数</td></tr>
+<tr><td>商业图卡</td><td>5 种</td><td><code>CHART_TYPES</code>（swot/pos/persona/funnel/mind）</td></tr>
+</table>
+<div class="box warn">
+  <div class="t">口径说明</div>
+  <p>「24 个模块」= 23 个 Tab + 品牌调性约束（内嵌在内容工厂，非独立 Tab）。<br>
+  「25 个计算 / 14 个可编排」——<code>matchIntent</code>、<code>matchScene</code> 是路由不是计算，已排除在 25 之外；可编排的 14 个是注册进 <code>LOCAL_TOOLS</code> 的，其余 11 个是模块内直接调用。</p>
+</div>
+</section>
+
+<section id="s3">
+<h3 class="sec">3 · 边界：做与不做</h3>
+<p>这个产品的价值，一半在做了什么，一半在<b>明确拒绝做什么</b>。</p>
+<h4>不做（附硬理由）</h4>
+<table>
+<tr><th>不做</th><th>理由</th></tr>
+<tr><td>自动抓取竞品/热点数据</td><td>CORS 硬限制，且会破坏"数据不出浏览器"的隐私承诺</td></tr>
+<tr><td>引入 ECharts / Three.js</td><td>会击穿"零依赖 + 单文件"；已手写 25 种骨架替代</td></tr>
+<tr><td>设计功能（画 Logo / 排版）</td><td>要么拖进重型依赖，要么只能做出玩具；改做资产台账</td></tr>
+<tr><td>定时提醒</td><td>页面关闭 JS 就停，不假装能做到</td></tr>
+<tr><td>后端 / 账号 / 云同步</td><td>与本地定位根本冲突</td></tr>
+<tr><td>LLM 意图识别（方案二）</td><td>现阶段规则够用，引入只会增加延迟与不确定性</td></tr>
+<tr><td>内嵌 Python（Pyodide）</td><td>30MB+，摧毁单文件；改做导出接口</td></tr>
+</table>
+<h4>改做（因为做不到/不该做，所以换了实现）</h4>
+<ul>
+  <li><b>热点"求真" → "该不该跟"</b>：做不到事实核查，改做决策判断</li>
+  <li><b>竞品自动监测 → 人工台账</b>：诚实标注需手动录入</li>
+  <li><b>内容包付费 → 全免费</b>：调用的是已有本地函数，无边际成本；付费与"核心功能永久免费"冲突</li>
+  <li><b>Excel/Python 集成 → 接口定义</b>：不做在线 Excel，只定义 CSV 进出与 JSON 规范</li>
+</ul>
+</section>
+
+<section id="s4">
+<h3 class="sec">4 · 整体分层</h3>
+<div class="lay">
+  <div class="row"><div class="lbl">决策链层</div><div class="val">品牌内核 → 调研/战略 → 定价/竞品 → 内容/日历 → 财务/方案合成</div></div>
+  <div class="row"><div class="lbl">方法论层</div><div class="val">回答"凭什么这么建议"：调研方案、战略矩阵、70 框架、品牌内核三层结构</div></div>
+  <div class="row"><div class="lbl">计算层</div><div class="val">25 个确定性函数，纯前端可验算，不依赖模型</div></div>
+  <div class="row"><div class="lbl">执行层</div><div class="val">5 种图卡 + 25 种骨架 + 日历 + 工作流 + 导出（MD/JSON/CSV/iCal/SVG）</div></div>
+  <div class="row"><div class="lbl">入口层</div><div class="val">流程导航（场景→步骤）+ 对话路由（意图→函数）+ 内容包独立窗口</div></div>
+  <div class="row"><div class="lbl">存储层</div><div class="val">localStorage 单一 <code>state</code>，全量备份/恢复 .json</div></div>
+</div>
+<div class="box ok">
+  <div class="t">关于"是不是 Agent"</div>
+  <p>按 Anthropic《Building Effective Agents》的划分：Workflow 是"LLM 与工具按预定义路径编排"，Agent 是"LLM 动态决定流程与工具"。本产品属于 <b>Workflow</b>，且是人工预定义的路径。</p>
+  <p>这不是缺陷——那篇文章的核心观点恰恰是<b>能 workflow 就别 agent</b>。营销结论要交付给客户，不能让模型自由发挥。所以能算的都做成确定性函数，只把创作类交给模型，LLM 步骤采用 <b>Human-in-the-loop</b>（人工回填后续跑）。</p>
+</div>
+</section>
+
+<section id="s5">
+<h3 class="sec">5 · 代码结构</h3>
+<p>38 个源文件按职责分层，构建时由 <code>build.py</code> 合并成单文件 <code>index.html</code>。</p>
+<table>
+<tr><th>层</th><th>文件</th><th>职责</th></tr>
+<tr><td>核心</td><td>01-core / 02-presets / 03-rules / 04-store / 05-brand / 06-render</td><td>状态、预设、规则、存储、渲染</td></tr>
+<tr><td>渲染</td><td>07-charts / 08-tools</td><td>5 种图卡、工具注册与调用</td></tr>
+<tr><td>能力</td><td>09-agent / 10-workspace / 11-kb / 12-generate / 13-scan / 14-feedback</td><td>工作流、工作台、知识库、生成、体检、反馈</td></tr>
+<tr><td>装配</td><td>15-bind / 16-boot</td><td>事件绑定、启动引导</td></tr>
+<tr><td>业务</td><td>17-calendar / 18-synth / 19-pricing / 20-market / 21-hotspot / 22-research / 23-strategy / 24-finance / 25-guide</td><td>各决策链环节</td></tr>
+<tr><td>框架</td><td>26-toolkit / 27-toolmap / 28-framesvg / 29-framecfg</td><td>8 个经典工具、70 框架全景、25 种骨架</td></tr>
+<tr><td>内核</td><td>30-brandcore / 32-tonecheck</td><td>品牌内核三层诊断、调性约束检查</td></tr>
+<tr><td>记录</td><td>33-timeline / 34-settings / 35-insight / 36-assets / 37-quarter</td><td>轨迹、设置、洞察、资产、季度视图</td></tr>
+<tr><td>内容包</td><td>38-packs / 39-packwiz</td><td>4 个场景包、独立窗口三段式</td></tr>
+</table>
+<div class="box warn">
+  <div class="t">构建注意</div>
+  <p><code>build.py</code> 使用<b>硬编码模块列表</b>，不是自动扫描 <code>src/</code>。新增 .js 文件必须手动加入列表，否则不会进产物——曾因此出现"代码写了但功能没生效"。</p>
+</div>
+</section>
+
+<section id="s6">
+<h3 class="sec">6 · 核心算法</h3>
+<p>25 个确定性函数，全部可用手算验证。选几个代表性的：</p>
+<h4>品牌内核：位置型 vs 强度型维度</h4>
+<p>关键设计——<b>价格定位是位置型维度，无好坏只有选择</b>。星巴克在溢价端不是缺点，是选择。所以主战场识别看<b>相对品类基准的偏离</b>，而非绝对分：</p>
+<pre><code>主战场   = 绝对分 ≥ 4.0（下了重注）
+差异化   = 相对基准偏离 ≥ 0.5
+撕裂检测 = 预置矛盾对（溢价↔高频折扣、稀缺↔全渠道铺货…）</code></pre>
+<p>验证：星巴克、瑞幸、香奈儿、DIOR 四个案例全部判定"自洽且有记忆点"——它们只是选了不同主战场。而"奢侈品 + 高频折扣"的反例能正确检出冲突。<b>它不评判哪个更好，只判断有没有前后矛盾。</b></p>
+<h4>调性约束：同一文案、不同品牌、不同结论</h4>
+<pre><code>文案："限时秒杀！全场最低价！赶紧冲！！！"
+
+香奈儿（奢侈品·克制·溢价）→ 0 分，触犯品类禁忌
+瑞幸（性价比·效率）      → 通过</code></pre>
+<p>6 个可量化信号：感叹号密度、emoji 密度、绝对化用词、促销词、第二人称频率、平均句长。禁忌表是<b>条件启用</b>的——"秒杀"对溢价端是硬命中，对性价比端不触发。<b>禁忌跟着定位走，不跟品类走。</b></p>
+<h4>洞察回归：样本不足就不给趋势</h4>
+<pre><code>if (n &lt; 5) return '样本不足（'+n+'/5），趋势暂不可判断';</code></pre>
+<p>对 3 个点做最小二乘也能算出斜率，但那是噪声不是结论。宁可少说，也不说一个自己都不信的数字。</p>
+<h4>内容包：本地函数优先</h4>
+<p>重新编排后，小红书包 6 步中 4 步是真跑（品牌内核→体检→调性→排期）。跑完即有真实数字，结果页图表才有依据。<b>AI 产出是自由文本，不包装成图表。</b></p>
+</section>
+
+<section id="s7">
+<h3 class="sec">7 · 模块清单（23 Tab / 6 组）</h3>
+<table>
+<tr><th>组</th><th>模块</th><th>作用</th></tr>
+<tr><td>① 入口</td><td>开始（流程导航）</td><td>按场景走完流程，解决"不知道点哪个"</td></tr>
+<tr><td>② 想清楚</td><td>热点决策 / 调研方案 / 战略矩阵 / 经典工具箱 / 工具地图 / 品牌内核</td><td>定义与判断</td></tr>
+<tr><td>③ 算出来</td><td>策略模板 / 定价策略 / 市场与竞品 / 财务测算</td><td>量化分析</td></tr>
+<tr><td>④ 做出来</td><td>营销角色 / 内容工厂 / 商业图卡 / <i>品牌调性约束</i></td><td>内容生产</td></tr>
+<tr><td>⑤ 串起来</td><td>工作流 / Agent 工作台 / 营销日历 / 方案合成 / 内容包</td><td>编排与执行</td></tr>
+<tr><td>⑥ 存下来</td><td>品牌知识库 / 品牌资产台账 / 品牌轨迹 / 系统设置</td><td>沉淀与配置</td></tr>
+</table>
+<div class="box">
+  <div class="t">品牌轨迹：把隐性的记录层显性化</div>
+  <p>产品里原本散落着 7 处记录（营销动作、竞品动态、内容评分、战略快照、执行 Trace、生成留痕、对话），用户要打开 7 个模块才能拼出完整轨迹。品牌轨迹把它们提取成一个统一时间线——<b>不增加新能力，只是把隐性的显性化</b>。</p>
+  <p>难点是 4 种时间格式归一（<code>YYYY-MM-DD</code>、<code>YYYY/M/D H:M:S</code>、ISO、纯时分秒）。对话历史只存了 <code>HH:MM:SS</code> 无日期，<b>技术上无法恢复</b>，故旧记录标为"日期未知"排在最后，不假装发生在今天。</p>
+</div>
+</section>
+
+<section id="s8">
+<h3 class="sec">8 · 数据设计</h3>
+<ul>
+  <li><b>单一 state</b>：全部状态挂在一个对象，序列化即全量备份</li>
+  <li><b>存储分类</b>：设置页按知识库/工作台/内容评分/策略档案/其他分类显示占用，UTF-16 计字节</li>
+  <li><b>有上限的</b>：history 50 条、chat 60 条、scores 100 条</li>
+  <li><b>无上限但有软提醒</b>：知识库单篇 &gt;5 万字提示（不阻止，用户有权存）</li>
+  <li><b>备份</b>：全量导出/恢复 .json —— 这是"数据不出浏览器"承诺的必需配套，否则本地存储会退化成"丢了就找不回"</li>
+</ul>
+</section>
+
+<section id="s9">
+<h3 class="sec">9 · 设计决策</h3>
+<h4>为什么 70 个框架只配 25 种骨架</h4>
+<p>营销框架的图形结构只有 25 种（四象限、九宫格、雷达、漏斗、金字塔…）。所以每个框架配置只一行：</p>
+<pre><code>'S-02': {s:'radar', t:'五边形雷达图',
+         l:['供应商议价','购买者议价','新进入者','替代品','同业竞争']}</code></pre>
+<p>750 行引擎覆盖全部 70 个，而不是写 70 套渲染器。</p>
+<h4>为什么"未实现"的框架不是灰按钮</h4>
+<p>39 个方法论速查卡片，点开显示"看什么 / 输出什么 / 常见误用"。比如 PEST 的常见误用：<b>把 PEST 写成新闻剪报——每格堆事实，却不写对我们的具体影响</b>。从"61 个空壳"变成"70 个方法论速查"，后者本身就有价值。</p>
+<h4>为什么色彩一致性只做软提示</h4>
+<p>色彩心理学是经验共识，不是硬科学，没法像 LTV 那样验算。所以只说"可能存在张力"，标注"非精确科学，仅供参考"，绝不说"你错了"。</p>
+<h4>为什么对话式采集只管启动前</h4>
+<p>内容包中间步骤是"用户去 LLM 跑完粘回来"，粘的是几百字正文——用疑问句/黑名单判断它对不对没有意义。所以<b>规则只管采集，不管粘贴</b>；粘贴步骤改用"可复制提示词 + 字数提示"。</p>
+</section>
+
+<section id="s10">
+<h3 class="sec">10 · 踩过的坑</h3>
+<p>这些是真实发生并修复的，每一条都有可复现的成因：</p>
+<table>
+<tr><th>问题</th><th>成因</th></tr>
+<tr><td>工作流静默执行错函数</td><td><code>brandcore</code> 误写索引 21，把战略矩阵注册顶掉。选「品牌内核」实际执行「区域市场」</td></tr>
+<tr><td>存储进度条永远不触发</td><td>5MB 上限下正常用量仅 9.3%，黄线 50% 红线 80% 形同虚设。改为按各类间占比 + 绝对阈值</td></tr>
+<tr><td>存储数字虚高 50%</td><td>用 <code>Blob.size</code> 算 UTF-8，但 localStorage 按 UTF-16 存。改为字符数 × 2</td></tr>
+<tr><td>函数名被 DOM 元素覆盖</td><td><code>kbUsage()</code> 与 <code>&lt;div id="kbUsage"&gt;</code> 同名，浏览器把 id 挂到 window 上</td></tr>
+<tr><td>结果页清空执行区</td><td>两区共用容器，<code>innerHTML=</code> 覆盖。拆成独立容器</td></tr>
+<tr><td>内容包按钮无响应</td><td><code>pkBindHomeCards()</code> 被追加到 IIFE 外面，访问不到闭包内函数</td></tr>
+<tr><td>农历节日逐年错位</td><td>日期写死 2026 值，2027 春节会错 11 天。内置 2026–2030 农历表</td></tr>
+<tr><td>iCal 事件少一天</td><td><code>DTEND</code> 是排他的，全天事件结束日不含当天</td></tr>
+<tr><td>代码写了功能没生效</td><td>build.py 用硬编码列表，新文件未加入</td></tr>
+<tr><td>框架状态注释过时</td><td>注释写"已实现 25 / 部分覆盖 5"，实际 27 / 4</td></tr>
+</table>
+</section>
+
+<section id="s11">
+<h3 class="sec">11 · 已知问题</h3>
+<ul>
+  <li><b>知识库检索是关键词匹配</b>，非语义检索</li>
+  <li><b>竞品与热点需手动录入</b>，无自动抓取（技术限制，已在界面标注）</li>
+  <li><b>对话历史缺日期</b>，旧记录无法恢复时间，标为"日期未知"</li>
+  <li><b>部分框架图标注曾与实际骨架不一致</b>，已统一；新增框架时需同步核对</li>
+  <li><b>工作流 LLM 步骤需人工回填</b>，属 Human-in-the-loop 设计，非缺陷但需说明</li>
+</ul>
+</section>
+
+<section id="s12">
+<h3 class="sec">12 · 面试线索</h3>
+<div class="box ok">
+  <div class="t">三个最有说服力的讲点</div>
+  <ol style="margin-left:18px;">
+    <li><b>把最后一个无计算逻辑的模块重构成了确定性工具</b> —— 品牌人格原本只是选个 MBTI 让模型发挥，重构成三层结构 + 五类诊断后，现在产品里没有"纯 prompt 拼接"的模块。</li>
+    <li><b>边界感：8 条明确不做</b> —— 自动抓取、ECharts、设计功能、定时提醒、后端、LLM 意图识别、内嵌 Python、内容包付费。每条都有硬理由。</li>
+    <li><b>诚实处理做不到的事</b> —— 样本不足不给趋势、对话历史缺日期就标"未知"、竞品手动录入如实标注、色彩只做软提示。不假装能做到。</li>
+  </ol>
+</div>
+<h4>如果被追问"为什么不做成真 Agent"</h4>
+<p>营销方案的结论要交付给客户，不能让模型自由发挥。所以能算的都做成确定性函数，只把创作类交给模型，LLM 步骤采用 Human-in-the-loop。这是<b>准确性优先于自主性</b>的取舍。</p>
+<h4>如果被追问"这 20 多个模块不就是堆功能吗"</h4>
+<p>看两点：一是有<b>入口层</b>（流程导航 + 对话路由 + 内容包窗口）重新组织了使用路径；二是模块间<b>真的咬合</b>——品牌内核算出的调性会约束内容体检，战略矩阵的任务会带来源地推到日历，7 处记录会汇成一条品牌轨迹。</p>
+</section>
+
+<div class="foot">
+  本文件由项目实际状态逐项核查生成 · 数字均为统计得出，非估算 · 随代码变更需同步更新
+</div>
+
+</main>
+</div>
+
+<script>
+(function(){
+  var links = [].slice.call(document.querySelectorAll('.side a'));
+  var secs  = links.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+  function upd(){
+    var y = window.scrollY + 90, idx = 0;
+    for (var i=0;i<secs.length;i++){ if (secs[i] && secs[i].offsetTop <= y) idx = i; }
+    links.forEach(function(a,i){ a.classList.toggle('on', i===idx); });
+  }
+  window.addEventListener('scroll', upd, {passive:true});
+  upd();
+  // 平滑滚动
+  links.forEach(function(a){
+    a.addEventListener('click', function(e){
+      var t = document.querySelector(a.getAttribute('href'));
+      if (t){ e.preventDefault(); window.scrollTo({top:t.offsetTop-12, behavior:'smooth'}); }
+    });
+  });
+})();
+</script>
+</body>
+</html>
