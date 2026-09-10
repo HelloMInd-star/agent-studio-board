@@ -4,7 +4,7 @@
 content → collect the result — entirely in your browser.**
 
 A local-first decision chain for brand and growth: **24 tabs (25 modules)**,
-**33 deterministic calculations** (17 of them registered as orchestrable
+**36 deterministic calculations** (17 of them registered as orchestrable
 workflow tools), **70 marketing frameworks** rendered from 25 graphic
 skeletons, **5 SVG chart types**. No backend, no tracking, no login.
 
@@ -819,6 +819,44 @@ reframes "should we research this?" into "how much confidence does this
 budget buy, and is that worth more than it costs?" — which connects directly
 to the assumption evidence chain in the research module.
 
+#### Batch 3: positioning and comparison
+
+Three blocks that move the module from "what happens if" to "where should we
+be, and are we actually different":
+
+| Block | Input | What it actually tells you |
+|---|---|---|
+| Strategy clock | price (1-5) × perceived value (1-5) | Which of Bowman's **8 positions** you occupy — two of which are known to fail |
+| Value curve | per-factor: you vs industry average | **Divergence score** plus the four actions framework (eliminate / reduce / raise / create) |
+| CPM matrix | KSF × weight × per-player score | Weighted total, rank, and **shortfalls sorted by weighted impact** |
+
+**Strategy clock.** Two of the eight positions — *high price / low value* and
+*standard price / low value* — are not "hard", they have no survivors. Those
+two return a `bad`-level warning rather than a neutral description. When
+Brand Core data exists, the landing point is checked against the category's
+baseline price; a deviation of 1.5 or more raises a tension note, and the
+category taboos are surfaced alongside. The note says *there is tension*, not
+*you are wrong* — the tool has no standing to make that call.
+
+**Value curve.** The four actions are **mutually exclusive**: a factor marked
+*create* is not also listed under *raise*, otherwise the same factor appears
+twice and reads as a counting error. A curve that merely cuts without raising
+anything is downgraded with an explicit message — that is cost-cutting, not
+differentiation. Divergence near zero is `bad`: if the two lines overlap,
+customers cannot say why they would pick you, and only price remains
+comparable.
+
+**CPM.** Weights are normalised, so they need not sum to 100. Scores are
+clamped to 0–5. Shortfalls are ordered by `gap × weight`, not by raw gap,
+because a 2-point deficit on a 50%-weight factor matters more than a
+3-point deficit on a 5%-weight one.
+
+None of the three are registered as orchestrable workflow tools: they are
+interactive fill-in instruments whose output only makes sense with a table of
+user-supplied rows, unlike the text-report tools that a workflow step can
+call in one shot. This is why the count is **36 calculations but 17
+orchestrable**.
+
 **Learning curve.** Verified invariant: doubling cumulative output must drop
 unit cost to exactly the learning rate (tested for 70/75/85/90/95%). The
 useful output is not the curve but the inverse — `n = (target/C₁)^(1/b)` —
@@ -853,20 +891,24 @@ landing page together.
 | Tabs | **24** | unique `data-tab` values in `src/index.template.html` |
 | Groups | **6** | unique `data-group` values |
 | Modules | **25** | 24 tabs + brand tone constraint (embedded, not a tab) |
-| Deterministic calculations | **33** | 26 `calc*` functions + 7 non-`calc` cores (`analyzeBrandCore`, `bcAnalyze`, `scoreContent`, `tcAnalyze`, `scoreTitles`, `auditAssetsCalc`, `analyzeTimelineCalc`) |
+| Deterministic calculations | **36** | 29 `calc*` functions + 7 non-`calc` cores (`analyzeBrandCore`, `bcAnalyze`, `scoreContent`, `tcAnalyze`, `scoreTitles`, `auditAssetsCalc`, `analyzeTimelineCalc`) |
 | Orchestrable in workflows | **17** | `LOCAL_TOOLS` indices 11–27 |
 | Source files | **43** | `src/*.js`, merged by `build.py` |
 | Frameworks mapped | **70** | `src/27-toolmap.js` — 27 done / 4 planned / 39 reference-only |
 | Graphic skeletons | **25** | distinct `s:` values in `src/29-framecfg.js` |
 | Chart types | **5** | `CHART_TYPES` in `src/07-charts.js` |
 | Manual chapters | **33** | `<h2>` in `manual.html` (22 carry a user-flow strip) |
-| Deployed artifact | **~820 KB** | `index.html`, single file, zero runtime dependencies |
+| Deployed artifact | **~1.0 MB** | `index.html`, single file, zero runtime dependencies |
 
 Two of these are worth defending explicitly:
 
-- **17 orchestrable, not 33.** Sixteen calculations are called directly by
-  their own module but were never registered as workflow tools. Registering
-  them is mechanical; it has not been done because no workflow needed them.
+- **17 orchestrable, not 36.** Nineteen calculations are called directly by
+  their own module but were never registered as workflow tools. Two kinds:
+  text-report tools that a workflow step could call (registering them is
+  mechanical; no workflow has needed them yet), and interactive fill-in
+  instruments — the strategy clock, value curve and CPM — whose output only
+  makes sense with a table of user-supplied rows, so a single workflow step
+  cannot invoke them meaningfully.
 - **39 of 70 frameworks are reference-only.** They render a structure
   diagram and a `看什么 / 输出什么 / 常见误用` card rather than a calculator.
   That is a deliberate trade: a 39-item placeholder grid would be worse than

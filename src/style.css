@@ -1904,6 +1904,24 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
   border-radius:var(--r-sm);background:var(--card);color:var(--text);
 }
 .dtgrid__row input:focus{outline:none;border-color:var(--brand);}
+/* 价值曲线 / CPM 输入网格（与决策树网格同构） */
+.vcgrid{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
+.vcgrid__hd,.vcgrid__row{display:grid;grid-template-columns:1fr 96px 108px 92px 52px;gap:8px;align-items:center;}
+.vcgrid__hd{font-size:11px;color:var(--ink-mid);padding:0 2px;}
+.vcgrid__row input{border:1px solid var(--line);border-radius:var(--r-sm);padding:6px 8px;font-size:13px;background:var(--card);color:var(--fg);}
+.vcgrid__row input:focus{outline:none;border-color:var(--brand);}
+.vcgrid__row input[type=checkbox]{width:16px;height:16px;}
+.cpmgrid{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
+.cpmgrid__hd,.cpmgrid__row{display:grid;grid-template-columns:1fr 72px 76px 76px 76px 52px;gap:8px;align-items:center;}
+.cpmgrid__hd{font-size:11px;color:var(--ink-mid);padding:0 2px;}
+.cpmgrid__row input{border:1px solid var(--line);border-radius:var(--r-sm);padding:6px 8px;font-size:13px;background:var(--card);color:var(--fg);}
+.cpmgrid__row input:focus{outline:none;border-color:var(--brand);}
+@media(max-width:820px){
+  .vcgrid__hd{display:none;}
+  .vcgrid__row{grid-template-columns:1fr 72px 84px 52px;}
+  .cpmgrid__hd{display:none;}
+  .cpmgrid__row{grid-template-columns:1fr 64px 60px 60px 60px 48px;}
+}
 @media (max-width:820px){
   .dtgrid__hd{display:none;}
   .dtgrid__row{grid-template-columns:1fr 72px 88px 48px;}

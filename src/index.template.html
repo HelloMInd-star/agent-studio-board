@@ -1413,6 +1413,40 @@
         <div id="lcOut" style="margin-top:12px"></div>
         <div class="chartwrap" id="lcChart"></div>
       </div>
+
+      <div class="card">
+        <div class="card__hd">6\ufe0f\u20e3 战略钟：你在哪个位置卖东西</div>
+        <p class="hint">💡 横轴<b>感知价值</b>、纵轴<b>价格</b>，交叉出 8 个战略位置。其中两个是<b>已知会失效</b>的位置——不是"很难"，是"没有幸存者"。填过「🏛️ 品牌内核」后，这里会把落点与品类基准做<b>自洽性检查</b>。</p>
+        <div class="grid4">
+          <label class="f"><span>价格水平（1 低 → 5 高）</span><input type="number" id="ckPrice" step="1" min="1" max="5" oninput="clockOnInput()" placeholder="3"></label>
+          <label class="f"><span>感知价值（1 低 → 5 高）</span><input type="number" id="ckVal" step="1" min="1" max="5" oninput="clockOnInput()" placeholder="3"></label>
+        </div>
+        <div id="simClockOut" style="margin-top:12px"></div>
+        <div class="chartwrap" id="simClockChart"></div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">7\ufe0f\u20e3 价值曲线：你和行业长得一样吗</div>
+        <p class="hint">💡 两条线重合 = 客户看不出选你的理由，只剩价格可比。工具会算<b>差异度</b>，并给出<b>蓝海四问</b>（剔除 / 减少 / 提升 / 创造）。<b>只削减不强化，是降配不是差异化</b>——这点会单独提示。</p>
+        <div id="vcRows"></div>
+        <div class="row" style="margin-top:10px"><button class="btn btn--sm" onclick="vcAddItem()">➕ 增加竞争要素</button><span class="ph">最多 10 个</span></div>
+        <div id="simCurveOut" style="margin-top:12px"></div>
+        <div class="chartwrap" id="simCurveChart"></div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">8\ufe0f\u20e3 竞争态势矩阵（CPM）：谁真的更强</div>
+        <p class="hint">💡 <b>加权总分 ＝ Σ（归一化权重 × 打分）</b>。权重会自动归一化，所以不必凑够 100。打分为主观评估——它的价值在于<b>把内部分歧摊开</b>，不在于精确。</p>
+        <div class="grid4">
+          <label class="f"><span>我方名称</span><input type="text" id="cpmMe" oninput="cpmOnInput()" placeholder="我方"></label>
+          <label class="f"><span>对手 A</span><input type="text" id="cpmR1" oninput="cpmOnInput()" placeholder="对手 A"></label>
+          <label class="f"><span>对手 B</span><input type="text" id="cpmR2" oninput="cpmOnInput()" placeholder="对手 B"></label>
+        </div>
+        <div id="cpmRows" style="margin-top:10px"></div>
+        <div class="row" style="margin-top:10px"><button class="btn btn--sm" onclick="cpmAddKsf()">➕ 增加关键因素</button><span class="ph">最多 10 个</span></div>
+        <div id="simCpmOut" style="margin-top:12px"></div>
+        <div class="chartwrap" id="simCpmChart"></div>
+      </div>
     </section>
 
 

@@ -92,7 +92,7 @@
   <p>定义品牌 → 验证市场 → 制定策略 → 执行传播 → 回收结果，全程在浏览器本地运行。</p>
   <div class="tags">
     <span>零后端</span><span>零依赖</span><span>单文件 840KB</span>
-    <span>33 个确定性计算</span><span>70 个框架</span>
+    <span>36 个确定性计算</span><span>70 个框架</span>
   </div>
 </div>
 
@@ -139,7 +139,7 @@
 <div class="box warn">
   <div class="t">口径说明</div>
   <p>「25 个模块」= 24 个 Tab + 品牌调性约束（内嵌在内容工厂，非独立 Tab）。<br>
-  「33 个计算 / 17 个可编排」——<code>matchIntent</code>、<code>matchScene</code> 是路由不是计算，已排除在外；33 = 26 个 <code>calc*</code> + 7 个非 calc 核心（<code>analyzeBrandCore</code> / <code>bcAnalyze</code> / <code>scoreContent</code> / <code>tcAnalyze</code> / <code>scoreTitles</code> / <code>auditAssetsCalc</code> / <code>analyzeTimelineCalc</code>）。可编排的 17 个是注册进 <code>LOCAL_TOOLS</code> 的，其余 16 个是模块内直接调用。</p>
+  「36 个计算 / 17 个可编排」——<code>matchIntent</code>、<code>matchScene</code> 是路由不是计算，已排除在外；36 = 29 个 <code>calc*</code> + 7 个非 calc 核心（<code>analyzeBrandCore</code> / <code>bcAnalyze</code> / <code>scoreContent</code> / <code>tcAnalyze</code> / <code>scoreTitles</code> / <code>auditAssetsCalc</code> / <code>analyzeTimelineCalc</code>）。可编排的 17 个是注册进 <code>LOCAL_TOOLS</code> 的，其余 19 个是模块内直接调用——其中战略钟 / 价值曲线 / CPM 是交互填表型，工作流单步调用没有意义。</p>
 </div>
 </section>
 
@@ -172,7 +172,7 @@
 <div class="lay">
   <div class="row"><div class="lbl">决策链层</div><div class="val">品牌内核 → 调研/战略 → 定价/竞品 → 内容/日历 → 财务/方案合成</div></div>
   <div class="row"><div class="lbl">方法论层</div><div class="val">回答"凭什么这么建议"：调研方案、战略矩阵、70 框架、品牌内核三层结构</div></div>
-  <div class="row"><div class="lbl">计算层</div><div class="val">33 个确定性函数，纯前端可验算，不依赖模型</div></div>
+  <div class="row"><div class="lbl">计算层</div><div class="val">36 个确定性函数，纯前端可验算，不依赖模型</div></div>
   <div class="row"><div class="lbl">执行层</div><div class="val">5 种图卡 + 25 种骨架 + 日历 + 工作流 + 导出（MD/JSON/CSV/iCal/SVG）</div></div>
   <div class="row"><div class="lbl">入口层</div><div class="val">流程导航（场景→步骤）+ 对话路由（意图→函数）+ 内容包独立窗口</div></div>
   <div class="row"><div class="lbl">存储层</div><div class="val">localStorage 单一 <code>state</code>，全量备份/恢复 .json</div></div>
@@ -207,7 +207,7 @@
 
 <section id="s6">
 <h3 class="sec">6 · 核心算法</h3>
-<p>33 个确定性函数，全部可用手算验证。选几个代表性的：</p>
+<p>36 个确定性函数，全部可用手算验证。选几个代表性的：</p>
 <h4>品牌内核：位置型 vs 强度型维度</h4>
 <p>关键设计——<b>价格定位是位置型维度，无好坏只有选择</b>。星巴克在溢价端不是缺点，是选择。所以主战场识别看<b>相对品类基准的偏离</b>，而非绝对分：</p>
 <pre><code>主战场   = 绝对分 ≥ 4.0（下了重注）

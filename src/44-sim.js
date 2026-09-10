@@ -21,7 +21,23 @@ function sim(){
     dt:{ cost:200,
          bs:[ {n:'成功',p:40,v:500}, {n:'一般',p:35,v:100}, {n:'失败',p:25,v:-200} ],
          rs:{ on:false, cost:20, imp:30 } },
-    lc:{ c1:100, lr:80, n:1000, rival:70, target:0 }
+    lc:{ c1:100, lr:80, n:1000, rival:70, target:0 },
+    clock:{ price:3, val:3 },
+    curve:{ items:[
+      {n:'价格', me:3, ind:4, create:false},
+      {n:'功能/性能', me:4, ind:4, create:false},
+      {n:'设计/美学', me:4, ind:3, create:false},
+      {n:'服务/体验', me:3, ind:3, create:false},
+      {n:'渠道便利', me:3, ind:4, create:false},
+      {n:'品牌情感', me:4, ind:3, create:false}
+    ]},
+    cpm:{ ksfs:[
+      {n:'产品力', w:30, sc:{me:4, r1:3, r2:4}},
+      {n:'品牌力', w:25, sc:{me:3, r1:4, r2:3}},
+      {n:'渠道力', w:20, sc:{me:4, r1:4, r2:3}},
+      {n:'成本效率', w:15, sc:{me:3, r1:3, r2:4}},
+      {n:'服务能力', w:10, sc:{me:4, r1:3, r2:3}}
+    ], names:{ me:'我方', r1:'对手 A', r2:'对手 B' }}
   };
   var S = state.sim;
   /* 旧存档兼容补齐 */
@@ -31,6 +47,23 @@ function sim(){
   if(!S.dt.bs || !S.dt.bs.length) S.dt.bs = [ {n:'成功',p:40,v:500}, {n:'一般',p:35,v:100}, {n:'失败',p:25,v:-200} ];
   if(!S.dt.rs) S.dt.rs = { on:false, cost:20, imp:30 };
   if(!S.lc) S.lc = { c1:100, lr:80, n:1000, rival:70, target:0 };
+  if(!S.clock) S.clock = { price:3, val:3 };
+  if(!S.curve || !S.curve.items || !S.curve.items.length) S.curve = { items:[
+      {n:'价格', me:3, ind:4, create:false},
+      {n:'功能/性能', me:4, ind:4, create:false},
+      {n:'设计/美学', me:4, ind:3, create:false},
+      {n:'服务/体验', me:3, ind:3, create:false},
+      {n:'渠道便利', me:3, ind:4, create:false},
+      {n:'品牌情感', me:4, ind:3, create:false}
+    ]};
+  if(!S.cpm || !S.cpm.ksfs || !S.cpm.ksfs.length) S.cpm = { ksfs:[
+      {n:'产品力', w:30, sc:{me:4, r1:3, r2:4}},
+      {n:'品牌力', w:25, sc:{me:3, r1:4, r2:3}},
+      {n:'渠道力', w:20, sc:{me:4, r1:4, r2:3}},
+      {n:'成本效率', w:15, sc:{me:3, r1:3, r2:4}},
+      {n:'服务能力', w:10, sc:{me:4, r1:3, r2:3}}
+    ], names:{ me:'我方', r1:'对手 A', r2:'对手 B' }};
+  if(!S.cpm.names) S.cpm.names = { me:'我方', r1:'对手 A', r2:'对手 B' };
   return S;
 }
 
@@ -633,11 +666,23 @@ function renderSimAll(){
   var st = $('#simStep'); if(st) st.checked = !!b.step;
   var tp = $('#simPct'); if(tp) tp.value = S.tor.pct;
 
+  var ck = $('#ckPrice'), cv = $('#ckVal');
+  if(ck) ck.value = S.clock.price;
+  if(cv) cv.value = S.clock.val;
+  var nm = S.cpm.names || {};
+  var n1 = $('#cpmMe'), n2 = $('#cpmR1'), n3 = $('#cpmR2');
+  if(n1) n1.value = nm.me || '我方';
+  if(n2) n2.value = nm.r1 || '对手 A';
+  if(n3) n3.value = nm.r2 || '对手 B';
+
   renderSimBe();
   renderSimTor();
   renderSimTrack();
   renderSimDt();
   renderSimLc();
+  renderSimClock();
+  renderSimCurve();
+  renderSimCpm();
 }
 
 function renderSimBe(){
@@ -937,11 +982,70 @@ function simExport(){
     md += lc.msg + '\n';
   }
 
-  md += '\n## 五、模型假设与边界\n\n';
+  md += '\n## 五、战略钟定位\n\n';
+  var ck = calcStratClock();
+  if(ck.ok){
+    md += '- 价格水平：' + ck.price + ' / 5 · 感知价值：' + ck.val + ' / 5\n';
+    md += '- **落点：位置 ' + ck.pos + ' · ' + ck.posName + '**\n';
+    md += '- 判读：' + ck.posDesc + '\n';
+    if(ck.basePrice != null){
+      md += '- 与「' + ck.cat + '」品类基准（' + ck.basePrice.toFixed(1) + '）偏离 ' +
+            (ck.dev >= 0 ? '+' : '') + ck.dev.toFixed(1) + '\n';
+    }
+    (ck.warns || []).forEach(function(w){
+      md += '\n> **' + w.t + '**：' + w.d + '\n';
+    });
+  } else {
+    md += ck.msg + '\n';
+  }
+
+  md += '\n## 六、价值曲线\n\n';
+  var vc = calcValueCurve();
+  if(vc.ok){
+    md += '**差异度：' + vc.diff.toFixed(2) + ' / 5**\n\n';
+    md += '| 竞争要素 | 我方 | 行业均值 | 偏离 |\n|---|---|---|---|\n';
+    vc.rows.forEach(function(x){
+      md += '| ' + x.n + (x.create ? '（创造）' : '') + ' | ' + x.me + ' | ' + x.ind + ' | ' +
+            (x.d > 0 ? '+' : '') + x.d + ' |\n';
+    });
+    md += '\n**判读**：' + vc.verdict + '\n\n';
+    md += '**蓝海四问**\n\n';
+    md += '- 剔除：' + (vc.eliminate.length ? vc.eliminate.map(function(x){ return x.n; }).join('、') : '未识别') + '\n';
+    md += '- 减少：' + (vc.reduce.length ? vc.reduce.map(function(x){ return x.n; }).join('、') : '未识别') + '\n';
+    md += '- 提升：' + (vc.raise.length ? vc.raise.map(function(x){ return x.n; }).join('、') : '无') + '\n';
+    md += '- 创造：' + (vc.create.length ? vc.create.map(function(x){ return x.n; }).join('、') : '未标记') + '\n';
+  } else {
+    md += vc.msg + '\n';
+  }
+
+  md += '\n## 七、竞争态势矩阵（CPM）\n\n';
+  var cpm = calcCpm();
+  if(cpm.ok){
+    md += '- 我方加权总分：**' + cpm.meTotal.toFixed(2) + ' / 5**（第 ' + cpm.myRank + ' 位 / 共 ' + cpm.rank.length + ' 家）\n';
+    md += '- 领先者：' + cpm.lead.name + '（' + cpm.lead.total.toFixed(2) + '）\n\n';
+    md += '| 关键成功因素 | 权重 | ' + cpm.names.me + ' | ' + cpm.names.r1 + ' | ' + cpm.names.r2 + ' |\n|---|---|---|---|---|\n';
+    cpm.rows.forEach(function(x){
+      md += '| ' + x.n + ' | ' + (x.w * 100).toFixed(0) + '% | ' + x.sc.me + ' | ' + x.sc.r1 + ' | ' + x.sc.r2 + ' |\n';
+    });
+    if(cpm.gaps.length){
+      md += '\n**短板（按加权影响排序）**\n\n';
+      cpm.gaps.slice(0, 4).forEach(function(g){
+        md += '- ' + g.n + '：我方 ' + g.me + '，最优 ' + g.best + '（差 ' + g.gap.toFixed(0) + '）\n';
+      });
+    }
+    md += '\n> 权重已归一化（原始合计 ' + cpm.wSum.toFixed(0) + '）。打分为主观评估，价值在于把分歧摊开，不在于精确。\n';
+  } else {
+    md += cpm.msg + '\n';
+  }
+
+  md += '\n## 八、模型假设与边界\n\n';
   md += '- 收入与变动成本按线性处理；真实场景可能存在规模效应或阶梯成本（已提供阶梯开关）。\n';
   md += '- 敏感性分析仅测试单变量扰动，未考虑变量之间的联动（如降价可能同时推高销量）。\n';
   md += '- 决策树的概率为主观估计；净期望为正不等于可以承受一次失败。\n';
   md += '- 学习曲线假设成本下降只由累计产量驱动，忽略技术突变与原材料波动。\n';
+  md += '- 战略钟的价格与感知价值为主观打分；与品类基准的偏离只提示张力，不判定对错。\n';
+  md += '- 价值曲线的「行业均值」由你估计；差异度衡量的是曲线形状，不等于竞争力本身。\n';
+  md += '- CPM 的关键成功因素与打分均为主观设定，结论强度取决于这些因素是否真的决定成败。\n';
   md += '- 所有数字取决于你填入的估算值，**本报告不预测未来，只呈现假设的后果**。\n';
 
   downloadFile('决策推演报告_' + todayStr() + '.md', md, 'text/markdown');
@@ -996,3 +1100,545 @@ window.calcDecisionTree = calcDecisionTree;
 window.calcLearning = calcLearning;
 window.calcBreakEven = calcBreakEven;
 window.calcTornado = calcTornado;
+
+/* ============================================================
+ * 第三批：定位与对比
+ *  ⑥ 战略钟（Bowman）：价格 × 感知价值 → 8 个位置，并做自洽性检查
+ *  ⑦ 价值曲线：你 vs 行业均值，算差异度 + 蓝海四问
+ *  ⑧ CPM 竞争态势矩阵：关键成功因素加权打分 → 综合分与短板
+ * ============================================================ */
+
+/* ---------- ⑥ 战略钟 ---------- */
+/* Bowman 战略钟 8 个位置。角度用数学角（0=右，逆时针为正），
+ * 顺时针依次为 混合→差异化→集中差异化→提价标准品→高价低值→标准价低值→无虚饰→低价 */
+var SIM_CLOCK = [
+  { k:3, n:'混合（超值）',       deg:-45, lv:'ok',   d:'低价 + 高感知价值。以性价比抢份额，需要成本结构支撑。' },
+  { k:4, n:'差异化',             deg:0,   lv:'ok',   d:'中高价格 + 高感知价值。靠可感知的差异点支撑溢价。' },
+  { k:5, n:'集中差异化',         deg:45,  lv:'ok',   d:'高价格 + 高感知价值。窄人群深耕，需要强品牌资产托底。' },
+  { k:6, n:'提价 / 标准品',      deg:90,  lv:'warn', d:'价格高于价值。除非有垄断或转换成本，否则份额会流失。' },
+  { k:7, n:'高价低值（自杀区）', deg:135, lv:'bad',  d:'卖得贵又没东西。这条路上没有幸存者。' },
+  { k:8, n:'标准价低值',         deg:180, lv:'bad',  d:'按行业价卖，却给得比同行少。用户会慢慢走掉。' },
+  { k:1, n:'无虚饰（极简低价）', deg:225, lv:'ok',   d:'低价 + 低附加值。可行，但只在对价格极度敏感的细分市场。' },
+  { k:2, n:'低价战略',           deg:270, lv:'ok',   d:'低价 + 中等价值。靠规模和效率赚钱，不是靠差异化。' }
+];
+
+/* 价格 / 感知价值（均 1-5）→ 战略钟位置 */
+function simClockPos(price, val){
+  var p = +price, v = +val;
+  if(p <= 2.5 && v <= 2.5) return 1;   /* 无虚饰 */
+  if(p <= 2.5 && v <  3.5) return 2;   /* 低价 */
+  if(p <= 2.5)             return 3;   /* 低价高值 → 混合/超值 */
+  if(p <= 3.5 && v >= 3.5) return 3;   /* 混合 */
+  if(p <= 3.5 && v >  2.5) return 4;   /* 中价中高值 → 差异化（弱） */
+  if(p <= 3.5)             return 8;   /* 标准价低值 */
+  if(v >= 3.5)             return (p >= 4.5 ? 5 : 4);  /* 差异化 / 集中差异化 */
+  if(v >  2.5)             return 6;   /* 提价标准品 */
+  return 7;                            /* 高价低值 */
+}
+
+/* 自洽性检查：把落点与品牌内核的品类基准对照
+ * 工具不替你判断对错，只提示「这里存在张力」并说明依据 */
+function calcStratClock(){
+  var S = sim(), c = S.clock;
+  var price = +c.price || 0, val = +c.val || 0;
+  if(!price || !val) return { ok:false, msg:'请填写价格水平与感知价值（1-5）。' };
+
+  var posK = simClockPos(price, val);
+  var pos = null;
+  SIM_CLOCK.forEach(function(x){ if(x.k === posK) pos = x; });
+
+  var r = { ok:true, price:price, val:val, pos:posK, posName:pos.n, posDesc:pos.d, lv:pos.lv, warns:[] };
+
+  /* 接品牌内核：品类价格基准 vs 你的落点 */
+  var cat = null, catName = '';
+  if(state.bc && state.bc.cat){
+    if(typeof BC_CATS !== 'undefined'){
+      BC_CATS.forEach(function(x){ if(x.k === state.bc.cat){ cat = x; catName = x.n; } });
+    }
+  }
+  if(cat){
+    r.cat = catName;
+    var bp = (cat.base && cat.base.price != null) ? cat.base.price : null;
+    if(bp != null){
+      r.basePrice = bp;
+      var d = price - bp;
+      r.dev = d;
+      /* 偏离 ≥ 1.5 视为明显张力；方向不同，风险也不同 */
+      if(Math.abs(d) >= 1.5){
+        r.warns.push({
+          lv: d < 0 ? 'warn' : 'warn',
+          t:'与「' + catName + '」的价格基准存在张力',
+          d:'该品类基准价位约 ' + bp.toFixed(1) + '，你的落点是 ' + price.toFixed(1) +
+            '（' + (d < 0 ? '低' : '高') + ' ' + Math.abs(d).toFixed(1) + '）。' +
+            (d < 0 ? '低于品类基准通常要靠模式创新（如取消中间环节）支撑，否则会被解读为"便宜没好货"。'
+                   : '高于品类基准需要极强的品牌资产或独占资源支撑，否则份额会掉。')
+        });
+      }
+    }
+    /* 品类禁忌提示：高价/低价策略常踩的坑 */
+    if(cat.taboo && cat.taboo.length){
+      r.taboo = cat.taboo.slice(0, 3);
+    }
+  }
+
+  /* 危险区硬提示 */
+  if(pos.lv === 'bad'){
+    r.warns.unshift({ lv:'bad', t:'落在「' + pos.n + '」', d:pos.d + ' 这是战略钟里两个已知会失效的位置——不是"很难"，是"没有幸存者"。' });
+  } else if(pos.lv === 'warn'){
+    r.warns.unshift({ lv:'warn', t:'落在「' + pos.n + '」', d:pos.d });
+  }
+  return r;
+}
+
+function svgStratClock(r){
+  if(!r || !r.ok) return '<span class="ph">' + esc(r && r.msg || '填参数后生成战略钟') + '</span>';
+  var W = 620, H = 520, cx = W/2, cy = H/2 - 6, R = 168;
+  var h = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="chartsvg" role="img" aria-label="战略钟">';
+  h += '<defs>';
+  ['ok:#0f9d58','warn:#e8a33d','bad:#d64545'].forEach(function(x){
+    h += '<marker id="ck_' + x.split(':')[0] + '" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><circle cx="4" cy="4" r="3" fill="' + x.split(':')[1] + '"/></marker>';
+  });
+  h += '</defs>';
+
+  /* 钟面环 + 象限底纹 */
+  h += '<circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" fill="none" stroke="var(--line)" stroke-width="1.5"/>';
+  h += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (R*0.55) + '" fill="none" stroke="var(--line)" stroke-width="1" stroke-dasharray="3 4"/>';
+  h += '<line x1="' + (cx-R) + '" y1="' + cy + '" x2="' + (cx+R) + '" y2="' + cy + '" stroke="var(--line)" stroke-width="1"/>';
+  h += '<line x1="' + cx + '" y1="' + (cy-R) + '" x2="' + cx + '" y2="' + (cy+R) + '" stroke="var(--line)" stroke-width="1"/>';
+  h += '<text x="' + (cx+R+10) + '" y="' + (cy+4) + '" font-size="11" fill="var(--soft)">感知价值 →</text>';
+  h += '<text x="' + cx + '" y="' + (cy-R-10) + '" font-size="11" fill="var(--soft)" text-anchor="middle">价格 ↑</text>';
+
+  /* 8 个位置 */
+  var cur = null;
+  SIM_CLOCK.forEach(function(p){
+    var a = p.deg * Math.PI / 180;
+    var x = cx + Math.cos(a) * R, y = cy - Math.sin(a) * R;
+    var isCur = (p.k === r.pos);
+    if(isCur) cur = { x:x, y:y, p:p };
+    h += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + (isCur ? 13 : 7) + '" fill="' +
+         (isCur ? 'var(--brand)' : 'var(--card)') + '" stroke="' +
+         (isCur ? 'var(--brand)' : 'var(--line-strong)') + '" stroke-width="' + (isCur ? 2.5 : 1.5) + '"/>';
+    h += '<text x="' + x.toFixed(1) + '" y="' + (y+4).toFixed(1) + '" font-size="11" font-weight="' +
+         (isCur ? 700 : 500) + '" fill="' + (isCur ? '#fff' : 'var(--fg)') + '" text-anchor="middle">' + p.k + '</text>';
+    /* 标签外推 */
+    var lx = cx + Math.cos(a) * (R + 34), ly = cy - Math.sin(a) * (R + 34);
+    var anc = (Math.cos(a) > 0.3 ? 'start' : (Math.cos(a) < -0.3 ? 'end' : 'middle'));
+    h += '<text x="' + lx.toFixed(1) + '" y="' + (ly+4).toFixed(1) + '" font-size="11" fill="var(--fg)" text-anchor="' + anc + '">' + esc(p.n) + '</text>';
+  });
+
+  /* 当前落点：按 price/val 映射到钟面内部 */
+  var px = cx + ((r.val - 3) / 2) * (R * 0.88);
+  var py = cy - ((r.price - 3) / 2) * (R * 0.88);
+  h += '<line x1="' + cx + '" y1="' + cy + '" x2="' + px.toFixed(1) + '" y2="' + py.toFixed(1) +
+       '" stroke="var(--brand)" stroke-width="1.5" stroke-dasharray="4 3"/>';
+  h += '<circle cx="' + px.toFixed(1) + '" cy="' + py.toFixed(1) + '" r="6" fill="var(--brand)" stroke="#fff" stroke-width="2"/>';
+
+  h += '<text x="' + cx + '" y="' + (H-14) + '" font-size="12" fill="var(--soft)" text-anchor="middle">' +
+       '当前落点：位置 ' + r.pos + ' · ' + esc(r.posName) + '（价格 ' + r.price + ' / 价值 ' + r.val + '）</text>';
+  h += '</svg>';
+  return h;
+}
+
+/* ---------- ⑦ 价值曲线 ---------- */
+/* 蓝海战略的核心工具。重点不是画图，是回答四问：
+ *   剔除 / 减少 / 提升 / 创造
+ * 差异度过低 = 你跟行业长一样 = 红海里的价格战 */
+function calcValueCurve(){
+  var S = sim(), items = (S.curve && S.curve.items) ? S.curve.items : [];
+  var valid = items.filter(function(x){ return x && x.n; });
+  if(valid.length < 2) return { ok:false, msg:'至少需要 2 个竞争要素才能画曲线。' };
+
+  var rows = valid.map(function(x){
+    var me = Math.max(0, Math.min(5, +x.me || 0));
+    var ind = Math.max(0, Math.min(5, +x.ind || 0));
+    return { n:x.n, me:me, ind:ind, d:me - ind, create:!!x.create };
+  });
+
+  /* 差异度：平均绝对偏离（0-5）。低于 0.6 视为与行业雷同 */
+  var sum = 0;
+  rows.forEach(function(r){ sum += Math.abs(r.d); });
+  var diff = sum / rows.length;
+
+  /* 蓝海四问：四项互斥——已标记为「创造」的不再重复计入「提升」，
+   * 否则同一要素会同时出现在两栏，读起来像数错了 */
+  var create    = rows.filter(function(r){ return r.create; });
+  var eliminate = rows.filter(function(r){ return !r.create && r.d <= -1.5; });
+  var reduce    = rows.filter(function(r){ return !r.create && r.d <= -0.5 && r.d > -1.5; });
+  var raise     = rows.filter(function(r){ return !r.create && r.d >= 1.0; });
+
+  var verdict, lv;
+  if(diff < 0.4){ verdict = '你的曲线与行业几乎重合——客户看不出选你的理由，只剩价格可比。'; lv = 'bad'; }
+  else if(diff < 0.8){ verdict = '差异偏弱。有区别，但还没到能支撑溢价的程度。'; lv = 'warn'; }
+  else if(diff < 1.5){ verdict = '差异清晰。你有明确的取舍，客户能说出"为什么选你"。'; lv = 'ok'; }
+  else { verdict = '差异极大。要么你真的重构了价值，要么你放弃了行业公认的必备项——请核对「剔除/减少」里有没有错删刚需。'; lv = 'warn'; }
+
+  /* 一致性：是否有"提升"项（没有提升只有削减 = 单纯降配，不是战略） */
+  if(raise.length === 0 && diff >= 0.8){
+    verdict += ' ⚠ 但你没有任何「远高于行业」的要素——只削减不强化，那是降配不是差异化。';
+    if(lv === 'ok') lv = 'warn';
+  }
+
+  return {
+    ok:true, rows:rows, diff:diff, verdict:verdict, lv:lv,
+    eliminate:eliminate, reduce:reduce, raise:raise, create:create
+  };
+}
+
+function svgValueCurve(r){
+  if(!r || !r.ok) return '<span class="ph">' + esc(r && r.msg || '填要素后生成价值曲线') + '</span>';
+  var n = r.rows.length;
+  var W = 880, H = 420, padL = 92, padR = 150, padT = 46, padB = 58;
+  var pw = W - padL - padR, ph = H - padT - padB;
+  var stepX = n > 1 ? pw / (n - 1) : 0;
+  var Y = function(v){ return padT + ph - (v / 5) * ph; };
+
+  var h = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="chartsvg" role="img" aria-label="价值曲线">';
+  /* 网格 */
+  for(var v = 0; v <= 5; v++){
+    var y = Y(v);
+    h += '<line x1="' + padL + '" y1="' + y.toFixed(1) + '" x2="' + (padL+pw) + '" y2="' + y.toFixed(1) +
+         '" stroke="var(--line)" stroke-width="1"' + (v === 0 ? '' : ' stroke-dasharray="3 4"') + '/>';
+    h += '<text x="' + (padL-10) + '" y="' + (y+4).toFixed(1) + '" font-size="11" fill="var(--soft)" text-anchor="end">' + v + '</text>';
+  }
+  /* 两条折线 */
+  var ptsMe = '', ptsInd = '';
+  r.rows.forEach(function(x, i){
+    var px = padL + i * stepX;
+    ptsMe  += (i ? ' ' : '') + px.toFixed(1) + ',' + Y(x.me).toFixed(1);
+    ptsInd += (i ? ' ' : '') + px.toFixed(1) + ',' + Y(x.ind).toFixed(1);
+  });
+  h += '<polyline points="' + ptsInd + '" fill="none" stroke="var(--soft)" stroke-width="2" stroke-dasharray="6 4"/>';
+  h += '<polyline points="' + ptsMe + '" fill="none" stroke="var(--brand)" stroke-width="2.5"/>';
+  /* 点 + 要素名 */
+  r.rows.forEach(function(x, i){
+    var px = padL + i * stepX;
+    h += '<circle cx="' + px.toFixed(1) + '" cy="' + Y(x.ind).toFixed(1) + '" r="3.5" fill="var(--soft)"/>';
+    h += '<circle cx="' + px.toFixed(1) + '" cy="' + Y(x.me).toFixed(1) + '" r="5" fill="var(--brand)"/>';
+    h += '<text x="' + px.toFixed(1) + '" y="' + (H-30) + '" font-size="11.5" fill="var(--fg)" text-anchor="middle">' + esc(x.n) + '</text>';
+    if(x.create){
+      h += '<text x="' + px.toFixed(1) + '" y="' + (H-14) + '" font-size="10.5" fill="#0f9d58" text-anchor="middle">＋ 创造</text>';
+    }
+  });
+  /* 图例 */
+  var lx = padL + pw + 18;
+  h += '<line x1="' + lx + '" y1="' + (padT+14) + '" x2="' + (lx+22) + '" y2="' + (padT+14) + '" stroke="var(--brand)" stroke-width="2.5"/>';
+  h += '<text x="' + (lx+28) + '" y="' + (padT+18) + '" font-size="11.5" fill="var(--fg)">我方</text>';
+  h += '<line x1="' + lx + '" y1="' + (padT+36) + '" x2="' + (lx+22) + '" y2="' + (padT+36) + '" stroke="var(--soft)" stroke-width="2" stroke-dasharray="6 4"/>';
+  h += '<text x="' + (lx+28) + '" y="' + (padT+40) + '" font-size="11.5" fill="var(--fg)">行业均值</text>';
+  h += '<text x="' + lx + '" y="' + (padT+70) + '" font-size="11.5" fill="var(--soft)">差异度</text>';
+  h += '<text x="' + lx + '" y="' + (padT+90) + '" font-size="19" font-weight="700" fill="var(--brand)">' + r.diff.toFixed(2) + '</text>';
+  h += '</svg>';
+  return h;
+}
+
+/* ---------- ⑧ CPM 竞争态势矩阵 ---------- */
+/* 关键成功因素 × 权重 × 各家打分 → 加权总分。
+ * 权重会归一化，所以你不必凑够 100 */
+function calcCpm(){
+  var S = sim(), c = S.cpm || {};
+  var ksfs = (c.ksfs || []).filter(function(x){ return x && x.n; });
+  var names = c.names || { me:'我方', r1:'对手 A', r2:'对手 B' };
+  var keys = ['me','r1','r2'];
+  if(ksfs.length < 2) return { ok:false, msg:'至少需要 2 个关键成功因素。' };
+
+  var wSum = 0;
+  ksfs.forEach(function(k){ wSum += Math.max(0, +k.w || 0); });
+  if(wSum <= 0) return { ok:false, msg:'权重之和必须大于 0。' };
+
+  var totals = { me:0, r1:0, r2:0 };
+  var rows = ksfs.map(function(k){
+    var w = Math.max(0, +k.w || 0) / wSum;      /* 归一化权重 */
+    var sc = {};
+    keys.forEach(function(key){
+      var v = (k.sc && k.sc[key] != null) ? Math.max(0, Math.min(5, +k.sc[key])) : 0;
+      sc[key] = v;
+      totals[key] += w * v;
+    });
+    return { n:k.n, w:w, wRaw:+k.w || 0, sc:sc };
+  });
+
+  /* 排名 */
+  var rank = keys.map(function(key){
+    return { key:key, name:names[key] || key, total:totals[key] };
+  }).sort(function(a, b){ return b.total - a.total; });
+
+  /* 我方短板：落后于最高分的要素 */
+  var gaps = rows.map(function(r){
+    var best = 0;
+    keys.forEach(function(k){ if(r.sc[k] > best) best = r.sc[k]; });
+    return { n:r.n, me:r.sc.me, best:best, gap:r.sc.me - best, w:r.w };
+  }).filter(function(g){ return g.gap < 0; })
+    .sort(function(a, b){ return (a.gap * a.w) - (b.gap * b.w); });
+
+  var myRank = 1;
+  rank.forEach(function(x, i){ if(x.key === 'me') myRank = i + 1; });
+
+  return {
+    ok:true, rows:rows, totals:totals, rank:rank, gaps:gaps,
+    names:names, myRank:myRank, wSum:wSum,
+    lead: rank[0], meTotal: totals.me
+  };
+}
+
+function svgCpm(r){
+  if(!r || !r.ok) return '<span class="ph">' + esc(r && r.msg || '填 KSF 后生成对比') + '</span>';
+  var W = 880, H = 120 + r.rank.length * 54, padL = 96, padR = 60, padT = 34;
+  var pw = W - padL - padR;
+  var maxT = 5;
+  var h = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="chartsvg" role="img" aria-label="CPM 竞争态势矩阵">';
+  r.rank.forEach(function(x, i){
+    var y = padT + i * 54;
+    var w = (x.total / maxT) * pw;
+    var isMe = (x.key === 'me');
+    h += '<text x="' + (padL-12) + '" y="' + (y+20) + '" font-size="12.5" fill="var(--fg)" text-anchor="end" font-weight="' +
+         (isMe ? 700 : 400) + '">' + esc(x.name) + '</text>';
+    h += '<rect x="' + padL + '" y="' + y + '" width="' + pw + '" height="30" rx="6" fill="var(--soft-bg)"/>';
+    h += '<rect x="' + padL + '" y="' + y + '" width="' + Math.max(2, w).toFixed(1) + '" height="30" rx="6" fill="' +
+         (isMe ? 'var(--brand)' : 'var(--soft)') + '"/>';
+    h += '<text x="' + (padL + Math.max(2, w) + 10).toFixed(1) + '" y="' + (y+20) + '" font-size="13" font-weight="700" fill="var(--fg)">' +
+         x.total.toFixed(2) + '</text>';
+  });
+  h += '<text x="' + padL + '" y="' + (H-12) + '" font-size="11" fill="var(--soft)">满分 5.00 · 权重已归一化（原权重合计 ' +
+       r.wSum.toFixed(0) + '）</text>';
+  h += '</svg>';
+  return h;
+}
+
+/* ---------- ⑥ 渲染：战略钟 ---------- */
+function renderSimClock(){
+  var r = calcStratClock();
+  var out = $('#simClockOut');
+  if(!r.ok){
+    if(out) out.innerHTML = '<span class="ph">' + esc(r.msg) + '</span>';
+    var c0 = $('#simClockChart'); if(c0) c0.innerHTML = '<span class="ph">—</span>';
+    return;
+  }
+  if(out){
+    var h = '<div class="kvlist">';
+    h += '<div class="kv"><span>落点位置</span><b class="' + (r.lv === 'bad' ? 'bad' : (r.lv === 'warn' ? 'warn' : 'good')) +
+         '">位置 ' + r.pos + ' · ' + esc(r.posName) + '</b></div>';
+    h += '<div class="kv"><span>价格水平 / 感知价值</span><b>' + r.price.toFixed(1) + ' / ' + r.val.toFixed(1) + '</b></div>';
+    if(r.basePrice != null){
+      h += '<div class="kv"><span>' + esc(r.cat) + ' 品类基准价位</span><b>' + r.basePrice.toFixed(1) +
+           '（偏离 ' + (r.dev >= 0 ? '+' : '') + r.dev.toFixed(1) + '）</b></div>';
+    }
+    h += '</div>';
+
+    h += '<div class="' + (r.lv === 'bad' ? 'warnbox' : 'note') + '">' + esc(r.posDesc) + '</div>';
+
+    (r.warns || []).forEach(function(w){
+      h += '<div class="' + (w.lv === 'bad' ? 'warnbox' : 'note') + '"><b>' + esc(w.t) + '</b><br>' + esc(w.d) + '</div>';
+    });
+
+    if(r.taboo && r.taboo.length){
+      h += '<div class="note"><b>「' + esc(r.cat) + '」的品类禁忌（来自品牌内核）</b><br>' +
+           r.taboo.map(function(t){ return '· ' + esc(t); }).join('<br>') + '</div>';
+    }
+    if(!r.cat){
+      h += '<div class="note">未检测到品牌内核数据。填过「🏛️ 品牌内核」后，这里会把你的落点与品类基准做自洽性检查。</div>';
+    }
+    out.innerHTML = h;
+  }
+  var c = $('#simClockChart'); if(c) c.innerHTML = svgStratClock(r);
+}
+
+function clockOnInput(){
+  var S = sim();
+  var p = $('#ckPrice'), v = $('#ckVal');
+  if(p) S.clock.price = Math.max(1, Math.min(5, +p.value || 3));
+  if(v) S.clock.val   = Math.max(1, Math.min(5, +v.value || 3));
+  save();
+  renderSimClock();
+}
+
+/* ---------- ⑦ 渲染：价值曲线 ---------- */
+function vcRowsHtml(){
+  var S = sim(), items = S.curve.items || [];
+  var h = '<div class="vcgrid">';
+  h += '<div class="vcgrid__hd"><span>竞争要素</span><span>我方（0-5）</span><span>行业均值（0-5）</span><span>行业从未提供</span><span></span></div>';
+  items.forEach(function(x, i){
+    h += '<div class="vcgrid__row">';
+    h += '<input class="inp" data-vc="n" data-i="' + i + '" value="' + esc(x.n) + '" placeholder="例：售后服务">';
+    h += '<input class="inp" type="number" step="1" min="0" max="5" data-vc="me" data-i="' + i + '" value="' + (+x.me || 0) + '">';
+    h += '<input class="inp" type="number" step="1" min="0" max="5" data-vc="ind" data-i="' + i + '" value="' + (+x.ind || 0) + '">';
+    h += '<label style="display:flex;align-items:center;justify-content:center"><input type="checkbox" data-vc="create" data-i="' + i + '"' + (x.create ? ' checked' : '') + '></label>';
+    h += '<button class="btn btn--mini" data-vcdel="' + i + '">删除</button>';
+    h += '</div>';
+  });
+  h += '</div>';
+  return h;
+}
+
+function renderSimCurve(){
+  var S = sim();
+  var box = $('#vcRows');
+  if(box){
+    box.innerHTML = vcRowsHtml();
+    box.querySelectorAll('[data-vc]').forEach(function(el){
+      el.addEventListener(el.type === 'checkbox' ? 'change' : 'input', vcOnInput);
+    });
+    box.querySelectorAll('[data-vcdel]').forEach(function(el){
+      el.addEventListener('click', function(){ vcDelItem(+el.getAttribute('data-vcdel')); });
+    });
+  }
+  var r = calcValueCurve();
+  var out = $('#simCurveOut');
+  if(!r.ok){
+    if(out) out.innerHTML = '<span class="ph">' + esc(r.msg) + '</span>';
+    var c0 = $('#simCurveChart'); if(c0) c0.innerHTML = '<span class="ph">—</span>';
+    return;
+  }
+  if(out){
+    var h = '<div class="kvlist">';
+    h += '<div class="kv"><span>差异度</span><b class="' + (r.lv === 'bad' ? 'bad' : (r.lv === 'warn' ? 'warn' : 'good')) +
+         '">' + r.diff.toFixed(2) + ' / 5</b></div>';
+    h += '<div class="kv"><span>远高于行业</span><b>' + r.raise.length + ' 项</b></div>';
+    h += '<div class="kv"><span>远低于行业</span><b>' + r.eliminate.length + ' 项</b></div>';
+    h += '</div>';
+    h += '<div class="' + (r.lv === 'bad' ? 'warnbox' : 'note') + '"><b>判读</b><br>' + esc(r.verdict) + '</div>';
+
+    /* 蓝海四问 */
+    var q = '';
+    q += '<div class="note"><b>蓝海四问</b><br>';
+    q += '<b>剔除</b>（应彻底取消）：' + (r.eliminate.length ? r.eliminate.map(function(x){ return esc(x.n); }).join('、') : '未识别') + '<br>';
+    q += '<b>减少</b>（应远低于行业）：' + (r.reduce.length ? r.reduce.map(function(x){ return esc(x.n); }).join('、') : '未识别') + '<br>';
+    q += '<b>提升</b>（应远高于行业）：' + (r.raise.length ? r.raise.map(function(x){ return esc(x.n); }).join('、') : '<span class="bad">无</span>') + '<br>';
+    q += '<b>创造</b>（行业从未提供）：' + (r.create.length ? r.create.map(function(x){ return esc(x.n); }).join('、') : '未标记') ;
+    q += '</div>';
+    out.innerHTML = h + q;
+  }
+  var c = $('#simCurveChart'); if(c) c.innerHTML = svgValueCurve(r);
+}
+
+function vcOnInput(){
+  var S = sim();
+  var els = document.querySelectorAll('[data-vc]');
+  for(var i = 0; i < els.length; i++){
+    var e = els[i], idx = +e.getAttribute('data-i'), f = e.getAttribute('data-vc');
+    if(!S.curve.items[idx]) continue;
+    if(f === 'create') S.curve.items[idx].create = !!e.checked;
+    else if(f === 'me' || f === 'ind') S.curve.items[idx][f] = Math.max(0, Math.min(5, +e.value || 0));
+    else S.curve.items[idx][f] = e.value;
+  }
+  save();
+  renderSimCurve();
+}
+
+function vcAddItem(){
+  var S = sim();
+  if(S.curve.items.length >= 10){ toast('最多 10 个竞争要素'); return; }
+  S.curve.items.push({ n:'新要素', me:3, ind:3, create:false });
+  save();
+  renderSimCurve();
+}
+
+function vcDelItem(i){
+  var S = sim();
+  S.curve.items.splice(i, 1);
+  save();
+  renderSimCurve();
+}
+
+/* ---------- ⑧ 渲染：CPM ---------- */
+function cpmRowsHtml(){
+  var S = sim(), c = S.cpm, ksfs = c.ksfs || [], nm = c.names || {};
+  var h = '<div class="cpmgrid">';
+  h += '<div class="cpmgrid__hd"><span>关键成功因素</span><span>权重</span><span>' + esc(nm.me || '我方') +
+       '</span><span>' + esc(nm.r1 || '对手 A') + '</span><span>' + esc(nm.r2 || '对手 B') + '</span><span></span></div>';
+  ksfs.forEach(function(x, i){
+    h += '<div class="cpmgrid__row">';
+    h += '<input class="inp" data-cpm="n" data-i="' + i + '" value="' + esc(x.n) + '" placeholder="例：供应链效率">';
+    h += '<input class="inp" type="number" step="1" min="0" data-cpm="w" data-i="' + i + '" value="' + (+x.w || 0) + '">';
+    ['me','r1','r2'].forEach(function(k){
+      h += '<input class="inp" type="number" step="1" min="0" max="5" data-cpm="sc_' + k + '" data-i="' + i + '" value="' +
+           ((x.sc && x.sc[k] != null) ? +x.sc[k] : 0) + '">';
+    });
+    h += '<button class="btn btn--mini" data-cpmdel="' + i + '">删除</button>';
+    h += '</div>';
+  });
+  h += '</div>';
+  return h;
+}
+
+function renderSimCpm(){
+  var S = sim();
+  var box = $('#cpmRows');
+  if(box){
+    box.innerHTML = cpmRowsHtml();
+    box.querySelectorAll('[data-cpm]').forEach(function(el){
+      el.addEventListener('input', cpmOnInput);
+    });
+    box.querySelectorAll('[data-cpmdel]').forEach(function(el){
+      el.addEventListener('click', function(){ cpmDelKsf(+el.getAttribute('data-cpmdel')); });
+    });
+  }
+  var r = calcCpm();
+  var out = $('#simCpmOut');
+  if(!r.ok){
+    if(out) out.innerHTML = '<span class="ph">' + esc(r.msg) + '</span>';
+    var c0 = $('#simCpmChart'); if(c0) c0.innerHTML = '<span class="ph">—</span>';
+    return;
+  }
+  if(out){
+    var h = '<div class="kvlist">';
+    h += '<div class="kv"><span>我方加权总分</span><b class="' + (r.myRank === 1 ? 'good' : 'warn') + '">' +
+         r.meTotal.toFixed(2) + ' / 5</b></div>';
+    h += '<div class="kv"><span>排名</span><b>第 ' + r.myRank + ' 位 / 共 ' + r.rank.length + ' 家</b></div>';
+    h += '<div class="kv"><span>领先者</span><b>' + esc(r.lead.name) + '（' + r.lead.total.toFixed(2) + '）</b></div>';
+    h += '</div>';
+
+    if(r.gaps.length){
+      h += '<div class="note"><b>短板（按加权影响排序）</b><br>';
+      r.gaps.slice(0, 4).forEach(function(g){
+        h += '· <b>' + esc(g.n) + '</b>：我方 ' + g.me + '，最优 ' + g.best + '（差 ' + g.gap.toFixed(0) +
+             '，权重 ' + (g.w * 100).toFixed(0) + '%）<br>';
+      });
+      h += '</div>';
+    } else {
+      h += '<div class="note">你在所有要素上都不低于对手——请核对打分是不是过于乐观。</div>';
+    }
+    h += '<div class="note">权重已归一化（原始合计 ' + r.wSum.toFixed(0) + '），所以不必凑够 100。' +
+         '打分 1-5 为主观评估，价值在于<b>把分歧摊开</b>，不在于精确。</div>';
+    out.innerHTML = h;
+  }
+  var c = $('#simCpmChart'); if(c) c.innerHTML = svgCpm(r);
+}
+
+function cpmOnInput(){
+  var S = sim();
+  var nm = ['cpmMe','cpmR1','cpmR2'];
+  ['me','r1','r2'].forEach(function(k, i){
+    var e = $('#' + nm[i]);
+    if(e) S.cpm.names[k] = e.value || (k === 'me' ? '我方' : '对手 ' + String.fromCharCode(65 + i - 1));
+  });
+  var els = document.querySelectorAll('[data-cpm]');
+  for(var i = 0; i < els.length; i++){
+    var e = els[i], idx = +e.getAttribute('data-i'), f = e.getAttribute('data-cpm');
+    if(!S.cpm.ksfs[idx]) continue;
+    if(f.indexOf('sc_') === 0){
+      if(!S.cpm.ksfs[idx].sc) S.cpm.ksfs[idx].sc = {};
+      S.cpm.ksfs[idx].sc[f.slice(3)] = Math.max(0, Math.min(5, +e.value || 0));
+    } else if(f === 'w'){
+      S.cpm.ksfs[idx].w = Math.max(0, +e.value || 0);
+    } else {
+      S.cpm.ksfs[idx][f] = e.value;
+    }
+  }
+  save();
+  renderSimCpm();
+}
+
+function cpmAddKsf(){
+  var S = sim();
+  if(S.cpm.ksfs.length >= 10){ toast('最多 10 个关键成功因素'); return; }
+  S.cpm.ksfs.push({ n:'新因素', w:10, sc:{ me:3, r1:3, r2:3 } });
+  save();
+  renderSimCpm();
+}
+
+function cpmDelKsf(i){
+  var S = sim();
+  S.cpm.ksfs.splice(i, 1);
+  save();
+  renderSimCpm();
+}
