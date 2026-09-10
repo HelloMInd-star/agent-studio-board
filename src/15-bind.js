@@ -13,6 +13,8 @@ function bind(){
       if(k === 'cal') renderCal();
       // 切到品牌轨迹时重采（7 类记录可能刚在其他模块产生）
       if(k === 'timeline') renderTimeline();
+      // 切到系统设置时重渲染（存储占用会随使用变化）
+      if(k === 'settings' && typeof renderSettings === 'function') renderSettings();
     };
   });
 

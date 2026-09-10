@@ -235,4 +235,10 @@ load();
 bind();
 restoreAll();
 renderScoreTrend();
+
+/* 系统设置（34）：渲染面板 + 应用「默认打开哪个模块」 */
+if (typeof renderSettings === 'function') renderSettings();
+if (state.startTab && state.startTab !== 'guide' && typeof switchTab === 'function') {
+  switchTab(state.startTab);
+}
 })();

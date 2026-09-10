@@ -91,6 +91,7 @@
     <div class="tgroup__tabs">
       <button class="tab" data-tab="kb"><span class="tab__name">📚 品牌知识库</span><span class="tab__desc">卖点 · 竞品 · 违禁词</span></button>
       <button class="tab" data-tab="timeline"><span class="tab__name">🕐 品牌轨迹</span><span class="tab__desc">7 类记录 · 时间线</span></button>
+      <button class="tab" data-tab="settings"><span class="tab__name">⚙️ 系统设置</span><span class="tab__desc">备份 · 主题 · 隐私</span></button>
     </div>
   </div>
 </nav>
@@ -691,6 +692,14 @@
       </div>
 
       <div id="tlList"></div>
+    </section>
+
+    <!-- ===== 系统设置 ===== -->
+    <section class="panel" data-panel="settings">
+      <h2 class="panel__hd">⚙️ 系统设置</h2>
+      <p class="panel__sub">全部数据只存在这台设备的浏览器里，不上传任何服务器。这意味着数据不外泄，但也意味着清缓存会丢失——<strong>请定期导出备份</strong>。</p>
+
+      <div id="setBody"></div>
     </section>
 
     <!-- ===== 商业图卡 ===== -->
@@ -1310,12 +1319,13 @@
     <div class="modal__hd"><span id="calModalTitle">➕ 新建事件</span><button class="btn btn--sm btn--ghost" id="btnCloseCal">✕</button></div>
     <label class="f"><span>标题</span><input type="text" id="ev_title" placeholder="例：618 预热第一波"></label>
     <div class="grid2">
-      <label class="f"><span>日期</span><input type="date" id="ev_date"></label>
+      <label class="f"><span>开始日期</span><input type="date" id="ev_date"></label>
+      <label class="f"><span>结束日期（可选）</span><input type="date" id="ev_date_end" title="留空 = 单日事件；填写后事件会在整个区间内每天显示"></label>
+    </div>
+    <div class="grid2">
       <label class="f"><span>优先级</span>
         <select id="ev_pri"><option value="high">高</option><option value="mid" selected>中</option><option value="low">低</option></select>
       </label>
-    </div>
-    <div class="grid2">
       <label class="f"><span>状态</span>
         <select id="ev_status">
           <option value="todo">待开始</option>
@@ -1324,17 +1334,17 @@
           <option value="delayed">已延期</option>
         </select>
       </label>
-      <label class="f"><span>跳转到</span>
-        <select id="ev_link">
-          <option value="">不跳转</option>
-          <option value="strategy">📊 策略模板</option>
-          <option value="content">✍️ 内容工厂</option>
-          <option value="chart">📊 商业图卡</option>
-          <option value="agent">💬 Agent 工作台</option>
-          <option value="flow">🔗 工作流</option>
-        </select>
-      </label>
     </div>
+    <label class="f"><span>跳转到</span>
+      <select id="ev_link">
+        <option value="">不跳转</option>
+        <option value="strategy">📊 策略模板</option>
+        <option value="content">✍️ 内容工厂</option>
+        <option value="chart">📊 商业图卡</option>
+        <option value="agent">💬 Agent 工作台</option>
+        <option value="flow">🔗 工作流</option>
+      </select>
+    </label>
     <label class="f"><span>备注</span><textarea id="ev_note" placeholder="目标、负责人、关联素材…"></textarea></label>
     <div class="row">
       <button class="btn btn--primary btn--sm" id="btnEvSave">💾 保存</button>

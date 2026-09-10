@@ -48,6 +48,7 @@ function tlCollect(){
     var st = (typeof EV_STATUS !== 'undefined' && EV_STATUS[e.status]) ? EV_STATUS[e.status].n : (e.status || '');
     var pr = (typeof EV_PRI !== 'undefined' && EV_PRI[e.pri]) ? EV_PRI[e.pri].n : '';
     out.push({k:'cal', day:tlDay(e.date), time:'',
+      id:e.id || '',
       t:e.title || '未命名事件',
       meta:[st, pr].filter(Boolean).join(' · '),
       txt:e.note || ''});
@@ -171,10 +172,14 @@ function renderTimeline(){
       h += '<div class="tlday">' + esc(dayLabel) +
            (r.day ? '' : ' <span class="tlday__note">（该记录仅保存了时分秒）</span>') + '</div>';
     }
-    h += '<div class="tlitem tl--' + r.k + '">';
+    h += '<div class="tlitem tl--' + r.k + '"' +
+         ' data-jump="' + esc(t.jump || '') + '"' +
+         ' data-rid="' + esc(r.id || '') + '"' +
+         ' title="点击前往来源模块">';
     h += '<div class="tlitem__hd"><span class="tlitem__em">' + t.em + '</span>';
     h += '<span class="tlitem__t">' + esc(r.t) + '</span>';
     if(r.time) h += '<span class="tlitem__time mono">' + esc(r.time) + '</span>';
+    if(t.jump) h += '<span class="tljump">前往 ' + esc(t.n) + ' →</span>';
     h += '</div>';
     if(r.meta || r.txt){
       h += '<div class="tlitem__bd">';
@@ -185,6 +190,30 @@ function renderTimeline(){
     h += '</div>';
   });
   host.innerHTML = h;
+  bindTimelineJump(host);
+}
+
+/* ---------- 溯源：点记录跳回来源模块（第 2 批） ---------- */
+/* 品牌轨迹只负责「聚合呈现」，真正的明细在各自模块。
+   所以每条记录都要能点回去 —— 否则用户看到问题却无法处理。 */
+function bindTimelineJump(host){
+  [].forEach.call(host.querySelectorAll('.tlitem[data-jump]'), function(el){
+    el.onclick = function(){
+      tlJumpTo(el.getAttribute('data-jump'), el.getAttribute('data-rid'));
+    };
+  });
+}
+function tlJumpTo(tab, rid){
+  if (!tab) return;
+  switchTab(tab);
+  /* 日历事件带 id，可精确定位到那一条，而不是只切到模块 */
+  if (tab === 'cal' && rid && typeof openCalModal === 'function') {
+    setTimeout(function(){ openCalModal(rid); }, 60);
+    toast('已定位到这条营销动作');
+  } else {
+    var nm = (TL_TYPES.filter(function(t){ return t.jump === tab; })[0] || {}).n;
+    toast(nm ? '已跳转到「' + nm + '」模块' : '已跳转');
+  }
 }
 
 /* ---------- 导出（只读，不改数据） ---------- */

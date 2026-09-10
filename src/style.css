@@ -1156,3 +1156,29 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
 .tl--trace{border-left-color:#06b6d4;}
 .tl--hist {border-left-color:#64748b;}
 .tl--chat {border-left-color:#ec4899;}
+
+/* ============================================================
+   系统设置（34-settings.js）
+   ============================================================ */
+.setrow{ padding:13px 0; border-bottom:1px solid var(--line); }
+.setrow:last-child{ border-bottom:none; }
+.setrow__lb{ font-size:13px; color:var(--text-3); margin-bottom:5px; }
+.setrow__val{ font-size:14px; color:var(--text); line-height:1.5; }
+.setrow__note{ font-size:12px; color:var(--text-3); font-weight:400; }
+.setrow__hint{ font-size:12px; color:var(--text-3); margin-top:7px; line-height:1.65; }
+.setrow--btns{ display:flex; gap:10px; flex-wrap:wrap; padding-top:15px; }
+.setbar{ height:6px; background:var(--bg-soft); border-radius:3px; overflow:hidden; margin-top:9px; }
+.setbar__in{ height:100%; border-radius:3px; transition:width .3s var(--t-mid); }
+.setradio{ display:inline-flex; align-items:center; gap:6px; margin-right:20px; font-size:14px; cursor:pointer; color:var(--text); }
+.setradio input{ cursor:pointer; }
+.setsel{ padding:6px 10px; border:1px solid var(--line-strong); border-radius:var(--r-sm);
+         background:var(--card); color:var(--text); font-size:13px; min-width:190px; }
+
+/* 品牌轨迹：溯源跳转（第 2 批） */
+.tlitem{ cursor:pointer; transition:border-color var(--t-fast), background var(--t-fast); }
+.tlitem:hover{ border-color:var(--brand); background:var(--brand-soft); }
+.tljump{ font-size:11px; color:var(--brand); margin-left:auto; white-space:nowrap; }
+.tlitem__hd{ display:flex; align-items:center; gap:8px; }
+
+/* 跨天事件的延续日：视觉上弱于首日，表示「仍在区间内」而非新事件 */
+.calev--cont{ opacity:.6; font-weight:400; font-style:italic; }

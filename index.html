@@ -1164,6 +1164,32 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
 .tl--hist {border-left-color:#64748b;}
 .tl--chat {border-left-color:#ec4899;}
 
+/* ============================================================
+   系统设置（34-settings.js）
+   ============================================================ */
+.setrow{ padding:13px 0; border-bottom:1px solid var(--line); }
+.setrow:last-child{ border-bottom:none; }
+.setrow__lb{ font-size:13px; color:var(--text-3); margin-bottom:5px; }
+.setrow__val{ font-size:14px; color:var(--text); line-height:1.5; }
+.setrow__note{ font-size:12px; color:var(--text-3); font-weight:400; }
+.setrow__hint{ font-size:12px; color:var(--text-3); margin-top:7px; line-height:1.65; }
+.setrow--btns{ display:flex; gap:10px; flex-wrap:wrap; padding-top:15px; }
+.setbar{ height:6px; background:var(--bg-soft); border-radius:3px; overflow:hidden; margin-top:9px; }
+.setbar__in{ height:100%; border-radius:3px; transition:width .3s var(--t-mid); }
+.setradio{ display:inline-flex; align-items:center; gap:6px; margin-right:20px; font-size:14px; cursor:pointer; color:var(--text); }
+.setradio input{ cursor:pointer; }
+.setsel{ padding:6px 10px; border:1px solid var(--line-strong); border-radius:var(--r-sm);
+         background:var(--card); color:var(--text); font-size:13px; min-width:190px; }
+
+/* 品牌轨迹：溯源跳转（第 2 批） */
+.tlitem{ cursor:pointer; transition:border-color var(--t-fast), background var(--t-fast); }
+.tlitem:hover{ border-color:var(--brand); background:var(--brand-soft); }
+.tljump{ font-size:11px; color:var(--brand); margin-left:auto; white-space:nowrap; }
+.tlitem__hd{ display:flex; align-items:center; gap:8px; }
+
+/* 跨天事件的延续日：视觉上弱于首日，表示「仍在区间内」而非新事件 */
+.calev--cont{ opacity:.6; font-weight:400; font-style:italic; }
+
 </style>
 </head>
 <body>
@@ -1249,6 +1275,7 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
     <div class="tgroup__tabs">
       <button class="tab" data-tab="kb"><span class="tab__name">📚 品牌知识库</span><span class="tab__desc">卖点 · 竞品 · 违禁词</span></button>
       <button class="tab" data-tab="timeline"><span class="tab__name">🕐 品牌轨迹</span><span class="tab__desc">7 类记录 · 时间线</span></button>
+      <button class="tab" data-tab="settings"><span class="tab__name">⚙️ 系统设置</span><span class="tab__desc">备份 · 主题 · 隐私</span></button>
     </div>
   </div>
 </nav>
@@ -1849,6 +1876,14 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
       </div>
 
       <div id="tlList"></div>
+    </section>
+
+    <!-- ===== 系统设置 ===== -->
+    <section class="panel" data-panel="settings">
+      <h2 class="panel__hd">⚙️ 系统设置</h2>
+      <p class="panel__sub">全部数据只存在这台设备的浏览器里，不上传任何服务器。这意味着数据不外泄，但也意味着清缓存会丢失——<strong>请定期导出备份</strong>。</p>
+
+      <div id="setBody"></div>
     </section>
 
     <!-- ===== 商业图卡 ===== -->
@@ -2468,12 +2503,13 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
     <div class="modal__hd"><span id="calModalTitle">➕ 新建事件</span><button class="btn btn--sm btn--ghost" id="btnCloseCal">✕</button></div>
     <label class="f"><span>标题</span><input type="text" id="ev_title" placeholder="例：618 预热第一波"></label>
     <div class="grid2">
-      <label class="f"><span>日期</span><input type="date" id="ev_date"></label>
+      <label class="f"><span>开始日期</span><input type="date" id="ev_date"></label>
+      <label class="f"><span>结束日期（可选）</span><input type="date" id="ev_date_end" title="留空 = 单日事件；填写后事件会在整个区间内每天显示"></label>
+    </div>
+    <div class="grid2">
       <label class="f"><span>优先级</span>
         <select id="ev_pri"><option value="high">高</option><option value="mid" selected>中</option><option value="low">低</option></select>
       </label>
-    </div>
-    <div class="grid2">
       <label class="f"><span>状态</span>
         <select id="ev_status">
           <option value="todo">待开始</option>
@@ -2482,17 +2518,17 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
           <option value="delayed">已延期</option>
         </select>
       </label>
-      <label class="f"><span>跳转到</span>
-        <select id="ev_link">
-          <option value="">不跳转</option>
-          <option value="strategy">📊 策略模板</option>
-          <option value="content">✍️ 内容工厂</option>
-          <option value="chart">📊 商业图卡</option>
-          <option value="agent">💬 Agent 工作台</option>
-          <option value="flow">🔗 工作流</option>
-        </select>
-      </label>
     </div>
+    <label class="f"><span>跳转到</span>
+      <select id="ev_link">
+        <option value="">不跳转</option>
+        <option value="strategy">📊 策略模板</option>
+        <option value="content">✍️ 内容工厂</option>
+        <option value="chart">📊 商业图卡</option>
+        <option value="agent">💬 Agent 工作台</option>
+        <option value="flow">🔗 工作流</option>
+      </select>
+    </label>
     <label class="f"><span>备注</span><textarea id="ev_note" placeholder="目标、负责人、关联素材…"></textarea></label>
     <div class="row">
       <button class="btn btn--primary btn--sm" id="btnEvSave">💾 保存</button>
@@ -6230,6 +6266,8 @@ function bind(){
       if(k === 'cal') renderCal();
       // 切到品牌轨迹时重采（7 类记录可能刚在其他模块产生）
       if(k === 'timeline') renderTimeline();
+      // 切到系统设置时重渲染（存储占用会随使用变化）
+      if(k === 'settings' && typeof renderSettings === 'function') renderSettings();
     };
   });
 
@@ -6915,15 +6953,24 @@ function renderCal(){
     var ds = ymd(d);
     var out = (d.getMonth() !== m);
     var isToday = (ds === todayS);
-    var evs = (c.events || []).filter(function(e){ return e.date === ds; });
+    /* 起止区间（第 2 批）：跨天事件在覆盖的每一天都出现，
+       首日显示原名，后续日加 ↳ 表示延续，避免看起来像重复事件。 */
+    var evs = (c.events || []).filter(function(e){
+      if(!e.date) return false;
+      if(e.dateEnd && e.dateEnd > e.date) return ds >= e.date && ds <= e.dateEnd;
+      return e.date === ds;
+    });
     h += '<div class="calcell' + (out?' is-out':'') + (isToday?' is-today':'') + '" data-date="' + ds + '">';
     h += '<div class="calcell__d"><span>' + d.getDate() + '</span>';
     if(evs.length) h += '<span class="mono" style="font-size:9.5px">' + evs.length + '</span>';
     h += '</div>';
     evs.slice(0,3).forEach(function(e){
+      var isSpan = !!(e.dateEnd && e.dateEnd > e.date);
+      var isCont = isSpan && ds > e.date;
       h += '<div class="calev ' + (e.status==='done'?'calev--done':e.status==='delayed'?'calev--delayed':'') +
-           (e.pri==='high'?' calev--high':'') + '" data-ev="' + e.id + '" title="' + esc(e.title) + '">' +
-           esc(e.title) + '</div>';
+           (e.pri==='high'?' calev--high':'') + (isCont?' calev--cont':'') + '" data-ev="' + e.id + '" title="' +
+           esc(e.title) + (isSpan ? '（' + e.date + ' → ' + e.dateEnd + '）' : '') + '">' +
+           (isCont ? '↳ ' : '') + esc(e.title) + '</div>';
     });
     if(evs.length > 3) h += '<div class="calcell__d" style="margin-top:2px">+' + (evs.length-3) + '</div>';
     h += '</div>';
@@ -7020,6 +7067,8 @@ function openCalModal(id, date){
   $('#ev_date').value   = e ? e.date : (date || ymd(today0()));
   $('#ev_pri').value    = e ? e.pri : 'mid';
   $('#ev_status').value = e ? e.status : 'todo';
+  var deEl2 = $('#ev_date_end');
+  if(deEl2) deEl2.value = e ? (e.dateEnd || '') : '';
   $('#ev_link').value   = e ? (e.link || '') : '';
   $('#ev_note').value   = e ? (e.note || '') : '';
   $('#btnEvDel').style.display = e ? '' : 'none';
@@ -7029,14 +7078,21 @@ function saveCalEvent(){
   var t = $('#ev_title').value.trim();
   if(!t){ toast('请填写标题'); return; }
   var d = $('#ev_date').value || ymd(today0());
+  var deEl = $('#ev_date_end');
+  var de = deEl ? (deEl.value || '') : '';
+  /* 起止区间（第 2 批）：结束日必须不早于开始日，否则视为单日 */
+  if(de && de < d){
+    toast('结束日期早于开始日期，已按单日事件保存');
+    de = '';
+  }
   var o = {
-    title:t, date:d,
+    title:t, date:d, dateEnd:de,
     pri:$('#ev_pri').value, status:$('#ev_status').value,
     link:$('#ev_link').value, note:$('#ev_note').value.trim()
   };
   if(calEditingId){
     var e = (state.cal.events||[]).filter(function(x){ return x.id === calEditingId; })[0];
-    if(e){ e.title=o.title; e.date=o.date; e.pri=o.pri; e.status=o.status; e.link=o.link; e.note=o.note; }
+    if(e){ e.title=o.title; e.date=o.date; e.dateEnd=o.dateEnd; e.pri=o.pri; e.status=o.status; e.link=o.link; e.note=o.note; }
   } else {
     o.id = 'ev' + Date.now() + Math.floor(Math.random()*100);
     state.cal.events.push(o);
@@ -13861,6 +13917,7 @@ function tlCollect(){
     var st = (typeof EV_STATUS !== 'undefined' && EV_STATUS[e.status]) ? EV_STATUS[e.status].n : (e.status || '');
     var pr = (typeof EV_PRI !== 'undefined' && EV_PRI[e.pri]) ? EV_PRI[e.pri].n : '';
     out.push({k:'cal', day:tlDay(e.date), time:'',
+      id:e.id || '',
       t:e.title || '未命名事件',
       meta:[st, pr].filter(Boolean).join(' · '),
       txt:e.note || ''});
@@ -13984,10 +14041,14 @@ function renderTimeline(){
       h += '<div class="tlday">' + esc(dayLabel) +
            (r.day ? '' : ' <span class="tlday__note">（该记录仅保存了时分秒）</span>') + '</div>';
     }
-    h += '<div class="tlitem tl--' + r.k + '">';
+    h += '<div class="tlitem tl--' + r.k + '"' +
+         ' data-jump="' + esc(t.jump || '') + '"' +
+         ' data-rid="' + esc(r.id || '') + '"' +
+         ' title="点击前往来源模块">';
     h += '<div class="tlitem__hd"><span class="tlitem__em">' + t.em + '</span>';
     h += '<span class="tlitem__t">' + esc(r.t) + '</span>';
     if(r.time) h += '<span class="tlitem__time mono">' + esc(r.time) + '</span>';
+    if(t.jump) h += '<span class="tljump">前往 ' + esc(t.n) + ' →</span>';
     h += '</div>';
     if(r.meta || r.txt){
       h += '<div class="tlitem__bd">';
@@ -13998,6 +14059,30 @@ function renderTimeline(){
     h += '</div>';
   });
   host.innerHTML = h;
+  bindTimelineJump(host);
+}
+
+/* ---------- 溯源：点记录跳回来源模块（第 2 批） ---------- */
+/* 品牌轨迹只负责「聚合呈现」，真正的明细在各自模块。
+   所以每条记录都要能点回去 —— 否则用户看到问题却无法处理。 */
+function bindTimelineJump(host){
+  [].forEach.call(host.querySelectorAll('.tlitem[data-jump]'), function(el){
+    el.onclick = function(){
+      tlJumpTo(el.getAttribute('data-jump'), el.getAttribute('data-rid'));
+    };
+  });
+}
+function tlJumpTo(tab, rid){
+  if (!tab) return;
+  switchTab(tab);
+  /* 日历事件带 id，可精确定位到那一条，而不是只切到模块 */
+  if (tab === 'cal' && rid && typeof openCalModal === 'function') {
+    setTimeout(function(){ openCalModal(rid); }, 60);
+    toast('已定位到这条营销动作');
+  } else {
+    var nm = (TL_TYPES.filter(function(t){ return t.jump === tab; })[0] || {}).n;
+    toast(nm ? '已跳转到「' + nm + '」模块' : '已跳转');
+  }
 }
 
 /* ---------- 导出（只读，不改数据） ---------- */
@@ -14019,6 +14104,274 @@ function exportTimeline(){
   });
   downloadFile('brand-timeline-' + Date.now() + '.md', m, 'text/markdown;charset=utf-8');
   toast('已导出 ' + all.length + ' 条记录');
+}
+
+/* ===== src/34-settings.js ===== */
+/* ============================================================
+ * 34-settings.js —— 系统设置
+ *
+ * 定位：这不是功能，是基础设施。
+ *
+ * 为什么要做：
+ *   全站数据存在 localStorage，有 save() / load()，但**没有任何备份出口**。
+ *   清一次浏览器缓存，品牌内核、竞品档案、调研方案、战略矩阵
+ *   这些最难重建的「思考成果」就全没了。
+ *
+ *   这与「数据不出浏览器」的隐私卖点形成一个自相矛盾：
+ *     数据不外泄（好）  ——  但也无备份（坏）
+ *   本地导出备份，是这个隐私卖点的必需配套。
+ *   否则「不出浏览器」就变成了「丢了就真没了」。
+ *
+ * 设计原则：克制。
+ *   只做真正有用的 6 类，不做账号 / 云同步 / 多语言 / 快捷键 / 插件市场。
+ * ============================================================ */
+
+/* 全部 Tab，供「默认打开」选择 */
+var SET_TABS = [
+  { k:'guide',    n:'🧭 开始' },
+  { k:'hotspot',  n:'📡 热点决策' },
+  { k:'research', n:'📐 调研方案' },
+  { k:'strat',    n:'🎯 战略矩阵' },
+  { k:'tkm',      n:'🧰 经典工具' },
+  { k:'toolmap',  n:'🗺️ 工具地图' },
+  { k:'persona',  n:'🏛️ 品牌内核' },
+  { k:'strategy', n:'📊 策略模板' },
+  { k:'pricing',  n:'💰 定价策略' },
+  { k:'market',   n:'🌏 市场与竞品' },
+  { k:'fin',      n:'💹 财务测算' },
+  { k:'role',     n:'🧠 营销角色' },
+  { k:'content',  n:'✍️ 内容工厂' },
+  { k:'chart',    n:'📊 商业图卡' },
+  { k:'flow',     n:'🔗 营销工作流' },
+  { k:'agent',    n:'💬 Agent 工作台' },
+  { k:'cal',      n:'📅 营销日历' },
+  { k:'synth',    n:'📋 方案合成' },
+  { k:'kb',       n:'📚 品牌知识库' },
+  { k:'timeline', n:'🕐 品牌轨迹' },
+  { k:'settings', n:'⚙️ 系统设置' }
+];
+
+/* ---------- 工具 ---------- */
+function setTodayStr(){
+  var d = new Date();
+  return d.getFullYear() + '-' +
+         String(d.getMonth() + 1).padStart(2, '0') + '-' +
+         String(d.getDate()).padStart(2, '0');
+}
+function setBytes(){
+  try {
+    var s = localStorage.getItem(KEY) || '';
+    return (new Blob([s])).size;
+  } catch (e) {
+    return (JSON.stringify(state) || '').length;
+  }
+}
+function setFmtBytes(b){
+  if (!b) return '0 B';
+  if (b < 1024) return b + ' B';
+  if (b < 1024 * 1024) return (b / 1024).toFixed(1) + ' KB';
+  return (b / 1024 / 1024).toFixed(2) + ' MB';
+}
+/* localStorage 上限通常 5MB，用占比提示风险 */
+function setUsagePct(){
+  var b = setBytes();
+  var cap = 5 * 1024 * 1024;
+  return Math.min(100, Math.round(b / cap * 100));
+}
+
+/* ---------- 备份 ---------- */
+function setExportBackup(){
+  try {
+    var data = JSON.stringify(state, null, 2);
+    var blob = new Blob([data], { type:'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'Y.Mine备份_' + setTodayStr() + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+    toast('备份已导出（' + setFmtBytes(setBytes()) + '）');
+  } catch (e) {
+    toast('导出失败：' + e.message);
+  }
+}
+function setImportBackup(file){
+  if (!file) return;
+  var r = new FileReader();
+  r.onload = function(){
+    var o;
+    try { o = JSON.parse(r.result); }
+    catch (e) { toast('解析失败：不是合法的 JSON 文件'); return; }
+    if (!o || typeof o !== 'object' || Array.isArray(o)) {
+      toast('文件格式不对：应为备份导出的对象'); return;
+    }
+    if (!confirm('恢复备份会覆盖当前全部数据。\n\n确定继续？建议先导出一份当前备份。')) return;
+    Object.keys(o).forEach(function(k){ state[k] = o[k]; });
+    save();
+    toast('已恢复，正在刷新…');
+    setTimeout(function(){ location.reload(); }, 600);
+  };
+  r.readAsText(file);
+}
+function setClearAll(){
+  if (!confirm('确定清空全部数据？\n\n包括品牌内核、竞品档案、调研方案、战略矩阵、知识库等所有内容。\n\n此操作不可撤销，建议先导出备份。')) return;
+  if (!confirm('再确认一次：真的要清空吗？')) return;
+  try { localStorage.removeItem(KEY); } catch (e) {}
+  location.reload();
+}
+
+/* ---------- 渲染 ---------- */
+function renderSettings(){
+  var host = $('#setBody');
+  if (!host) return;
+
+  var b = setBytes();
+  var pct = setUsagePct();
+  var barColor = pct > 80 ? '#dc2626' : (pct > 50 ? '#f59e0b' : '#0ea5e9');
+
+  /* 品牌基准 */
+  var bc = state.bc || {};
+  var bcName = bc.brand || '';
+  var bcCat = bc.cat || '';
+  var bcHtml = bcName
+    ? '<div class="setrow__val"><strong>' + esc(bcName) + '</strong>' +
+      (bcCat ? ' <span class="setrow__note">' + esc(bcCat) + '</span>' : '') +
+      '</div><div class="setrow__hint">内容体检会按这个品牌的调性与禁忌评分</div>'
+    : '<div class="setrow__val" style="color:var(--text-3)">未设置</div>' +
+      '<div class="setrow__hint">未设置时，内容体检使用通用评分</div>';
+
+  /* 默认打开 */
+  var startTab = state.startTab || 'guide';
+  var optHtml = SET_TABS.map(function(t){
+    return '<option value="' + t.k + '"' + (t.k === startTab ? ' selected' : '') + '>' +
+           esc(t.n) + '</option>';
+  }).join('');
+
+  var h = '';
+
+  /* ① 数据与备份（最重要，放最前） */
+  h += '<div class="card">';
+  h += '<div class="card__hd">💾 数据与备份 <span class="eyebrow" style="margin-left:auto">建议定期导出</span></div>';
+  h += '<div class="card__bd">';
+  h += '<div class="setrow">';
+  h += '<div class="setrow__lb">存储占用</div>';
+  h += '<div class="setrow__val">' + setFmtBytes(b) + ' <span class="setrow__note">/ 约 5 MB 上限（' + pct + '%）</span></div>';
+  h += '<div class="setbar"><div class="setbar__in" style="width:' + Math.max(2, pct) + '%;background:' + barColor + '"></div></div>';
+  h += '<div class="setrow__hint">全部数据只存在这台设备的浏览器里，不上传任何服务器。清缓存会丢失，所以导出备份很重要。</div>';
+  h += '</div>';
+  h += '<div class="setrow setrow--btns">';
+  h += '<button class="btn btn--sm" id="btnSetExport">📤 导出全量备份</button>';
+  h += '<button class="btn btn--sm btn--ghost" id="btnSetImport">📥 恢复备份</button>';
+  h += '<button class="btn btn--sm btn--ghost" id="btnSetClear" style="color:#dc2626">🗑️ 清空全部数据</button>';
+  h += '<input type="file" id="setFile" accept=".json,application/json" style="display:none" />';
+  h += '</div>';
+  h += '</div></div>';
+
+  /* ② 外观 */
+  h += '<div class="card">';
+  h += '<div class="card__hd">🎨 外观</div>';
+  h += '<div class="card__bd">';
+  h += '<div class="setrow">';
+  h += '<div class="setrow__lb">主题</div>';
+  h += '<div class="setrow__val">';
+  h += '<label class="setradio"><input type="radio" name="setTheme" value="light"' + (state.theme !== 'dark' ? ' checked' : '') + '> 浅色</label>';
+  h += '<label class="setradio"><input type="radio" name="setTheme" value="dark"' + (state.theme === 'dark' ? ' checked' : '') + '> 深色</label>';
+  h += '</div></div>';
+  h += '</div></div>';
+
+  /* ③ 品牌基准 */
+  h += '<div class="card">';
+  h += '<div class="card__hd">🏛️ 品牌基准 <span class="eyebrow" style="margin-left:auto">内容体检的评分依据</span></div>';
+  h += '<div class="card__bd">';
+  h += '<div class="setrow"><div class="setrow__lb">当前生效</div>' + bcHtml + '</div>';
+  h += '<div class="setrow setrow--btns">';
+  h += '<button class="btn btn--sm btn--ghost" id="btnSetGoBrand">前往' + (bcName ? '修改' : '填写') + ' →</button>';
+  h += '</div>';
+  h += '</div></div>';
+
+  /* ④ 启动 */
+  h += '<div class="card">';
+  h += '<div class="card__hd">🚀 启动</div>';
+  h += '<div class="card__bd">';
+  h += '<div class="setrow">';
+  h += '<div class="setrow__lb">默认打开</div>';
+  h += '<div class="setrow__val"><select id="setStartTab" class="setsel">' + optHtml + '</select></div>';
+  h += '<div class="setrow__hint">下次打开工作台时自动进入这个模块</div>';
+  h += '</div></div></div>';
+
+  /* ⑤ 隐私 */
+  h += '<div class="card">';
+  h += '<div class="card__hd">🔒 隐私与联网</div>';
+  h += '<div class="card__bd">';
+  h += '<div class="setrow">';
+  h += '<div class="setrow__lb">允许联网调用模型</div>';
+  h += '<div class="setrow__val">';
+  h += '<label class="setradio"><input type="radio" name="setNet" value="off"' + (!state.net || !state.net.on ? ' checked' : '') + '> 关闭（默认）</label>';
+  h += '<label class="setradio"><input type="radio" name="setNet" value="on"' + (state.net && state.net.on ? ' checked' : '') + '> 开启</label>';
+  h += '</div>';
+  h += '<div class="setrow__hint">关闭时全部功能本地运行，数据不出浏览器。开启后由你填入自己的 Key，请求直达模型厂商，不经任何中转服务器。</div>';
+  h += '</div></div></div>';
+
+  /* ⑥ 关于 */
+  h += '<div class="card">';
+  h += '<div class="card__hd">ℹ️ 关于</div>';
+  h += '<div class="card__bd">';
+  h += '<div class="setrow"><div class="setrow__lb">定位</div><div class="setrow__val">品牌战略到增长的完整决策链</div></div>';
+  h += '<div class="setrow"><div class="setrow__lb">运行方式</div><div class="setrow__val">单文件 · 零依赖 · 默认不联网</div></div>';
+  h += '<div class="setrow"><div class="setrow__lb">数据存储</div><div class="setrow__val">浏览器本地（localStorage）</div></div>';
+  h += '<div class="setrow"><div class="setrow__lb">使用手册</div><div class="setrow__val"><a href="manual.html" target="_blank" rel="noopener">打开 manual.html →</a></div></div>';
+  h += '</div></div>';
+
+  host.innerHTML = h;
+  bindSettings();
+}
+
+function bindSettings(){
+  var ex = $('#btnSetExport');
+  if (ex) ex.onclick = setExportBackup;
+
+  var im = $('#btnSetImport');
+  var fi = $('#setFile');
+  if (im && fi) im.onclick = function(){ fi.click(); };
+  if (fi) fi.onchange = function(){
+    if (fi.files && fi.files[0]) setImportBackup(fi.files[0]);
+    fi.value = '';
+  };
+
+  var cl = $('#btnSetClear');
+  if (cl) cl.onclick = setClearAll;
+
+  var gb = $('#btnSetGoBrand');
+  if (gb) gb.onclick = function(){ switchTab('persona'); };
+
+  [].forEach.call(document.querySelectorAll('input[name="setTheme"]'), function(el){
+    el.onchange = function(){
+      state.theme = el.value;
+      document.documentElement.setAttribute('data-theme', state.theme);
+      /* 同步顶栏主题按钮的文字，避免两处显示不一致 */
+      var tb = $('#btnTheme');
+      if (tb) tb.textContent = state.theme === 'dark' ? '☀️ 浅色' : '🌙 深色';
+      save();
+      toast('已切换为' + (state.theme === 'dark' ? '深色' : '浅色'));
+    };
+  });
+
+  [].forEach.call(document.querySelectorAll('input[name="setNet"]'), function(el){
+    el.onchange = function(){
+      if (!state.net) state.net = { on:false, provider:'deepseek', key:'', base:'' };
+      state.net.on = (el.value === 'on');
+      save();
+      toast(state.net.on ? '已开启联网（需填自己的 Key）' : '已关闭联网，全部本地运行');
+    };
+  });
+
+  var st = $('#setStartTab');
+  if (st) st.onchange = function(){
+    state.startTab = st.value;
+    save();
+    toast('下次打开将进入「' + (SET_TABS.filter(function(t){ return t.k === st.value; })[0] || {}).n + '」');
+  };
 }
 
 /* ===== src/16-boot.js ===== */
@@ -14259,6 +14612,12 @@ load();
 bind();
 restoreAll();
 renderScoreTrend();
+
+/* 系统设置（34）：渲染面板 + 应用「默认打开哪个模块」 */
+if (typeof renderSettings === 'function') renderSettings();
+if (state.startTab && state.startTab !== 'guide' && typeof switchTab === 'function') {
+  switchTab(state.startTab);
+}
 })();
 
 </script>

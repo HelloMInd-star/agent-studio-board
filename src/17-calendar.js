@@ -72,15 +72,24 @@ function renderCal(){
     var ds = ymd(d);
     var out = (d.getMonth() !== m);
     var isToday = (ds === todayS);
-    var evs = (c.events || []).filter(function(e){ return e.date === ds; });
+    /* 起止区间（第 2 批）：跨天事件在覆盖的每一天都出现，
+       首日显示原名，后续日加 ↳ 表示延续，避免看起来像重复事件。 */
+    var evs = (c.events || []).filter(function(e){
+      if(!e.date) return false;
+      if(e.dateEnd && e.dateEnd > e.date) return ds >= e.date && ds <= e.dateEnd;
+      return e.date === ds;
+    });
     h += '<div class="calcell' + (out?' is-out':'') + (isToday?' is-today':'') + '" data-date="' + ds + '">';
     h += '<div class="calcell__d"><span>' + d.getDate() + '</span>';
     if(evs.length) h += '<span class="mono" style="font-size:9.5px">' + evs.length + '</span>';
     h += '</div>';
     evs.slice(0,3).forEach(function(e){
+      var isSpan = !!(e.dateEnd && e.dateEnd > e.date);
+      var isCont = isSpan && ds > e.date;
       h += '<div class="calev ' + (e.status==='done'?'calev--done':e.status==='delayed'?'calev--delayed':'') +
-           (e.pri==='high'?' calev--high':'') + '" data-ev="' + e.id + '" title="' + esc(e.title) + '">' +
-           esc(e.title) + '</div>';
+           (e.pri==='high'?' calev--high':'') + (isCont?' calev--cont':'') + '" data-ev="' + e.id + '" title="' +
+           esc(e.title) + (isSpan ? '（' + e.date + ' → ' + e.dateEnd + '）' : '') + '">' +
+           (isCont ? '↳ ' : '') + esc(e.title) + '</div>';
     });
     if(evs.length > 3) h += '<div class="calcell__d" style="margin-top:2px">+' + (evs.length-3) + '</div>';
     h += '</div>';
@@ -177,6 +186,8 @@ function openCalModal(id, date){
   $('#ev_date').value   = e ? e.date : (date || ymd(today0()));
   $('#ev_pri').value    = e ? e.pri : 'mid';
   $('#ev_status').value = e ? e.status : 'todo';
+  var deEl2 = $('#ev_date_end');
+  if(deEl2) deEl2.value = e ? (e.dateEnd || '') : '';
   $('#ev_link').value   = e ? (e.link || '') : '';
   $('#ev_note').value   = e ? (e.note || '') : '';
   $('#btnEvDel').style.display = e ? '' : 'none';
@@ -186,14 +197,21 @@ function saveCalEvent(){
   var t = $('#ev_title').value.trim();
   if(!t){ toast('请填写标题'); return; }
   var d = $('#ev_date').value || ymd(today0());
+  var deEl = $('#ev_date_end');
+  var de = deEl ? (deEl.value || '') : '';
+  /* 起止区间（第 2 批）：结束日必须不早于开始日，否则视为单日 */
+  if(de && de < d){
+    toast('结束日期早于开始日期，已按单日事件保存');
+    de = '';
+  }
   var o = {
-    title:t, date:d,
+    title:t, date:d, dateEnd:de,
     pri:$('#ev_pri').value, status:$('#ev_status').value,
     link:$('#ev_link').value, note:$('#ev_note').value.trim()
   };
   if(calEditingId){
     var e = (state.cal.events||[]).filter(function(x){ return x.id === calEditingId; })[0];
-    if(e){ e.title=o.title; e.date=o.date; e.pri=o.pri; e.status=o.status; e.link=o.link; e.note=o.note; }
+    if(e){ e.title=o.title; e.date=o.date; e.dateEnd=o.dateEnd; e.pri=o.pri; e.status=o.status; e.link=o.link; e.note=o.note; }
   } else {
     o.id = 'ev' + Date.now() + Math.floor(Math.random()*100);
     state.cal.events.push(o);

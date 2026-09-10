@@ -347,26 +347,70 @@ them last, instead of pretending they happened today.
 
 Read-only by design: it changes no existing data structure. Export to Markdown.
 
+#### Traceability (batch 2)
+The timeline only *aggregates*; the real detail lives in each module. So every
+record is clickable and **jumps back to its source**. Calendar actions carry an
+`id`, so those are located precisely — the calendar opens with that exact
+event's edit dialog. Other types can only jump to module level, because their
+records have no stable id. That limit is shown as-is rather than papered over.
+
+---
+
+### 3.13 System settings (settings)
+
+All state lives in `localStorage`. There is `save()` / `load()` but — before
+this module — **no backup export at all**. Clear the browser cache once and the
+brand core, competitor dossiers, research plans and strategy snapshots are gone.
+
+That is a contradiction sitting right next to the privacy promise:
+
+| | |
+|---|---|
+| data never leaves the browser | good — nothing leaks |
+| but there is no backup either | bad — losing it means losing it for good |
+
+So local backup export is not an extra feature; it is the **required
+counterpart** of the privacy claim. Without it, "never leaves your browser"
+silently degrades into "gone forever".
+
+Six groups, deliberately nothing more:
+
+| Group | Contents |
+|---|---|
+| 💾 Data & backup | full JSON export / restore / clear, storage usage bar |
+| 🎨 Appearance | light / dark (two-way sync with the topbar toggle) |
+| 🏛️ Brand baseline | which brand the tone check scores against |
+| 🚀 Startup | which tab opens by default |
+| 🔒 Network | online toggle, off by default |
+| ℹ️ About | positioning, runtime, storage |
+
+Deliberately **not** built: accounts, cloud sync, i18n, custom shortcuts, a
+plugin marketplace. Each either needs a backend (breaking the privacy promise)
+or is something nobody would actually use.
+
+`localStorage` caps at roughly 5 MB, so the usage bar turns amber past 50 % and
+red past 80 % — a nudge to export and clean up before it actually breaks.
+
 ---
 
 ### 3.10 Information architecture
 
 
-20 tabs are grouped by **task**, not by when they were built:
+21 tabs are grouped by **task**, not by when they were built:
 
 ```
 入口     guide
-想清楚   hotspot · research · strat · tkm · toolmap
+想清楚   hotspot · research · strat · tkm · toolmap · persona
 算出来   strategy · pricing · market · fin
-做出来   role · content · persona · chart
+做出来   role · content · chart
 串起来   flow · agent · cal · synth
-存下来   kb
+存下来   kb · timeline · settings
 ```
 
 The group labels double as a recommended path: figure out *what* to do,
 compute *whether* it works, produce the content, wire it together, then
 keep the output. `guide` is the default landing tab for the same reason —
-19 tabs with no entry point is a list, not a workflow.
+20 tabs with no entry point is a list, not a workflow.
 
 The manual mirrors this: each of the 22 module chapters opens with a
 **user flow strip** (`input → steps → output`) plus a note on what to do

@@ -223,6 +223,7 @@ a:hover{text-decoration:underline;}
       <a href="#toolkit">🧰 经典工具箱</a>
       <a href="#toolmap">🗺️ 工具地图</a>
       <a href="#timeline">🕐 品牌轨迹</a>
+      <a href="#settings">⚙️ 系统设置</a>
     </div>
     <div class="mgroup">
       <div class="mgroup__t">附录</div>
@@ -931,6 +932,63 @@ a:hover{text-decoration:underline;}
         <b>只读</b>：本模块不写入、不修改任何现有数据，只读取并呈现。
         点「📤 导出时间线」可导出 Markdown。
       </div>
+      <h3>溯源：点记录回到来源模块</h3>
+      <p>时间线只负责<b>聚合呈现</b>，真正的明细在各自模块里。所以每条记录都可以点击，
+      <b>直接跳回它的来源</b>——否则你看到问题却无法处理。</p>
+      <div class="mtable">
+        <table>
+          <tr><th>记录类型</th><th>点击后</th></tr>
+          <tr><td>📅 营销动作</td><td>跳到营销日历，<b>并直接打开那一条事件的编辑弹窗</b>（精确定位）</td></tr>
+          <tr><td>📡 竞品动态</td><td>跳到市场与竞品</td></tr>
+          <tr><td>🩺 内容评分</td><td>跳到内容工厂</td></tr>
+          <tr><td>🎯 战略快照</td><td>跳到战略矩阵</td></tr>
+          <tr><td>⚙️ 执行记录</td><td>跳到营销工作流</td></tr>
+          <tr><td>📝 生成留痕 / 💬 对话</td><td>跳到 Agent 工作台</td></tr>
+        </table>
+      </div>
+      <div class="mnote is-ok">
+        只有<b>营销动作</b>能精确定位到具体那一条（因为日历事件带 id）。
+        其他类型只能跳到模块层面——这是数据结构的客观限制，如实呈现而不假装都能定位。
+      </div>
+    </section>
+
+    <!-- ============ 系统设置 ============ -->
+    <section class="msec" id="settings">
+      <h2><span class="ico">⚙️</span>系统设置</h2>
+      <div class="mflow" data-flow="settings">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">打开系统设置</span><span class="mfl__arrow">→</span><span class="mfl__step">查看存储占用</span><span class="mfl__arrow">→</span><span class="mfl__step">按需导出备份 / 调整偏好</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">设置自动持久化</span></div>
+        <div class="mflow__note">前置：无。建议在使用一段时间后、或清缓存前导出一次备份。</div>
+      </div>
+      <h3>为什么必须有备份功能</h3>
+      <p>全站数据存在浏览器 <code>localStorage</code> 里，有 <code>save()</code> / <code>load()</code>，
+      但<b>没有任何备份出口</b>——清一次浏览器缓存，品牌内核、竞品档案、调研方案、战略矩阵
+      这些最难重建的「思考成果」就全没了。</p>
+      <div class="mnote is-warn">
+        这与「数据不出浏览器」的隐私卖点形成一个<b>自相矛盾</b>：
+        数据不外泄（好），但也无备份（坏）。
+        本地导出备份是这个隐私承诺的<b>必需配套</b>——
+        否则「不出浏览器」就变成了「丢了就真没了」。
+      </div>
+      <h3>六类设置项</h3>
+      <div class="mtable">
+        <table>
+          <tr><th>类别</th><th>包含</th><th>说明</th></tr>
+          <tr><td>💾 数据与备份</td><td>导出全量备份 / 恢复 / 清空</td><td>JSON 格式，含全部状态；恢复前二次确认</td></tr>
+          <tr><td>🎨 外观</td><td>浅色 / 深色</td><td>与顶栏主题按钮双向同步</td></tr>
+          <tr><td>🏛️ 品牌基准</td><td>当前生效品牌</td><td>内容体检按此品牌的调性与禁忌评分</td></tr>
+          <tr><td>🚀 启动</td><td>默认打开哪个模块</td><td>下次打开工作台时自动进入</td></tr>
+          <tr><td>🔒 隐私与联网</td><td>联网开关（默认关）</td><td>开启后需填自己的 Key，请求直达厂商</td></tr>
+          <tr><td>ℹ️ 关于</td><td>定位 / 运行方式 / 存储</td><td>含存储占用百分比条</td></tr>
+        </table>
+      </div>
+      <div class="mnote is-ok">
+        <b>刻意不做</b>：账号体系、云同步、多语言、快捷键自定义、插件市场。
+        这些看起来专业，但要么需要后端（破坏隐私承诺），要么用户根本用不上。
+      </div>
+      <h3>存储占用</h3>
+      <p><code>localStorage</code> 通常有约 <b>5 MB</b> 上限。设置页会显示当前占用与百分比条：
+      超过 50% 转黄、超过 80% 转红。<b>建议在变红前导出备份并清理历史记录。</b></p>
     </section>
 
     <!-- ============ 附录 ============ -->
@@ -958,7 +1016,10 @@ a:hover{text-decoration:underline;}
     <section class="msec" id="faq">
       <h2><span class="ico">❓</span>常见问题</h2>
       <h4>数据会丢吗？</h4>
-      <p>清浏览器缓存、换浏览器、无痕模式都会丢。重要内容请用各模块的导出按钮存 Markdown。</p>
+      <p>清浏览器缓存、换浏览器、无痕模式都会丢。
+      <b>请定期到「⚙️ 系统设置」导出全量备份（JSON）</b>——一次导出即可保存全部 21 个模块的数据，
+      需要时用「恢复备份」整体还原。各模块的导出按钮适合单份内容交付，
+      全量备份适合防丢与迁移。两者用途不同，建议都要。</p>
       <h4>为什么生成的是提示词不是成品文案？</h4>
       <p>因为不联网、不接模型。这是定位取舍，不是未完成功能。创作类任务必须靠外部模型执行。</p>
       <h4>能多人用吗？</h4>

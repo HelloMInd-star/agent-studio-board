@@ -55,6 +55,7 @@ MODULES = [
     '30-brandcore.js',    # 品牌内核：三层结构 + 品类模板 + 商业模型对齐（须在 boot 前）
     '32-tonecheck.js',    # 品牌调性约束：把品牌内核变成内容体检的评分基准（须在 brandcore 后）
     '33-timeline.js',     # 品牌轨迹：7 类记录统一时间线（须在 calendar/agent 后、boot 前）
+    '34-settings.js',     # 系统设置：备份/恢复/主题/品牌基准/默认Tab（须在 boot 前）
     '16-boot.js',       # 回填 + 启动（最后，含 })();）
 ]
 
