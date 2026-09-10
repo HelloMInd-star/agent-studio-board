@@ -118,8 +118,15 @@ function setUsageBreakdown(){
   });
   items.push({ k:'think', n:'策略与档案', icon:'🏛️', b:think, note:thinkN + ' 个模块有数据' });
 
+  /* 品牌资产台账：Logo 版本 + 物料 + 色值规范 */
+  var a = state.assets || {};
+  var asN = (a.logos ? a.logos.length : 0) + (a.materials ? a.materials.length : 0);
+  items.push({ k:'assets', n:'品牌资产台账', icon:'🎨',
+               b:setFieldBytes(a), note:asN + ' 条登记' });
+
   /* 其余：对话 / 日历 / 历史 / 工作流 / trace / 品牌记忆 等 */
-  var known = ['kb','blocks','scores','bc','rs','rivals','mx','pr','mk','fin','theme','net','startTab'];
+  var known = ['kb','blocks','scores','bc','rs','rivals','mx','pr','mk','fin',
+               'assets','theme','net','startTab'];
   var other = 0;
   Object.keys(state || {}).forEach(function(key){
     if (known.indexOf(key) < 0) other += setFieldBytes(state[key]);

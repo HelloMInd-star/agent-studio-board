@@ -464,7 +464,7 @@ they just get to know what it costs.
 ### 3.10 Information architecture
 
 
-21 tabs are grouped by **task**, not by when they were built:
+22 tabs are grouped by **task**, not by when they were built:
 
 ```
 入口     guide
@@ -472,18 +472,63 @@ they just get to know what it costs.
 算出来   strategy · pricing · market · fin
 做出来   role · content · chart
 串起来   flow · agent · cal · synth
-存下来   kb · timeline · settings
+存下来   kb · assets · timeline · settings
 ```
 
 The group labels double as a recommended path: figure out *what* to do,
 compute *whether* it works, produce the content, wire it together, then
 keep the output. `guide` is the default landing tab for the same reason —
-20 tabs with no entry point is a list, not a workflow.
+22 tabs with no entry point is a list, not a workflow.
 
 The manual mirrors this: each of the 22 module chapters opens with a
 **user flow strip** (`input → steps → output`) plus a note on what to do
 before and after, so a chapter answers "when do I open this" rather than
 just "what does this do".
+
+---
+
+### 3.14 Brand asset ledger (assets)
+
+Registers **what brand assets exist and what state they are in** — Logo
+versions, material progress, and colour/type specifications.
+
+Deliberately **not** a design tool: no Logo drawing, no layout, no image editor.
+A design surface would either drag in heavy dependencies (destroying the
+zero-dependency single-file property) or end up a toy. What brand owners
+actually lack is not another canvas but *which materials exist, who owns them,
+whether they are approved, and whether the spec can be handed over in one click*.
+
+| Interface | Purpose |
+|---|---|
+| Brand spec (Markdown) | Hand to designers / suppliers: colours, type, usage bans, Logo ledger, material list |
+| Material CSV | Open in Excel as a progress sheet (UTF-8 BOM) |
+| Export JSON | Backup, or restore on another device |
+| Import JSON | Restore a ledger (overwrites; confirm first) |
+
+**Colour reading and its limit.** A hex value is converted to HSL and given a
+character reading (warm · high saturation · high lightness → energetic,
+promotional). If **Brand Core** is filled in, the top-scoring positioning
+dimension is used to hint whether the colour matches.
+
+This is flagged in the UI as *empirical consensus, not exact science*.
+Colour psychology cannot be verified the way LTV can, so the tool says
+"there may be tension here" and never "you are wrong".
+
+---
+
+### 3.15 Calendar quarter view (quarter)
+
+Month view shows **density**; quarter view shows **rhythm**. Three months side
+by side make it visible at a glance whether three Q4 campaigns collide, or
+where the gaps are.
+
+- Span events appear on every covered day, with `↳` on continuation days
+  (same logic as month view)
+- Max 2 events per cell, overflow shown as `+N`; click an event to edit,
+  click blank space to create
+- Prev/next quarter rolls over the year automatically
+- Switching back to month view lands on the corresponding month **within the
+  quarter you were browsing**, so browsing context is not lost
 
 ---
 

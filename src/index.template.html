@@ -90,6 +90,7 @@
     <span class="tgroup__lb">存下来</span>
     <div class="tgroup__tabs">
       <button class="tab" data-tab="kb"><span class="tab__name">📚 品牌知识库</span><span class="tab__desc">卖点 · 竞品 · 违禁词</span></button>
+      <button class="tab" data-tab="assets"><span class="tab__name">🎨 品牌资产</span><span class="tab__desc">Logo · 物料 · 色值规范</span></button>
       <button class="tab" data-tab="timeline"><span class="tab__name">🕐 品牌轨迹</span><span class="tab__desc">7 类记录 · 时间线</span></button>
       <button class="tab" data-tab="settings"><span class="tab__name">⚙️ 系统设置</span><span class="tab__desc">备份 · 主题 · 隐私</span></button>
     </div>
@@ -703,6 +704,16 @@
       <div id="tlList"></div>
     </section>
 
+    <!-- ===== 品牌资产台账 ===== -->
+    <section class="panel" data-panel="assets">
+      <h2 class="panel__hd">🎨 品牌资产台账</h2>
+      <p class="panel__sub">
+        登记 Logo 版本、物料进度与色值规范，一键导出可发给设计 / 供应商的品牌规范。
+        <strong>这里不做设计</strong>——管的是「有什么资产、什么状态、能不能交付」。
+      </p>
+      <div id="asBody"></div>
+    </section>
+
     <!-- ===== 系统设置 ===== -->
     <section class="panel" data-panel="settings">
       <h2 class="panel__hd">⚙️ 系统设置</h2>
@@ -854,12 +865,14 @@
         <span class="calbar__ym" id="calYM"></span>
         <button class="btn btn--sm btn--ghost" id="btnCalNext">下月 ›</button>
         <button class="btn btn--sm btn--ghost" id="btnCalToday">今天</button>
+        <button class="btn btn--sm btn--ghost" id="btnCalView">🗓️ 季度视图</button>
         <span class="spacer"></span>
         <button class="btn btn--sm btn--primary" id="btnCalAdd">➕ 新建事件</button>
         <button class="btn btn--sm btn--ghost" id="btnCalNode">🎯 节点库</button>
       </div>
 
       <div class="calgrid" id="calGrid"></div>
+      <div class="calquarter" id="calQuarter" style="display:none"></div>
 
       <div class="callegend">
         <span><i style="background:var(--brand)"></i>待开始</span>

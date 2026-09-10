@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Y.Mine · 品牌战略到增长的完整决策链（全程本地运行）</title>
-<meta name="description" content="定义品牌、验证市场、制定策略、回收结果的完整决策链。21 个模块、21 个确定性分析函数，全部在浏览器里跑完，数据不出本地。">
+<meta name="description" content="定义品牌、验证市场、制定策略、回收结果的完整决策链。22 个模块、21 个确定性分析函数，全部在浏览器里跑完，数据不出本地。">
 <style>
 :root{
   --brand:#4f46e5; --brand2:#7c3aed;
@@ -316,7 +316,7 @@ a{color:inherit;text-decoration:none;}
     <a class="btn btn--ghost" href="manual.html">📖 使用手册</a>
   </div>
   <div class="hero__stats">
-    <div class="hero__stat"><b>20</b><span>个功能模块</span></div>
+    <div class="hero__stat"><b>22</b><span>个功能模块</span></div>
     <div class="hero__stat"><b>21</b><span>个确定性分析函数</span></div>
     <div class="hero__stat"><b>102</b><span>条可溯源违禁词规则</span></div>
     <div class="hero__stat"><b>0</b><span>条数据上传</span></div>
@@ -437,8 +437,8 @@ a{color:inherit;text-decoration:none;}
   <div class="wrap">
     <div class="sec__hd">
       <div class="eyebrow">Modules</div>
-      <h2>二十一个模块，六个分组</h2>
-      <p>21 个模块按任务分成六组——<b>入口 · 想清楚 · 算出来 · 做出来 · 串起来 · 存下来</b>，
+      <h2>二十二个模块，六个分组</h2>
+      <p>22 个模块按任务分成六组——<b>入口 · 想清楚 · 算出来 · 做出来 · 串起来 · 存下来</b>，
       对应营销人真实的工作顺序，不是功能堆砌。每张卡片写清输入、处理、输出。</p>
       <div class="mflow" style="max-width:760px;margin:16px auto 4px">
         <div class="mflow__hd">推荐动线</div>
@@ -533,6 +533,17 @@ a{color:inherit;text-decoration:none;}
           <div class="io__row"><span class="io__k">处理</span><span class="io__v">4 种时间格式归一 · 按日分组 · 类型筛选与搜索</span></div>
           <div class="io__row"><span class="io__k">输出</span><span class="io__v">统一时间线（可导出 MD / CSV）· 每条记录可点击<b>溯源回来源模块</b> · 诚实标注无法恢复的日期</span></div>
           <div class="io__row"><span class="io__k">洞察</span><span class="io__v">30 天活跃度柱图 · 内容质量回归趋势 · 执行完成率与逾期 · 各类跟进提醒</span></div>
+        </div>
+      </div>
+
+      <div class="mod">
+        <div class="mod__hd"><span class="mod__ico">🎨</span><span class="mod__name">品牌资产台账</span><span class="mod__tag is-done">已完成</span></div>
+        <p class="mod__desc">登记「品牌有什么资产、现在什么状态」。<b>不做设计功能</b>——这里管的是 Logo 版本、物料进度与色值规范，以及能不能一键交付给设计 / 供应商。</p>
+        <div class="io">
+          <div class="io__row"><span class="io__k">输入</span><span class="io__v">色值 HEX · 字体规范 · 使用禁忌 · Logo 版本（名称/用途/状态）· 物料（类型/负责人/截止）</span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">HEX→HSL 换算出色彩性格读数；与品牌内核定位做<b>匹配提示</b>（经验值，非硬科学）</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">品牌规范 Markdown（可直接发供应商）· 物料 CSV · JSON 备份 / 恢复</span></div>
+          <div class="io__row"><span class="io__k">明确不做</span><span class="io__v">画 Logo、排版、图片编辑——那是设计工具，会摧毁「零依赖单文件」</span></div>
         </div>
       </div>
 
@@ -658,11 +669,12 @@ a{color:inherit;text-decoration:none;}
 
       <div class="mod">
         <div class="mod__hd"><span class="mod__ico">📅</span><span class="mod__name">营销日历</span><span class="mod__tag is-done">已完成</span></div>
-        <p class="mod__desc">月视图 + 事件追踪 + 节点库 + 到期提醒 + <b>起止区间</b> + 导出。跨天活动（如 6/1 预热到 6/18 爆发）终于能表达成一条，而不是建 18 个事件。</p>
+        <p class="mod__desc">月视图 + <b>季度视图</b> + 事件追踪 + 节点库 + 到期提醒 + 起止区间 + 导出。跨天活动（如 6/1 预热到 6/18 爆发）终于能表达成一条；三个月并排看节奏，大促撞车与空档期一眼可见。</p>
         <div class="io">
           <div class="io__row"><span class="io__k">输入</span><span class="io__v">事件、开始日、<b>结束日</b>、优先级、状态；或一键导入倒排结果</span></div>
-          <div class="io__row"><span class="io__k">处理</span><span class="io__v">月视图渲染 · 跨天事件连续显示 · 打开页面时计算逾期与临期 · 农历节日按年校准</span></div>
-          <div class="io__row"><span class="io__k">输出</span><span class="io__v">日历视图 + 提醒横幅 + 状态追踪 + <b>导出 iCal(.ics) / CSV</b></span></div>
+          <div class="io__row"><span class="io__k">处理</span><span class="io__v">月视图 / 季度视图渲染 · 跨天事件连续显示 · 打开页面时计算逾期与临期 · 农历节日按年校准</span></div>
+          <div class="io__row"><span class="io__k">输出</span><span class="io__v">月/季视图 + 提醒横幅 + 状态追踪 + <b>导出 iCal(.ics) / CSV</b></span></div>
+          <div class="io__row"><span class="io__k">季度视图</span><span class="io__v">三个月并排 · 跨天事件延续显示 · 可翻季跨年 · 切回月视图保留浏览位置</span></div>
         </div>
       </div>
 
@@ -702,7 +714,7 @@ a{color:inherit;text-decoration:none;}
       </div>
       <div class="road__row">
         <span class="road__dot is-wip"></span><span class="road__st is-wip">进行中</span>
-        <div class="road__t"><b>营销日历完整能力</b><span>月视图与提醒已可用；周/日视图、看板模式暂未做</span></div>
+        <div class="road__t"><b>营销日历完整能力</b><span>月视图、季度视图与提醒已可用；周/日视图、看板模式暂未做</span></div>
       </div>
       <div class="road__row">
         <span class="road__dot is-wip"></span><span class="road__st is-wip">进行中</span>

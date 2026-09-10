@@ -223,6 +223,7 @@ a:hover{text-decoration:underline;}
       <a href="#toolkit">🧰 经典工具箱</a>
       <a href="#toolmap">🗺️ 工具地图</a>
       <a href="#timeline">🕐 品牌轨迹</a>
+      <a href="#assets">🎨 品牌资产</a>
       <a href="#settings">⚙️ 系统设置</a>
     </div>
     <div class="mgroup">
@@ -755,6 +756,14 @@ a:hover{text-decoration:underline;}
         跨天到 09-08 的事件要写 <code>DTEND 09-09</code>。
         少加这一天，导进日历后每个事件都会<b>少一天</b>。
       </div>
+      <h3>季度视图：三个月并排看节奏</h3>
+      <p>月视图能看密度，但看不出节奏。点「🗓️ 季度视图」切换后，三个月并排显示——
+      Q4 三个大促怎么排布、资源会不会撞车、哪一段是空档期，一眼可见。</p>
+      <ul>
+        <li>跨天事件在覆盖的每一天都出现，延续日显示 <code>↳</code>（与月视图同一套逻辑）</li>
+        <li>每格最多显示 2 条，超出的标 <code>+N</code>；点事件直接编辑，点空白新建</li>
+        <li>可翻上季 / 下季（跨年自动进位）；切回月视图时，会停在你浏览的季度内的对应月份，不丢失上下文</li>
+      </ul>
       <div class="mnote is-no">
         <b>提醒的边界</b>：只有在<b>你打开页面时</b>才会提醒。
         关掉页面 JS 就停止运行，做不到"定时推送"——这是纯前端的硬限制。
@@ -996,6 +1005,39 @@ a:hover{text-decoration:underline;}
     </section>
 
     <!-- ============ 系统设置 ============ -->
+    <section class="msec" id="assets">
+      <h2><span class="ico">🎨</span>品牌资产台账<span class="mtag is-done">沉淀层</span></h2>
+      <div class="mflow" data-flow="assets">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">填色值与字体规范</span><span class="mfl__arrow">→</span><span class="mfl__step">登记 Logo 版本</span><span class="mfl__arrow">→</span><span class="mfl__step">记录物料进度</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">导出品牌规范 / CSV / JSON</span></div>
+        <div class="mflow__note">导出物可直接发给设计或供应商，用于对齐规范。</div>
+      </div>
+      <p>登记「品牌有什么资产、现在什么状态」三部分：<b>Logo 版本台账</b>、
+      <b>物料清单与进度</b>、<b>色值与字体规范</b>。</p>
+      <div class="mnote is-no">
+        <b>这里不做设计</b>：不画 Logo、不做排版、不内嵌图片编辑器。
+        品牌人真正缺的不是又一个画板，而是「有哪些物料、谁在跟进、定稿了没、规范能不能一键给出去」。
+      </div>
+      <h3>色值读数与一致性提示</h3>
+      <p>填入主色后会算出 <code>HSL</code>，并给出色彩性格读数
+      （例：暖色系 · 高饱和 · 高明度 → 活力、促销感）。
+      若已填过<b>品牌内核</b>，还会取打分最高的定位维度，提示色彩是否与之匹配。</p>
+      <div class="mnote is-warn">
+        <b>边界</b>：色彩与定位的关联是<b>经验共识</b>，不是精确科学，无法像 LTV 那样验算。
+        所以这里只给「可能存在张力」的提示，绝不说「你错了」，并在界面上标明依据为经验值。
+      </div>
+      <h3>四个接口</h3>
+      <div class="mtable">
+        <table>
+          <tr><th>接口</th><th>用途</th></tr>
+          <tr><td>📄 品牌规范（Markdown）</td><td>发给设计 / 供应商，含色彩、字体、使用禁忌、Logo 台账、物料清单</td></tr>
+          <tr><td>📊 物料 CSV</td><td>Excel 打开做进度表（带 BOM，中文不乱码）</td></tr>
+          <tr><td>📐 导出 JSON</td><td>备份，或在另一台设备恢复</td></tr>
+          <tr><td>📥 导入 JSON</td><td>恢复台账（会覆盖当前内容，导入前有二次确认）</td></tr>
+        </table>
+      </div>
+    </section>
+
     <section class="msec" id="settings">
       <h2><span class="ico">⚙️</span>系统设置</h2>
       <div class="mflow" data-flow="settings">

@@ -57,6 +57,8 @@ MODULES = [
     '33-timeline.js',     # 品牌轨迹：7 类记录统一时间线（须在 calendar/agent 后、boot 前）
     '34-settings.js',     # 系统设置：备份/恢复/主题/品牌基准/默认Tab（须在 boot 前）
     '35-insight.js',      # 洞察与导出：趋势分析 + 日历 iCal/CSV（须在 timeline/calendar 后、boot 前）
+    '36-assets.js',       # 品牌资产台账：Logo 版本 / 物料进度 / 色值规范（须在 brandcore 后）
+    '37-quarter.js',      # 营销日历季度视图：三个月并排看节奏（须在 calendar 后、boot 前）
     '16-boot.js',       # 回填 + 启动（最后，含 })();）
 ]
 

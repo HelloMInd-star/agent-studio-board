@@ -1306,6 +1306,76 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
   .calexport{flex-direction:column;align-items:stretch;}
 }
 
+/* ============================================================
+   品牌资产台账（36）
+   ============================================================ */
+.asform{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-bottom:10px;}
+.asform .inp{flex:1;min-width:108px;}
+.astable{display:flex;flex-direction:column;gap:5px;}
+.asrow{
+  display:flex;align-items:center;gap:9px;padding:7px 11px;
+  border:1px solid var(--line);border-radius:9px;font-size:12px;
+  background:var(--bg-soft,rgba(127,127,127,.03));transition:border-color .18s;
+}
+.asrow:hover{border-color:var(--line-strong);}
+.asrow__n{font-weight:600;color:var(--text-1);min-width:104px;}
+.asrow__tag{
+  font-size:10px;padding:1px 7px;border-radius:8px;font-weight:500;
+  background:var(--brand-soft,rgba(108,92,231,.08));color:var(--brand);margin-left:4px;
+}
+.asrow__m{flex:1;color:var(--text-2);font-size:11.5px;min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.asrow__ops{display:flex;gap:5px;flex-shrink:0;}
+.asrow__ops button{
+  font-size:10.5px;padding:2px 9px;border-radius:7px;cursor:pointer;
+  border:1px solid var(--line);background:transparent;color:var(--text-2);transition:all .16s;
+}
+.asrow__ops button:hover{border-color:var(--brand);color:var(--brand);}
+.asswatch{display:flex;gap:16px;flex-wrap:wrap;}
+.asswatch__i{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;color:var(--text-2);}
+.asswatch__i i{width:52px;height:34px;border-radius:7px;border:1px solid var(--line);display:block;}
+.asswatch__hsl{color:var(--text-3);font-family:var(--font-mono,monospace);font-size:9.5px;}
+.ashint{
+  margin-top:8px;padding:9px 12px;border-radius:9px;font-size:11.5px;line-height:1.6;
+  border-left:3px solid var(--brand);background:var(--bg-soft,rgba(127,127,127,.03));color:var(--text-2);
+}
+.ashint.is-ok{border-left-color:var(--ok);}
+.ashint.is-warn{border-left-color:#b45309;}
+.ashint__note{display:block;margin-top:3px;color:var(--text-3);font-size:10px;}
+
+/* ============================================================
+   营销日历 · 季度视图（37）
+   ============================================================ */
+.qhd{font-size:14px;font-weight:700;color:var(--text-1);margin-bottom:10px;}
+.qhd__sub{font-weight:400;font-size:11.5px;color:var(--text-3);margin-left:6px;}
+.qgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.qmonth{border:1px solid var(--line);border-radius:11px;padding:9px 10px 10px;}
+.qmonth__hd{font-size:12px;font-weight:700;color:var(--text-1);margin-bottom:6px;}
+.qmonth__wd,.qmonth__cells{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.qmonth__wd i{font-style:normal;text-align:center;font-size:9.5px;color:var(--text-3);padding-bottom:3px;}
+.qcell{
+  min-height:40px;border-radius:5px;padding:2px 2px 1px;
+  background:var(--bg-soft,rgba(127,127,127,.03));
+  border:1px solid transparent;overflow:hidden;cursor:pointer;transition:all .15s;
+}
+.qcell:hover{border-color:var(--brand);}
+.qcell.is-out{opacity:.32;}
+.qcell.is-today{border-color:var(--brand);background:var(--brand-soft,rgba(108,92,231,.07));}
+.qcell__d{display:block;font-size:9.5px;color:var(--text-3);font-family:var(--font-mono,monospace);padding-left:2px;}
+.qev{
+  display:block;font-style:normal;font-size:9px;line-height:1.35;margin-top:1px;
+  padding:1px 3px;border-radius:3px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+  background:var(--brand-soft,rgba(108,92,231,.12));color:var(--brand);border-left:2px solid var(--brand);
+}
+.qev--high{border-left-width:3px;font-weight:600;}
+.qev--done{opacity:.5;text-decoration:line-through;border-left-color:var(--ok);}
+.qev--delayed{border-left-color:var(--alert);background:rgba(185,28,28,.09);color:var(--alert);}
+.qev--cont{opacity:.65;background:transparent;border-left-style:dashed;}
+.qev--more{background:transparent;border-left-color:transparent;color:var(--text-3);font-size:8.5px;}
+@media (max-width:900px){
+  .qgrid{grid-template-columns:1fr;}
+}
+
 </style>
 </head>
 <body>
@@ -1390,6 +1460,7 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
     <span class="tgroup__lb">存下来</span>
     <div class="tgroup__tabs">
       <button class="tab" data-tab="kb"><span class="tab__name">📚 品牌知识库</span><span class="tab__desc">卖点 · 竞品 · 违禁词</span></button>
+      <button class="tab" data-tab="assets"><span class="tab__name">🎨 品牌资产</span><span class="tab__desc">Logo · 物料 · 色值规范</span></button>
       <button class="tab" data-tab="timeline"><span class="tab__name">🕐 品牌轨迹</span><span class="tab__desc">7 类记录 · 时间线</span></button>
       <button class="tab" data-tab="settings"><span class="tab__name">⚙️ 系统设置</span><span class="tab__desc">备份 · 主题 · 隐私</span></button>
     </div>
@@ -2003,6 +2074,16 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
       <div id="tlList"></div>
     </section>
 
+    <!-- ===== 品牌资产台账 ===== -->
+    <section class="panel" data-panel="assets">
+      <h2 class="panel__hd">🎨 品牌资产台账</h2>
+      <p class="panel__sub">
+        登记 Logo 版本、物料进度与色值规范，一键导出可发给设计 / 供应商的品牌规范。
+        <strong>这里不做设计</strong>——管的是「有什么资产、什么状态、能不能交付」。
+      </p>
+      <div id="asBody"></div>
+    </section>
+
     <!-- ===== 系统设置 ===== -->
     <section class="panel" data-panel="settings">
       <h2 class="panel__hd">⚙️ 系统设置</h2>
@@ -2154,12 +2235,14 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
         <span class="calbar__ym" id="calYM"></span>
         <button class="btn btn--sm btn--ghost" id="btnCalNext">下月 ›</button>
         <button class="btn btn--sm btn--ghost" id="btnCalToday">今天</button>
+        <button class="btn btn--sm btn--ghost" id="btnCalView">🗓️ 季度视图</button>
         <span class="spacer"></span>
         <button class="btn btn--sm btn--primary" id="btnCalAdd">➕ 新建事件</button>
         <button class="btn btn--sm btn--ghost" id="btnCalNode">🎯 节点库</button>
       </div>
 
       <div class="calgrid" id="calGrid"></div>
+      <div class="calquarter" id="calQuarter" style="display:none"></div>
 
       <div class="callegend">
         <span><i style="background:var(--brand)"></i>待开始</span>
@@ -2826,7 +2909,8 @@ var state = {
     {name:'爆款素材',docs:[]}
   ],curFolder:0,curDoc:-1},
   history:[],
-  cal:{y:new Date().getFullYear(), m:new Date().getMonth(), events:[]},
+  cal:{y:new Date().getFullYear(), m:new Date().getMonth(), q:0, view:'month', events:[]},
+  assets:{logos:[], materials:[], colors:{main:'', sub:'', acc:''}, fonts:'', norm:''},
   pricing:{cost:'', gm:'55', fixed:'', qty:'', rlo:'', rhi:'', value:'',
            cap:'60', pos:'mid', base:'', varc:'', disc:'80'},
   rivals:[],
@@ -14433,8 +14517,15 @@ function setUsageBreakdown(){
   });
   items.push({ k:'think', n:'策略与档案', icon:'🏛️', b:think, note:thinkN + ' 个模块有数据' });
 
+  /* 品牌资产台账：Logo 版本 + 物料 + 色值规范 */
+  var a = state.assets || {};
+  var asN = (a.logos ? a.logos.length : 0) + (a.materials ? a.materials.length : 0);
+  items.push({ k:'assets', n:'品牌资产台账', icon:'🎨',
+               b:setFieldBytes(a), note:asN + ' 条登记' });
+
   /* 其余：对话 / 日历 / 历史 / 工作流 / trace / 品牌记忆 等 */
-  var known = ['kb','blocks','scores','bc','rs','rivals','mx','pr','mk','fin','theme','net','startTab'];
+  var known = ['kb','blocks','scores','bc','rs','rivals','mx','pr','mk','fin',
+               'assets','theme','net','startTab'];
   var other = 0;
   Object.keys(state || {}).forEach(function(key){
     if (known.indexOf(key) < 0) other += setFieldBytes(state[key]);
@@ -15135,6 +15226,663 @@ function bindInsight(){
 }
 bindInsight();
 
+/* ===== src/36-assets.js ===== */
+/* ============================================================
+ * 36-assets.js —— 品牌资产台账（第 4 批）
+ *
+ * 定位：登记「品牌有什么资产、现在什么状态」，不做设计功能。
+ *   · 不做 Logo 绘制、不做排版、不内嵌图片编辑器
+ *   · 只做：版本台账 / 物料进度 / 色值规范 / 导入导出接口
+ *
+ * 为什么不做设计：
+ *   设计工具要么依赖大型库（摧毁「零依赖单文件」），
+ *   要么只能做出玩具级功能。品牌人真正缺的不是又一个画板，
+ *   而是「我有哪些物料、谁在跟进、定稿了没、规范能不能一键给出去」。
+ *
+ * 色值一致性检查的边界（重要）：
+ *   色彩心理学是经验共识，不是硬科学，无法像 LTV 那样验算。
+ *   所以这里只给「色彩性格读数 + 与定位的匹配提示」，
+ *   措辞为提示而非判定，并明确标注为依据经验值。
+ *
+ * 依赖：04-store（save/toast/esc）· 09-agent（downloadFile）
+ *       30-brandcore（state.bc 提供定位维度，用于软提示）
+ * ============================================================ */
+
+var AS_LOGO_ST = {
+  cur: {n:'在用',     cls:'is-done'},
+  old: {n:'历史版本', cls:'is-delayed'}
+};
+var AS_MAT_ST = {
+  design:  {n:'设计中', cls:'is-todo'},
+  review:  {n:'待审核', cls:'is-doing'},
+  done:    {n:'已定稿', cls:'is-done'},
+  archived:{n:'已归档', cls:'is-delayed'}
+};
+var AS_MAT_TYPES = ['包装','海报','社媒图文','视频','官网','线下物料','其他'];
+
+/* ---------- 状态存取 ---------- */
+function asState(){
+  state.assets = state.assets || {};
+  var a = state.assets;
+  a.logos     = a.logos     || [];
+  a.materials = a.materials || [];
+  a.colors    = a.colors    || {main:'', sub:'', acc:''};
+  if(a.fonts === undefined) a.fonts = '';
+  if(a.norm  === undefined) a.norm  = '';
+  return a;
+}
+
+/* ---------- 色值工具 ---------- */
+/* #RGB / #RRGGBB → {h:0-360, s:0-100, l:0-100}；非法返回 null */
+function hexToHsl(hex){
+  var s = String(hex || '').trim().replace(/^#/, '');
+  if(s.length === 3) s = s[0]+s[0]+s[1]+s[1]+s[2]+s[2];
+  if(!/^[0-9a-fA-F]{6}$/.test(s)) return null;
+  var r = parseInt(s.slice(0,2),16)/255, g = parseInt(s.slice(2,4),16)/255, b = parseInt(s.slice(4,6),16)/255;
+  var mx = Math.max(r,g,b), mn = Math.min(r,g,b);
+  var h = 0, l = (mx+mn)/2, d = mx-mn;
+  var sat = 0;
+  if(d){
+    sat = l > 0.5 ? d/(2-mx-mn) : d/(mx+mn);
+    if(mx === r)      h = ((g-b)/d + (g<b?6:0));
+    else if(mx === g) h = ((b-r)/d + 2);
+    else              h = ((r-g)/d + 4);
+    h *= 60;
+  }
+  return {h:Math.round(h), s:Math.round(sat*100), l:Math.round(l*100)};
+}
+/* 色彩性格读数：只描述客观特征 + 通行联想，不做优劣判断 */
+function colorPersona(hsl){
+  if(!hsl) return null;
+  var warm = (hsl.h >= 0 && hsl.h < 60) || hsl.h >= 300;
+  var cool = hsl.h >= 180 && hsl.h < 300;
+  var satTxt = hsl.s >= 70 ? '高饱和' : hsl.s >= 35 ? '中饱和' : '低饱和';
+  var litTxt = hsl.l >= 65 ? '高明度' : hsl.l >= 35 ? '中明度' : '低明度';
+  var hueTxt = warm ? '暖色系' : cool ? '冷色系' : '中性/绿色系';
+  var mood = [];
+  /* 阈值与「低饱和」的定义一致（s<35），避免出现
+     米白（s≈31、l≈94）明明是留白感却被判成亲和感的错判 */
+  if(hsl.s >= 70 && warm) mood.push('活力、促销感');
+  else if(hsl.s <= 35 && hsl.l >= 60) mood.push('克制、留白感');
+  else if(hsl.s <= 35 && hsl.l <= 35) mood.push('沉稳、高端感');
+  else if(cool && hsl.s <= 55) mood.push('理性、专业感');
+  else mood.push('亲和、日常感');
+  return {hue:hueTxt, sat:satTxt, lit:litTxt, mood:mood.join(''), h:hsl.h, s:hsl.s, l:hsl.l};
+}
+/* 与品牌内核定位的软匹配提示
+   期望表为经验值：只提示「可能有张力」，绝不说「你错了」 */
+var TONE_COLOR_EXPECT = {
+  '身份象征':  {sat:'low',  txt:'高身份象征的定位通常配低饱和/中性色'},
+  '价值观表达':{sat:'low',  txt:'价值观驱动型多配低饱和色，避免喧宾夺主'},
+  '感官体验':  {sat:'mid',  txt:'感官体验型偏好中等饱和、柔和明度'},
+  '情绪共鸣':  {sat:'mid',  txt:'情绪共鸣型可用中等饱和暖色'},
+  '服务温度':  {sat:'mid',  txt:'服务温度型适合中饱和、偏暖'},
+  '圈层归属':  {sat:'low',  txt:'圈层型多用低饱和色强化专属感'},
+  '效率速度':  {sat:'high', txt:'效率型常用高饱和、明快色彩'},
+  '渠道便利':  {sat:'high', txt:'便利型倾向高饱和、易识别'},
+  '产品功能':  {sat:'mid',  txt:'功能导向型色彩多为中性或中饱和'},
+  '价格定位':  {sat:'high', txt:'性价比定位常用高饱和暖色传达活力'}
+};
+function colorToneHint(hsl){
+  var bc = state.bc;
+  if(!bc || !bc.dims || !hsl) return null;
+  /* 取打分最高的维度作为主战场 */
+  var top = null;
+  Object.keys(bc.dims).forEach(function(k){
+    var v = parseFloat((bc.dims[k] || {}).v || 0);
+    if(!top || v > top.v) top = {k:k, v:v};
+  });
+  if(!top || !top.v) return null;
+  var ex = TONE_COLOR_EXPECT[top.k];
+  if(!ex) return null;
+  var actual = hsl.s >= 70 ? 'high' : hsl.s >= 35 ? 'mid' : 'low';
+  if(actual === ex.sat) return {ok:true, dim:top.k, txt:'与「' + top.k + '」定位的色彩习惯一致'};
+  return {ok:false, dim:top.k, txt:ex.txt + '，当前主色为' + (actual==='high'?'高':actual==='mid'?'中':'低') + '饱和，可能存在张力'};
+}
+
+/* ---------- 增删改 ---------- */
+function asAddLogo(){
+  var a = asState();
+  var n = $('#as_logo_name');
+  var name = n ? n.value.trim() : '';
+  if(!name){ toast('请填写 Logo 名称'); return; }
+  a.logos.unshift({
+    id:'lg' + Date.now(),
+    name:name,
+    ver:($('#as_logo_ver') || {}).value || 'v1.0',
+    use:($('#as_logo_use') || {}).value || '',
+    path:($('#as_logo_path') || {}).value || '',
+    st:($('#as_logo_st') || {}).value || 'cur',
+    d:ymd(today0())
+  });
+  if(n) n.value = '';
+  save(); renderAssets(); toast('已添加 Logo 版本');
+}
+function asAddMat(){
+  var a = asState();
+  var n = $('#as_mat_name');
+  var name = n ? n.value.trim() : '';
+  if(!name){ toast('请填写物料名称'); return; }
+  a.materials.unshift({
+    id:'mt' + Date.now(),
+    name:name,
+    type:($('#as_mat_type') || {}).value || '其他',
+    st:($('#as_mat_st') || {}).value || 'design',
+    owner:($('#as_mat_owner') || {}).value || '',
+    due:($('#as_mat_due') || {}).value || '',
+    note:($('#as_mat_note') || {}).value || ''
+  });
+  if(n) n.value = '';
+  save(); renderAssets(); toast('已添加物料');
+}
+function asDel(list, id){
+  var a = asState();
+  a[list] = a[list].filter(function(x){ return x.id !== id; });
+  save(); renderAssets(); toast('已删除');
+}
+function asSet(list, id, key, val){
+  var a = asState();
+  a[list].forEach(function(x){ if(x.id === id) x[key] = val; });
+  save(); renderAssets();
+}
+
+/* ---------- 渲染 ---------- */
+function renderAssets(){
+  var a = asState();
+  var host = $('#asBody');
+  if(!host) return;
+
+  var h = '';
+
+  /* ---- 1. 色值与字体规范 ---- */
+  h += '<div class="card">';
+  h += '<div class="card__hd">🎨 色值与字体规范 <span class="eyebrow" style="margin-left:auto">品牌一致性的基准</span></div>';
+  h += '<div class="card__bd">';
+  h += '<div class="grid3">';
+  [['main','主色','#4f46e5'],['sub','辅色',''],['acc','强调色','']].forEach(function(c){
+    h += '<label class="fld"><span>' + c[1] + '</span>' +
+         '<input type="text" id="as_c_' + c[0] + '" class="inp" placeholder="' + c[2] + '" value="' +
+         esc(a.colors[c[0]] || '') + '"></label>';
+  });
+  h += '</div>';
+  h += '<label class="fld" style="margin-top:10px"><span>字体规范</span>' +
+       '<input type="text" id="as_fonts" class="inp" placeholder="例：标题 PingFang SC Semibold / 正文 PingFang SC Regular" value="' +
+       esc(a.fonts || '') + '"></label>';
+  h += '<label class="fld" style="margin-top:10px"><span>使用规范 / 禁忌备注</span>' +
+       '<textarea id="as_norm" class="inp" rows="3" placeholder="例：Logo 最小留白为高度的 1/2；不得拉伸变形；不得置于高饱和背景上">' +
+       esc(a.norm || '') + '</textarea></label>';
+
+  /* 色卡预览 + 性格读数 */
+  var anyColor = a.colors.main || a.colors.sub || a.colors.acc;
+  if(anyColor){
+    h += '<div class="asswatch" style="margin-top:12px">';
+    ['main','sub','acc'].forEach(function(k){
+      var v = a.colors[k];
+      if(!v) return;
+      var hsl = hexToHsl(v);
+      h += '<div class="asswatch__i" title="' + esc(v) + '">' +
+           '<i style="background:' + esc(v) + '"></i>' +
+           '<span class="mono">' + esc(v) + '</span>' +
+           (hsl ? '<span class="asswatch__hsl">H' + hsl.h + ' S' + hsl.s + '% L' + hsl.l + '%</span>' : '<span class="asswatch__hsl">色值无法解析</span>') +
+           '</div>';
+    });
+    h += '</div>';
+    var p = colorPersona(hexToHsl(a.colors.main));
+    if(p){
+      h += '<div class="ashint">🎨 主色读数：' + p.hue + ' · ' + p.sat + ' · ' + p.lit +
+           '　→　通常传达<b>' + esc(p.mood) + '</b></div>';
+      var tn = colorToneHint(hexToHsl(a.colors.main));
+      if(tn){
+        h += '<div class="ashint ' + (tn.ok ? 'is-ok' : 'is-warn') + '">' +
+             (tn.ok ? '✅ ' : '⚠️ ') + esc(tn.txt) +
+             '<span class="ashint__note">（色彩与定位的关联为经验共识，非精确科学，仅供参考）</span></div>';
+      }
+    }
+  } else {
+    h += '<div class="hint" style="margin-top:10px">💡 填入主色后可看到 HSL 读数，并与品牌内核的定位做一致性提示</div>';
+  }
+  h += '<div class="row" style="margin-top:10px"><button class="btn btn--sm btn--primary" id="btnAsSaveColor">💾 保存规范</button></div>';
+  h += '</div></div>';
+
+  /* ---- 2. Logo 版本台账 ---- */
+  h += '<div class="card">';
+  h += '<div class="card__hd">🖼️ Logo 版本台账 <span class="eyebrow" style="margin-left:auto">' + a.logos.length + ' 个版本</span></div>';
+  h += '<div class="card__bd">';
+  h += '<div class="asform">';
+  h += '<input type="text" id="as_logo_name" class="inp" placeholder="名称，例：主 Logo 横版">';
+  h += '<input type="text" id="as_logo_ver" class="inp" style="max-width:90px" placeholder="v1.0" value="v1.0">';
+  h += '<input type="text" id="as_logo_use" class="inp" placeholder="用途，例：官网/包装">';
+  h += '<input type="text" id="as_logo_path" class="inp" placeholder="文件位置或链接">';
+  h += '<select id="as_logo_st" class="inp" style="max-width:110px"><option value="cur">在用</option><option value="old">历史版本</option></select>';
+  h += '<button class="btn btn--sm btn--primary" id="btnAsAddLogo">➕ 添加</button>';
+  h += '</div>';
+  if(!a.logos.length){
+    h += '<div class="calempty">还没有登记 Logo 版本<br>多版本并存时，这张表能避免「用错旧版」</div>';
+  } else {
+    h += '<div class="astable">';
+    a.logos.forEach(function(l){
+      var st = AS_LOGO_ST[l.st] || AS_LOGO_ST.cur;
+      h += '<div class="asrow">';
+      h += '<span class="badge ' + st.cls + '"><i class="dot"></i>' + st.n + '</span>';
+      h += '<span class="asrow__n">' + esc(l.name) + ' <span class="mono">' + esc(l.ver || '') + '</span></span>';
+      h += '<span class="asrow__m">' + esc(l.use || '') + (l.path ? '　🔗 ' + esc(l.path) : '') + '</span>';
+      h += '<span class="asrow__ops">';
+      h += '<button data-as="tgl" data-l="logos" data-id="' + l.id + '" data-k="st" data-v="' + (l.st === 'cur' ? 'old' : 'cur') + '">切换</button>';
+      h += '<button data-as="del" data-l="logos" data-id="' + l.id + '">删除</button>';
+      h += '</span></div>';
+    });
+    h += '</div>';
+  }
+  h += '</div></div>';
+
+  /* ---- 3. 物料清单 ---- */
+  h += '<div class="card">';
+  h += '<div class="card__hd">📦 物料清单与进度 <span class="eyebrow" style="margin-left:auto" id="asMatStat"></span></div>';
+  h += '<div class="card__bd">';
+  h += '<div class="asform">';
+  h += '<input type="text" id="as_mat_name" class="inp" placeholder="物料名称，例：618 主视觉">';
+  h += '<select id="as_mat_type" class="inp" style="max-width:110px">';
+  AS_MAT_TYPES.forEach(function(t){ h += '<option value="' + t + '">' + t + '</option>'; });
+  h += '</select>';
+  h += '<select id="as_mat_st" class="inp" style="max-width:100px">';
+  Object.keys(AS_MAT_ST).forEach(function(k){ h += '<option value="' + k + '">' + AS_MAT_ST[k].n + '</option>'; });
+  h += '</select>';
+  h += '<input type="text" id="as_mat_owner" class="inp" style="max-width:90px" placeholder="负责人">';
+  h += '<input type="date" id="as_mat_due" class="inp" style="max-width:140px">';
+  h += '<input type="text" id="as_mat_note" class="inp" placeholder="备注">';
+  h += '<button class="btn btn--sm btn--primary" id="btnAsAddMat">➕ 添加</button>';
+  h += '</div>';
+  if(!a.materials.length){
+    h += '<div class="calempty">还没有物料记录<br>包装、海报、社媒图文的进度都可以在这里跟</div>';
+  } else {
+    h += '<div class="astable">';
+    a.materials.forEach(function(m){
+      var st = AS_MAT_ST[m.st] || AS_MAT_ST.design;
+      var late = m.due && m.st !== 'done' && m.st !== 'archived' && m.due < ymd(today0());
+      h += '<div class="asrow">';
+      h += '<span class="badge ' + st.cls + '"><i class="dot"></i>' + st.n + '</span>';
+      h += '<span class="asrow__n">' + esc(m.name) + ' <span class="asrow__tag">' + esc(m.type || '') + '</span></span>';
+      h += '<span class="asrow__m">' + (m.owner ? esc(m.owner) + '　' : '') +
+           (m.due ? (late ? '⚠️ 已逾期 ' : '📅 ') + esc(m.due) : '') +
+           (m.note ? '　' + esc(m.note) : '') + '</span>';
+      h += '<span class="asrow__ops">';
+      h += '<button data-as="next" data-l="materials" data-id="' + m.id + '">推进</button>';
+      h += '<button data-as="del" data-l="materials" data-id="' + m.id + '">删除</button>';
+      h += '</span></div>';
+    });
+    h += '</div>';
+  }
+  h += '</div></div>';
+
+  /* ---- 4. 导入导出接口 ---- */
+  h += '<div class="card">';
+  h += '<div class="card__hd">🔌 导入导出接口</div>';
+  h += '<div class="card__bd">';
+  h += '<div class="row">';
+  h += '<button class="btn btn--sm btn--primary" id="btnAsSpec">📄 导出品牌规范</button>';
+  h += '<button class="btn btn--sm btn--ghost" id="btnAsCsv">📊 导出物料 CSV</button>';
+  h += '<button class="btn btn--sm btn--ghost" id="btnAsJson">📐 导出 JSON</button>';
+  h += '<button class="btn btn--sm btn--ghost" id="btnAsImport">📥 导入 JSON</button>';
+  h += '<input type="file" id="asFileImport" accept=".json" style="display:none">';
+  h += '</div>';
+  h += '<div class="hint" style="margin-top:8px">💡 品牌规范是可直接发给设计/供应商的 Markdown 文档；JSON 用于备份或在另一台设备恢复。</div>';
+  h += '</div></div>';
+
+  host.innerHTML = h;
+
+  /* 统计 */
+  var doneN = a.materials.filter(function(m){ return m.st === 'done'; }).length;
+  var lateN = a.materials.filter(function(m){
+    return m.due && m.st !== 'done' && m.st !== 'archived' && m.due < ymd(today0());
+  }).length;
+  var ms = $('#asMatStat');
+  if(ms) ms.textContent = a.materials.length + ' 项 · 已定稿 ' + doneN + (lateN ? ' · 逾期 ' + lateN : '');
+
+  /* 事件 */
+  var b1 = $('#btnAsAddLogo'); if(b1) b1.onclick = asAddLogo;
+  var b2 = $('#btnAsAddMat');  if(b2) b2.onclick = asAddMat;
+  var b3 = $('#btnAsSaveColor'); if(b3) b3.onclick = asSaveColor;
+  var b4 = $('#btnAsSpec');    if(b4) b4.onclick = asExportSpec;
+  var b5 = $('#btnAsCsv');     if(b5) b5.onclick = asExportCsv;
+  var b6 = $('#btnAsJson');    if(b6) b6.onclick = asExportJson;
+  var b7 = $('#btnAsImport');  if(b7) b7.onclick = function(){ var f = $('#asFileImport'); if(f) f.click(); };
+  var fi = $('#asFileImport'); if(fi) fi.onchange = function(){ if(this.files && this.files[0]) asImportJson(this.files[0]); this.value = ''; };
+
+  /* 行内操作：切换 / 推进 / 删除 */
+  [].forEach.call(host.querySelectorAll('[data-as]'), function(el){
+    el.onclick = function(){
+      var op = el.getAttribute('data-as');
+      var list = el.getAttribute('data-l');
+      var id = el.getAttribute('data-id');
+      if(op === 'del'){ asDel(list, id); return; }
+      if(op === 'tgl'){ asSet(list, id, el.getAttribute('data-k'), el.getAttribute('data-v')); return; }
+      if(op === 'next'){
+        var order = ['design','review','done'];
+        var a2 = asState();
+        a2[list].forEach(function(x){
+          if(x.id === id){
+            var i = order.indexOf(x.st || 'design');
+            x.st = order[Math.min(i + 1, order.length - 1)];
+          }
+        });
+        save(); renderAssets();
+      }
+    };
+  });
+
+  /* 色值输入即时预览 */
+  ['main','sub','acc'].forEach(function(k){
+    var el = $('#as_c_' + k);
+    if(el) el.addEventListener('input', function(){
+      var s = asState();
+      s.colors[k] = el.value;
+      save();
+    });
+  });
+}
+function asSaveColor(){
+  var a = asState();
+  a.colors.main = ($('#as_c_main') || {}).value || '';
+  a.colors.sub  = ($('#as_c_sub')  || {}).value || '';
+  a.colors.acc  = ($('#as_c_acc')  || {}).value || '';
+  a.fonts = ($('#as_fonts') || {}).value || '';
+  a.norm  = ($('#as_norm')  || {}).value || '';
+  save(); renderAssets(); toast('规范已保存');
+}
+
+/* ---------- 导出：品牌规范 Markdown ---------- */
+function asExportSpec(){
+  var a = asState();
+  var bn = (state.brand && state.brand.name) || (state.bc && state.bc.name) || '品牌';
+  var m = '# ' + bn + ' · 品牌规范\n\n';
+  m += '> 由本地工作台生成 · ' + new Date().toLocaleString('zh-CN') + '\n';
+  m += '> 本文件只登记规范与台账，不含设计文件本身\n\n';
+
+  m += '## 一、色彩规范\n\n';
+  var hasC = false;
+  ['main','sub','acc'].forEach(function(k){
+    var v = a.colors[k];
+    if(!v) return;
+    hasC = true;
+    var nm = k === 'main' ? '主色' : k === 'sub' ? '辅色' : '强调色';
+    var hsl = hexToHsl(v);
+    m += '- **' + nm + '**：`' + v + '`' + (hsl ? '　HSL(' + hsl.h + ', ' + hsl.s + '%, ' + hsl.l + '%)' : '') + '\n';
+  });
+  if(!hasC) m += '_（未填写）_\n';
+  var p = colorPersona(hexToHsl(a.colors.main));
+  if(p) m += '\n主色读数：' + p.hue + ' · ' + p.sat + ' · ' + p.lit + '，通常传达' + p.mood + '。\n';
+
+  m += '\n## 二、字体规范\n\n';
+  m += a.fonts ? a.fonts + '\n' : '_（未填写）_\n';
+
+  m += '\n## 三、使用规范与禁忌\n\n';
+  m += a.norm ? a.norm + '\n' : '_（未填写）_\n';
+  if(state.bc && state.bc.cat){
+    m += '\n> 品类：' + state.bc.cat + '\n';
+  }
+
+  m += '\n## 四、Logo 版本台账\n\n';
+  if(!a.logos.length) m += '_（未登记）_\n';
+  else {
+    m += '| 版本 | 名称 | 用途 | 状态 | 文件位置 |\n|---|---|---|---|---|\n';
+    a.logos.forEach(function(l){
+      var st = (AS_LOGO_ST[l.st] || AS_LOGO_ST.cur).n;
+      m += '| ' + (l.ver || '') + ' | ' + l.name + ' | ' + (l.use || '') + ' | ' + st + ' | ' + (l.path || '') + ' |\n';
+    });
+  }
+
+  m += '\n## 五、物料清单\n\n';
+  if(!a.materials.length) m += '_（未登记）_\n';
+  else {
+    m += '| 物料 | 类型 | 状态 | 负责人 | 截止 | 备注 |\n|---|---|---|---|---|---|\n';
+    a.materials.forEach(function(x){
+      m += '| ' + x.name + ' | ' + (x.type || '') + ' | ' + (AS_MAT_ST[x.st] || AS_MAT_ST.design).n +
+           ' | ' + (x.owner || '') + ' | ' + (x.due || '') + ' | ' + (x.note || '') + ' |\n';
+    });
+  }
+  m += '\n---\n\n_说明：色彩与定位的关联为经验共识，非精确科学；本文件仅作团队对齐用。_\n';
+  downloadFile('brand-spec-' + ymd(today0()) + '.md', m, 'text/markdown;charset=utf-8');
+  toast('已导出品牌规范');
+}
+/* ---------- 导出：物料 CSV ---------- */
+function asExportCsv(){
+  var a = asState();
+  if(!a.materials.length && !a.logos.length){ toast('还没有可导出的资产'); return; }
+  var rows = [['类别','名称','类型/版本','状态','负责人','截止','备注']];
+  a.logos.forEach(function(l){
+    rows.push(['Logo', l.name, l.ver || '', (AS_LOGO_ST[l.st] || AS_LOGO_ST.cur).n, '', '', l.use || '']);
+  });
+  a.materials.forEach(function(x){
+    rows.push(['物料', x.name, x.type || '', (AS_MAT_ST[x.st] || AS_MAT_ST.design).n,
+               x.owner || '', x.due || '', x.note || '']);
+  });
+  downloadFile('brand-assets-' + ymd(today0()) + '.csv', csvText(rows), 'text/csv;charset=utf-8');
+  toast('已导出资产台账');
+}
+/* ---------- 导出 / 导入 JSON ---------- */
+function asExportJson(){
+  var a = asState();
+  var pack = {__type:'ym-brand-assets', v:1, at:new Date().toISOString(), assets:a};
+  downloadFile('brand-assets-' + ymd(today0()) + '.json', JSON.stringify(pack, null, 2), 'application/json');
+  toast('已导出 JSON');
+}
+function asImportJson(file){
+  var r = new FileReader();
+  r.onload = function(){
+    try{
+      var o = JSON.parse(r.result);
+      var src = (o && o.assets) ? o.assets : o;
+      if(!src || typeof src !== 'object') throw new Error('格式不符');
+      if(!window.confirm('导入将覆盖当前品牌资产台账（Logo / 物料 / 色值规范）。建议先导出备份。继续？')) return;
+      state.assets = {
+        logos:     Array.isArray(src.logos) ? src.logos : [],
+        materials: Array.isArray(src.materials) ? src.materials : [],
+        colors:    src.colors || {main:'', sub:'', acc:''},
+        fonts:     src.fonts || '',
+        norm:      src.norm || ''
+      };
+      save(); renderAssets(); toast('已导入资产台账');
+    }catch(e){ toast('导入失败：文件不是有效的资产 JSON'); }
+  };
+  r.readAsText(file);
+}
+
+/* ---------- 绑定 ---------- */
+function bindAssets(){
+  /* 面板内元素由 renderAssets 动态绑定，这里只处理首次渲染 */
+  renderAssets();
+}
+bindAssets();
+
+/* ===== src/37-quarter.js ===== */
+/* ============================================================
+ * 37-quarter.js —— 营销日历 · 季度视图（第 5 批）
+ *
+ * 为什么要有季度视图：
+ *   月视图能看密度，但看不出节奏。Q4 三个大促怎么排布、
+ *   资源会不会撞车，翻月是看不出来的——必须三个月并排。
+ *
+ * 设计：
+ *   · 三个月并排，每格显示日期 + 最多 2 个事件（超出的 +N）
+ *   · 跨天事件在覆盖的每一天都出现，延续日加 ↳（与月视图一致）
+ *   · 点事件编辑、点空白新建，与月视图行为完全一致
+ *   · 只读聚合日历数据，不新增数据结构
+ *
+ * 依赖：17-calendar（renderCal / openCalModal / ymd / today0）
+ * ============================================================ */
+
+/* 季度：0-3 → 该季度的月份数组（0-11） */
+function qMonths(q){ return [q * 3, q * 3 + 1, q * 3 + 2]; }
+/* 由年月反推所属季度 */
+function qOfMonth(m){ return Math.floor(m / 3); }
+
+function renderQuarter(){
+  var host = $('#calQuarter');
+  if(!host) return;
+  var c = state.cal;
+  var y = c.y, q = (c.q == null) ? qOfMonth(c.m) : c.q;
+  c.q = q;
+  var months = qMonths(q);
+  var todayS = ymd(today0());
+
+  var h = '';
+  h += '<div class="qhd">' + y + ' 年 Q' + (q + 1) +
+       '　<span class="qhd__sub">' + (months[0] + 1) + ' / ' + (months[1] + 1) + ' / ' + (months[2] + 1) + ' 月</span></div>';
+  h += '<div class="qgrid">';
+
+  months.forEach(function(m){
+    var first = new Date(y, m, 1);
+    var start = new Date(first); start.setDate(1 - first.getDay()); // 周日起
+    var dim = new Date(y, m + 1, 0).getDate();
+
+    h += '<div class="qmonth">';
+    h += '<div class="qmonth__hd">' + (m + 1) + ' 月</div>';
+    var WD = ['日','一','二','三','四','五','六'];
+    h += '<div class="qmonth__wd">';
+    WD.forEach(function(w){ h += '<i>' + w + '</i>'; });
+    h += '</div>';
+    h += '<div class="qmonth__cells">';
+
+    for(var i = 0; i < 42; i++){
+      var d = new Date(start); d.setDate(start.getDate() + i);
+      var ds = ymd(d);
+      var out = (d.getMonth() !== m);
+      var isToday = (ds === todayS);
+      /* 与月视图同一套区间逻辑 */
+      var evs = (c.events || []).filter(function(e){
+        if(!e.date) return false;
+        if(e.dateEnd && e.dateEnd > e.date) return ds >= e.date && ds <= e.dateEnd;
+        return e.date === ds;
+      });
+      /* 最后一周若全为下月，则整行不渲染，避免多余空白 */
+      if(i >= 35 && out && evs.length === 0 && d.getMonth() !== m){
+        var restEmpty = true;
+        for(var j = i; j < 42; j++){
+          var dj = new Date(start); dj.setDate(start.getDate() + j);
+          if(dj.getMonth() === m){ restEmpty = false; break; }
+        }
+        if(restEmpty) break;
+      }
+      h += '<div class="qcell' + (out ? ' is-out' : '') + (isToday ? ' is-today' : '') +
+           '" data-date="' + ds + '">';
+      h += '<span class="qcell__d">' + d.getDate() + '</span>';
+      evs.slice(0, 2).forEach(function(e){
+        var isSpan = !!(e.dateEnd && e.dateEnd > e.date);
+        var isCont = isSpan && ds > e.date;
+        h += '<i class="qev ' + (e.status === 'done' ? 'qev--done' : e.status === 'delayed' ? 'qev--delayed' : '') +
+             (e.pri === 'high' ? ' qev--high' : '') + (isCont ? ' qev--cont' : '') +
+             '" data-ev="' + e.id + '" title="' + esc(e.title) +
+             (isSpan ? '（' + e.date + ' → ' + e.dateEnd + '）' : '') + '">' +
+             (isCont ? '↳' : esc(String(e.title).slice(0, 5))) + '</i>';
+      });
+      if(evs.length > 2) h += '<i class="qev qev--more">+' + (evs.length - 2) + '</i>';
+      h += '</div>';
+    }
+    h += '</div></div>';
+  });
+  h += '</div>';
+  h += '<div class="hint" style="margin-top:8px">💡 三个月并排看节奏：大促间隔、资源撞车、空档期一眼可见。点事件可直接编辑。</div>';
+
+  host.innerHTML = h;
+
+  host.onclick = function(e){
+    var ev = e.target.closest('.qev');
+    if(ev && ev.getAttribute('data-ev')){ openCalModal(ev.getAttribute('data-ev')); return; }
+    var cell = e.target.closest('.qcell');
+    if(cell){ openCalModal(null, cell.getAttribute('data-date')); }
+  };
+}
+
+/* ---------- 视图切换 ---------- */
+function calApplyView(){
+  var g = $('#calGrid'), q = $('#calQuarter');
+  var ym = $('#calYM');
+  if(!g || !q) return;
+  var isQ = state.cal.view === 'quarter';
+  if(isQ){
+    renderQuarter();
+    g.style.display = 'none';
+    q.style.display = '';
+    if(ym) ym.textContent = state.cal.y + ' 年 Q' + ((state.cal.q == null ? qOfMonth(state.cal.m) : state.cal.q) + 1);
+  } else {
+    g.style.display = '';
+    q.style.display = 'none';
+    var c = state.cal;
+    if(ym) ym.textContent = c.y + ' 年 ' + (c.m + 1) + ' 月';
+  }
+  /* 上/下 按钮文案随视图变化 */
+  var pv = $('#btnCalPrev'), nx = $('#btnCalNext');
+  if(pv) pv.textContent = isQ ? '‹ 上季' : '‹ 上月';
+  if(nx) nx.textContent = isQ ? '下季 ›' : '下月 ›';
+}
+function calSetView(v){
+  var c = state.cal;
+  if(v === 'quarter'){
+    /* 进入季度视图：先看当前月属于哪一季，避免莫名其妙跳到别的季度 */
+    c.q = qOfMonth(c.m);
+  } else {
+    /* 回到月视图：保持在刚才那个季度内的相对位置。
+       例如在 5 月（Q2 第 2 个月）翻到 Q3 再切回月，应落在 8 月（Q3 第 2 个月），
+       而不是跳回 Q3 首月，否则用户会丢失浏览上下文。 */
+    var q = (c.q == null) ? qOfMonth(c.m) : c.q;
+    c.m = q * 3 + (c.m % 3);
+  }
+  c.view = v;
+  save();
+  if(v === 'month' && typeof __renderCalOrig === 'function') __renderCalOrig();   // 月份可能已变，重渲染月视图
+  calApplyView();
+}
+/* 季度/月度的上一步下一步 */
+function calStep(dir){
+  var c = state.cal;
+  if(c.view === 'quarter'){
+    var q = (c.q == null) ? qOfMonth(c.m) : c.q;
+    q += dir;
+    if(q < 0){ q = 3; c.y -= 1; }
+    else if(q > 3){ q = 0; c.y += 1; }
+    c.q = q;
+    c.m = q * 3;   // 与月视图联动：季变则月跟到该季首月
+  } else {
+    var m = c.m + dir;
+    if(m < 0){ m = 11; c.y -= 1; }
+    else if(m > 11){ m = 0; c.y += 1; }
+    c.m = m;
+    c.q = qOfMonth(m);
+  }
+  save();
+  if(c.view === 'quarter') calApplyView(); else renderCal();
+}
+
+/* ---------- 包装原 renderCal：让所有调用点都尊重当前视图 ---------- */
+var __renderCalOrig = renderCal;
+renderCal = function(){
+  __renderCalOrig();
+  if(!state.cal.view) state.cal.view = 'month';
+  if(state.cal.q == null) state.cal.q = qOfMonth(state.cal.m);
+  calApplyView();
+};
+
+/* ---------- 绑定 ---------- */
+function bindQuarter(){
+  var v = $('#btnCalView');
+  if(v) v.onclick = function(){
+    calSetView(state.cal.view === 'quarter' ? 'month' : 'quarter');
+  };
+  /* 上/下 按钮改由 calStep 统一处理 */
+  var pv = $('#btnCalPrev'); if(pv) pv.onclick = function(){ calStep(-1); };
+  var nx = $('#btnCalNext'); if(nx) nx.onclick = function(){ calStep(1); };
+  var td = $('#btnCalToday');
+  if(td) td.onclick = function(){
+    var t = today0();
+    state.cal.y = t.getFullYear();
+    state.cal.m = t.getMonth();
+    state.cal.q = qOfMonth(state.cal.m);
+    save();
+    if(state.cal.view === 'quarter') calApplyView(); else renderCal();
+  };
+}
+bindQuarter();
+
 /* ===== src/16-boot.js ===== */
 /* ================= 回填 ================= */
 function restoreAll(){
@@ -15371,6 +16119,9 @@ function restoreAll(){
 /* ================= 启动 ================= */
 load();
 bind();
+/* 季度视图（37）的按钮必须在 bind() 之后重绑：
+   bind() 会给 btnCalPrev / Next / Today 赋 onclick，会覆盖模块内的绑定 */
+if (typeof bindQuarter === 'function') bindQuarter();
 restoreAll();
 renderScoreTrend();
 

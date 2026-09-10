@@ -233,6 +233,9 @@ function restoreAll(){
 /* ================= 启动 ================= */
 load();
 bind();
+/* 季度视图（37）的按钮必须在 bind() 之后重绑：
+   bind() 会给 btnCalPrev / Next / Today 赋 onclick，会覆盖模块内的绑定 */
+if (typeof bindQuarter === 'function') bindQuarter();
 restoreAll();
 renderScoreTrend();
 
