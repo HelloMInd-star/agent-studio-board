@@ -1,6 +1,6 @@
 /* ============================================================
  * 33-timeline.js —— 品牌轨迹
- * 把散落在 7 个模块的记录，统一成一条可筛选的时间线。
+ * 把散落在 8 个模块的记录，统一成一条可筛选的时间线。
  * 设计原则：只读聚合，不新增能力，不改现有数据结构。
  *
  *   ① 📅 营销动作  state.cal.events      ymd        YYYY-MM-DD
@@ -22,7 +22,8 @@ var TL_TYPES = [
   {k:'snap',  n:'战略快照', em:'🎯', jump:'strat'},
   {k:'trace', n:'执行记录', em:'⚙️', jump:'flow'},
   {k:'hist',  n:'生成留痕', em:'📝', jump:'agent'},
-  {k:'chat',  n:'对话记录', em:'💬', jump:'agent'}
+  {k:'chat',  n:'对话记录', em:'💬', jump:'agent'},
+  {k:'hs',    n:'热点追踪', em:'🔥', jump:'hotspot'}
 ];
 
 /* ---------- 时间归一化 ---------- */
@@ -105,6 +106,18 @@ function tlCollect(){
     out.push({k:'chat', day:tlDay(c.d), time:tlTime(c.at),
       t:(c.role === 'user' ? '提问：' : '回复：') + full.slice(0, 80),
       meta:c.tag || '', txt:full.length > 80 ? full : ''});
+  });
+
+  /* ⑧ 热点追踪 —— 决策留痕 + 事后回填（V45）
+   * 价值不在单条记录，而在累积够样本后能回答
+   * 「我们品牌适合追什么」——这是别的产品没有的，
+   * 因为只有这里同时有决策记录和执行结果。 */
+  ((state.hs && state.hs.log) || []).forEach(function(r){
+    out.push({k:'hs', day:tlDay(r.day), time:'',
+      id:r.id || '',
+      t:r.topic || '未命名热点',
+      meta:[r.actName, r.result ? '已回填' : '待回填'].filter(Boolean).join(' · '),
+      txt:[r.advice, r.result, r.review].filter(Boolean).join('　')});
   });
 
   return out;

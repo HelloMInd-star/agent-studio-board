@@ -248,27 +248,6 @@ a{color:var(--brand);text-decoration:none;}
 .tab__name{font-family:var(--font-disp);font-size:13.5px;font-weight:600;line-height:1.35;letter-spacing:-.005em;}
 .tab__desc{font-size:10.5px;opacity:.78;line-height:1.3;font-weight:400;white-space:nowrap;letter-spacing:.01em;}
 
-/* ---- 线性图标（42-icons.js）：1.5px stroke，跟随 currentColor ---- */
-.tab__name{display:inline-flex;align-items:center;gap:5px;}
-.ico{flex:0 0 auto;display:block;opacity:.92;}
-.tab__name .ico{width:16px;height:16px;}
-.tab.is-active .ico{opacity:1;}
-/* 卡片/区块标题内的图标略大 */
-.card__h .ico,.ph__h .ico,.sec__h .ico{width:18px;height:18px;}
-
-/* ---- 状态圆点：替代 🔴🟡⚠️ 语义 emoji（UI 徽章用，报告正文仍用 emoji） ---- */
-.dot{
-  display:inline-block;width:8px;height:8px;border-radius:100px;flex:0 0 auto;
-  background:var(--text-3);vertical-align:middle;
-}
-.dot--ok{background:var(--ok);}
-.dot--warn{background:var(--warn);}
-.dot--alert{background:var(--alert);}
-.dot--signal{background:var(--signal);}
-.dot--mute{background:var(--text-3);}
-.dot--lg{width:10px;height:10px;}
-.dot--sm{width:6px;height:6px;}
-
 /* Tab 栏响应式：中等屏收副标题，小屏横向滚动 */
 @media (max-width:1120px){
   .tabs{gap:6px 2px;padding:10px 12px;}
@@ -1794,6 +1773,100 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
   .bdstat{gap:8px;font-size:11px;}
 }
 
+/* ============================================================
+ * 可预期热点池（V45）
+ * ============================================================ */
+.hspool{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
+.hspool__item{
+  border:1px solid var(--line);border-radius:var(--r-md);
+  padding:12px 14px;background:var(--card);
+  display:flex;flex-direction:column;gap:6px;
+  transition:border-color .15s,box-shadow .15s;
+}
+.hspool__item:hover{border-color:var(--brand);box-shadow:var(--shadow-sm);}
+.hspool__item--live{border-left:3px solid var(--ok);}
+.hspool__item--prepare{border-left:3px solid var(--warn);}
+.hspool__item--future{border-left:3px solid var(--line);opacity:.72;}
+.hspool__top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.hspool__name{font-weight:600;font-size:14px;color:var(--ink);}
+.hspool__stage{
+  font-size:11px;padding:2px 8px;border-radius:100px;
+  font-family:var(--font-mono);white-space:nowrap;
+}
+.hspool__meta{
+  display:flex;flex-wrap:wrap;gap:5px;
+  font-family:var(--font-mono);font-size:11px;color:var(--ink-mid);
+}
+.hspool__win{font-size:12px;color:var(--ink-mid);line-height:1.55;}
+.hspool__btn{margin-top:auto;padding-top:4px;}
+.hspool__bg{
+  border:1px dashed var(--line);border-radius:var(--r-sm);
+  padding:10px 12px;background:var(--soft-bg);margin-bottom:10px;
+  display:flex;flex-direction:column;gap:6px;
+}
+.hspool__bgrow{display:flex;flex-wrap:wrap;gap:6px;}
+.hspool__tip,.hspool__care{font-size:12px;line-height:1.6;color:var(--ink-mid);}
+.hspool__care{color:var(--warn);}
+@media (max-width:560px){
+  .hspool{grid-template-columns:1fr;}
+}
+
+/* ---------- 热点动作层 + 台账（V45） ---------- */
+.hsact{
+  border:1px solid var(--line);border-radius:var(--r-md);
+  padding:14px 16px;margin-top:14px;background:var(--soft-bg);
+}
+.hsact__ttl{
+  font-size:13px;font-weight:600;color:var(--ink);margin-bottom:10px;
+}
+.hsact__row{display:flex;flex-wrap:wrap;gap:8px;}
+.hsact__btn{
+  background:var(--card)!important;font-weight:600;
+  padding:7px 16px;border-width:1.5px;
+}
+.hsact__note{
+  margin-top:10px;font-size:12px;line-height:1.6;color:var(--ink-mid);
+}
+.hsact__out{
+  margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+}
+.hsact__ban{font-size:12px;color:var(--alert);font-weight:600;}
+
+.hslog{margin-top:16px;}
+.hslog__ttl{
+  font-size:13px;font-weight:600;color:var(--ink);
+  display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;
+}
+.hslog__cnt{
+  font-family:var(--font-mono);font-size:11px;
+  color:var(--ink-mid);font-weight:400;
+}
+.hslog__note{
+  margin-top:6px;font-size:12px;line-height:1.6;
+  color:var(--ink-mid);padding:6px 10px;border-radius:var(--r-sm);
+  background:var(--card);border:1px dashed var(--line);
+}
+.hslog__note--ok{border-style:solid;border-color:var(--ok);color:var(--ok);}
+.hslog__row{
+  border:1px solid var(--line);border-radius:var(--r-sm);
+  padding:10px 12px;margin-top:8px;background:var(--card);
+}
+.hslog__hd{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.hslog__act{font-size:12px;font-weight:700;}
+.hslog__day{font-family:var(--font-mono);font-size:11px;color:var(--ink-mid);}
+.hslog__topic{font-size:13px;color:var(--ink);margin-top:4px;line-height:1.55;}
+.hslog__meta{font-size:11px;color:var(--ink-mid);margin-top:3px;}
+.hslog__res{
+  font-size:12px;color:var(--ink);margin-top:6px;line-height:1.6;
+  padding:6px 8px;background:var(--soft-bg);border-radius:var(--r-sm);
+}
+.hslog__todo{
+  font-size:11px;color:var(--warn);margin-top:6px;
+  font-family:var(--font-mono);
+}
+.hslog__ops{margin-top:6px;display:flex;gap:10px;}
+
 </style>
 </head>
 <body>
@@ -2822,10 +2895,28 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
     <!-- ===== 热点决策 ===== -->
     <section class="panel" data-panel="hotspot">
       <h2 class="panel__hd">📡 热点决策</h2>
-      <p class="panel__sub">判断一个热点该不该跟、怎么跟。<b>做决策辅助，不做事实核查</b>——营销翻车多半不是因为热点是假的，而是热点是真的但不该跟。</p>
+      <p class="panel__sub">判断一个热点该不该跟、怎么跟。<b>做决策辅助，不做事实核查</b>——营销翻车多半不是因为热点是假的，而是热点是真的但不该跟。<br>采用<b>五道闸门</b>而非加权打分：热点是负偏态决策，收益有上限、损失无下限，打分只会用虚假精确感掩盖尾部风险。</p>
+
+      <div class="card">
+        <div class="card__hd">📅 可预期热点池 <span class="eyebrow" style="margin-left:auto">入口 · 内置 40 个节点</span></div>
+        <p class="hint">突发热点（塌房/事故/爆梗）只能靠抓取 API 发现，而抓取会破坏本地运行的底线——<b>更要命的是等你发现、评估、出物料，窗口已经关了</b>。<br>可预期热点提前一年就确定，因此可以提前准备，这才是本工具真正能帮上忙的地方。点「载入评估 →」把节点带入下方。</p>
+        <div class="row" style="margin:10px 0">
+          <select id="hsPoolFlt" class="inp" style="max-width:190px" onchange="hsRenderPool()">
+            <option value="all">近期节点（进行中 + 该准备）</option>
+            <option value="live">仅进行中</option>
+            <option value="prepare">仅该准备</option>
+            <option value="future">全部含远期</option>
+            <option value="festival">传统节日</option>
+            <option value="ecom">电商节点</option>
+            <option value="season">行业档期</option>
+          </select>
+        </div>
+        <div id="hsPool"></div>
+      </div>
 
       <div class="card">
         <div class="card__hd">📝 热点信息 <span class="eyebrow" id="hsStat" style="margin-left:auto"></span></div>
+        <div id="hs_poolbg"></div>
         <label class="f"><span>热点描述</span>
           <input type="text" id="hs_topic" placeholder="例：某明星官宣新代言，全网热议"></label>
         <label class="f"><span>你计划怎么跟（可留空）</span>
@@ -2833,7 +2924,33 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
       </div>
 
       <div class="card">
-        <div class="card__hd">🎚️ 五维自评</div>
+        <div class="card__hd">⏱️ 闸门三 · 时滞 vs 窗口 <span class="eyebrow" style="margin-left:auto">唯一能真算的一关</span></div>
+        <p class="hint">绝大多数热点不是「不该追」，是<b>来不及</b>。大家都在纠结要不要追，没人算最快多久能出物料。填下面几项，工具会算出你<b>真实还剩多少有效窗口</b>。</p>
+        <div class="hsgrid">
+          <label class="f"><span>热点剩余窗口（小时）</span>
+            <input type="number" id="hs_win_h" value="36" min="1" max="720" step="1">
+            <small class="f__hint">这个热点大约还能火多久</small></label>
+          <label class="f"><span>文案耗时（小时）</span>
+            <input type="number" id="hs_copy_h" value="4" min="0" max="168" step="1"></label>
+          <label class="f"><span>设计耗时（小时）</span>
+            <input type="number" id="hs_design_h" value="8" min="0" max="168" step="1"></label>
+          <label class="f"><span>审批耗时（小时）</span>
+            <input type="number" id="hs_appr_h" value="12" min="0" max="168" step="1"></label>
+          <label class="f"><span>发布后起量（小时）</span>
+            <input type="number" id="hs_ramp_h" value="8" min="0" max="168" step="1">
+            <small class="f__hint">内容发出到真正跑起来需要多久</small></label>
+          <label class="f"><span>环节关系</span>
+            <select id="hs_para" class="inp">
+              <option value="0">串行（文案→设计→审批依次进行）</option>
+              <option value="1">并行（三环节同时推进，取最长项）</option>
+            </select></label>
+        </div>
+        <p class="hint" style="margin-top:8px">有效窗口 ＝ 剩余窗口 － 响应时滞 － 起量时间。<b>结果为负即参与不了</b>，不是「建议观望」。</p>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">🎚️ 五维自评 <span class="eyebrow" style="margin-left:auto">背景信息 · 不参与加权</span></div>
+        <p class="hint">原「总分」已弃用——热点是负偏态决策，加权打分会用虚假精确感掩盖尾部风险。以下自评仅作背景参考。</p>
         <div class="hsgrid">
           <label class="f hsslider"><span>🎯 相关性（1-5）<b class="hsv" id="hs_rel_v">3</b></span>
             <input type="range" id="hs_rel" min="1" max="5" step="1" value="3"
@@ -9076,13 +9193,20 @@ function exportRivals(){
 
 /* ===== src/21-hotspot.js ===== */
 /* ============================================================
- * 热点决策 —— 这个热点该不该跟
+ * 热点决策 —— 这个热点该不该跟、怎么跟
+ *
  * 说明：不做"事实核查"（那需要联网权威数据源 + 要对结论负责）
- *       做"跟进决策"（确定性打分，纯前端可完成）
+ *       做"跟进决策"（确定性判断，纯前端可完成）
  * 营销翻车 90% 不是因为热点是假的，而是热点是真的但不该跟
+ *
+ * V45 重构：从「五维加权打分」改为「五道闸门 + 动作层」
+ *   为什么改：热点是负偏态决策——收益有上限（多一波声量），
+ *   损失无下限（品牌翻车不可逆）。加权打分会用虚假精确感
+ *   掩盖尾部风险。闸门是"能不能碰"的定性判断，不是"值多少分"。
+ *   原五维打分降级为背景信息，不再直接输出一个总分。
  * ============================================================ */
 
-/* ---------- 五维打分定义 ---------- */
+/* ---------- 五维打分（降级为背景信息，不再直接加权出总分） ---------- */
 var HS_DIMS = [
   {k:'rel',    n:'相关性',   icon:'🎯', max:25,
    q:'这个热点与你的品牌/品类关联度多高？',
@@ -9101,7 +9225,7 @@ var HS_DIMS = [
    lo:'只有曝光没有转化', hi:'能直接带货/获客'}
 ];
 
-/* ---------- 敏感话题清单（用于风险预警，非违禁词） ---------- */
+/* ---------- 敏感话题清单（闸门一的判定依据） ---------- */
 var HS_RISK_TOPICS = [
   {k:'disaster', n:'自然灾害/事故',   w:['地震','台风','洪水','火灾','爆炸','坠机','沉船','塌方'], lv:'high',
    tip:'涉伤亡事件，借势极易被解读为消费苦难。如要发声，只做公益不提产品。'},
@@ -9121,7 +9245,259 @@ var HS_RISK_TOPICS = [
    tip:'借竞品负面营销容易引发行业反感，且可能构成不正当竞争。'}
 ];
 
-/* ---------- 核心计算 ---------- */
+/* ============================================================
+ *  闸门一：红线筛查（一票否决，不是打分）
+ * ============================================================ */
+var HS_GATE1 = {
+  red:    {n:'🔴 禁止触碰', c:'var(--alert)', d:'不参与后续任何评估，直接出结论'},
+  yellow: {n:'🟡 谨慎',     c:'var(--warn)',  d:'可继续，但强制降档 + 额外约束'},
+  green:  {n:'🟢 一般',     c:'var(--ok)',    d:'正常走完整评估流程'}
+};
+
+function hsGate1(topic){
+  var hits = [];
+  HS_RISK_TOPICS.forEach(function(t){
+    var hit = [];
+    t.w.forEach(function(w){ if(topic.indexOf(w) > -1) hit.push(w); });
+    if(hit.length) hits.push({k:t.k, n:t.n, lv:t.lv, tip:t.tip, hit:hit});
+  });
+  var hasHigh = hits.some(function(r){ return r.lv === 'high'; });
+  var hasMid  = hits.some(function(r){ return r.lv === 'mid'; });
+  var lv = hasHigh ? 'red' : (hasMid ? 'yellow' : 'green');
+  return {lv:lv, hits:hits, hasHigh:hasHigh, hasMid:hasMid};
+}
+
+/* ============================================================
+ *  闸门二：品牌契合（三层，不止"品类相关吗"）
+ * ============================================================ */
+function hsBrandCtx(){
+  var out = {hasBC:false, catName:'', taboo:[], claim:'', aud:''};
+  try{
+    if(typeof BC_CATS === 'undefined') return out;
+    var k = '';
+    var el = $('#bc_cat');
+    if(el && el.value) k = el.value;
+    if(!k && state.bc && state.bc.cat) k = state.bc.cat;
+    if(!k) return out;
+    var cat = null;
+    BC_CATS.forEach(function(x){ if(x.k === k) cat = x; });
+    if(!cat) return out;
+    out.hasBC = true;
+    out.catName = cat.n;
+    out.taboo = cat.taboo || [];
+    if(state.bc){
+      out.claim = state.bc.claim || '';
+      out.aud   = state.bc.aud || '';
+    }
+  }catch(e){}
+  return out;
+}
+
+function hsGate2(topic, way){
+  var bc = hsBrandCtx();
+  var res = {bc:bc, level:'na', note:'', conflicts:[]};
+
+  if(!bc.hasBC){
+    res.note = '未填品牌内核，无法做价值契合判断。建议先填「🏛️ 品牌内核」再评估。';
+    return res;
+  }
+
+  // 品类禁忌文本匹配：热点涉及的动作是否踩到品类禁忌
+  var txt = (topic + ' ' + (way || '')).toLowerCase();
+  var hitTaboo = [];
+  bc.taboo.forEach(function(t){
+    // 禁忌句里抽取关键动作词做粗匹配
+    var keys = (t.match(/[一-龥]{2,4}/g) || []);
+    keys.forEach(function(kk){
+      if(kk.length >= 2 && txt.indexOf(kk) > -1) hitTaboo.push({t:t, k:kk});
+    });
+  });
+  // 去重
+  var seen = {};
+  hitTaboo = hitTaboo.filter(function(x){ if(seen[x.t]) return false; seen[x.t] = 1; return true; });
+
+  res.conflicts = hitTaboo;
+
+  if(hitTaboo.length){
+    res.level = 'conflict';
+    res.note = '热点跟进方式可能触发【' + bc.catName + '】品类禁忌，需调整角度或放弃。';
+  } else {
+    res.level = 'ok';
+    res.note = '未发现与【' + bc.catName + '】品类禁忌的明显冲突。价值契合需人工复核：这个热点传达的价值观，与品牌主张一致吗？';
+  }
+  return res;
+}
+
+/* ============================================================
+ *  闸门三：时滞 vs 窗口（唯一能真算的一关）
+ *  绝大多数热点不是"不该追"，是"来不及"
+ * ============================================================ */
+function hsGate3(){
+  var g = function(id, def){
+    var el = $(id);
+    var v = el ? parseFloat(el.value) : NaN;
+    return isNaN(v) ? def : v;
+  };
+  var win  = g('#hs_win_h', 36);   // 热点剩余窗口（小时）
+  var copy = g('#hs_copy_h', 4);   // 文案
+  var des  = g('#hs_design_h', 8); // 设计
+  var appr = g('#hs_appr_h', 12);  // 审批
+  var ramp = g('#hs_ramp_h', 8);   // 发布后起量
+  var paraEl = $('#hs_para');
+  var para = paraEl ? (paraEl.value === '1') : false;
+
+  // 串行 = 累加；并行 = 取最长项
+  var lag = para ? Math.max(copy, des, appr) : (copy + des + appr);
+  var eff = win - lag - ramp;
+
+  var verdict, vc;
+  if(eff <= 0){
+    verdict = '参与不了';
+    vc = 'var(--alert)';
+  } else if(eff <= win * 0.25){
+    verdict = '极度紧张';
+    vc = 'var(--warn)';
+  } else if(eff <= win * 0.5){
+    verdict = '基本来得及';
+    vc = 'var(--signal)';
+  } else {
+    verdict = '有余量';
+    vc = 'var(--ok)';
+  }
+
+  return {
+    win:win, copy:copy, des:des, appr:appr, ramp:ramp, para:para,
+    lag:lag, eff:eff, verdict:verdict, vc:vc
+  };
+}
+
+/* ============================================================
+ *  闸门四：参与姿态（"追不追"是个错误的二选一）
+ * ============================================================ */
+var HS_POSES = [
+  {k:'silent',  n:'沉默',     lv:0, cost:'零',   risk:'零',
+   d:'不参与，品牌资产零损耗',
+   when:'红线命中 / 价值冲突 / 明显来不及',
+   tip:'放弃不是失败。不参与是最低成本的品牌保护。'},
+  {k:'light',   n:'轻量跟随', lv:1, cost:'极低', risk:'低',
+   d:'换话题标签、评论区接梗、转发带态度。近乎零成本，拿存在感不押资产',
+   when:'时间紧 / 预算小 / 不确定值不值',
+   tip:'多数情况下这是最优解——用最小成本拿曝光，不押品牌。'},
+  {k:'rewrite', n:'借势改写', lv:2, cost:'中',   risk:'中',
+   d:'用热点元素讲自己的故事，做独立内容',
+   when:'价值契合 + 有时间做内容',
+   tip:'需要真正的创意，不是复述热点。'},
+  {k:'heavy',   n:'重度绑定', lv:3, cost:'高',   risk:'高',
+   d:'做物料、投流、做活动，全资源压上',
+   when:'热点与品牌强相关 + 窗口充足 + 预算到位',
+   tip:'只有大节点值得，且必须过事前验尸。'},
+  {k:'reverse', n:'反向输出', lv:4, cost:'中高', risk:'很高',
+   d:'反其道而行，用对立角度制造记忆点',
+   when:'仅限 🟢 一般类热点 + 有极强的表达把控力',
+   tip:'最高回报也最高风险。🟡🔴 类热点绝不提供此选项。'}
+];
+
+function hsGate4(g1, g2, g3, dims){
+  var why = [];
+
+  // 红线命中 → 直接沉默（不参与后续任何评估）
+  if(g1.lv === 'red'){
+    return {pose:HS_POSES[0], why:['闸门一命中红线（🔴 禁止触碰），不参与后续评估']};
+  }
+
+  /* cap = 系统推荐上限。所有"提升"规则都不得突破它。
+   * 初始 3（重度绑定）——reverse 是最低风险档的反面，
+   * 属最高风险，只作可选提示，永不作为系统自动推荐结果。 */
+  var cap = 3;
+
+  // 黄线 → 天花板压到轻量
+  if(g1.lv === 'yellow'){
+    cap = 1;
+    why.push('闸门一为 🟡 谨慎：最高只到「轻量跟随」');
+  }
+
+  // 价值冲突 → 天花板压到轻量
+  if(g2.level === 'conflict'){
+    cap = Math.min(cap, 1);
+    why.push('闸门二检测到品类禁忌冲突：不宜做重度内容');
+  }
+
+  // 时间窗决定时间天花板
+  var timeCap = 4;
+  if(g3.eff <= 0){ timeCap = 0; why.push('闸门三：有效窗口 ' + Math.round(g3.eff) + ' 小时 → 参与不了'); }
+  else if(g3.eff <= g3.win * 0.25){ timeCap = 1; why.push('闸门三：有效窗口仅剩 ' + Math.round(g3.eff) + ' 小时 → 只够轻量动作'); }
+  else if(g3.eff <= g3.win * 0.5){ timeCap = 2; why.push('闸门三：有效窗口 ' + Math.round(g3.eff) + ' 小时 → 可借势改写'); }
+  else { why.push('闸门三：有效窗口 ' + Math.round(g3.eff) + ' 小时 → 时间充裕'); }
+
+  cap = Math.min(cap, timeCap);
+
+  var lv = cap;
+
+  // 相关性与契合度做进一步压低（只会更低，不会突破 cap）
+  var rel = (dims.filter(function(d){ return d.k === 'rel'; })[0] || {}).raw || 3;
+  var fit = (dims.filter(function(d){ return d.k === 'fit'; })[0] || {}).raw || 3;
+  if(rel <= 2 && lv > 1){ lv = 1; why.push('相关性偏低（' + rel + '/5）→ 硬蹭风险大于收益'); }
+  if(fit <= 2 && lv > 1){ lv = 1; why.push('品牌契合偏低（' + fit + '/5）→ 强行玩梗易翻车'); }
+
+  // 相关性与契合双高：在时间天花板内提升到重度绑定，但不得突破 cap
+  if(rel >= 4 && fit >= 4 && lv < 3 && timeCap >= 3){
+    var want = Math.min(3, cap);
+    if(want > lv){ lv = want; why.push('相关性与契合双高 → 可考虑重度绑定'); }
+  }
+
+  // 🟡 类热点不给反向输出（双重保险）
+  if(g1.lv !== 'green' && lv >= 4) lv = 3;
+  // 反向输出永不作为自动推荐
+  if(lv >= 4) lv = 3;
+
+  if(!why.length) why.push('各项均衡，按推荐档位执行');
+
+  return {pose:HS_POSES[lv], why:why};
+}
+
+/* ============================================================
+ *  闸门五：事前验尸（Pre-mortem）
+ *  不问"会不会成功"，问"假设翻车了，最可能因为什么"
+ * ============================================================ */
+var HS_PREMORTEM = [
+  {k:'reverse',  n:'热点本身反转',        d:'事实未明就站队，后续打脸'},
+  {k:'person',   n:'关联人出负面',        d:'代言人/话题人物塌房牵连品牌'},
+  {k:'offend',   n:'表达冒犯了某群体',    d:'玩梗越界、刻板印象、地域性别'},
+  {k:'same',     n:'竞品已占位，同质化',  d:'同样的角度被说过了，无人记得你'},
+  {k:'slow',     n:'审批太慢，错过窗口',  d:'内部流程耗光了热度'},
+  {k:'overdo',   n:'用力过猛',            d:'小热点大投入，显得刻意且廉价'},
+  {k:'values',   n:'价值观冲突',          d:'热点传达的价值观与品牌主张相悖'}
+];
+
+/* ============================================================
+ *  动作层：四个决策动作
+ * ============================================================ */
+var HS_ACTIONS = [
+  {k:'drop',  n:'放弃',     c:'var(--mute)',   d:'归档，不投入任何资源'},
+  {k:'light', n:'轻量跟随', c:'var(--ok)',     d:'最低成本拿曝光，不押品牌资产'},
+  {k:'watch', n:'继续追踪', c:'var(--signal)', d:'进观察池，设定复评条件后暂缓'},
+  {k:'go',    n:'肯定跟',   c:'var(--brand)',  d:'投入资源，走完整内容流程'}
+];
+
+/* ---------- 反向角度（仅 🟢 类热点提供）----------
+ * 追热点最大的问题不是慢，是同质化——所有人说一样的话。
+ * 真正的差异化是角度，不是速度。
+ * ⚠️ 但反向角度最容易踩红线，所以仅 🟢 类开放。
+ */
+function hsReverseAngles(topic, g1){
+  if(g1.lv !== 'green'){
+    return null; // 🔴🟡 类不提供，避免诱导在敏感话题上"抖机灵"
+  }
+  return [
+    {n:'主流叙事', c:'var(--mute)',  d:'大多数人会怎么说——这是你要避开的角度'},
+    {n:'反向切入', c:'var(--brand)', d:'解构/质疑/补充主流没说的那一面。反向角度往往才是被记住的'},
+    {n:'侧向迁移', c:'var(--signal)',d:'不谈热点本身，把热点的情绪或场景迁移到自己的产品'}
+  ];
+}
+
+/* ============================================================
+ *  核心计算
+ * ============================================================ */
 function calcHotspot(){
   var get = function(k){
     var el = $('#hs_' + k);
@@ -9138,88 +9514,51 @@ function calcHotspot(){
   if(stat) stat.textContent = errs.length ? ('⚠️ ' + errs[0]) : '✅ 参数已就绪';
   if(errs.length) return null;
 
+  // 五维（背景信息）
   var dims = HS_DIMS.map(function(d){
     var v = clamp(get(d.k), 1, 5);
-    var ratio = (v - 1) / 4;                 // 1-5 映射到 0-1
-    var score = Math.round(ratio * d.max);
-    return {k:d.k, n:d.n, icon:d.icon, raw:v, s:score, max:d.max};
+    var ratio = (v - 1) / 4;
+    return {k:d.k, n:d.n, icon:d.icon, raw:v, s:Math.round(ratio * d.max), max:d.max};
   });
-
   var total = dims.reduce(function(a,d){ return a + d.s; }, 0);
 
-  /* 敏感话题识别 */
-  var risks = [];
-  HS_RISK_TOPICS.forEach(function(t){
-    var hit = [];
-    t.w.forEach(function(w){ if(topic.indexOf(w) > -1) hit.push(w); });
-    if(hit.length) risks.push({k:t.k, n:t.n, lv:t.lv, tip:t.tip, hit:hit});
-  });
+  // 五闸门
+  var g1 = hsGate1(topic);
+  var g2 = hsGate2(topic, way);
+  var g3 = hsGate3();
+  var g4 = hsGate4(g1, g2, g3, dims);
+  var g5 = HS_PREMORTEM.slice();
 
-  /* 风险一票否决：高危话题且风险维度自评 >=4，直接降级 */
-  var riskDim = dims.filter(function(d){ return d.k === 'risk'; })[0];
-  var hasHigh = risks.filter(function(r){ return r.lv === 'high'; }).length > 0;
-  var vetoed = false;
-  if(hasHigh && riskDim.raw >= 4){
-    // 用户认为安全但文本含高危词 —— 提示矛盾，并强制降级
-    vetoed = true;
-    total = Math.min(total, 45);
-  }
+  // 反向角度（仅 🟢）
+  var rev = hsReverseAngles(topic, g1);
 
-  /* 建议四档 */
+  // 整体建议：以闸门结论为准，不再用总分
   var advice, adviceKey, color;
-  if(hasHigh){
-    adviceKey = 'stop';
-    advice = '🛑 不建议跟进';
-    color = 'var(--alert)';
-  } else if(total >= 70){
-    adviceKey = 'go';
-    advice = '🟢 果断跟进';
-    color = 'var(--ok)';
-  } else if(total >= 50){
-    adviceKey = 'careful';
-    advice = '🟡 谨慎跟进（建议换角度）';
-    color = 'var(--warn)';
+  if(g1.lv === 'red'){
+    adviceKey = 'stop'; advice = '🛑 红线命中 · 不建议跟进'; color = 'var(--alert)';
+  } else if(g3.eff <= 0){
+    adviceKey = 'late'; advice = '⏱️ 来不及 · 有效窗口已耗尽'; color = 'var(--alert)';
+  } else if(g2.level === 'conflict'){
+    adviceKey = 'conflict'; advice = '⚠️ 与品类禁忌冲突 · 需换角度'; color = 'var(--warn)';
   } else {
-    adviceKey = 'no';
-    advice = '⚪ 不建议投入资源';
-    color = 'var(--gray-500)';
-  }
-  if(vetoed && adviceKey !== 'stop'){
-    advice = '🟠 文本含高危话题，建议重新评估';
-    color = 'var(--orange)';
-  }
-
-  /* 跟进角度建议 */
-  var angles = [];
-  var relD  = dims.filter(function(d){ return d.k === 'rel'; })[0];
-  var fitD  = dims.filter(function(d){ return d.k === 'fit'; })[0];
-  var valD  = dims.filter(function(d){ return d.k === 'value'; })[0];
-  var timeD = dims.filter(function(d){ return d.k === 'time'; })[0];
-
-  if(hasHigh){
-    angles.push('若必须发声，只做公益/关怀表达，**全程不提产品与购买链接**');
-    angles.push('或选择完全不参与，等舆论平息');
-  } else {
-    if(relD.raw <= 2) angles.push('相关性偏低 → 不要硬蹭，可只取热点中的某个**情绪或场景**做软关联');
-    if(fitD.raw <= 2) angles.push('品牌契合度低 → 换更中性的表达，避免强行玩梗');
-    if(timeD.raw <= 2) angles.push('时效性差 → 放弃追首发，改做**长尾复盘/科普**角度');
-    if(valD.raw <= 2) angles.push('转化潜力低 → 控制投入，当作品牌曝光而非带货');
-    if(timeD.raw >= 4 && relD.raw >= 4) angles.push('时效与相关性双高 → **优先快发**，抢占首发窗口');
-    if(valD.raw >= 4) angles.push('转化潜力高 → 配明确 CTA 与落地页，别浪费流量');
-    if(!angles.length) angles.push('各项均衡 → 按常规内容流程执行，发布前务必过一遍内容体检');
+    adviceKey = g4.pose.k;
+    advice = {silent:'⚪ 建议放弃', light:'🟢 轻量跟随即可', rewrite:'🔵 可借势改写',
+              heavy:'🟣 值得重度投入', reverse:'🟠 可考虑反向输出'}[g4.pose.k] || '🟢 可跟进';
+    color = g4.pose.k === 'silent' ? 'var(--mute)' :
+            (g4.pose.k === 'light' ? 'var(--ok)' : 'var(--brand)');
   }
 
   return {
     topic:topic, way:way, brand:brand,
     dims:dims, total:total, max:100,
-    risks:risks, hasHigh:hasHigh, vetoed:vetoed,
-    advice:advice, adviceKey:adviceKey, color:color,
-    angles:angles
+    g1:g1, g2:g2, g3:g3, g4:g4, g5:g5, rev:rev,
+    advice:advice, adviceKey:adviceKey, color:color
   };
 }
 
 /* ---------- 渲染 ---------- */
 var lastHotspot = null;
+
 function renderHotspot(){
   var d = calcHotspot();
   lastHotspot = d;
@@ -9238,46 +9577,165 @@ function renderHotspot(){
   out.push('');
   out.push('---');
   out.push('');
-  out.push('## 一、决策结论');
+  out.push('## 决策结论');
   out.push('');
   out.push('> # ' + d.advice);
   out.push('>');
-  out.push('> 综合得分 **' + d.total + ' / 100**');
+  out.push('> 建议姿态：**' + d.g4.pose.n + '**（成本 ' + d.g4.pose.cost + ' · 风险 ' + d.g4.pose.risk + '）');
   out.push('');
-  out.push('## 二、五维评分明细');
+
+  /* 闸门一 */
+  var G1 = HS_GATE1[d.g1.lv];
+  out.push('## 闸门一 · 红线筛查');
   out.push('');
-  out.push('| 维度 | 自评 | 得分 | 说明 |');
-  out.push('|---|---|---|---|');
-  d.dims.forEach(function(x){
-    var def = HS_DIMS.filter(function(y){ return y.k === x.k; })[0];
-    out.push('| ' + x.icon + ' ' + x.n + ' | ' + x.raw + ' / 5 | **' + x.s + ' / ' + x.max +
-             '** | ' + def.q + ' |');
+  out.push('**' + G1.n + '** — ' + G1.d);
+  out.push('');
+  if(d.g1.hits.length){
+    d.g1.hits.forEach(function(r){
+      out.push('- **' + (r.lv === 'high' ? '🔴 高危' : '🟡 中危') + ' ' + r.n + '**（命中：' + r.hit.join('、') + '）');
+      out.push('  - ' + r.tip);
+    });
+  } else {
+    out.push('- 未命中敏感话题词库。');
+    out.push('- 提醒：词库只能识别显性词，**价值观层面的风险仍需人工判断**。');
+  }
+  out.push('');
+  if(d.g1.lv === 'red'){
+    out.push('> 🛑 **红线命中，以下闸门仅作记录，不改变"不跟进"的结论。**');
+    out.push('');
+  }
+
+  /* 闸门二 */
+  out.push('## 闸门二 · 品牌契合');
+  out.push('');
+  var G2 = d.g2;
+  if(G2.level === 'na'){
+    out.push('⚪ ' + G2.note);
+  } else {
+    out.push('品类：**' + G2.bc.catName + '**');
+    if(G2.bc.claim) out.push('品牌主张：' + G2.bc.claim);
+    out.push('');
+    if(G2.conflicts.length){
+      out.push('⚠️ **可能与品类禁忌冲突**：');
+      G2.conflicts.forEach(function(c){
+        out.push('- ' + c.t + '（命中词：' + c.k + '）');
+      });
+    } else {
+      out.push('✅ 未发现与品类禁忌的明显冲突。');
+    }
+    out.push('');
+    out.push('> ' + G2.note);
+    if(G2.bc.taboo.length){
+      out.push('>');
+      out.push('> 该品类全部禁忌：');
+      G2.bc.taboo.forEach(function(t){ out.push('> - ' + t); });
+    }
+  }
+  out.push('');
+
+  /* 闸门三 */
+  var G3 = d.g3;
+  out.push('## 闸门三 · 时滞 vs 窗口');
+  out.push('');
+  out.push('| 项目 | 数值 |');
+  out.push('|---|---|');
+  out.push('| 热点剩余窗口 | ' + G3.win + ' 小时 |');
+  out.push('| 响应时滞（' + (G3.para ? '并行' : '串行') + '） | ' + G3.lag + ' 小时 |');
+  out.push('　| 　— 文案 ' + G3.copy + 'h · 设计 ' + G3.des + 'h · 审批 ' + G3.appr + 'h |  ');
+  out.push('| 发布后起量 | ' + G3.ramp + ' 小时 |');
+  out.push('| **有效窗口** | **' + Math.round(G3.eff) + ' 小时** |');
+  out.push('');
+  out.push('**判定：' + G3.verdict + '**');
+  out.push('');
+  if(G3.eff <= 0){
+    out.push('> ⏱️ 有效窗口为负——不是"建议观望"，是**这个热点你参与不了**。');
+    out.push('>');
+    out.push('> 缩短审批或改用轻量动作（评论区/话题标签）可重新进入窗口。');
+  }
+  out.push('');
+
+  /* 闸门四 */
+  var G4 = d.g4;
+  out.push('## 闸门四 · 建议参与姿态');
+  out.push('');
+  out.push('### ' + G4.pose.n + '（成本 ' + G4.pose.cost + ' · 风险 ' + G4.pose.risk + '）');
+  out.push('');
+  out.push(G4.pose.d);
+  out.push('');
+  out.push('- **适用**：' + G4.pose.when);
+  out.push('- **提醒**：' + G4.pose.tip);
+  out.push('');
+  out.push('**为什么是这一档**：');
+  G4.why.forEach(function(w){ out.push('- ' + w); });
+  out.push('');
+  out.push('<details><summary>全部五档姿态对照</summary>');
+  out.push('');
+  out.push('| 姿态 | 成本 | 风险 | 说明 | 适用 |');
+  out.push('|---|---|---|---|---|');
+  HS_POSES.forEach(function(p){
+    out.push('| ' + (p.k === G4.pose.k ? '**▶ ' + p.n + '**' : p.n) + ' | ' + p.cost + ' | ' + p.risk + ' | ' + p.d + ' | ' + p.when + ' |');
+  });
+  out.push('');
+  out.push('</details>');
+  out.push('');
+
+  /* 闸门五 */
+  out.push('## 闸门五 · 事前验尸');
+  out.push('');
+  out.push('> 假设一周后，这次追热点翻车了。最可能因为什么？');
+  out.push('>');
+  out.push('> 逐项确认，勾选你无法排除的：');
+  out.push('');
+  d.g5.forEach(function(p){
+    out.push('- [ ] **' + p.n + '** — ' + p.d);
+  });
+  out.push('');
+  out.push('*方法论：Gary Klein 的 Pre-mortem。人预测失败时的判断力显著强于预测成功。*');
+  out.push('');
+
+  /* 反向角度 */
+  if(d.rev){
+    out.push('## 💡 反向角度（仅 🟢 一般类热点提供）');
+    out.push('');
+    d.rev.forEach(function(r){
+      out.push('- **' + r.n + '**：' + r.d);
+    });
+    out.push('');
+  } else if(d.g1.lv !== 'green'){
+    out.push('## 💡 反向角度');
+    out.push('');
+    out.push('🛑 **本次不提供**。反向角度在' +
+      (d.g1.lv === 'red' ? '🔴 禁止触碰' : '🟡 谨慎') +
+      '类热点上极易演变为冒犯——这个功能本身很妙，但没有约束就是定时炸弹。');
+    out.push('');
+  }
+
+  /* 动作层 */
+  out.push('## 决策动作');
+  out.push('');
+  out.push('| 动作 | 含义 |');
+  out.push('|---|---|');
+  HS_ACTIONS.forEach(function(a){
+    out.push('| ' + a.n + ' | ' + a.d + ' |');
   });
   out.push('');
 
-  if(d.risks.length){
-    out.push('## 三、⚠️ 风险话题识别');
-    out.push('');
-    d.risks.forEach(function(r){
-      var lv = r.lv === 'high' ? '🔴 高危' : '🟡 中危';
-      out.push('### ' + lv + '　' + r.n);
-      out.push('');
-      out.push('- 命中词：' + r.hit.join('、'));
-      out.push('- **建议**：' + r.tip);
-      out.push('');
-    });
-    if(d.vetoed){
-      out.push('> ⚠️ **注意**：你给风险维度打了 ' +
-        d.dims.filter(function(x){ return x.k === 'risk'; })[0].raw +
-        ' 分（偏安全），但热点描述中包含高危话题词。请重新确认——是否已排除上述情况？');
-      out.push('');
-    }
-  }
+  /* 五维背景 */
+  out.push('<details><summary>五维自评（背景信息，不参与加权）</summary>');
+  out.push('');
+  out.push('| 维度 | 自评 | 说明 |');
+  out.push('|---|---|---|');
+  d.dims.forEach(function(x){
+    var def = HS_DIMS.filter(function(y){ return y.k === x.k; })[0];
+    out.push('| ' + x.icon + ' ' + x.n + ' | ' + x.raw + ' / 5 | ' + def.q + ' |');
+  });
+  out.push('');
+  out.push('> ⚠️ 原「总分 ' + d.total + '/100」已弃用。热点是负偏态决策，');
+  out.push('> 加权打分会用虚假精确感掩盖尾部风险，改为闸门定性判断。');
+  out.push('');
+  out.push('</details>');
+  out.push('');
 
-  out.push('## ' + (d.risks.length ? '四' : '三') + '、跟进角度建议');
-  out.push('');
-  d.angles.forEach(function(a, i){ out.push((i+1) + '. ' + a); });
-  out.push('');
   out.push('---');
   out.push('');
   out.push('### 下一步');
@@ -9287,12 +9745,21 @@ function renderHotspot(){
   out.push('');
   out.push('*本工具做「该不该跟」的决策辅助，不做事实核查。热点真伪请自行通过权威渠道核实。*');
 
-  if(host) host.innerHTML = mdLite(out.join('\n'));
+  if(host){
+    host.innerHTML = mdLite(out.join('\n'));
+    /* 动作层与台账挂在 md 之后，避免被 mdLite 吞掉按钮 */
+    var _a = document.createElement('div');
+    _a.innerHTML = hsActHtml(d);
+    host.appendChild(_a);
+    var _l = document.createElement('div');
+    _l.id = 'hsLog';
+    host.appendChild(_l);
+  }
+  hsRenderLog();
 
-  // 结论徽章
   var badge = $('#hsBadge');
   if(badge){
-    badge.textContent = d.advice + '　' + d.total + ' 分';
+    badge.textContent = d.advice;
     badge.style.color = d.color;
     badge.style.borderColor = d.color;
   }
@@ -9304,7 +9771,6 @@ function hotspotToScan(){
   var d = lastHotspot;
   switchTab('content');
 
-  // 内容工厂用「标题 + 额外要求」驱动生成，把热点语境填进这两处
   var t = $('#c_title');
   if(t){
     t.value = d.topic.slice(0, 30);
@@ -9315,8 +9781,9 @@ function hotspotToScan(){
     var lines = [];
     lines.push('【热点借势】' + d.topic);
     if(d.way) lines.push('计划跟进方式：' + d.way);
-    lines.push('决策结论：' + d.advice + '（' + d.total + '/100）');
-    d.angles.forEach(function(a){ lines.push('· ' + a.replace(/\*\*/g, '')); });
+    lines.push('决策结论：' + d.advice + '（建议姿态：' + d.g4.pose.n + '）');
+    lines.push('建议：' + d.g4.pose.tip);
+    if(d.rev) lines.push('可用角度：' + d.rev.map(function(r){ return r.n; }).join(' / '));
     ex.value = lines.join('\n');
     ex.dispatchEvent(new Event('input', {bubbles:true}));
   }
@@ -9333,6 +9800,12 @@ function demoHotspot(){
   set('#hs_risk',  '5');
   set('#hs_fit',   '4');
   set('#hs_value', '3');
+  set('#hs_win_h',   '36');
+  set('#hs_copy_h',  '4');
+  set('#hs_design_h','8');
+  set('#hs_appr_h',  '12');
+  set('#hs_ramp_h',  '8');
+  set('#hs_para',    '0');
   renderHotspot();
   toast('已填入示例：明星代言类热点');
 }
@@ -9347,30 +9820,516 @@ function exportHotspot(){
   out.push('**热点**：' + d.topic);
   if(d.way) out.push('**计划跟进方式**：' + d.way);
   out.push('');
-  out.push('## 结论：' + d.advice + '（' + d.total + '/100）');
+  out.push('## 结论：' + d.advice + '（建议姿态：' + d.g4.pose.n + '）');
   out.push('');
-  out.push('| 维度 | 自评 | 得分 |');
-  out.push('|---|---|---|');
-  d.dims.forEach(function(x){
-    out.push('| ' + x.n + ' | ' + x.raw + '/5 | ' + x.s + '/' + x.max + ' |');
-  });
-  out.push('');
-  if(d.risks.length){
-    out.push('## 风险识别');
-    out.push('');
-    d.risks.forEach(function(r){
-      out.push('- **' + (r.lv === 'high' ? '🔴 高危' : '🟡 中危') + ' ' + r.n + '**：' + r.tip);
+  out.push('### 闸门一 · 红线筛查：' + HS_GATE1[d.g1.lv].n);
+  if(d.g1.hits.length){
+    d.g1.hits.forEach(function(r){
+      out.push('- ' + (r.lv === 'high' ? '🔴' : '🟡') + ' ' + r.n + '：' + r.tip);
     });
-    out.push('');
-  }
-  out.push('## 跟进角度建议');
+  } else out.push('- 未命中敏感话题词库');
   out.push('');
-  d.angles.forEach(function(a, i){ out.push((i+1) + '. ' + a); });
+  out.push('### 闸门二 · 品牌契合');
+  out.push('- ' + d.g2.note);
+  if(d.g2.conflicts.length){
+    d.g2.conflicts.forEach(function(c){ out.push('- ⚠️ ' + c.t); });
+  }
+  out.push('');
+  out.push('### 闸门三 · 时滞 vs 窗口');
+  out.push('- 剩余窗口 ' + d.g3.win + 'h － 时滞 ' + d.g3.lag + 'h － 起量 ' + d.g3.ramp + 'h ＝ **有效 ' + Math.round(d.g3.eff) + 'h**');
+  out.push('- 判定：' + d.g3.verdict);
+  out.push('');
+  out.push('### 闸门四 · 建议姿态：' + d.g4.pose.n);
+  d.g4.why.forEach(function(w){ out.push('- ' + w); });
+  out.push('');
+  out.push('### 闸门五 · 事前验尸');
+  d.g5.forEach(function(p){ out.push('- [ ] ' + p.n + '：' + p.d); });
+  out.push('');
+  if(d.rev){
+    out.push('### 反向角度');
+    d.rev.forEach(function(r){ out.push('- **' + r.n + '**：' + r.d); });
+  } else {
+    out.push('### 反向角度');
+    out.push('- 本次不提供（' + HS_GATE1[d.g1.lv].n + '类热点不开放反向角度）');
+  }
   out.push('');
   out.push('---');
   out.push('');
   out.push('*决策辅助工具，不做事实核查。热点真伪请通过权威渠道核实。*');
   downloadFile('热点决策_' + ymd(new Date()) + '.md', out.join('\n'), 'text/markdown');
+}
+
+/* ============================================================
+ *  热点台账：决策留痕 + 事后回填
+ * ------------------------------------------------------------
+ *  为什么单独做台账，而不是只给一个结论：
+ *    「追不追」是当下决策，但「追得对不对」只有事后才知道。
+ *    没有回填，每次决策都是从零开始，无法形成
+ *    「我们品牌适合追什么」的规律——那才是长期值钱的东西。
+ *  样本约定：有效回填 < 5 条时不统计规律（沿用产品一贯原则：
+ *  宁可少说，也不说一个自己都不信的数字）。
+ * ============================================================ */
+function hsLog(){
+  if(!state.hs) state.hs = {};
+  if(!state.hs.log) state.hs.log = [];
+  return state.hs.log;
+}
+
+function hsStat(){
+  var log = hsLog();
+  var done = log.filter(function(r){ return r.result; });
+  return {total:log.length, done:done.length, enough:done.length >= 5};
+}
+
+function hsLogAdd(actKey){
+  var d = lastHotspot;
+  if(!d){ toast('请先计算热点决策'); return null; }
+  var act = HS_ACTIONS.filter(function(a){ return a.k === actKey; })[0] || HS_ACTIONS[0];
+  var rec = {
+    id:'hs' + Date.now(),
+    day:(new Date()).toISOString().slice(0,10),
+    topic:d.topic,
+    way:d.way || '',
+    gate1:d.g1.lv,
+    advice:d.advice || '',
+    pose:(d.g4 && d.g4.pose) ? d.g4.pose.n : '',
+    act:actKey,
+    actName:act.n,
+    result:'',
+    review:''
+  };
+  var log = hsLog();
+  log.unshift(rec);
+  if(log.length > 100) log.length = 100;
+  if(typeof save === 'function') save();
+  toast('已记入热点台账：' + act.n);
+  hsRenderLog();
+  return rec;
+}
+
+/* 事后回填：prompt 是最朴素但零依赖可靠的方式 */
+function hsFillResult(id){
+  var log = hsLog();
+  var rec = log.filter(function(r){ return r.id === id; })[0];
+  if(!rec) return;
+  var v = prompt('回填结果：这次「' + rec.actName + '」，实际效果如何？\n例：曝光 5 万、转化 12 单 / 无反响 / 轻微负面', rec.result || '');
+  if(v === null) return;
+  rec.result = v.trim();
+  if(rec.result){
+    var r2 = prompt('一句话复盘：下次遇到同类热点，还会这么做吗？', rec.review || '');
+    if(r2 !== null) rec.review = r2.trim();
+  }
+  if(typeof save === 'function') save();
+  hsRenderLog();
+  if(typeof renderTimeline === 'function') renderTimeline();
+}
+
+function hsLogDel(id){
+  var log = hsLog();
+  var i = -1;
+  log.forEach(function(r, k){ if(r.id === id) i = k; });
+  if(i > -1){
+    log.splice(i, 1);
+    if(typeof save === 'function') save();
+    hsRenderLog();
+    if(typeof renderTimeline === 'function') renderTimeline();
+  }
+}
+
+function hsRenderLog(){
+  var host = $('#hsLog');
+  if(!host) return;
+  var log = hsLog();
+  var st = hsStat();
+  if(!log.length){
+    host.innerHTML = '<span class="ph">暂无记录。在上方选一个动作，决策会记入这里，事后可回填结果。</span>';
+    return;
+  }
+  var h = '<div class="hslog">';
+  h += '<div class="hslog__ttl">热点台账 <span class="hslog__cnt">' + st.total + ' 条决策 · ' + st.done + ' 条已回填</span></div>';
+  if(!st.enough){
+    h += '<div class="hslog__note">样本不足（' + st.done + '/5）：暂不统计「我们适合追什么」的规律，只做记录。</div>';
+  } else {
+    var byAct = {};
+    log.forEach(function(r){ if(r.result) byAct[r.actName] = (byAct[r.actName] || 0) + 1; });
+    var arr = Object.keys(byAct).map(function(k){ return k + ' ' + byAct[k] + ' 次'; });
+    h += '<div class="hslog__note hslog__note--ok">已回填 ' + st.done + ' 条：' + esc(arr.join('、')) + '</div>';
+  }
+  log.slice(0, 12).forEach(function(r){
+    var c = {drop:'var(--mute)', light:'var(--ok)', watch:'var(--signal)', go:'var(--brand)'}[r.act] || 'var(--mute)';
+    h += '<div class="hslog__row">';
+    h += '<div class="hslog__hd"><span class="hslog__act" style="color:' + c + '">' + esc(r.actName) + '</span>';
+    h += '<span class="hslog__day">' + esc(r.day) + '</span></div>';
+    h += '<div class="hslog__topic">' + esc(r.topic) + '</div>';
+    h += '<div class="hslog__meta">' + esc(r.advice) + '</div>';
+    if(r.result){
+      h += '<div class="hslog__res">📌 ' + esc(r.result) + (r.review ? '　—　' + esc(r.review) : '') + '</div>';
+    } else {
+      h += '<div class="hslog__todo">⏳ 待回填</div>';
+    }
+    h += '<div class="hslog__ops">';
+    h += '<button class="lnk" onclick="hsFillResult(\'' + r.id + '\')">' + (r.result ? '改结果' : '回填结果') + '</button>';
+    h += '<button class="lnk" onclick="hsLogDel(\'' + r.id + '\')">删除</button>';
+    h += '</div></div>';
+  });
+  h += '</div>';
+  host.innerHTML = h;
+}
+
+/* ---------- 动作层：可点击按钮（原来只是导出报告里的表格） ---------- */
+function hsActHtml(d){
+  var h = '<div class="hsact"><div class="hsact__ttl">选一个动作 · 记入热点台账</div><div class="hsact__row">';
+  HS_ACTIONS.forEach(function(a){
+    h += '<button class="btn hsact__btn" style="border-color:' + a.c + ';color:' + a.c + '" '
+       + 'onclick="hsLogAdd(\'' + a.k + '\')">' + a.n + '</button>';
+  });
+  h += '</div>';
+  h += '<div class="hsact__note">';
+  h += '「继续追踪」不是逃避决定——它会带着复评条件留在台账里，到期提醒你回看。';
+  h += '</div>';
+  h += '<div class="hsact__out">';
+  if(d.g1.lv !== 'red'){
+    h += '<button class="btn" onclick="hotspotToPack(\'xhs\')">📦 开内容包生产</button>';
+  } else {
+    h += '<span class="hsact__ban">🛑 红线热点：不提供「开内容包」出口</span>';
+  }
+  h += '<button class="btn" onclick="hotspotToScan()">📝 送去内容工厂</button>';
+  h += '</div></div>';
+  return h;
+}
+
+/* ---------- 出口：一键开内容包，并带入热点语境 ---------- */
+function hotspotToPack(id){
+  var d = lastHotspot;
+  if(!d){ toast('请先计算热点决策'); return; }
+  if(typeof pkOpenModal !== 'function'){ toast('内容包模块未加载'); return; }
+  var pid = id || 'xhs';
+  try{
+    if(typeof pkState === 'function'){
+      var st = pkState();
+      if(!st[pid]) st[pid] = {steps:[], ctx:{}};
+      if(!st[pid].ctx) st[pid].ctx = {};
+      var flds = (typeof PK_FIELDS !== 'undefined' && PK_FIELDS[pid]) || [];
+      if(flds.length && !st[pid].ctx[flds[0].key]){
+        st[pid].ctx[flds[0].key] = d.topic.slice(0, 40);
+      }
+      if(typeof save === 'function') save();
+    }
+  }catch(e){ /* 预填失败不影响开包 */ }
+  pkOpenModal(pid);
+  toast('已带入热点语境');
+}
+
+/* ===== src/43-hotpool.js ===== */
+/* ============================================================
+ * 可预期热点池 —— 热点决策的入口层
+ *
+ * 为什么不做「实时热点雷达」
+ *   突发热点（塌房/事故/爆梗）只能靠抓取 API 发现，
+ *   而抓取会破坏「零依赖、本地运行」的产品底线。
+ *   更要命的是：等你发现 → 评估 → 出物料，窗口已经关了。
+ *
+ * 可预期热点的真正价值
+ *   它们提前一年就确定，因此可以提前准备。
+ *   这才是本工具（排期 / 工作流 / 内容包）能真正帮上忙的地方。
+ *
+ * 数据来源说明
+ *   农历节日复用 17-calendar.js 的 LUNAR_FEST（2026-2030 已核对），
+ *   不另行维护一套，避免两处漂移。
+ * ============================================================ */
+
+/* ---------- 情绪倾向（用于价值契合判断） ---------- */
+var HS_EMO = {
+  warm:  {n:'温情',   c:'var(--warn)',  d:'团圆/感恩/关怀，适合情感叙事'},
+  joy:   {n:'欢快',   c:'var(--ok)',    d:'玩梗/庆祝/释放，适合轻松玩闹'},
+  deal:  {n:'交易',   c:'var(--brand)', d:'促销/囤货/比价，理性决策主导'},
+  achiev:{n:'成就',   c:'var(--signal)',d:'拼搏/逆袭/里程碑，适合励志叙事'},
+  calm:  {n:'肃穆',   c:'var(--mute)',  d:'纪念/反思/庄重，商业表达需极度克制'},
+  trend: {n:'潮流',   c:'var(--violet)',d:'跟风/尝鲜/社交货币，适合快节奏'}
+};
+
+/* ---------- 热点池节点定义 ----------
+ * type: festival 传统节日 / ecom 电商节点 / season 行业档期
+ * md:   公历固定日期 'MM-DD'；lunar:true 时按 LUNAR_FEST 取
+ * lead: 建议提前准备天数（= 物料筹备 + 预热所需）
+ * emo:  情绪倾向（见 HS_EMO）
+ * win:  这个节点通常怎么赢（典型打法）
+ * care: 这个节点最容易翻车的点
+ */
+var HS_POOL = [
+
+  /* ========== 一、传统节日（情感向最强） ========== */
+  {n:'元旦',     type:'festival', md:'01-01', lead:20, emo:'joy',
+   win:'新年flag / 年度回顾 / 开年第一单，适合做"新开始"叙事',
+   care:'避免空洞的励志口号，用户已免疫'},
+  {n:'春节',     type:'festival', md:'02-17', lunar:true, lead:45, emo:'warm',
+   win:'团圆/归乡/年味，情感浓度全年最高；年货礼品类可做转化',
+   care:'氛围合家欢，任何冲突性表达都会被放大；促销硬广会冲淡情感'},
+  {n:'元宵',     type:'festival', md:'03-03', lunar:true, lead:14, emo:'warm',
+   win:'灯谜/汤圆/团圆收尾，适合轻量互动，低成本收官春节档',
+   care:'春节尾声，用户注意力已回落，不宜重投'},
+  {n:'情人节',   type:'festival', md:'02-14', lead:21, emo:'warm',
+   win:'礼物/告白/双人场景，礼品与体验类转化率高',
+   care:'单身群体对过度甜蜜表达敏感，注意别制造对立'},
+  {n:'妇女节',   type:'festival', md:'03-08', lead:18, emo:'achiev',
+   win:'女性力量/自我犒赏，近年从"女神节"转向"悦己"叙事',
+   care:'❗ 高危：避免"教女性如何取悦他人"的旧叙事，易被批物化'},
+  {n:'清明',     type:'festival', md:'04-05', lead:10, emo:'calm',
+   win:'踏青/春日/思念；多数品牌应仅做静默或轻量春日内容',
+   care:'❗ 高危：祭扫主题严禁商业借势，只可踏青不可悼念'},
+  {n:'五一',     type:'festival', md:'05-01', lead:21, emo:'joy',
+   win:'出行/假期/劳动者，旅游与户外品类主战场',
+   care:'"劳动节"与"假期玩乐"两种叙事易冲突，选一个别混着说'},
+  {n:'母亲节',   type:'festival', md:'05-10', lead:21, emo:'warm',
+   win:'感恩/礼物/亲情，礼品类转化稳定',
+   care:'避免制造"不买就是不孝"的愧疚感营销'},
+  {n:'儿童节',   type:'festival', md:'06-01', lead:18, emo:'joy',
+   win:'童心/怀旧/成年人的儿童节，泛人群都能参与',
+   care:'面向成年人的怀旧易与真正的亲子内容混流，受众要分清楚'},
+  {n:'端午',     type:'festival', md:'06-19', lunar:true, lead:21, emo:'warm',
+   win:'粽子/龙舟/家宴，食品与礼盒类主战场',
+   care:'历史人物题材（屈原）不宜娱乐化玩梗'},
+  {n:'七夕',     type:'festival', md:'08-19', lunar:true, lead:21, emo:'warm',
+   win:'中式浪漫/告白/礼物，比情人节更适合国风表达',
+   care:'单身议题敏感，避免"脱单焦虑"话术'},
+  {n:'教师节',   type:'festival', md:'09-10', lead:14, emo:'achiev',
+   win:'感恩师恩/回忆校园，教育与众筹类借势合适',
+   care:'❗ 避免借机推销送礼，与师德议题冲突'},
+  {n:'中秋',     type:'festival', md:'09-25', lunar:true, lead:30, emo:'warm',
+   win:'团圆/月饼/赏月，全年第二情感高峰，礼盒类转化强',
+   care:'与春节同质化，需找差异角度'},
+  {n:'国庆',     type:'festival', md:'10-01', lead:25, emo:'achiev',
+   win:'长假/出游/家国情怀，旅游与家居大促窗口',
+   care:'❗ 高危：家国叙事商业品牌须极克制，娱乐化会被批'},
+  {n:'重阳',     type:'festival', md:'10-18', lunar:true, lead:12, emo:'warm',
+   win:'敬老/登高/秋意，适合银发与康养品类',
+   care:'敬老题材避免悲情化，也避免过度商业化'},
+  {n:'万圣节',   type:'festival', md:'10-31', lead:14, emo:'joy',
+   win:'cosplay/搞怪/暗黑，年轻化品牌的低成本玩法',
+   care:'恐怖元素需注意尺度，儿童向内容要规避'},
+  {n:'平安夜',   type:'festival', md:'12-24', lead:14, emo:'warm',
+   win:'礼物/仪式感/城市氛围，年轻人社交场景',
+   care:'宗教意味淡化处理，只取节庆氛围'},
+  {n:'圣诞节',   type:'festival', md:'12-25', lead:18, emo:'joy',
+   win:'节日氛围/限定款/聚会，全品类通用',
+   care:'"洋节"在部分舆论场有争议，重氛围轻文化'},
+  {n:'跨年',     type:'festival', md:'12-31', lead:20, emo:'achiev',
+   win:'年度盘点/新年flag/告别与启程，情感与转发率双高',
+   care:'各家都在做盘点，同质化极严重，需要独特切口'},
+
+  /* ========== 二、电商节点（转化向，且有预热期） ========== */
+  {n:'年货节',   type:'ecom', md:'01-10', lead:30, emo:'deal',
+   win:'囤货/送礼/返乡，礼盒与食品类主战场',
+   care:'与春节档重叠，需明确是"囤"还是"送"'},
+  {n:'38大促',   type:'ecom', md:'03-05', lead:18, emo:'deal',
+   win:'悦己消费/女性向品类，美妆个护主战场',
+   care:'❗ 与妇女节同期，促销叙事与女性议题需分开处理'},
+  {n:'五一黄金周', type:'ecom', md:'04-28', lead:21, emo:'deal',
+   win:'出行装备/出游囤货，比五一当天更早开打',
+   care:'促销期与假期错位，别在假期开始后才发力'},
+  {n:'618',      type:'ecom', md:'06-18', lead:30, emo:'deal',
+   win:'年中最大节点；6/1 即开预售，6/18 为爆发日',
+   care:'❗ 真正的战场在 6/1 预售，不是 6/18 当天——按"起止区间"排期'},
+  {n:'818',      type:'ecom', md:'08-18', lead:18, emo:'deal',
+   win:'数码家电类主战场，暑期末促销',
+   care:'声量远小于 618/双11，投入需相应缩减'},
+  {n:'99划算节', type:'ecom', md:'09-09', lead:14, emo:'deal',
+   win:'秋冬换季预热，服饰与家居类',
+   care:'夹在 818 与双11 之间，需避免促销疲劳'},
+  {n:'双11',     type:'ecom', md:'11-11', lead:40, emo:'deal',
+   win:'全年最大节点；10 月中下旬即启动预售，战线长达一个月',
+   care:'❗ 提前量最大的节点，40 天前不动就已落后'},
+  {n:'双12',     type:'ecom', md:'12-12', lead:14, emo:'deal',
+   win:'双11 补漏与清仓，性价比叙事',
+   care:'用户对连续大促已疲劳，需新角度'},
+  {n:'年终清仓', type:'ecom', md:'12-20', lead:12, emo:'deal',
+   win:'库存出清/年终结账，价格敏感人群',
+   care:'频繁清仓会损伤正价心智'},
+
+  /* ========== 三、行业档期（分人群，非全品类） ========== */
+  {n:'寒假',     type:'season', md:'01-20', lead:20, emo:'joy',
+   win:'学生/亲子/家庭场景，教育与娱乐品类',
+   care:'家长视角与学生视角叙事完全不同'},
+  {n:'开学季',   type:'season', md:'02-25', lead:21, emo:'achiev',
+   win:'装备/文具/换新，泛学生人群；家长决策学生使用',
+   care:'决策者（家长）与使用者（学生）诉求不同'},
+  {n:'秋招季',   type:'season', md:'03-01', lead:18, emo:'achiev',
+   win:'求职/简历/成长焦虑，教育与服务类',
+   care:'❗ 民生焦虑类，玩梗语气会被批"何不食肉糜"'},
+  {n:'毕业季',   type:'season', md:'06-10', lead:25, emo:'warm',
+   win:'告别/启程/友谊，情感浓度高，泛品类可借',
+   care:'伤感与希望两种情绪需择一，混用会稀释'},
+  {n:'暑假',     type:'season', md:'07-05', lead:25, emo:'joy',
+   win:'出游/培训/宅家娱乐，亲子与学生双线',
+   care:'跨度长达两月，需拆成多个子节点运营'},
+  {n:'暑期档',   type:'season', md:'07-15', lead:21, emo:'trend',
+   win:'影视/游戏/线下娱乐，内容消费高峰',
+   care:'娱乐内容竞争激烈，蹭片需版权意识'},
+  {n:'军训季',   type:'season', md:'09-01', lead:14, emo:'achiev',
+   win:'晒黑/成长/集体记忆，适合轻量化玩梗',
+   care:'❗ 涉校园与青少年，商业表达需谨慎'},
+  {n:'开学季(秋)',type:'season', md:'09-01', lead:21, emo:'achiev',
+   win:'秋季开学，装备与教辅类；比春季开学声量更大',
+   care:'与军训季重叠，需区分人群'},
+  {n:'秋游季',   type:'season', md:'10-15', lead:18, emo:'trend',
+   win:'赏秋/露营/短途，户外与摄影品类',
+   care:'地域差异大，南北方内容不可通用'},
+  {n:'换季上新', type:'season', md:'10-08', lead:20, emo:'trend',
+   win:'秋冬服饰/护肤/家居，全品类上新窗口',
+   care:'"换季"是常规动作，缺乏话题性需另找钩子'},
+  {n:'年度盘点', type:'season', md:'12-15', lead:18, emo:'achiev',
+   win:'报告/榜单/回顾，B端与个人品牌都适用',
+   care:'各家都发盘点，同质化严重，需独特数据或角度'},
+  {n:'颁奖季',   type:'season', md:'02-20', lead:14, emo:'trend',
+   win:'影视/时尚/设计，内容借势与红毯话题',
+   care:'明星关联度高，需防塌房风险'}
+];
+
+/* ---------- 取节点在今年/明年的公历日期 ---------- */
+function hsNodeDate(node, year){
+  if(node.lunar){
+    var lf = (typeof LUNAR_FEST !== 'undefined') && LUNAR_FEST[year];
+    if(lf && lf[node.n]) return year + '-' + lf[node.n];
+    // 没有该年的农历表时退回内置值（不静默返回 null 导致后续崩）
+    return year + '-' + node.md;
+  }
+  return year + '-' + node.md;
+}
+
+/* ---------- 计算节点状态 ----------
+ * 返回 { d: 距今天数, stage:'past'|'live'|'prepare'|'future', label, color }
+ * d < -3          已过（归档）
+ * -3 <= d <= 3    进行中（黄金期）
+ * 3 < d <= lead   该准备了
+ * d > lead        还早
+ */
+function hsNodeStage(node, today){
+  today = today || new Date();
+  var y = today.getFullYear();
+  var ds = hsNodeDate(node, y);
+  var dt = new Date(ds + 'T00:00:00');
+  var d = Math.round((dt - new Date(today.getFullYear(), today.getMonth(), today.getDate())) / 86400000);
+
+  // 已过且超过 3 天 → 看明年
+  if(d < -3){
+    var ds2 = hsNodeDate(node, y + 1);
+    var dt2 = new Date(ds2 + 'T00:00:00');
+    var d2 = Math.round((dt2 - new Date(today.getFullYear(), today.getMonth(), today.getDate())) / 86400000);
+    return {d:d2, date:ds2, year:y+1, stage:(d2 <= node.lead ? 'prepare' : 'future'), nextYear:true};
+  }
+
+  var stage;
+  if(d <= 3) stage = 'live';
+  else if(d <= node.lead) stage = 'prepare';
+  else stage = 'future';
+
+  return {d:d, date:ds, year:y, stage:stage, nextYear:false};
+}
+
+var HS_STAGE = {
+  live:    {n:'进行中',   c:'var(--ok)',    d:'黄金期，内容应已在投放'},
+  prepare: {n:'该准备了', c:'var(--warn)',  d:'筹备与预热窗口'},
+  future:  {n:'还早',     c:'var(--mute)',  d:'可先记入排期'},
+  past:    {n:'已过',     c:'var(--gray-500)', d:'已归档'}
+};
+
+/* ---------- 按状态排序后的热点池 ---------- */
+function hsPoolList(today){
+  return HS_POOL.map(function(n){
+    var st = hsNodeStage(n, today);
+    return {node:n, d:st.d, date:st.date, year:st.year, stage:st.stage, nextYear:st.nextYear};
+  }).sort(function(a, b){
+    var ord = {live:0, prepare:1, future:2};
+    var oa = ord[a.stage] === undefined ? 3 : ord[a.stage];
+    var ob = ord[b.stage] === undefined ? 3 : ord[b.stage];
+    if(oa !== ob) return oa - ob;
+    return a.d - b.d;
+  });
+}
+
+/* ---------- 从热点池载入到评估表单 ---------- */
+function hsLoadNode(idx){
+  var list = hsPoolList();
+  var it = list[idx];
+  if(!it) return;
+  var n = it.node;
+
+  var t = $('#hs_topic');
+  if(t){ t.value = n.n; }
+
+  // 自动带出：情绪倾向 + 典型打法，作为背景信息
+  var bg = $('#hs_poolbg');
+  if(bg){
+    var emo = HS_EMO[n.emo] || HS_EMO.trend;
+    bg.innerHTML =
+      '<div class="hspool__bg">' +
+      '<div class="hspool__bgrow"><span class="chip chip--sm">' + esc(n.type === 'ecom' ? '电商节点' : (n.type === 'festival' ? '传统节日' : '行业档期')) + '</span>' +
+      '<span class="chip chip--sm" style="background:' + emo.c + '22;color:' + emo.c + '">' + esc(emo.n) + '</span>' +
+      '<span class="chip chip--sm">' + esc(it.date) + ' · 还有 ' + it.d + ' 天</span></div>' +
+      '<div class="hspool__tip"><b>通常怎么赢</b>：' + esc(n.win) + '</div>' +
+      '<div class="hspool__care"><b>容易翻车</b>：' + esc(n.care) + '</div>' +
+      '</div>';
+  }
+
+  // 节点类热点的时效性默认给高（因为可预期、可提前准备）
+  var timeEl = $('#hs_time');
+  if(timeEl){
+    timeEl.value = it.stage === 'live' ? 5 : (it.stage === 'prepare' ? 4 : 3);
+    if(typeof syncRange === 'function') syncRange(timeEl);
+  }
+
+  if(typeof calcHotspot === 'function') calcHotspot();
+  if(typeof renderHotspot === 'function') renderHotspot();
+}
+
+/* ---------- 渲染热点池 ---------- */
+function hsRenderPool(){
+  var host = $('#hsPool');
+  if(!host) return;
+  var list = hsPoolList();
+  var flt = $('#hsPoolFlt') ? $('#hsPoolFlt').value : 'all';
+
+  var show = list.filter(function(it){
+    if(flt === 'all') return it.stage !== 'future';
+    if(flt === 'live') return it.stage === 'live';
+    if(flt === 'prepare') return it.stage === 'prepare';
+    if(flt === 'future') return true;
+    if(flt === 'ecom') return it.node.type === 'ecom';
+    if(flt === 'festival') return it.node.type === 'festival';
+    if(flt === 'season') return it.node.type === 'season';
+    return true;
+  });
+
+  if(!show.length){
+    host.innerHTML = '<span class="ph">当前筛选下没有节点</span>';
+    return;
+  }
+
+  var h = '<div class="hspool">';
+  show.forEach(function(it){
+    var n = it.node;
+    var st = HS_STAGE[it.stage] || HS_STAGE.future;
+    var emo = HS_EMO[n.emo] || HS_EMO.trend;
+    h += '<div class="hspool__item hspool__item--' + it.stage + '" data-idx="' + list.indexOf(it) + '">';
+    h += '<div class="hspool__top">';
+    h += '<span class="hspool__name">' + esc(n.n) + '</span>';
+    h += '<span class="hspool__stage" style="background:' + st.c + '22;color:' + st.c + '">' + esc(st.n) + '</span>';
+    h += '</div>';
+    h += '<div class="hspool__meta">';
+    h += '<span>' + esc(it.date) + '</span>';
+    h += '<span>·</span>';
+    h += '<span>' + (it.d <= 0 ? '今天/进行中' : '还有 ' + it.d + ' 天') + '</span>';
+    h += '<span>·</span>';
+    h += '<span style="color:' + emo.c + '">' + esc(emo.n) + '</span>';
+    h += '<span>·</span>';
+    h += '<span>建议提前 ' + n.lead + ' 天</span>';
+    h += '</div>';
+    h += '<div class="hspool__win">' + esc(n.win) + '</div>';
+    h += '<div class="hspool__btn"><button class="btn btn--sm" onclick="hsLoadNode(' + list.indexOf(it) + ')">载入评估 →</button></div>';
+    h += '</div>';
+  });
+  h += '</div>';
+  host.innerHTML = h;
 }
 
 /* ===== src/22-research.js ===== */
@@ -14626,7 +15585,7 @@ if(typeof LOCAL_TOOLS !== 'undefined'){
 /* ===== src/33-timeline.js ===== */
 /* ============================================================
  * 33-timeline.js —— 品牌轨迹
- * 把散落在 7 个模块的记录，统一成一条可筛选的时间线。
+ * 把散落在 8 个模块的记录，统一成一条可筛选的时间线。
  * 设计原则：只读聚合，不新增能力，不改现有数据结构。
  *
  *   ① 📅 营销动作  state.cal.events      ymd        YYYY-MM-DD
@@ -14648,7 +15607,8 @@ var TL_TYPES = [
   {k:'snap',  n:'战略快照', em:'🎯', jump:'strat'},
   {k:'trace', n:'执行记录', em:'⚙️', jump:'flow'},
   {k:'hist',  n:'生成留痕', em:'📝', jump:'agent'},
-  {k:'chat',  n:'对话记录', em:'💬', jump:'agent'}
+  {k:'chat',  n:'对话记录', em:'💬', jump:'agent'},
+  {k:'hs',    n:'热点追踪', em:'🔥', jump:'hotspot'}
 ];
 
 /* ---------- 时间归一化 ---------- */
@@ -14731,6 +15691,18 @@ function tlCollect(){
     out.push({k:'chat', day:tlDay(c.d), time:tlTime(c.at),
       t:(c.role === 'user' ? '提问：' : '回复：') + full.slice(0, 80),
       meta:c.tag || '', txt:full.length > 80 ? full : ''});
+  });
+
+  /* ⑧ 热点追踪 —— 决策留痕 + 事后回填（V45）
+   * 价值不在单条记录，而在累积够样本后能回答
+   * 「我们品牌适合追什么」——这是别的产品没有的，
+   * 因为只有这里同时有决策记录和执行结果。 */
+  ((state.hs && state.hs.log) || []).forEach(function(r){
+    out.push({k:'hs', day:tlDay(r.day), time:'',
+      id:r.id || '',
+      t:r.topic || '未命名热点',
+      meta:[r.actName, r.result ? '已回填' : '待回填'].filter(Boolean).join(' · '),
+      txt:[r.advice, r.result, r.review].filter(Boolean).join('　')});
   });
 
   return out;
@@ -18106,144 +19078,6 @@ function analyzeTimelineReport(){
   }
 })();
 
-/* ===== src/42-icons.js ===== */
-/* ============================================================
- * 42-icons.js —— 线性图标系统（orbit 风格）
- *
- * 规范（与设计稿一致）：
- *   viewBox 0 0 24 24 · stroke-width 1.5 · fill:none
- *   stroke=currentColor（自动跟随主题与激活色）
- *   linecap/linejoin = round
- *
- * 设计原则：
- *   1. 不引外部图标库（Lucide / Feather 都要额外文件，破坏单文件零依赖）
- *   2. 图标按业务语义重画，不套通用图形：
- *      竞品=BCG四象限、STP=准心圈定人群、日历=跨天色条、工作流=三节点链
- *   3. 降级：脚本缺失或 key 找不到时保留原 emoji，图标位不塌陷
- * ============================================================ */
-(function () {
-  'use strict';
-
-  function S(inner) {
-    return '<svg class="ico" viewBox="0 0 24 24" width="18" height="18" fill="none" ' +
-      'stroke="currentColor" stroke-width="1.5" stroke-linecap="round" ' +
-      'stroke-linejoin="round" aria-hidden="true" focusable="false">' + inner + '</svg>';
-  }
-
-  /* 23 个 Tab 图标（key 与 index.template.html 的 data-tab 严格对应） */
-  var ICONS = {
-    /* ① 入口 */
-    // 开始：指南针
-    guide: S('<circle cx="12" cy="12" r="8.5"/><path d="M15.4 8.6l-2.1 5.1-5.1 2.1 2.1-5.1z"/>'),
-
-    /* ② 想清楚 */
-    // 热点决策：信号塔（发散弧 + 中心点）
-    hotspot: S('<circle cx="12" cy="14.5" r="1.2"/><path d="M12 18.5v2.5"/><path d="M8.4 13.2a5 5 0 017.2 0"/><path d="M5.8 10.4a8.6 8.6 0 0112.4 0"/>'),
-    // 调研方案：问卷纸 + 勾选项
-    research: S('<path d="M6 3.5h8.2L18 7.3V20a.5.5 0 01-.5.5H6a.5.5 0 01-.5-.5V4a.5.5 0 01.5-.5z"/><path d="M14 3.5v4h4"/><path d="M8.6 12h7"/><path d="M8.6 15.5h4.2"/><path d="M14.6 18.2l1.5 1.5 2.6-2.8"/>'),
-    // 战略矩阵：同心环 + 准心（圈定）
-    strat: S('<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.6"/><path d="M12 3.5v2.6M12 17.9v2.6M3.5 12h2.6M17.9 12h2.6"/>'),
-    // 经典工具：工具箱
-    tkm: S('<path d="M3.5 8.5h17v10.5a1 1 0 01-1 1h-15a1 1 0 01-1-1z"/><path d="M8.2 8.5V6.2a2 2 0 012-2h3.6a2 2 0 012 2v2.3"/><path d="M3.5 12.6h17"/><path d="M10.2 12.6v3.2M13.8 12.6v3.2"/>'),
-    // 工具地图：三折地图
-    toolmap: S('<path d="M3.5 6.2l5.6-2 6 2 5.4-2v13.4l-5.4 2-6-2-5.6 2z"/><path d="M9.1 4.2v13.4M15.1 6.2v13.4"/>'),
-    // 品牌内核：神庙（文化·价值·商业模型的三层隐喻）
-    persona: S('<path d="M3 10.2L12 4l9 6.2"/><path d="M3.6 10.2h16.8"/><path d="M6.8 10.5v8.6M12 10.5v8.6M17.2 10.5v8.6"/><path d="M3.4 19.6h17.2"/>'),
-
-    /* ③ 算出来 */
-    // 策略模板：分层 STP（逐层收窄）
-    strategy: S('<path d="M4 6.8h16"/><path d="M7 12h10"/><path d="M10 17.2h4"/><path d="M4 6.8l2.6 3M20 6.8l-2.6 3"/><path d="M7 12l2.2 3.4M17 12l-2.2 3.4"/>'),
-    // 定价策略：价签
-    pricing: S('<path d="M12.6 3.6H19.5a.9.9 0 01.9.9v6.9l-8.3 8.3-7.8-7.8z"/><circle cx="16.4" cy="7.5" r="1.3"/><path d="M8.4 15.6l4.2 4.2"/>'),
-    // 市场与竞品：地球（经纬）
-    market: S('<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5a13 13 0 010 17"/><path d="M12 3.5a13 13 0 000 17"/>'),
-    // 财务测算：上涨折线 + 箭头
-    fin: S('<path d="M4.2 17.4l5.2-5.2 3.4 3.4 7-7"/><path d="M15.4 8.6h4.4v4.4"/><path d="M4.2 20.4h15.6"/>'),
-
-    /* ④ 做出来 */
-    // 营销角色：头像 + 思维纹
-    role: S('<circle cx="12" cy="8.4" r="3.9"/><path d="M4.8 20.2a7.2 7.2 0 0114.4 0"/><path d="M12 5.6v3.4M10.4 7.6h3.2"/>'),
-    // 内容工厂：纸 + 斜置铅笔（创作）
-    content: S('<path d="M6.5 20.2l2.6-.7L19 9.6l-2.6-2.6L6.5 17z"/><path d="M15.2 5.6l2.6 2.6"/><path d="M5.4 21.6l1.6-2.6"/>'),
-    // 商业图卡：柱图
-    chart: S('<path d="M4.2 20.2h15.6"/><path d="M7.2 20.2V13M12 20.2V7.8M16.8 20.2v-4.6"/>'),
-
-    /* ⑤ 串起来 */
-    // 营销工作流：三节点链（本地 / LLM / 人工）
-    flow: S('<circle cx="5.4" cy="6.4" r="2.3"/><circle cx="5.4" cy="17.6" r="2.3"/><circle cx="18.6" cy="12" r="2.3"/><path d="M7.4 7.6l9.1 3.4M7.4 16.4l9.1-3.4"/>'),
-    // Agent 工作台：对话气泡
-    agent: S('<path d="M4.2 6.4a2 2 0 012-2h11.6a2 2 0 012 2v7.2a2 2 0 01-2 2H9.4L4.4 20z"/><path d="M8.4 10.2h.01M12 10.2h.01M15.6 10.2h.01"/>'),
-    // 营销日历：挂环 + 网格 + 跨天条
-    cal: S('<path d="M4.4 6.6h15.2v13.2H4.4z"/><path d="M8.2 3.6v4M15.8 3.6v4"/><path d="M4.4 10.4h15.2"/><path d="M7 13.6h8.4"/>'),
-    // 方案合成：剪板 + 汇总行
-    synth: S('<path d="M8.6 4.2h6.8v3H8.6z"/><path d="M6 6.4h12v13.4H6z"/><path d="M8.8 10.8h6.4M8.8 14.2h6.4M8.8 17.6h4.2"/>'),
-    // 内容包：开箱立方体
-    packs: S('<path d="M12 3.4l8 4.4v8.4L12 20.6 4 16.2V7.8z"/><path d="M4 7.8l8 4.4 8-4.4"/><path d="M12 12.2v8.4"/>'),
-
-    /* ⑥ 存下来 */
-    // 品牌知识库：三本书
-    kb: S('<path d="M4 4.6h4.6v15H4z"/><path d="M9.7 4.6h4.6v15H9.7z"/><path d="M15.6 6.2l4.4 1.2v11.6l-4.4-1.2z"/>'),
-    // 品牌资产：调色板
-    assets: S('<circle cx="12" cy="12" r="8.5"/><circle cx="9.2" cy="9.6" r="1.25"/><circle cx="14.6" cy="10.2" r="1.25"/><circle cx="10.4" cy="15" r="1.25"/>'),
-    // 品牌轨迹：时间轴 + 疏密节点
-    timeline: S('<path d="M6.8 4.2v15.6"/><circle cx="6.8" cy="8" r="2.1"/><circle cx="6.8" cy="16.2" r="2.1"/><path d="M12.4 7.4h7.6M12.4 15.6h5"/>'),
-    // 系统设置：齿轮
-    settings: S('<circle cx="12" cy="12" r="3.2"/><path d="M12 3.6v2.8M12 17.6v2.8M4.4 7.6l2.4 1.4M17.2 15l2.4 1.4M4.4 16.4l2.4-1.4M17.2 9l2.4-1.4"/>')
-  };
-
-  /* ---------- 状态圆点：替代 🔴🟡⚠️ 等语义 emoji ----------
-   * 只在 UI 徽章/状态位使用；报告正文里的 emoji 保留（用户会复制走）。
-   * 相比 emoji：渲染一致（不受系统字体影响）、可跟随主题、零体积。 */
-  var DOT_KIND = { ok: '--ok', good: '--ok', warn: '--warn', alert: '--alert', stop: '--alert', signal: '--signal', mute: '--mute' };
-
-  function dotTag(kind) {
-    var k = DOT_KIND[kind] || '--mute';
-    return '<i class="dot dot' + k + '" aria-hidden="true"></i>';
-  }
-
-  /* ---------- 应用：把 Tab 名称里的 emoji 换成 SVG ---------- */
-  function applyTabIcons() {
-    var tabs = document.querySelectorAll('.tab[data-tab]');
-    var n = 0;
-    for (var i = 0; i < tabs.length; i++) {
-      var btn = tabs[i];
-      var key = btn.getAttribute('data-tab');
-      var nm = btn.querySelector('.tab__name');
-      if (!nm || !ICONS[key]) continue;
-      if (nm.getAttribute('data-iconed') === '1') continue;
-      // 去掉开头的 emoji 与空白，只保留中文/字母数字标签
-      var label = nm.textContent.replace(/^[^一-龥A-Za-z0-9]+/, '').trim();
-      if (!label) continue;
-      nm.setAttribute('data-iconed', '1');
-      nm.innerHTML = ICONS[key] + '<span>' + label + '</span>';
-      n++;
-    }
-    return n;
-  }
-
-  /* 立即执行一次（脚本位于 body 末尾，DOM 已就绪） */
-  var applied = 0;
-  try { applied = applyTabIcons(); } catch (e) { /* 失败则保留 emoji */ }
-
-  // 兜底：若因时序问题未生效，DOMContentLoaded 与 load 各再试一次
-  if (!applied) {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', function () {
-        try { applyTabIcons(); } catch (e) {}
-      });
-    }
-    window.addEventListener && window.addEventListener('load', function () {
-      try { applyTabIcons(); } catch (e) {}
-    });
-  }
-
-  // 暴露给其它模块与调试
-  window.ICONS = ICONS;
-  window.iconSvg = function (k) { return ICONS[k] || ''; };
-  window.dotTag = dotTag;
-  window.iconApplyTabs = applyTabIcons;
-})();
-
 /* ===== src/16-boot.js ===== */
 /* ================= 回填 ================= */
 function restoreAll(){
@@ -18360,7 +19194,21 @@ function restoreAll(){
       el.addEventListener('input', function(){ state.hotspot[k] = el.value; save(); });
     }
   });
+  /* 热点决策：闸门三时滞参数回填（V45） */
+  ['win_h','copy_h','design_h','appr_h','ramp_h','para'].forEach(function(k){
+    var el = $('#hs_' + k);
+    if(el && state.hotspot[k] !== undefined){
+      el.value = state.hotspot[k];
+      el.addEventListener('input', function(){ state.hotspot[k] = el.value; save(); });
+      el.addEventListener('change', function(){ state.hotspot[k] = el.value; save(); });
+    }
+  });
   if($('#hs_topic') && $('#hs_topic').value) renderHotspot();
+
+  /* 热点决策：可预期热点池初始化（V45） */
+  if(typeof hsRenderPool === 'function'){
+    try{ hsRenderPool(); }catch(e){ if(typeof console !== 'undefined') console.warn('hotpool init', e); }
+  }
 
   /* 调研方案：模板 chips + 回填 */
   var rt = $('#rsTpls');

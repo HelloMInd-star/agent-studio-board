@@ -43,7 +43,8 @@ MODULES = [
     '18-synth.js',      # 方案合成（跨模块聚合，须在 boot 前）
     '19-pricing.js',    # 定价策略（5 种定价法 + 折扣测算，须在 boot 前）
     '20-market.js',     # 区域市场 + 竞品档案（须在 boot 前）
-    '21-hotspot.js',    # 热点决策（五维打分 + 风险预警，须在 boot 前）
+    '21-hotspot.js',    # 热点决策（五闸门 + 动作层，须在 boot 前）
+    '43-hotpool.js',    # 可预期热点池：40 个节点的时间轴入口（须在 calendar·hotspot 后、boot 前）
     '22-research.js',   # 调研方案模板库（假设/市场/交叉/定价，须在 boot 前）
     '23-strategy.js',   # 战略矩阵（SWOT/TOWS/BCG，须在 boot 前）
     '24-finance.js',    # 营销财务测算（GMV/LTV/预算/雷达，须在 boot 前）
@@ -63,7 +64,6 @@ MODULES = [
     '38-packs.js',        # 内容包：工作流预设产品化，本地函数优先 + 结果可视化（须在 workspace 后）
     '39-packwiz.js',      # 内容包独立窗口：全屏模态 + 启动前对话式采集 + AI 步骤引导（须在 packs 后）
     '41-moretools.js',    # 扩充可编排工具集：A/B标题/资产审计/轨迹洞察（须在 tonecheck·insight·assets 后）
-    '42-icons.js',        # 线性图标系统：23 个 Tab 的 1.5px SVG + 状态圆点（须在 boot 前、DOM 就绪后）
     '16-boot.js',       # 回填 + 启动（最后，含 })();）
 ]
 

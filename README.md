@@ -43,7 +43,7 @@ agent-studio-board/
 │   ├── manual.template.html # manual source
 │   ├── style.css            # all styles
 │   ├── MANIFEST.txt         # module index (regenerate when adding files)
-│   └── *.js                 # 41 modules, merged in the order below
+│   └── *.js                 # 38 modules, merged in the order below
 └── ym-marketing-patch.js    # optional patch for the legacy version
 ```
 
@@ -59,7 +59,7 @@ python3 build.py --check   # validate without writing
 **Merge order matters.** `build.py` holds the authoritative list; several
 modules must load before `16-boot.js` (which restores state and binds events)
 and some depend on others (e.g. `32-tonecheck` after `30-brandcore`,
-`28/29-frames*` before `27-toolmap`). The 41 modules by layer:
+`28/29-frames*` before `27-toolmap`). The 38 modules by layer:
 
 | Layer | Modules |
 |---|---|
@@ -71,10 +71,7 @@ and some depend on others (e.g. `32-tonecheck` after `30-brandcore`,
 | Entry & knowledge | `25-guide` scenario nav · `26-toolkit` 8 classic frameworks · `27-toolmap` 70-framework map · `28-framesvg` + `29-framecfg` skeleton engine |
 | Brand chain | `30-brandcore` · `32-tonecheck` · `33-timeline` · `36-assets` |
 | System & insight | `34-settings` · `35-insight` · `37-quarter` |
-| Calendar views | `40-calview` week / day / kanban + five-view dispatch |
 | Content packs | `38-packs` · `39-packwiz` |
-| Extended tools | `41-moretools` A/B titles · asset audit · timeline insight |
-| Icons | `42-icons` 23 line SVGs + status dots (**no icon library**) |
 | Bootstrap | `15-bind` event binding · `16-boot` restore + start (**must be last**) |
 
 ---
@@ -656,7 +653,7 @@ A standalone 12-chapter document, opened from the top bar of every page:
 | 2 | Verified numbers — every count with how it was measured |
 | 3 | Boundaries: 7 things deliberately not built, 4 that were re-framed |
 | 4 | Six-layer architecture, plus an honest answer to "is this an agent?" |
-| 5 | The 41 source files grouped by layer |
+| 5 | The 38 source files grouped by layer |
 | 6 | Core algorithms (positional dimensions, the tone-0 case, sample-size guards) |
 | 7 | All 23 tabs / 6 groups |
 | 8 | Data design (`localStorage` shape, per-module keys) |
@@ -728,6 +725,61 @@ not "pick the winner".
 
 ---
 
+### 3.22 Hotspot decision: five gates (`21-hotspot.js`, `43-hotpool.js`)
+
+Rewritten from **weighted scoring to five gates**.
+
+Hotspot chasing is a **negatively skewed** decision: upside is bounded (a
+burst of impressions), downside is not (a brand incident is not reversible).
+The expected value can be positive while a single tail event erases ten wins.
+Scoring it produces false precision that hides tail risk. The original five
+dimensions are demoted to background context and no longer produce a total.
+
+| Gate | Question | Mechanism |
+|---|---|---|
+| 1 Red line | May we touch it at all | 🔴 veto · 🟡 downgrade · 🟢 proceed |
+| 2 Brand fit | Does it match our values | reads category taboos from Brand Core |
+| 3 Lag vs window | Can we still make it | `remaining − lag − ramp = effective` |
+| 4 Posture | How hard to participate | silence → light → rewrite → heavy → reverse |
+| 5 Pre-mortem | If it fails, why | 7-item checklist (Gary Klein) |
+
+**Gate 3 is the only one that actually computes.** Most hotspots are not
+"should not chase" but "too late" — everyone debates *whether* while nobody
+calculates how long the material takes. Lag supports serial (sum) or parallel
+(max). A negative result reads **"you cannot participate"**, not
+"consider waiting". This turns "feels rushed" into "short by 6 hours".
+
+**Reverse angles are gated to 🟢 only.** Deconstructing the mainstream
+narrative is the strongest differentiator and the fastest way to cause
+offence on a sensitive topic. With 🟡/🔴 they are not offered at all.
+
+**Ceilings are absolute.** No promotion rule may cross them: red line →
+silence; 🟡 → light at most; taboo conflict → light at most; effective
+window ≤ 0 → silence; relevance or fit ≤ 2 → light at most; and **reverse is
+never auto-recommended** (it appears only as a comparison row). Verified by a
+180-combination invariant sweep.
+
+**Entry: predictable hotspot pool (40 nodes).** Breaking hotspots cannot be
+discovered without scraping, which breaks zero-dependency — and by the time
+you notice, evaluate, and ship, the window has closed. Predictable nodes are
+known a year ahead, so they can be *prepared for*, which is exactly what the
+calendar, workflow and content packs are for. Lunar dates reuse `LUNAR_FEST`
+from `17-calendar` rather than a second table. Nodes are auto-bucketed by days
+remaining (live / prepare / future / archived-to-next-year) and each carries
+"how it is usually won" plus "how it usually backfires".
+
+**Exit: decision log with follow-up (V46).** Picking an action writes to
+`state.hs.log` — topic, verdict, posture and chosen action. `hsFillResult()`
+later records what actually happened and a one-line retrospective. Below 5
+filled records the log **refuses to report a pattern** — the same
+insufficient-sample rule used by the content-quality trend, because a
+3-point "we are good at X" is noise dressed as insight. At 5 or more it
+summarises which actions have actually been taken. Log entries surface as an
+8th kind (🔥 hotspot tracking) on the Brand timeline, so a decision and its
+outcome stay on one trail — the only place in the product where a decision
+record and its result sit together. From any non-red verdict you can open a
+content pack with the hotspot carried in as context.
+
 ## 4. Data
 
 Everything lives in `localStorage` under `ym_studio_v1`. Clearing browser
@@ -776,35 +828,3 @@ The banned-word library is a review aid, not legal advice. A hit does not
 mean something is illegal. Platform rules change often — verify against the
 current official source before publishing. Category benchmarks in Brand Core
 are experience-based reference values, not measurements from any dataset.
-
-### 3.23 Line icon system (`42-icons.js`)
-
-The 23 tabs used to be labelled with emoji. Emoji render differently per OS,
-ignore the theme, and look out of place next to a precision-tool UI. They are
-now inline SVG drawn to one spec: `viewBox 0 0 24 24`, `stroke-width:1.5`,
-`fill:none`, `stroke="currentColor"` — so an icon inherits the tab's colour
-and flips correctly in dark mode.
-
-No icon library is used. Lucide or Feather would mean shipping an extra file
-(or inlining a large sprite), which breaks the single-file, zero-dependency
-constraint. Twenty-three hand-drawn paths cost ~6 KB.
-
-The icons are drawn from the domain, not from a generic set:
-
-| Tab | Drawn as | Why not a generic icon |
-|---|---|---|
-| Competitor matrix | Four quadrants + four plotted points | That *is* the BCG matrix |
-| STP | Concentric rings + crosshair + highlighted arc | "Selecting" a segment |
-| Calendar | Hanger loops, grid, and a cross-day bar | Matches the date-range feature |
-| Workflow | Three linked nodes (local / LLM / human) | Mirrors the three step kinds |
-| Brand Core | Temple: pediment, columns, base | Culture → value → tone, stacked |
-| Timeline | Vertical axis with unevenly spaced nodes | Event *density* over time |
-
-**Status dots.** `🔴🟡⚠️` in table cells are replaced by
-`<i class="dot dot--ok">` CSS circles. They render identically everywhere,
-follow the theme, and add no payload. Report bodies keep their emoji on
-purpose — users copy those into documents, and a CSS class does not survive
-a copy-paste.
-
-**Fallback.** If `42-icons.js` fails to load, the original emoji stay and the
-tab bar never collapses to empty boxes.

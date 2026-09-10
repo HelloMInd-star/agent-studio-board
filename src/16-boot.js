@@ -113,7 +113,21 @@ function restoreAll(){
       el.addEventListener('input', function(){ state.hotspot[k] = el.value; save(); });
     }
   });
+  /* 热点决策：闸门三时滞参数回填（V45） */
+  ['win_h','copy_h','design_h','appr_h','ramp_h','para'].forEach(function(k){
+    var el = $('#hs_' + k);
+    if(el && state.hotspot[k] !== undefined){
+      el.value = state.hotspot[k];
+      el.addEventListener('input', function(){ state.hotspot[k] = el.value; save(); });
+      el.addEventListener('change', function(){ state.hotspot[k] = el.value; save(); });
+    }
+  });
   if($('#hs_topic') && $('#hs_topic').value) renderHotspot();
+
+  /* 热点决策：可预期热点池初始化（V45） */
+  if(typeof hsRenderPool === 'function'){
+    try{ hsRenderPool(); }catch(e){ if(typeof console !== 'undefined') console.warn('hotpool init', e); }
+  }
 
   /* 调研方案：模板 chips + 回填 */
   var rt = $('#rsTpls');

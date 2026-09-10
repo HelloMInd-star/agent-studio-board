@@ -226,7 +226,6 @@ a:hover{text-decoration:underline;}
       <a href="#timeline">🕐 品牌轨迹</a>
       <a href="#assets">🎨 品牌资产</a>
       <a href="#settings">⚙️ 系统设置</a>
-      <a href="#icons">✏️ 线性图标</a>
     </div>
     <div class="mgroup">
       <div class="mgroup__t">附录</div>
@@ -238,7 +237,7 @@ a:hover{text-decoration:underline;}
   <main class="mmain">
     <div class="mhero">
       <h1>使用手册</h1>
-      <p>24 个功能模块，每个都写清楚<b>解决什么问题、怎么用、注意什么</b>。
+      <p>16 个功能模块，每个都写清楚<b>解决什么问题、怎么用、注意什么</b>。
       左侧目录可跳转，滚动时会自动高亮当前章节。</p>
     </div>
 
@@ -419,8 +418,8 @@ a:hover{text-decoration:underline;}
       <h2><span class="ico">📡</span>热点决策<span class="mtag is-done">方法论层</span></h2>
       <div class="mflow" data-flow="hotspot">
         <div class="mflow__hd">用户流程</div>
-        <div class="mflow__steps"><span class="mfl__step">描述这个热点</span><span class="mfl__arrow">→</span><span class="mfl__step">五维打分</span><span class="mfl__arrow">→</span><span class="mfl__step">敏感话题检测（8 类）</span><span class="mfl__arrow">→</span><span class="mfl__step">综合分 + 四档建议</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">送去内容体检</span></div>
-        <div class="mflow__note">它回答「该不该跟」，不做事实核查——敏感话题会一票否决。</div>
+        <div class="mflow__steps"><span class="mfl__step">热点池选节点 / 粘贴突发热点</span><span class="mfl__arrow">→</span><span class="mfl__step">五道闸门</span><span class="mfl__arrow">→</span><span class="mfl__step">建议姿态 + 事前验尸</span><span class="mfl__arrow">→</span><span class="mfl__step">选动作（放弃 / 轻量 / 追踪 / 肯定跟）</span><span class="mfl__arrow">→</span><span class="mfl__step">记入台账</span><span class="mfl__arrow">→</span><span class="mfl__step">开内容包 / 送去体检</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">事后回填结果</span></div>
+        <div class="mflow__note">它回答「该不该跟、怎么跟」，不做事实核查——红线命中会一票否决。</div>
       </div>
       <p>判断<b>该不该跟热点</b>，而不是"热点是真是假"。</p>
       <div class="mnote is-warn">
@@ -428,23 +427,130 @@ a:hover{text-decoration:underline;}
         且说错了要负法律责任。而营销翻车 90% 不是因为热点是假的，
         是<b>热点是真的但不该跟</b>（灾难、逝者、社会悲剧）。
       </div>
-      <h3>五维打分</h3>
+
+      <h3>入口：可预期热点池（40 个节点）</h3>
+      <p>热点分两类，做法完全不同：</p>
       <div class="mtable">
         <table>
-          <tr><th>维度</th><th>权重</th><th>问什么</th></tr>
-          <tr><td>相关性</td><td>25</td><td>与品牌/品类关联度</td></tr>
-          <tr><td>风险度</td><td>25</td><td>分越高越安全</td></tr>
-          <tr><td>时效性</td><td>20</td><td>还能火多久</td></tr>
-          <tr><td>品牌契合</td><td>15</td><td>与调性冲突吗</td></tr>
-          <tr><td>转化潜力</td><td>15</td><td>能带货吗</td></tr>
+          <tr><th>类型</th><th>举例</th><th>本工具做法</th></tr>
+          <tr><td>突发型</td><td>塌房 / 事故 / 突然爆梗</td><td>无法预测，只能<b>手动粘贴评估</b></td></tr>
+          <tr><td>可预期型</td><td>春节 / 618 / 开学季 / 颁奖季</td><td><b>内置节点池</b>，自动排到时间轴上</td></tr>
         </table>
       </div>
-      <h3>两个关键机制</h3>
+      <div class="mnote">
+        <b>为什么不做"实时热点雷达"</b>：突发热点需要抓取 API，会破坏「零依赖、本地运行」的底线。
+        更要命的是——<b>等你发现、评估、出物料，窗口早就关了</b>。
+        而可预期热点提前一年就确定，可以提前准备，这才是本工具（排期 / 工作流 / 内容包）真正能帮上忙的地方。
+      </div>
+      <p>节点池按<b>距今天数</b>自动分四档，并给出"该准备了"的提前量：</p>
+      <div class="mtable">
+        <table>
+          <tr><th>状态</th><th>判定</th><th>含义</th></tr>
+          <tr><td>进行中</td><td>距今 ≤ 3 天</td><td>黄金期，内容应已在投放</td></tr>
+          <tr><td>该准备了</td><td>距今 ≤ 提前量</td><td>筹备与预热窗口</td></tr>
+          <tr><td>还早</td><td>距今 &gt; 提前量</td><td>可先记入排期</td></tr>
+          <tr><td>已过</td><td>已过去 3 天以上</td><td>自动指向明年</td></tr>
+        </table>
+      </div>
+      <p>每个节点带三样内容：<b>通常怎么赢</b>（典型打法）、<b>容易翻车</b>（该节点的高频坑）、<b>情绪倾向</b>。
+      点「载入评估 →」把节点带入下方表单。</p>
+
+      <h3>五道闸门（不是加权打分）</h3>
+      <div class="mnote is-warn">
+        <b>为什么弃用五维加权打分</b>：热点是<b>负偏态决策</b>——收益有上限（多一波声量），
+        损失无下限（品牌翻车不可逆）。期望值算出来是正的，但尾部风险能吃掉十次成功。
+        加权打分会用<b>虚假精确感</b>掩盖尾部风险。闸门是"能不能碰"的定性判断，不是"值多少分"。
+        原五维打分降级为背景信息，不再输出总分。
+      </div>
+      <div class="mtable">
+        <table>
+          <tr><th>闸门</th><th>回答什么</th><th>机制</th></tr>
+          <tr><td>① 红线筛查</td><td>能不能碰</td><td>🔴 禁止触碰一票否决；🟡 谨慎降档；🟢 正常流程</td></tr>
+          <tr><td>② 品牌契合</td><td>跟我的价值观一致吗</td><td>读品牌内核的<b>品类禁忌</b>，检测冲突</td></tr>
+          <tr><td>③ 时滞 vs 窗口</td><td>还来不来得及</td><td>纯算术：<b>剩余窗口 − 响应时滞 − 起量时间</b></td></tr>
+          <tr><td>④ 参与姿态</td><td>用多重的力度参与</td><td>五档：沉默 / 轻量跟随 / 借势改写 / 重度绑定 / 反向输出</td></tr>
+          <tr><td>⑤ 事前验尸</td><td>如果翻车，最可能因为什么</td><td>7 项 checklist 逐项排除</td></tr>
+        </table>
+      </div>
+
+      <h4>闸门三：唯一能真算的一关</h4>
+      <p>绝大多数热点不是"不该追"，是<b>来不及</b>。大家都在纠结要不要追，没人算最快多久能出物料。</p>
+      <div class="mnote">
+        有效窗口 ＝ 热点剩余窗口 － 响应时滞（文案＋设计＋审批，可选串行或并行）－ 发布后起量时间<br>
+        <b>结果为负即"参与不了"</b>——不是"建议观望"，是这个热点你根本挤不进去。
+        这把"感觉来不及"变成了"确实来不及 6 小时"。
+      </div>
+
+      <h4>闸门四：追不追是个错误的二选一</h4>
+      <p>热点参与不是布尔值，是个<b>梯度</b>。五档姿态各有成本、风险与适用条件：</p>
+      <div class="mtable">
+        <table>
+          <tr><th>姿态</th><th>成本</th><th>风险</th><th>适用</th></tr>
+          <tr><td>沉默</td><td>零</td><td>零</td><td>红线命中 / 价值冲突 / 明显来不及</td></tr>
+          <tr><td>轻量跟随</td><td>极低</td><td>低</td><td>时间紧 / 预算小 / 不确定值不值</td></tr>
+          <tr><td>借势改写</td><td>中</td><td>中</td><td>价值契合 + 有时间做内容</td></tr>
+          <tr><td>重度绑定</td><td>高</td><td>高</td><td>强相关 + 窗口足 + 预算到位</td></tr>
+          <tr><td>反向输出</td><td>中高</td><td>很高</td><td>仅 🟢 类 + 极强表达把控力</td></tr>
+        </table>
+      </div>
+      <div class="mnote is-warn">
+        <b>"不追"常常不是最优解，"轻量跟随"才是</b>——用近乎零的成本拿存在感，不押品牌资产。
+        这跟本工具其他模块的气质一致：<b>克制是特性</b>。但克制不是"不做"，是"选最小的那档做"。
+      </div>
+
+      <h4>闸门五：事前验尸（Pre-mortem）</h4>
+      <p>不问"我们会成功吗"，而是问：<b>假设一周后翻车了，最可能的三个原因是什么？</b></p>
+      <p>人预测失败时的判断力显著强于预测成功。7 项逐一排除：热点反转 / 关联人出负面 /
+      冒犯某群体 / 竞品已占位 / 审批太慢 / 用力过猛 / 价值观冲突。</p>
+
+      <h3>反向角度：只在 🟢 类开放</h3>
+      <p>追热点最大的问题不是慢，是<b>同质化</b>——所有人说一样的话。真正的差异化是角度，不是速度。
+      工具提供三种角度对照：<b>主流叙事</b>（要避开的）、<b>反向切入</b>（解构质疑）、<b>侧向迁移</b>（把情绪迁移到自己产品）。</p>
+      <div class="mnote is-warn">
+        <b>硬约束</b>：反向角度只在 🟢 一般类热点提供。<b>🟡🔴 类一律不提供</b>——
+        在敏感话题上"抖机灵"极易演变为冒犯。这个功能本身很妙，但没有约束就是定时炸弹。
+      </div>
+
+      <h3>决策动作</h3>
+      <div class="mtable">
+        <table>
+          <tr><th>动作</th><th>含义</th></tr>
+          <tr><td>放弃</td><td>归档，不投入任何资源</td></tr>
+          <tr><td>轻量跟随</td><td>最低成本拿曝光，不押品牌资产</td></tr>
+          <tr><td>继续追踪</td><td>进观察池，设定复评条件后暂缓</td></tr>
+          <tr><td>肯定跟</td><td>投入资源，走完整内容流程</td></tr>
+        </table>
+      </div>
+
+      <div class="mnote">
+        <b>动作不是终点，是台账的起点</b>：点任意一个动作，本次决策（热点、结论、姿态、动作）
+        会记入<b>热点台账</b>，事后可回填实际结果。
+      </div>
+
+      <h3>热点台账：让「追得对不对」有答案</h3>
+      <p>「追不追」是当下决策，但「追得对不对」只有事后才知道。没有回填，每次决策都从零开始，
+      无法形成<b>「我们品牌适合追什么」</b>的规律——那才是长期值钱的东西。</p>
+      <p>点「回填结果」记录实际效果（曝光 / 转化 / 有无负面）并写一句复盘。台账会显示
+      <b>已回填 N 条</b>，并作为第 8 类记录（🔥 热点追踪）出现在<b>品牌轨迹</b>里。</p>
+      <div class="mnote is-warn">
+        <b>样本不足（&lt; 5 条）不统计规律</b>——沿用本产品一贯原则：宁可少说，
+        也不说一个自己都不信的数字。3 条记录推出的「我们擅长 X」是噪声冒充洞察。
+        满 5 条后才会显示各动作的实际分布。
+      </div>
+      <p>非红线热点还可点「📦 开内容包生产」，把热点语境带入内容包，直接开始生产；
+      或点「📝 送去内容工厂」做合规体检。</p>
+
+      <h3>天花板不可逾越</h3>
+      <p>系统推荐姿态受<b>多重天花板</b>约束，且任何"提升"规则都不得突破它：</p>
       <ul>
-        <li><b>高危一票否决</b>：8 类敏感话题（灾难/名人离世/时政/性别对立等）直接判"不建议跟进"</li>
-        <li><b>矛盾校验</b>：如果你给"某地地震"的风险项打了 5 分（自认为安全），
-        工具会指出冲突："你给风险维度打了 5 分，但描述中含高危话题词，请重新确认"——<b>不会默默接受矛盾输入</b></li>
+        <li>红线命中 → 强制沉默，不参与后续任何评估</li>
+        <li>🟡 谨慎类 → 最高只到「轻量跟随」</li>
+        <li>检测到品类禁忌冲突 → 最高只到「轻量跟随」</li>
+        <li>有效窗口 ≤ 0 → 强制沉默</li>
+        <li>相关性或契合 ≤ 2 分 → 最高只到「轻量跟随」</li>
+        <li><b>反向输出永不作为系统自动推荐</b>——只作对照与可选提示</li>
       </ul>
+      <p>这六条已通过 180 种输入组合的不变量穷举验证。</p>
     </section>
 
     <section class="msec" id="persona">
@@ -1058,7 +1164,7 @@ a:hover{text-decoration:underline;}
         <div class="mflow__steps"><span class="mfl__step">在各模块正常产出</span><span class="mfl__arrow">→</span><span class="mfl__step">记录自动沉淀</span><span class="mfl__arrow">→</span><span class="mfl__step">这里按日汇总成时间线</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">按类型筛选 / 搜索 / 导出</span></div>
         <div class="mflow__note">只读聚合：不新增数据，只把散落各处的记录显性化。</div>
       </div>
-      <p>产品里一直存在 <b>7 类记录</b>，但它们各自藏在模块内部、互相看不见。
+      <p>产品里一直存在 <b>8 类记录</b>，但它们各自藏在模块内部、互相看不见。
       品牌轨迹做的唯一一件事，就是把它们汇成一条时间线。</p>
       <div class="mtable">
         <table>
@@ -1070,10 +1176,11 @@ a:hover{text-decoration:underline;}
           <tr><td>⚙️ 执行记录</td><td>工作流每步的真实产出</td><td>营销工作流</td></tr>
           <tr><td>📝 生成留痕</td><td>历史生成内容</td><td>各生成模块</td></tr>
           <tr><td>💬 对话记录</td><td>与工作台的问答</td><td>Agent 工作台</td></tr>
+          <tr><td>🔥 热点追踪</td><td>每次热点决策的动作与事后回填结果</td><td>热点决策</td></tr>
         </table>
       </div>
       <h3>4 种时间格式归一</h3>
-      <p>这 7 类数据的时间戳用了 <b>4 种不同格式</b>（<code>YYYY-MM-DD</code>、
+      <p>这 8 类数据的时间戳用了 <b>4 种不同格式</b>（<code>YYYY-MM-DD</code>、
       <code>YYYY/M/D H:M:S</code>、ISO、以及<b>只有时分秒</b>），
       直接排序会乱。模块内部统一归一到 <code>YYYY-MM-DD</code> 后再按日分组、倒序排列。</p>
       <div class="mnote is-warn">
@@ -1160,30 +1267,6 @@ a:hover{text-decoration:underline;}
           <tr><td>📥 导入 JSON</td><td>恢复台账（会覆盖当前内容，导入前有二次确认）</td></tr>
         </table>
       </div>
-    </section>
-
-    <section class="msec" id="icons">
-      <h2><span class="ico">✏️</span>线性图标系统</h2>
-      <div class="mflow" data-flow="icons">
-        <div class="mflow__hd">设计原则</div>
-        <div class="mflow__steps"><span class="mfl__step">统一 24×24 画布</span><span class="mfl__arrow">→</span><span class="mfl__step">1.5px 描边</span><span class="mfl__arrow">→</span><span class="mfl__step">跟随 currentColor</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">自动适配深浅色</span></div>
-        <div class="mflow__note">不引外部图标库（Lucide / Feather 都要额外文件，破坏单文件零依赖）。</div>
-      </div>
-      <p>23 个 Tab 的图标由 emoji 换成了<b>手写线性 SVG</b>。原因是 emoji 在不同系统上长得不一样、不跟随主题色，
-      放在一个强调"确定性"的工具里显得不精确。</p>
-      <p>图标按<b>业务语义</b>重画，不是套通用图形：</p>
-      <div class="mgrid">
-        <div class="mcard"><div class="mcard__t">⚔️ 竞品矩阵</div><div class="mcard__d">四象限 + 4 个定位点——就是 BCG 本身</div></div>
-        <div class="mcard"><div class="mcard__t">🎯 STP</div><div class="mcard__d">同心环 + 准心 + 高亮弧，表示圈定人群</div></div>
-        <div class="mcard"><div class="mcard__t">📅 营销日历</div><div class="mcard__d">挂环 + 网格 + 跨天色条，呼应起止区间</div></div>
-        <div class="mcard"><div class="mcard__t">🔗 营销工作流</div><div class="mcard__d">三节点链，对应本地 / LLM / 人工三类步骤</div></div>
-        <div class="mcard"><div class="mcard__t">🏛️ 品牌内核</div><div class="mcard__d">神庙：顶檐 + 立柱 + 基座，隐喻三层结构</div></div>
-        <div class="mcard"><div class="mcard__t">🕐 品牌轨迹</div><div class="mcard__d">竖轴 + 疏密不同的节点，表示事件密度</div></div>
-      </div>
-      <p><b>状态圆点</b>：表格里的 🔴🟡⚠️ 换成了 CSS 圆点（<code>.dot--ok / warn / alert / signal</code>）。
-      好处是渲染一致、跟随主题、不占体积。</p>
-      <p><b>但报告正文里的 emoji 保留</b>——你复制走的内容里，CSS 类不会跟着走，换成圆点反而看不了了。</p>
-      <p><b>降级</b>：图标脚本万一加载失败，原来的 emoji 会留着，Tab 栏不会变成一片空白方块。</p>
     </section>
 
     <section class="msec" id="settings">

@@ -1034,10 +1034,28 @@
     <!-- ===== 热点决策 ===== -->
     <section class="panel" data-panel="hotspot">
       <h2 class="panel__hd">📡 热点决策</h2>
-      <p class="panel__sub">判断一个热点该不该跟、怎么跟。<b>做决策辅助，不做事实核查</b>——营销翻车多半不是因为热点是假的，而是热点是真的但不该跟。</p>
+      <p class="panel__sub">判断一个热点该不该跟、怎么跟。<b>做决策辅助，不做事实核查</b>——营销翻车多半不是因为热点是假的，而是热点是真的但不该跟。<br>采用<b>五道闸门</b>而非加权打分：热点是负偏态决策，收益有上限、损失无下限，打分只会用虚假精确感掩盖尾部风险。</p>
+
+      <div class="card">
+        <div class="card__hd">📅 可预期热点池 <span class="eyebrow" style="margin-left:auto">入口 · 内置 40 个节点</span></div>
+        <p class="hint">突发热点（塌房/事故/爆梗）只能靠抓取 API 发现，而抓取会破坏本地运行的底线——<b>更要命的是等你发现、评估、出物料，窗口已经关了</b>。<br>可预期热点提前一年就确定，因此可以提前准备，这才是本工具真正能帮上忙的地方。点「载入评估 →」把节点带入下方。</p>
+        <div class="row" style="margin:10px 0">
+          <select id="hsPoolFlt" class="inp" style="max-width:190px" onchange="hsRenderPool()">
+            <option value="all">近期节点（进行中 + 该准备）</option>
+            <option value="live">仅进行中</option>
+            <option value="prepare">仅该准备</option>
+            <option value="future">全部含远期</option>
+            <option value="festival">传统节日</option>
+            <option value="ecom">电商节点</option>
+            <option value="season">行业档期</option>
+          </select>
+        </div>
+        <div id="hsPool"></div>
+      </div>
 
       <div class="card">
         <div class="card__hd">📝 热点信息 <span class="eyebrow" id="hsStat" style="margin-left:auto"></span></div>
+        <div id="hs_poolbg"></div>
         <label class="f"><span>热点描述</span>
           <input type="text" id="hs_topic" placeholder="例：某明星官宣新代言，全网热议"></label>
         <label class="f"><span>你计划怎么跟（可留空）</span>
@@ -1045,7 +1063,33 @@
       </div>
 
       <div class="card">
-        <div class="card__hd">🎚️ 五维自评</div>
+        <div class="card__hd">⏱️ 闸门三 · 时滞 vs 窗口 <span class="eyebrow" style="margin-left:auto">唯一能真算的一关</span></div>
+        <p class="hint">绝大多数热点不是「不该追」，是<b>来不及</b>。大家都在纠结要不要追，没人算最快多久能出物料。填下面几项，工具会算出你<b>真实还剩多少有效窗口</b>。</p>
+        <div class="hsgrid">
+          <label class="f"><span>热点剩余窗口（小时）</span>
+            <input type="number" id="hs_win_h" value="36" min="1" max="720" step="1">
+            <small class="f__hint">这个热点大约还能火多久</small></label>
+          <label class="f"><span>文案耗时（小时）</span>
+            <input type="number" id="hs_copy_h" value="4" min="0" max="168" step="1"></label>
+          <label class="f"><span>设计耗时（小时）</span>
+            <input type="number" id="hs_design_h" value="8" min="0" max="168" step="1"></label>
+          <label class="f"><span>审批耗时（小时）</span>
+            <input type="number" id="hs_appr_h" value="12" min="0" max="168" step="1"></label>
+          <label class="f"><span>发布后起量（小时）</span>
+            <input type="number" id="hs_ramp_h" value="8" min="0" max="168" step="1">
+            <small class="f__hint">内容发出到真正跑起来需要多久</small></label>
+          <label class="f"><span>环节关系</span>
+            <select id="hs_para" class="inp">
+              <option value="0">串行（文案→设计→审批依次进行）</option>
+              <option value="1">并行（三环节同时推进，取最长项）</option>
+            </select></label>
+        </div>
+        <p class="hint" style="margin-top:8px">有效窗口 ＝ 剩余窗口 － 响应时滞 － 起量时间。<b>结果为负即参与不了</b>，不是「建议观望」。</p>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">🎚️ 五维自评 <span class="eyebrow" style="margin-left:auto">背景信息 · 不参与加权</span></div>
+        <p class="hint">原「总分」已弃用——热点是负偏态决策，加权打分会用虚假精确感掩盖尾部风险。以下自评仅作背景参考。</p>
         <div class="hsgrid">
           <label class="f hsslider"><span>🎯 相关性（1-5）<b class="hsv" id="hs_rel_v">3</b></span>
             <input type="range" id="hs_rel" min="1" max="5" step="1" value="3"
