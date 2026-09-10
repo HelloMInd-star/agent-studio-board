@@ -132,7 +132,7 @@ var TOOLMAP = [
 
   /* ---------- 执行层 ---------- */
   {id:'E-01', n:'营销日历', en:'Calendar', em:'🗓️', cat:'execute', catN:'执行', st:'done', tab:'cal',
-   d:'全年营销活动排期（已覆盖）', chart:'月视图日历',
+   d:'全年营销活动排期（已覆盖）', chart:'月/季度视图 / 甘特',
    w:'事件/日期/优先级/状态', o:'排期表 + 到期提醒', m:'排了不跟踪——日历的价值在状态更新'},
   {id:'E-02', n:'竞品对比矩阵', en:'Competitor Matrix', em:'⚔️', cat:'execute', catN:'执行', st:'done', tab:'strategy',
    d:'多维度竞品加权打分', chart:'加权排名表',

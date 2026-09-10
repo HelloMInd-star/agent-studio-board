@@ -158,29 +158,33 @@ Export to three formats:
 | Coze workflow | start/llm/plugin/end nodes + edges |
 | Dify DSL | `type:tool` vs `type:llm`, `error_strategy` mapping |
 
-Five local functions are registered as callable tools, so a step can
+Fourteen local functions are registered as callable tools, so a step can
 execute deterministically instead of asking an LLM:
 
-- `analyze_competitor_matrix`
-- `evaluate_market_segments`
-- `plan_marketing_calendar`
-- `check_content_health`
-- `generate_mind_map`
-- `synthesize_marketing_plan`
-- `calculate_pricing_strategy`
-- `evaluate_regional_markets`
-- `decide_hotspot_follow`
-- `build_research_plan`
-- `analyze_strategy_matrix`
-- `calc_marketing_finance`
-- `generate_mind_map`
-- `synthesize_marketing_plan`
-- `calculate_pricing_strategy`
-- `evaluate_regional_markets`
-- `decide_hotspot_follow`
-- `build_research_plan`
-- `analyze_strategy_matrix`
-- `calc_marketing_finance`
+| Index | Function | Module |
+|---|---|---|
+| 11 | `analyze_competitor_matrix` | 竞品对比矩阵 |
+| 12 | `evaluate_market_segments` | STP 市场选择 |
+| 13 | `plan_marketing_calendar` | 营销日历倒排 |
+| 14 | `check_content_health` | 内容体检评分 |
+| 15 | `generate_mind_map` | 思维导图 |
+| 16 | `synthesize_marketing_plan` | 方案合成 |
+| 17 | `calculate_pricing_strategy` | 定价策略 |
+| 18 | `evaluate_regional_markets` | 区域市场 |
+| 19 | `decide_hotspot_follow` | 热点决策 |
+| 20 | `build_research_plan` | 调研方案 |
+| 21 | `analyze_strategy_matrix` | 战略矩阵 |
+| 22 | `calc_marketing_finance` | 财务测算 |
+| 23 | `analyze_brand_core` | 品牌内核诊断 |
+| 24 | `check_brand_tone` | 品牌调性约束 |
+
+**Index alignment matters.** The workflow step stores `tool` as an index into
+the `TOOLS` dropdown, and `LOCAL_TOOLS[i]` resolves it. Indices 18–22 were
+previously defined only in `LOCAL_TOOLS` and absent from the dropdown, so
+those five were unselectable, and the two appended entries (brandcore,
+tonecheck) landed on 18/19 — silently dispatching **region** and **hotspot**
+instead. Fixed by declaring all fourteen in `TOOLS` up front; a test asserts
+11–24 resolve both ways.
 
 **Trace**: record each step's real output with status and notes, export as
 Markdown. Shows a workflow was executed, not just designed.
