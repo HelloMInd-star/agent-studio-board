@@ -775,12 +775,50 @@ a:hover{text-decoration:underline;}
       <h2><span class="ico">📦</span>内容包</h2>
       <div class="mflow" data-flow="packs">
         <div class="mflow__hd">用户流程</div>
-        <div class="mflow__steps"><span class="mfl__step">选一个场景包</span><span class="mfl__arrow">→</span><span class="mfl__step">按顺序跑步骤</span><span class="mfl__arrow">→</span><span class="mfl__step">⚡ 本地步真跑 / 🤖 AI 步粘贴</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">结果页出完成度与真实指标</span></div>
+        <div class="mflow__steps"><span class="mfl__step">选包→打开独立窗口</span><span class="mfl__arrow">→</span><span class="mfl__step">对话采集 3 题</span><span class="mfl__arrow">→</span><span class="mfl__step">⚡ 本地步真跑 / 🤖 AI 步粘贴</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">结果页出完成度与真实指标</span></div>
         <div class="mflow__note">标 ⚡ 的步骤由本地确定性函数执行，结果可复现；标 🤖 的步骤需要你把 AI 平台的产出粘贴回来。</div>
       </div>
       <p>4 个包，<b>全部免费</b>。它们的能力全部来自已有模块——
       此前以「工作流预设」的形式藏在下拉里，而首页 4 张卡片却写着「即将推出」。
       这里做的是<b>产品化，不是新建功能</b>。</p>
+
+      <h3>独立窗口：三个阶段</h3>
+      <p>点包卡片会打开一个<b>全屏窗口</b>，而不是在页面里塞更多东西。顶部有阶段指示器：</p>
+      <table>
+        <tr><th>阶段</th><th>做什么</th></tr>
+        <tr><td>1 采集</td><td>对话式问 3 个问题（品牌基准 / 本次目标 / 硬限制），答案注入后续每一步的提示词</td></tr>
+        <tr><td>2 执行</td><td>按步骤跑。⚡ 步骤点按钮即出真实数字；🤖 步骤给可复制提示词</td></tr>
+        <tr><td>3 成果</td><td>完成度环形图 + 指标卡 + 步骤分布，可导出 Markdown</td></tr>
+      </table>
+      <p>采集过的上下文会在执行页顶部显示；点「修改」可以回去重填。</p>
+
+      <h3>采集阶段的跑偏判断</h3>
+      <p>这是<b>纯前端规则判断，不调用任何 LLM</b>——没有网络请求、没有 token 消耗、不会幻觉，
+      适合结构化字段的采集。四类判断：</p>
+      <ul>
+        <li><b>空 / 纯表情 / 过短</b>——先过滤掉没有实际内容的输入</li>
+        <li><b>疑问句</b>——命中问号或疑问词即判跑偏，<b>但加了长度豁免</b></li>
+        <li><b>分字段黑名单</b>——每个问题有自己的词表，不共用</li>
+        <li><b>长度上限</b>——超过 40~80 字提示精简</li>
+      </ul>
+      <div class="mnote">
+        <b>为什么疑问句要加长度豁免</b><br>
+        朴素正则会把「我们的目标人群是 25-35 岁都市白领？」判成提问——但它其实是有效回答，
+        只是句末带了个问号。所以规则改成：<b>只有 15 字以内</b>的疑问句才算真提问。
+        同理，黑名单按字段隔离，避免问「行业」时用户提到「竞品」就被误判。
+      </div>
+      <p><b>容忍机制</b>：连续 2 次跑偏才会提示「也可以直接跳过」，且每个可跳过的题都常驻「跳过」出口——
+      判断错了要能立刻绕开，而不是把用户困住。</p>
+      <div class="mnote">
+        <b>边界：规则只用于采集，不用于粘贴</b><br>
+        这套判断<b>只服务「问一个问题、等一个短答案」</b>的场景（第 1 阶段）。
+        执行阶段那些「把 AI 产出粘回来」的步骤不适用——用户粘的是几百字正文，
+        用疑问句/黑名单判断它对不对没有意义。那里改用<b>可复制提示词 + 字数提示</b>解决「卡住」的问题。
+      </div>
+
+      <h3>AI 步骤的引导</h3>
+      <p>每个 🤖 步骤会显示一段<b>可复制的提示词</b>，其中已经带上了你刚才填的品牌、目标与限制。
+      复制到任意 AI 平台跑完，粘回下方即可。下方有字数提示：少于 30 字会提醒「可能还没跑完」。</p>
 
       <h3>本地函数优先</h3>
       <p>原有的 4 个预设几乎全是 LLM 步骤（小红书包原本<b>一个本地函数都没有</b>），
@@ -1241,3 +1279,40 @@ a:hover{text-decoration:underline;}
 </script>
 </body>
 </html>
+    <h2 id="packwiz">内容包独立窗口</h2>
+    <p>点首页任意一张内容包卡片，会打开一个<strong>全屏窗口</strong>，分三段走完：开始前问几句 → 分步执行 → 看本次成果。</p>
+
+    <div class="mfl">
+      <div class="mfl__step">选一个内容包 →</div><div class="mfl__arrow">→</div>
+      <div class="mfl__step">回答 2-3 个设定题</div><div class="mfl__arrow">→</div>
+      <div class="mfl__step">按步骤执行</div><div class="mfl__arrow">→</div>
+      <div class="mfl__step is-out">查看本次成果</div>
+    </div>
+    <p class="mfl__note">答案会注入后面每一步，所以同一个包在不同设定下，提示语是不一样的。</p>
+
+    <h3>开始前为什么要先问几句</h3>
+    <p>内容包是通用流程，但你的品牌、目标、限制是具体的。先问清楚，后续每一步的提示词才会带上这些信息——比如"基于 Y.Mine 手工香薰、目标是涨粉、不提折扣"生成的标题，和空白设定下生成的完全不同。</p>
+    <p>每题都可以<strong>跳过</strong>，答案不会阻塞流程。</p>
+
+    <h3>输入校验的规则</h3>
+    <table>
+      <tr><th>情况</th><th>处理</th></tr>
+      <tr><td>空输入 / 纯表情 / 少于 2 字</td><td>提示补充</td></tr>
+      <tr><td>短疑问句（如"美妆？"）</td><td>判定为在提问，拉回本题</td></tr>
+      <tr><td><strong>长句带问号</strong></td><td><strong>通过</strong>——确认语气的有效回答不该被拦</td></tr>
+      <tr><td>命中该字段的黑名单词</td><td>拉回本题</td></tr>
+      <tr><td>要求填数字却没数字</td><td>提示补数字</td></tr>
+      <tr><td>要求简短却超 60 字</td><td>提示精简</td></tr>
+    </table>
+
+    <div class="tip">
+      <b>为什么中间步骤不校验内容质量</b><br>
+      执行阶段让你粘贴的是 AI 跑完的产出，几百字。规则判断无法衡量它好不好——硬判只会误伤正常的长文本。
+      所以中间步骤<strong>只检查有没有填</strong>，质量由你判断。这不是偷懒，是刻意的边界。
+    </div>
+
+    <div class="note">
+      <b>关于连续答偏</b><br>
+      第 1 次答偏给出柔和提示（💡），第 2 次才加强语气（⚠️），并且任何时候都能点「跳过这题」。
+      不阻塞、不指责。
+    </div>

@@ -243,6 +243,9 @@ renderScoreTrend();
 if (typeof renderSettings === 'function') renderSettings();
 /* 内容包（38）：渲染包列表，并恢复上次正在跑的包 */
 if (typeof renderPacks === 'function') { renderPacks(); renderPackRun(); }
+/* 首页内容包卡片 → 打开独立窗口（39-packwiz）
+   必须放在 IIFE 内：pkBindHomeCards 定义在闭包里，外面访问不到 */
+if (typeof pkBindHomeCards === 'function') pkBindHomeCards();
 if (state.startTab && state.startTab !== 'guide' && typeof switchTab === 'function') {
   switchTab(state.startTab);
 }

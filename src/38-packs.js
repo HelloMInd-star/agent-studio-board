@@ -252,7 +252,11 @@ function renderPacks(){
         '<button class="btn btn--sm ' + (doneN ? 'btn--ghost' : 'btn--primary') + '">' +
           (doneN ? '继续' : '开始') + ' →</button>' +
       '</div>';
-    el.querySelector('button').onclick = function(){ pkOpen(p.id); renderPacks(); renderPackRun(); };
+    el.querySelector('button').onclick = function(){
+      // 独立窗口：全屏模态，先采集再执行（39-packwiz）
+      if(typeof pkOpenModal === 'function') pkOpenModal(p.id);
+      else { pkOpen(p.id); renderPacks(); renderPackRun(); }
+    };
     host.appendChild(el);
   });
   var back = $('#pkBack'); if(back) back.style.display = cur ? '' : 'none';
@@ -260,7 +264,9 @@ function renderPacks(){
 
 /* ---------- 视图 2：执行页 ---------- */
 function renderPackRun(){
-  var wrap = $('#packRun'); if(!wrap) return;
+  // pkHostEl：39-packwiz 的全屏模态会把容器指过来，否则渲染回 Tab 内
+  var wrap = (typeof pkHostEl !== 'undefined' && pkHostEl) ? pkHostEl : $('#packRun');
+  if(!wrap) return;
   var id = pkCur(), p = pkPack(id);
   if(!p){
     wrap.innerHTML = '<p class="hint">从上方选一个内容包开始。每个包都标明哪几步能本地真跑。</p>';
@@ -310,12 +316,29 @@ function renderPackRun(){
       box.appendChild(tip);
     }
 
+    // AI 步骤：给可复制提示词（39-packwiz）
+    if(!isLocal && typeof pkAiHelpHtml === 'function'){
+      var hp = document.createElement('div');
+      hp.innerHTML = pkAiHelpHtml(p, sp, pkCtx ? pkCtx(id) : null, i);
+      box.appendChild(hp);
+    }
+
     var ta = document.createElement('textarea');
     ta.className = 'pkstep__out';
-    ta.placeholder = isLocal ? '点下方按钮自动填充，也可手工粘贴' : (sp.ph || '粘贴这一步的产出…');
+    ta.placeholder = isLocal ? '点下方按钮自动填充，也可手工粘贴' : (sp.ph || '把上一步 AI 的产出粘贴到这里…');
     ta.value = rec.out || '';
-    ta.oninput = function(){ rec.out = ta.value; save(); };
+    ta.oninput = function(){
+      rec.out = ta.value; save();
+      if(!isLocal && typeof pkCountUpdate === 'function') pkCountUpdate(i, ta);
+    };
     box.appendChild(ta);
+
+    // 字数提示（仅 AI 步骤）
+    if(!isLocal && typeof pkCountHtml === 'function'){
+      var cw = document.createElement('div');
+      cw.innerHTML = pkCountHtml(i);
+      box.appendChild(cw);
+    }
 
     var row = document.createElement('div');
     row.className = 'row';
@@ -387,6 +410,30 @@ function renderPackRun(){
     wrap.appendChild(box);
   });
 
+  // 绑定「复制提示词」
+  Array.prototype.forEach.call(wrap.querySelectorAll('.pkhelp__copy'), function(b){
+    b.onclick = function(){
+      var i = parseInt(b.getAttribute('data-idx'), 10);
+      var pre = document.getElementById('pkPrompt' + i);
+      if(!pre){ return; }
+      var txt = pre.textContent || '';
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(txt).then(
+          function(){ toast('提示词已复制，去 AI 平台粘贴运行'); },
+          function(){ toast('复制失败，请手动选中'); }
+        );
+      }else{
+        toast('请手动选中复制');
+      }
+    };
+  });
+  // 初始化字数提示（仅 AI 步骤）
+  var allTa = wrap.querySelectorAll('.pkstep__out');
+  p.steps.forEach(function(sp, i){
+    if(sp.kind) return;
+    if(typeof pkCountUpdate === 'function' && allTa[i]) pkCountUpdate(i, allTa[i]);
+  });
+
   var exp = document.createElement('div');
   exp.className = 'row';
   var be = document.createElement('button');
@@ -396,7 +443,8 @@ function renderPackRun(){
   exp.appendChild(be);
   wrap.appendChild(exp);
 
-  renderPackResult();
+  // 模态模式下由 39-packwiz 决定结果区位置，这里不自动渲染
+  if(!(typeof pkHostEl !== 'undefined' && pkHostEl)) renderPackResult();
 }
 
 /* scan / tonecheck 需要文本入参：直接调底层函数生成报告 */
@@ -440,7 +488,10 @@ function pkRunTextKind(kind, txt){
 
 /* ---------- 视图 3：结果页（可视化） ---------- */
 function renderPackResult(){
-  var host = $('#packResult'); if(!host) return;
+  // pkResEl：39-packwiz 全屏模态的专用结果容器（与执行容器 pkHostEl 分离，避免互相覆盖）
+  var host = (typeof pkResEl !== 'undefined' && pkResEl) ? pkResEl
+           : ((typeof pkHostEl !== 'undefined' && pkHostEl) ? pkHostEl : $('#packResult'));
+  if(!host) return;
   var id = pkCur(), p = pkPack(id);
   if(!p){ host.innerHTML = ''; return; }
   var st = pkState()[id] || {steps:[]};

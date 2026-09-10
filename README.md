@@ -573,6 +573,51 @@ health 90/100, content score 64/100, **tone 0/25** — the same copy scored
 against a value brand passes. The brand→copy constraint holds through the
 pack pipeline.
 
+
+### 3.17 Pack wizard: standalone window + rule-based intake (packwiz)
+
+**Three-stage full-screen modal.** Opening a pack no longer dumps six steps
+into the page. A full-screen window carries a stage indicator
+(`1 采集 → 2 执行 → 3 成果`):
+
+1. **Intake** — three conversational questions (brand baseline / goal /
+   hard limits). Answers are injected into every downstream prompt.
+2. **Execution** — ⚡ steps run locally; 🤖 steps ship a copyable prompt.
+3. **Result** — completion ring, metric cards, step distribution, Markdown export.
+
+Collected context is shown as a bar at the top of the execution stage with an
+inline "修改" shortcut back to stage 1.
+
+**Off-topic detection is rule-based — no LLM.** Zero network, zero tokens,
+no hallucination. Four checks, each with a specific anti-false-positive
+fix:
+
+| Check | Naive version would… | Actual rule |
+|---|---|---|
+| Empty / emoji-only / <2 chars | pass on symbols | rejected up front |
+| Interrogative | flag *any* trailing `？` | **length豁免**: only <15 chars counts as a question |
+| Blacklist | one global word list | **per-field** lists — mentioning "竞品" while answering "行业" is fine |
+| Max length | none | 40–80 chars depending on field |
+
+The length exemption matters: `我们的目标人群是 25-35 岁都市白领？` is a
+valid answer with a trailing question mark. A naive regex rejects it.
+
+**Tolerance.** Two consecutive off-topic hits surface "也可以直接跳过";
+every skippable field keeps a permanent skip exit. A wrong judgement must be
+escapable, not a dead end.
+
+**Boundary: rules govern intake, not paste-back.** The checker serves
+"ask one question, expect one short answer" (stage 1). It is deliberately
+*not* applied to execution-stage paste boxes, where users return 300+
+characters of LLM prose — interrogative/blacklist heuristics are meaningless
+there. Those steps instead get a copyable prompt (pre-filled with the
+collected brand/goal/limits) plus a live character counter that warns below
+30 chars.
+
+**Landing cards are now real entries.** The four home-page cards previously
+read 即将推出 while the packs were already runnable. They now carry
+`data-pack` and open the corresponding pack directly.
+
 ---
 
 ## 4. Data
@@ -590,3 +635,33 @@ no server and sees nothing.
 The banned-word library is a review aid, not legal advice. A hit does not
 mean something is illegal. Platform rules change often — verify against the
 current official source before publishing.
+### 3.17 内容包独立窗口（39-packwiz）
+
+内容包从 Tab 内列表升级为**全屏独立窗口**，三段式：
+
+```
+① 启动前：对话式采集（2-3 题，规则校验）
+      ↓ 答案注入后续步骤
+② 执行中：分步执行，本地函数真跑
+      ↓
+③ 结果页：完成度环 + 指标卡 + 步骤分布
+```
+
+**关键设计：三段的校验方式不同，这是刻意的边界**
+
+| 阶段 | 校验 | 原因 |
+|---|---|---|
+| 启动采集 | 规则校验（疑问句/黑名单/长度/正向特征） | 答案是结构化短字段，规则适用 |
+| 中间步骤 | 只查非空 | 用户粘回的是几百字 AI 产出，规则无法判断质量，硬判只会误伤 |
+| 结果页 | 只统计完成度 | AI 产出是自由文本，不包装成图表 |
+
+**规则校验相对朴素版做了 4 处改良**（都是实测会误判才加的）：
+
+1. **疑问句加长度豁免**：`isQuestion && text.length < 15` 才算跑偏。
+   否则"目标人群是 25-35 岁白领？"这种确认语气的有效回答会被误拦。
+2. **黑名单分字段**：每个字段配自己的黑名单。全局黑名单会让
+   "我们和竞品一样做美妆"在行业题上被误判。
+3. **正向特征**：不只判断"不是什么"，也判断"像什么"（预算题要求含数字）。
+4. **连续 2 次才强拉**：第 1 次 💡 软提示，第 2 次才 ⚠️，且始终给跳过出口。
+
+**明确不做**：LLM 意图识别（方案二）。现阶段规则覆盖率够，加 LLM 只引入延迟与不确定性。触发条件：出现明显的规则误判反馈。
