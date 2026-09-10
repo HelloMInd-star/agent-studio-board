@@ -1375,6 +1375,44 @@
         <p class="hint">💡 快照机制早已存在，但图上没画过迁移。这里按时间排序画出箭头与方向判定（进入更优 / 恶化 / 份额提升 / 增长提速）。</p>
         <div class="chartwrap" id="simTrackChart"></div>
       </div>
+
+      <div class="card">
+        <div class="card__hd">4️⃣ 决策树与期望值：敢不敢赌，算出来</div>
+        <p class="hint">💡 <b>EV ＝ Σ（概率 × 收益）</b>，减去投入就是净期望值。<b>概率是你估的</b>——这一点不掩饰，工具做的是把你估的数变成可见后果，不是替你预测未来。</p>
+        <div class="grid4">
+          <label class="f"><span>投入成本（万元）</span><input type="number" id="dtCost" step="1" oninput="dtOnInput()" placeholder="200"></label>
+          <div style="display:flex;align-items:flex-end"><button class="btn" onclick="dtAddBranch()">➕ 增加结果分支</button></div>
+          <div style="display:flex;align-items:flex-end"><span class="ph">最多 5 个分支</span></div>
+          <div></div>
+        </div>
+        <div id="dtRows" style="margin-top:10px"></div>
+        <div class="grid4" style="margin-top:10px">
+          <label class="f" style="flex-direction:row;align-items:center;gap:8px"><span>评估调研价值</span><input type="checkbox" id="dtRsOn" onchange="dtOnInput()"></label>
+          <label class="f"><span>调研费用（万元）</span><input type="number" id="dtRsCost" step="1" oninput="dtOnInput()" placeholder="20"></label>
+          <label class="f"><span>成功率提升（百分点）</span><input type="number" id="dtRsImp" step="1" oninput="dtOnInput()" placeholder="30"></label>
+          <div></div>
+        </div>
+        <p class="hint">💡 勾选后可算<b>信息价值（VOI）</b>：先花一笔调研费把最好结果的把握提高，看划不划算——这就是调研预算的定价依据。</p>
+        <div id="dtOut" style="margin-top:12px"></div>
+        <div class="chartwrap" id="dtChart"></div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">5️⃣ 学习曲线：多久能追平对手</div>
+        <p class="hint">💡 <b>累计产量每翻一倍，单位成本降到原来的「学习率」</b>。它回答的不是"能不能降本"，而是<b>"要再生产多少件才能追平，这段时间撑不撑得住"</b>——价格战能不能打，看的是这个。</p>
+        <div class="grid4">
+          <label class="f"><span>首件单位成本</span><input type="number" id="lcC1" step="0.01" oninput="lcOnInput()" placeholder="100"></label>
+          <label class="f"><span>学习率 %</span><input type="number" id="lcLr" step="1" oninput="lcOnInput()" placeholder="80"></label>
+          <label class="f"><span>当前累计产量（件）</span><input type="number" id="lcN" step="1" oninput="lcOnInput()" placeholder="1000"></label>
+          <label class="f"><span>对手单位成本</span><input type="number" id="lcRival" step="0.01" oninput="lcOnInput()" placeholder="70"></label>
+        </div>
+        <div class="grid4" style="margin-top:10px">
+          <label class="f"><span>目标单位成本（可选）</span><input type="number" id="lcTarget" step="0.01" oninput="lcOnInput()" placeholder="0"></label>
+          <div class="ph" style="align-self:flex-end">参考学习率：半导体 80% · 组装 85% · 定制 90% · 软件服务 95%</div>
+        </div>
+        <div id="lcOut" style="margin-top:12px"></div>
+        <div class="chartwrap" id="lcChart"></div>
+      </div>
     </section>
 
 

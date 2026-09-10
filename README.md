@@ -3,8 +3,8 @@
 **Define the brand → validate the market → set the strategy → produce the
 content → collect the result — entirely in your browser.**
 
-A local-first decision chain for brand and growth: **23 tabs (24 modules)**,
-**28 deterministic calculations** (17 of them registered as orchestrable
+A local-first decision chain for brand and growth: **24 tabs (25 modules)**,
+**33 deterministic calculations** (17 of them registered as orchestrable
 workflow tools), **70 marketing frameworks** rendered from 25 graphic
 skeletons, **5 SVG chart types**. No backend, no tracking, no login.
 
@@ -43,7 +43,7 @@ agent-studio-board/
 │   ├── manual.template.html # manual source
 │   ├── style.css            # all styles
 │   ├── MANIFEST.txt         # module index (regenerate when adding files)
-│   └── *.js                 # 38 modules, merged in the order below
+│   └── *.js                 # 43 modules, merged in the order below
 └── ym-marketing-patch.js    # optional patch for the legacy version
 ```
 
@@ -59,7 +59,7 @@ python3 build.py --check   # validate without writing
 **Merge order matters.** `build.py` holds the authoritative list; several
 modules must load before `16-boot.js` (which restores state and binds events)
 and some depend on others (e.g. `32-tonecheck` after `30-brandcore`,
-`28/29-frames*` before `27-toolmap`). The 38 modules by layer:
+`28/29-frames*` before `27-toolmap`). The 43 modules by layer:
 
 | Layer | Modules |
 |---|---|
@@ -653,7 +653,7 @@ A standalone 12-chapter document, opened from the top bar of every page:
 | 2 | Verified numbers — every count with how it was measured |
 | 3 | Boundaries: 7 things deliberately not built, 4 that were re-framed |
 | 4 | Six-layer architecture, plus an honest answer to "is this an agent?" |
-| 5 | The 38 source files grouped by layer |
+| 5 | The 43 source files grouped by layer |
 | 6 | Core algorithms (positional dimensions, the tone-0 case, sample-size guards) |
 | 7 | All 23 tabs / 6 groups |
 | 8 | Data design (`localStorage` shape, per-module keys) |
@@ -692,23 +692,6 @@ Design constraints, same as `37-quarter.js`:
 - `40-calview.js` *takes over* `calApplyView` / `calStep` by saving the
   previous implementation and calling it for the month/quarter cases,
   rather than copying that logic — so the two files cannot drift apart.
-
-### 3.22 Decision simulation (`44-sim.js`)
-
-The strategy matrix answers *where you are*. This module answers *what happens if*.
-
-| Block | Formula | What it actually tells you |
-|---|---|---|
-| Break-even | `Q* = F / (P − V)` | Break-even volume, **safety margin**, **operating leverage** (= contribution / profit: a leverage of 4.33 means a 10% volume swing moves profit ~43%) |
-| Tornado | ±10% per variable on `Q*` | Which assumption, if wrong, kills the plan — the longest bar is the one to validate first |
-| BCG movement | snapshot diff | Arrows between saved snapshots, with direction verdicts |
-
-Two boundaries are enforced in code and stated in the export:
-
-- **Linear by default, stepped as an option.** Real fixed costs jump when you add capacity. A `step` toggle raises fixed cost per capacity tier, which pushes the break-even point far to the right.
-- **Contribution margin ≤ 0 returns `ok:false` with a message**, not a meaningless number.
-
-The Markdown export closes with an explicit disclaimer: *this report does not predict the future, it shows the consequences of your assumptions.*
 
 ### 3.21 Three more orchestrable tools (`41-moretools.js`)
 
@@ -797,6 +780,58 @@ outcome stay on one trail — the only place in the product where a decision
 record and its result sit together. From any non-red verdict you can open a
 content pack with the hotspot carried in as context.
 
+### 3.23 Decision simulation (`44-sim.js`)
+
+The strategy matrix answers *where you are*. This module answers *what happens if*.
+
+| Block | Formula | What it actually tells you |
+|---|---|---|
+| Break-even | `Q* = F / (P − V)` | Break-even volume, **safety margin**, **operating leverage** (= contribution / profit: a leverage of 4.33 means a 10% volume swing moves profit ~43%) |
+| Tornado | ±10% per variable on `Q*` | Which assumption, if wrong, kills the plan — the longest bar is the one to validate first |
+| BCG movement | snapshot diff | Arrows between saved snapshots, with direction verdicts |
+
+Two boundaries are enforced in code and stated in the export:
+
+- **Linear by default, stepped as an option.** Real fixed costs jump when you add capacity. A `step` toggle raises fixed cost per capacity tier, which pushes the break-even point far to the right.
+- **Contribution margin ≤ 0 returns `ok:false` with a message**, not a meaningless number.
+
+The Markdown export closes with an explicit disclaimer: *this report does not predict the future, it shows the consequences of your assumptions.*
+
+#### Batch 2: decision tree and learning curve
+
+Two more blocks, both answering questions the matrix cannot:
+
+| Block | Formula | What it actually tells you |
+|---|---|---|
+| Decision tree | `EV = Σ pᵢ × vᵢ`, net `= EV − cost` | Whether the bet is worth taking **under the probabilities you supplied** |
+| Value of information | `VOI = (EV_after − EV_before) − research cost` | How much a research budget is worth — the pricing basis for spending on validation |
+| Learning curve | `C(n) = C₁ × n^b`, `b = log₂(learning rate)` | How many more units you must build to match a rival, and whether you can survive that long |
+
+**Decision tree.** Probabilities are subjective and the UI says so. The tool
+does not predict outcomes; it turns your estimates into visible consequences.
+Probabilities that do not sum to 100% are normalised with a visible note, and
+**downside probability is reported separately** — net EV being positive does
+not mean you can survive one failure, so the module says that explicitly when
+downside probability exceeds 20%.
+
+**Value of information** is the part worth pointing at in an interview: it
+reframes "should we research this?" into "how much confidence does this
+budget buy, and is that worth more than it costs?" — which connects directly
+to the assumption evidence chain in the research module.
+
+**Learning curve.** Verified invariant: doubling cumulative output must drop
+unit cost to exactly the learning rate (tested for 70/75/85/90/95%). The
+useful output is not the curve but the inverse — `n = (target/C₁)^(1/b)` —
+which answers *how many more units until we match them*. When you are behind,
+the module states the gap and the remaining volume, then asks the question
+that actually decides a price war: **can you survive that long?**
+
+Both blocks state their boundaries in the UI and the export: the decision
+tree assumes subjective probabilities, the learning curve assumes cost falls
+only from cumulative volume (ignoring process leaps and material shifts).
+
+---
+
 ## 4. Data
 
 Everything lives in `localStorage` under `ym_studio_v1`. Clearing browser
@@ -817,8 +852,8 @@ landing page together.
 |---|---|---|
 | Tabs | **24** | unique `data-tab` values in `src/index.template.html` |
 | Groups | **6** | unique `data-group` values |
-| Modules | **24** | 23 tabs + brand tone constraint (embedded, not a tab) |
-| Deterministic calculations | **28** | 22 `calc*` functions + `analyzeBrandCore` + `tcAnalyze` + `scoreContent` + `scoreTitles` + `auditAssetsCalc` + `analyzeTimelineCalc` |
+| Modules | **25** | 24 tabs + brand tone constraint (embedded, not a tab) |
+| Deterministic calculations | **33** | 26 `calc*` functions + 7 non-`calc` cores (`analyzeBrandCore`, `bcAnalyze`, `scoreContent`, `tcAnalyze`, `scoreTitles`, `auditAssetsCalc`, `analyzeTimelineCalc`) |
 | Orchestrable in workflows | **17** | `LOCAL_TOOLS` indices 11–27 |
 | Source files | **43** | `src/*.js`, merged by `build.py` |
 | Frameworks mapped | **70** | `src/27-toolmap.js` — 27 done / 4 planned / 39 reference-only |
@@ -829,7 +864,7 @@ landing page together.
 
 Two of these are worth defending explicitly:
 
-- **17 orchestrable, not 28.** Eleven calculations are called directly by
+- **17 orchestrable, not 33.** Sixteen calculations are called directly by
   their own module but were never registered as workflow tools. Registering
   them is mechanical; it has not been done because no workflow needed them.
 - **39 of 70 frameworks are reference-only.** They render a structure
@@ -845,3 +880,4 @@ The banned-word library is a review aid, not legal advice. A hit does not
 mean something is illegal. Platform rules change often — verify against the
 current official source before publishing. Category benchmarks in Brand Core
 are experience-based reference values, not measurements from any dataset.
+

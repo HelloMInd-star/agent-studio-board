@@ -1859,3 +1859,52 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
   font-family:var(--font-mono);
 }
 .hslog__ops{margin-top:6px;display:flex;gap:10px;}
+
+/* ============================================================
+   决策推演（44）—— 指标列表 / 结论框 / 分支表
+   ============================================================ */
+.kvlist{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));
+  gap:8px;margin:10px 0 4px;
+}
+.kv{
+  display:flex;flex-direction:column;gap:3px;
+  padding:9px 12px;border:1px solid var(--line);border-radius:var(--r-sm);
+  background:var(--soft-bg);
+}
+.kv > span{font-size:11px;color:var(--ink-mid);letter-spacing:.02em;}
+.kv > b{font-size:15px;color:var(--ink);font-variant-numeric:tabular-nums;}
+.kv > b.good{color:var(--ok);}
+.kv > b.bad{color:var(--alert);}
+.kv > b.warn{color:var(--warn);}
+.good{color:var(--ok);}
+.bad{color:var(--alert);}
+.warn{color:var(--warn);}
+
+.note{
+  font-size:12px;line-height:1.7;color:var(--text-2);
+  background:var(--soft-bg);border-left:2px solid var(--line-strong);
+  padding:8px 11px;border-radius:0 var(--r-sm) var(--r-sm) 0;margin-top:8px;
+}
+.warnbox,.okbox{
+  font-size:12.5px;line-height:1.7;padding:9px 12px;border-radius:var(--r-sm);margin-top:8px;
+}
+.warnbox{background:var(--warn-soft);border:1px solid var(--warn-line);color:var(--warn);}
+.okbox{background:var(--ok-soft);border:1px solid var(--ok-line);color:var(--ok);}
+
+.btn--mini{padding:5px 10px;font-size:12px;border-radius:7px;font-weight:500;}
+
+.dtgrid{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
+.dtgrid__hd,.dtgrid__row{
+  display:grid;grid-template-columns:1fr 92px 116px 58px;gap:8px;align-items:center;
+}
+.dtgrid__hd{font-size:11px;color:var(--ink-mid);padding:0 2px;}
+.dtgrid__row input{
+  padding:7px 9px;font-size:13px;border:1px solid var(--line);
+  border-radius:var(--r-sm);background:var(--card);color:var(--text);
+}
+.dtgrid__row input:focus{outline:none;border-color:var(--brand);}
+@media (max-width:820px){
+  .dtgrid__hd{display:none;}
+  .dtgrid__row{grid-template-columns:1fr 72px 88px 48px;}
+}

@@ -1867,6 +1867,55 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
 }
 .hslog__ops{margin-top:6px;display:flex;gap:10px;}
 
+/* ============================================================
+   决策推演（44）—— 指标列表 / 结论框 / 分支表
+   ============================================================ */
+.kvlist{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));
+  gap:8px;margin:10px 0 4px;
+}
+.kv{
+  display:flex;flex-direction:column;gap:3px;
+  padding:9px 12px;border:1px solid var(--line);border-radius:var(--r-sm);
+  background:var(--soft-bg);
+}
+.kv > span{font-size:11px;color:var(--ink-mid);letter-spacing:.02em;}
+.kv > b{font-size:15px;color:var(--ink);font-variant-numeric:tabular-nums;}
+.kv > b.good{color:var(--ok);}
+.kv > b.bad{color:var(--alert);}
+.kv > b.warn{color:var(--warn);}
+.good{color:var(--ok);}
+.bad{color:var(--alert);}
+.warn{color:var(--warn);}
+
+.note{
+  font-size:12px;line-height:1.7;color:var(--text-2);
+  background:var(--soft-bg);border-left:2px solid var(--line-strong);
+  padding:8px 11px;border-radius:0 var(--r-sm) var(--r-sm) 0;margin-top:8px;
+}
+.warnbox,.okbox{
+  font-size:12.5px;line-height:1.7;padding:9px 12px;border-radius:var(--r-sm);margin-top:8px;
+}
+.warnbox{background:var(--warn-soft);border:1px solid var(--warn-line);color:var(--warn);}
+.okbox{background:var(--ok-soft);border:1px solid var(--ok-line);color:var(--ok);}
+
+.btn--mini{padding:5px 10px;font-size:12px;border-radius:7px;font-weight:500;}
+
+.dtgrid{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
+.dtgrid__hd,.dtgrid__row{
+  display:grid;grid-template-columns:1fr 92px 116px 58px;gap:8px;align-items:center;
+}
+.dtgrid__hd{font-size:11px;color:var(--ink-mid);padding:0 2px;}
+.dtgrid__row input{
+  padding:7px 9px;font-size:13px;border:1px solid var(--line);
+  border-radius:var(--r-sm);background:var(--card);color:var(--text);
+}
+.dtgrid__row input:focus{outline:none;border-color:var(--brand);}
+@media (max-width:820px){
+  .dtgrid__hd{display:none;}
+  .dtgrid__row{grid-template-columns:1fr 72px 88px 48px;}
+}
+
 </style>
 </head>
 <body>
@@ -3235,6 +3284,44 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
         <div class="card__hd">3️⃣ BCG 迁移轨迹：业务到底在往哪走</div>
         <p class="hint">💡 快照机制早已存在，但图上没画过迁移。这里按时间排序画出箭头与方向判定（进入更优 / 恶化 / 份额提升 / 增长提速）。</p>
         <div class="chartwrap" id="simTrackChart"></div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">4️⃣ 决策树与期望值：敢不敢赌，算出来</div>
+        <p class="hint">💡 <b>EV ＝ Σ（概率 × 收益）</b>，减去投入就是净期望值。<b>概率是你估的</b>——这一点不掩饰，工具做的是把你估的数变成可见后果，不是替你预测未来。</p>
+        <div class="grid4">
+          <label class="f"><span>投入成本（万元）</span><input type="number" id="dtCost" step="1" oninput="dtOnInput()" placeholder="200"></label>
+          <div style="display:flex;align-items:flex-end"><button class="btn" onclick="dtAddBranch()">➕ 增加结果分支</button></div>
+          <div style="display:flex;align-items:flex-end"><span class="ph">最多 5 个分支</span></div>
+          <div></div>
+        </div>
+        <div id="dtRows" style="margin-top:10px"></div>
+        <div class="grid4" style="margin-top:10px">
+          <label class="f" style="flex-direction:row;align-items:center;gap:8px"><span>评估调研价值</span><input type="checkbox" id="dtRsOn" onchange="dtOnInput()"></label>
+          <label class="f"><span>调研费用（万元）</span><input type="number" id="dtRsCost" step="1" oninput="dtOnInput()" placeholder="20"></label>
+          <label class="f"><span>成功率提升（百分点）</span><input type="number" id="dtRsImp" step="1" oninput="dtOnInput()" placeholder="30"></label>
+          <div></div>
+        </div>
+        <p class="hint">💡 勾选后可算<b>信息价值（VOI）</b>：先花一笔调研费把最好结果的把握提高，看划不划算——这就是调研预算的定价依据。</p>
+        <div id="dtOut" style="margin-top:12px"></div>
+        <div class="chartwrap" id="dtChart"></div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">5️⃣ 学习曲线：多久能追平对手</div>
+        <p class="hint">💡 <b>累计产量每翻一倍，单位成本降到原来的「学习率」</b>。它回答的不是"能不能降本"，而是<b>"要再生产多少件才能追平，这段时间撑不撑得住"</b>——价格战能不能打，看的是这个。</p>
+        <div class="grid4">
+          <label class="f"><span>首件单位成本</span><input type="number" id="lcC1" step="0.01" oninput="lcOnInput()" placeholder="100"></label>
+          <label class="f"><span>学习率 %</span><input type="number" id="lcLr" step="1" oninput="lcOnInput()" placeholder="80"></label>
+          <label class="f"><span>当前累计产量（件）</span><input type="number" id="lcN" step="1" oninput="lcOnInput()" placeholder="1000"></label>
+          <label class="f"><span>对手单位成本</span><input type="number" id="lcRival" step="0.01" oninput="lcOnInput()" placeholder="70"></label>
+        </div>
+        <div class="grid4" style="margin-top:10px">
+          <label class="f"><span>目标单位成本（可选）</span><input type="number" id="lcTarget" step="0.01" oninput="lcOnInput()" placeholder="0"></label>
+          <div class="ph" style="align-self:flex-end">参考学习率：半导体 80% · 组装 85% · 定制 90% · 软件服务 95%</div>
+        </div>
+        <div id="lcOut" style="margin-top:12px"></div>
+        <div class="chartwrap" id="lcChart"></div>
       </div>
     </section>
 
@@ -19591,6 +19678,8 @@ function analyzeTimelineReport(){
  *  ① 盈亏平衡曲线：参数 → 保本点 / 安全边际 / 经营杠杆
  *  ② 敏感性龙卷风：哪个假设错了会毁掉方案
  *  ③ BCG 迁移箭头：快照之间业务位置的真实移动
+ *  ④ 决策树与期望值：敢不敢赌 → 算出来；顺带给调研预算定价
+ *  ⑤ 学习曲线：累计产量翻倍，成本降到多少；多久追平对手
  *
  * 设计原则（与全产品一致）：
  *   - 只算能算的，不含糊其辞
@@ -19602,9 +19691,21 @@ function analyzeTimelineReport(){
 function sim(){
   if(!state.sim) state.sim = {
     be:{ f:240000, p:39, v:13, q:9000, step:false, cap:5000 },
-    tor:{ pct:10 }
+    tor:{ pct:10 },
+    dt:{ cost:200,
+         bs:[ {n:'成功',p:40,v:500}, {n:'一般',p:35,v:100}, {n:'失败',p:25,v:-200} ],
+         rs:{ on:false, cost:20, imp:30 } },
+    lc:{ c1:100, lr:80, n:1000, rival:70, target:0 }
   };
-  return state.sim;
+  var S = state.sim;
+  /* 旧存档兼容补齐 */
+  if(!S.be) S.be = { f:240000, p:39, v:13, q:9000, step:false, cap:5000 };
+  if(!S.tor) S.tor = { pct:10 };
+  if(!S.dt) S.dt = { cost:200, bs:[], rs:{ on:false, cost:20, imp:30 } };
+  if(!S.dt.bs || !S.dt.bs.length) S.dt.bs = [ {n:'成功',p:40,v:500}, {n:'一般',p:35,v:100}, {n:'失败',p:25,v:-200} ];
+  if(!S.dt.rs) S.dt.rs = { on:false, cost:20, imp:30 };
+  if(!S.lc) S.lc = { c1:100, lr:80, n:1000, rival:70, target:0 };
+  return S;
 }
 
 /* ---------- ① 盈亏平衡 ---------- */
@@ -19946,6 +20047,257 @@ function svgBcgTrack(){
   return s;
 }
 
+/* ---------- ④ 决策树与期望值 ---------- */
+/* EV = Σ pᵢ × vᵢ ；净 EV = EV − 投入
+ * 信息价值(VOI)：先花一笔调研费，把最好结果的把握提高，看净收益是否划算。
+ * 注意：概率是主观估计——这一点不掩饰。工具做的是「把你估的数变成可见后果」，不是预测。 */
+function calcDecisionTree(){
+  var S = sim(), d = S.dt;
+  var cost = +d.cost || 0;
+  var bs = (d.bs || []).filter(function(x){ return x && String(x.n || '').trim(); })
+            .map(function(x){ return { n:String(x.n).trim(), p:+x.p || 0, v:+x.v || 0 }; });
+  if(bs.length < 2) return { ok:false, msg:'至少需要 2 个结果分支（例如 成功 / 一般 / 失败）。' };
+
+  var sumP = bs.reduce(function(a, x){ return a + x.p; }, 0);
+  if(sumP <= 0) return { ok:false, msg:'概率之和为 0，请填写各分支概率。' };
+
+  var needNorm = Math.abs(sumP - 100) > 0.01;
+  var k = needNorm ? 100 / sumP : 1;
+  bs.forEach(function(x){ x.pr = Math.max(0, Math.min(100, x.p * k)) / 100; });
+
+  /* 归一化后再拉平一次，避免浮点误差导致概率和不为 1 */
+  var s2 = bs.reduce(function(a, x){ return a + x.pr; }, 0);
+  if(s2 > 0) bs.forEach(function(x){ x.pr = x.pr / s2; });
+
+  var ev = bs.reduce(function(a, x){ return a + x.pr * x.v; }, 0);
+  var net = ev - cost;
+
+  var best = bs[0], worst = bs[0];
+  bs.forEach(function(x){
+    if(x.v > best.v) best = x;
+    if(x.v < worst.v) worst = x;
+  });
+
+  /* 下行风险：只看亏损分支 */
+  var down = bs.filter(function(x){ return x.v < 0; });
+  var downP = down.reduce(function(a, x){ return a + x.pr; }, 0);
+  var downEV = down.reduce(function(a, x){ return a + x.pr * x.v; }, 0);
+
+  var res = {
+    ok:true, cost:cost, bs:bs, sumP:sumP, needNorm:needNorm,
+    ev:ev, net:net, best:best, worst:worst,
+    downP:downP, downEV:downEV,
+    go: net > 0,
+    voi:null
+  };
+
+  /* 信息价值：把收益最高分支的概率提高 imp 个百分点，其余按比例缩减 */
+  var rs = d.rs || {};
+  if(rs.on){
+    var rc = +rs.cost || 0, imp = +rs.imp || 0;
+    var bi = 0;
+    bs.forEach(function(x, i){ if(x.v > bs[bi].v) bi = i; });
+    var tgt = bs[bi];
+    var np = Math.max(0, Math.min(1, tgt.pr + imp / 100));
+    var rest = 1 - np, base = 1 - tgt.pr;
+    var ev2 = np * tgt.v;
+    bs.forEach(function(x, i){
+      if(i === bi) return;
+      ev2 += (base > 0 ? x.pr / base * rest : 0) * x.v;
+    });
+    res.voi = {
+      cost:rc, imp:imp, target:tgt.n,
+      p0:tgt.pr, p1:np,
+      ev0:ev, ev1:ev2,
+      net0:net, net1:ev2 - cost - rc,
+      gain:ev2 - ev,
+      worth:(ev2 - ev) - rc
+    };
+  }
+  return res;
+}
+
+function svgDecisionTree(r){
+  if(!r || !r.ok) return '<span class="ph">' + esc(r && r.msg || '填参数后生成决策树') + '</span>';
+
+  var W = 880, padL = 30, padR = 220, padT = 58, padB = 52;
+  var rowH = 62, n = r.bs.length;
+  var H = padT + n * rowH + padB;
+  var x0 = padL + 34;                    // 决策方块中心
+  var x1 = W - padR - 40;                // 分支末端
+  var cy = padT + (n * rowH) / 2;
+
+  var s = '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H +
+          '" viewBox="0 0 ' + W + ' ' + H + '" font-family="PingFang SC,Microsoft YaHei,sans-serif">';
+  s += cxFrame(W, H, '决策树与期望值', 'DECISION TREE · EV ' + r.ev.toFixed(1) +
+               ' · 净 ' + (r.net >= 0 ? '+' : '') + r.net.toFixed(1) + (r.needNorm ? '（概率已归一化）' : ''));
+
+  r.bs.forEach(function(b, i){
+    var y = padT + i * rowH + rowH / 2;
+    /* 分支线 */
+    s += '<path d="M ' + x0 + ' ' + cy + ' C ' + (x0 + 70) + ' ' + cy + ' ' + (x1 - 70) + ' ' + y + ' ' + x1 + ' ' + y +
+         '" fill="none" stroke="' + (b.v < 0 ? CX.t : CX.o) + '" stroke-width="' +
+         (b.pr >= 0.4 ? 2.4 : 1.6) + '"/>';
+    /* 概率标签 */
+    s += '<text x="' + ((x0 + x1) / 2).toFixed(1) + '" y="' + (y - 12) + '" font-size="12" fill="' + CX.sub +
+         '" text-anchor="middle">' + (b.pr * 100).toFixed(1) + '%</text>';
+    /* 末端节点 */
+    s += '<circle cx="' + x1 + '" cy="' + y + '" r="5" fill="' + (b.v < 0 ? CX.t : CX.o) + '"/>';
+    /* 结果说明 */
+    s += '<text x="' + (x1 + 14) + '" y="' + (y - 3) + '" font-size="13" font-weight="600" fill="' + CX.ink + '">' +
+         esc(b.n) + '</text>';
+    s += '<text x="' + (x1 + 14) + '" y="' + (y + 15) + '" font-size="12" fill="' + (b.v < 0 ? CX.t : CX.s) + '">' +
+         (b.v >= 0 ? '+' : '') + b.v + ' 万元</text>';
+  });
+
+  /* 决策方块 */
+  s += '<rect x="' + (x0 - 34) + '" y="' + (cy - 22) + '" width="68" height="44" rx="6" fill="' +
+       CX.paper + '" stroke="' + CX.ink + '" stroke-width="1.6"/>';
+  s += '<text x="' + x0 + '" y="' + (cy - 3) + '" font-size="12" font-weight="700" fill="' + CX.ink +
+       '" text-anchor="middle">投入</text>';
+  s += '<text x="' + x0 + '" y="' + (cy + 14) + '" font-size="12" fill="' + CX.sub +
+       '" text-anchor="middle">' + r.cost + ' 万</text>';
+
+  /* 底部结论 */
+  var verdict = r.go ? '净期望为正' : '净期望为负';
+  var vcol = r.go ? CX.s : CX.t;
+  s += '<line x1="' + padL + '" y1="' + (H - padB + 6) + '" x2="' + (W - padL) + '" y2="' + (H - padB + 6) +
+       '" stroke="' + CX.line + '"/>';
+  s += '<text x="' + padL + '" y="' + (H - padB + 28) + '" font-size="12" fill="' + CX.sub + '">EV = ' +
+       r.ev.toFixed(1) + ' 万 · 净 EV = </text>';
+  s += '<text x="' + (padL + 168) + '" y="' + (H - padB + 28) + '" font-size="12" font-weight="700" fill="' + vcol + '">' +
+       (r.net >= 0 ? '+' : '') + r.net.toFixed(1) + ' 万（' + verdict + '）</text>';
+
+  return s + '</svg>';
+}
+
+/* ---------- ⑤ 学习曲线 ---------- */
+/* C(n) = C₁ × n^b ， b = log₂(学习率)  → 产量每翻一倍，单位成本降到学习率
+ * 反解：达到目标成本所需累计产量 n = (目标 / C₁)^(1/b)
+ * b < 0（学习率 < 100%），所以 n 随目标降低而指数上升 —— 这正是「追平对手」的代价 */
+function calcLearning(){
+  var S = sim(), l = S.lc;
+  var c1 = +l.c1 || 0;
+  var lr = +l.lr || 0;
+  var n = Math.max(1, +l.n || 1);
+  var rival = +l.rival || 0;
+  var target = +l.target || 0;
+
+  if(c1 <= 0) return { ok:false, msg:'请填写首件单位成本。' };
+  if(lr <= 0 || lr >= 100) return { ok:false, msg:'学习率必须在 0–100% 之间（现实常见区间 70%–95%）。' };
+
+  var b = Math.log(lr / 100) / Math.log(2);        // 负数
+  var cn = c1 * Math.pow(n, b);
+  var c2n = c1 * Math.pow(n * 2, b);
+
+  var nTarget = (target > 0 && target < c1) ? Math.pow(target / c1, 1 / b) : null;
+  var nRival  = (rival  > 0 && rival  < c1) ? Math.pow(rival  / c1, 1 / b) : null;
+
+  var gap = (rival > 0 && cn > 0) ? (cn - rival) / rival : null;
+  var needMore = (nRival !== null) ? Math.max(0, nRival - n) : null;
+
+  var hint = '';
+  if(lr < 70) hint = '学习率低于 70% 属极端情况（几乎只有强规模效应的半导体/面板出现过），请确认。';
+  else if(lr > 95) hint = '学习率高于 95% 意味着几乎无法通过量产降低成本——软件与定制服务常在此区间。';
+
+  return {
+    ok:true, c1:c1, lr:lr, n:n, rival:rival, target:target, b:b,
+    cn:cn, c2n:c2n, nTarget:nTarget, nRival:nRival,
+    gap:gap, needMore:needMore, hint:hint,
+    ahead: gap === null ? null : (gap <= 0)
+  };
+}
+
+function svgLearning(r){
+  if(!r || !r.ok) return '<span class="ph">' + esc(r && r.msg || '填参数后生成学习曲线') + '</span>';
+
+  var W = 880, H = 460, padL = 84, padR = 34, padT = 58, padB = 66;
+  var pw = W - padL - padR, ph = H - padT - padB;
+
+  /* X 用对数刻度：学习曲线在双对数下是直线，线性刻度下前段会挤成一团 */
+  var nMin = 1;
+  var nMax = Math.max(r.n * 4, r.nRival || 0, r.nTarget || 0, 100) * 1.6;
+  var lx = function(v){ return Math.log(Math.max(nMin, v)) / Math.log(nMax) ; };
+
+  var cMax = r.c1 * 1.1;
+  var cMin = Math.min(r.cn, r.rival > 0 ? r.rival : r.cn, r.target > 0 ? r.target : r.cn) * 0.85;
+
+  var X = function(v){ return padL + lx(v) * pw; };
+  var Y = function(c){ return padT + ph - (c - cMin) / (cMax - cMin) * ph; };
+
+  var s = '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H +
+          '" viewBox="0 0 ' + W + ' ' + H + '" font-family="PingFang SC,Microsoft YaHei,sans-serif">';
+  s += cxFrame(W, H, '学习曲线（经验曲线）', 'LEARNING CURVE · 学习率 ' + r.lr +
+               '% · 累计产量翻倍 → 单位成本降至 ' + r.lr + '%');
+
+  /* 网格 */
+  for(var i = 1; i <= 4; i++){
+    var gy = padT + ph * i / 5;
+    s += '<line x1="' + padL + '" y1="' + gy.toFixed(1) + '" x2="' + (padL + pw) + '" y2="' + gy.toFixed(1) +
+         '" stroke="' + CX.line + '" stroke-width="1"/>';
+  }
+
+  /* 曲线 */
+  var pts = [];
+  for(var t = 0; t <= 120; t++){
+    var nn = Math.pow(nMax, t / 120);
+    pts.push(X(nn).toFixed(1) + ',' + Y(r.c1 * Math.pow(nn, r.b)).toFixed(1));
+  }
+  s += '<polyline fill="none" stroke="' + CX.brand + '" stroke-width="2.4" points="' + pts.join(' ') + '"/>';
+
+  /* 对手成本线 */
+  if(r.rival > 0){
+    s += '<line x1="' + padL + '" y1="' + Y(r.rival).toFixed(1) + '" x2="' + (padL + pw) + '" y2="' + Y(r.rival).toFixed(1) +
+         '" stroke="' + CX.t + '" stroke-width="1.8" stroke-dasharray="6 4"/>';
+    s += '<text x="' + (padL + 8) + '" y="' + (Y(r.rival) - 7).toFixed(1) + '" font-size="12" fill="' + CX.t +
+         '">对手 ' + r.rival.toFixed(1) + '</text>';
+  }
+  /* 目标成本线 */
+  if(r.target > 0){
+    s += '<line x1="' + padL + '" y1="' + Y(r.target).toFixed(1) + '" x2="' + (padL + pw) + '" y2="' + Y(r.target).toFixed(1) +
+         '" stroke="' + CX.s + '" stroke-width="1.6" stroke-dasharray="3 3"/>';
+    s += '<text x="' + (padL + 8) + '" y="' + (Y(r.target) - 7).toFixed(1) + '" font-size="12" fill="' + CX.s +
+         '">目标 ' + r.target.toFixed(1) + '</text>';
+  }
+
+  /* 当前位置 */
+  var cx0 = X(r.n), cy0 = Y(r.cn);
+  s += '<line x1="' + cx0.toFixed(1) + '" y1="' + cy0.toFixed(1) + '" x2="' + cx0.toFixed(1) + '" y2="' + (padT + ph) +
+       '" stroke="' + CX.ink + '" stroke-width="1" stroke-dasharray="3 3"/>';
+  s += '<circle cx="' + cx0.toFixed(1) + '" cy="' + cy0.toFixed(1) + '" r="6" fill="' + CX.brand + '"/>';
+  s += '<text x="' + (cx0 + 10).toFixed(1) + '" y="' + (cy0 - 8).toFixed(1) + '" font-size="12" font-weight="700" fill="' +
+       CX.brand + '">当前 ' + Math.round(r.n).toLocaleString() + ' 件 · ' + r.cn.toFixed(1) + '</text>';
+
+  /* 追平点 */
+  if(r.nRival !== null && r.nRival <= nMax){
+    var rx = X(r.nRival), ry = Y(r.rival);
+    s += '<circle cx="' + rx.toFixed(1) + '" cy="' + ry.toFixed(1) + '" r="5" fill="none" stroke="' + CX.t +
+         '" stroke-width="2"/>';
+    s += '<text x="' + (rx + 8).toFixed(1) + '" y="' + (ry + 16).toFixed(1) + '" font-size="11" fill="' + CX.t +
+         '">追平需 ' + Math.round(r.nRival).toLocaleString() + ' 件</text>';
+  }
+
+  /* 轴 */
+  s += '<line x1="' + padL + '" y1="' + (padT + ph) + '" x2="' + (padL + pw) + '" y2="' + (padT + ph) +
+       '" stroke="' + CX.ink + '"/>';
+  s += '<line x1="' + padL + '" y1="' + padT + '" x2="' + padL + '" y2="' + (padT + ph) + '" stroke="' + CX.ink + '"/>';
+  [1, 10, 100, 1000, 10000, 100000, 1000000].forEach(function(v){
+    if(v > nMax) return;
+    var x = X(v);
+    s += '<text x="' + x.toFixed(1) + '" y="' + (padT + ph + 18) + '" font-size="11" fill="' + CX.mute +
+         '" text-anchor="middle">' + (v >= 10000 ? (v / 10000) + '万' : v) + '</text>';
+  });
+  s += '<text x="' + (padL + pw / 2) + '" y="' + (H - 18) + '" font-size="12" fill="' + CX.sub +
+       '" text-anchor="middle">累计产量（对数刻度）</text>';
+  s += '<text x="16" y="' + (padT + ph / 2) + '" font-size="12" fill="' + CX.sub +
+       '" transform="rotate(-90 16 ' + (padT + ph / 2) + ')" text-anchor="middle">单位成本</text>';
+
+  s += '<text x="' + padL + '" y="' + (H - 36) + '" font-size="11" fill="' + CX.mute +
+       '">横轴为对数刻度：每向右一格代表产量 ×10。曲线越陡，规模效应越强。</text>';
+
+  return s + '</svg>';
+}
+
 /* ---------- 渲染 ---------- */
 function renderSimAll(){
   var S = sim(), b = S.be;
@@ -19958,6 +20310,8 @@ function renderSimAll(){
   renderSimBe();
   renderSimTor();
   renderSimTrack();
+  renderSimDt();
+  renderSimLc();
 }
 
 function renderSimBe(){
@@ -20025,6 +20379,149 @@ function renderSimTrack(){
   if(c) c.innerHTML = svgBcgTrack();
 }
 
+
+/* ---------- ④ 渲染：决策树 ---------- */
+function dtRowsHtml(){
+  var S = sim(), d = S.dt;
+  var h = '<div class="dtgrid">';
+  h += '<div class="dtgrid__hd"><span>结果</span><span>概率 %</span><span>收益（万元）</span><span></span></div>';
+  (d.bs || []).forEach(function(b, i){
+    h += '<div class="dtgrid__row">';
+    h += '<input class="inp" data-dt="n" data-i="' + i + '" value="' + esc(b.n) + '" placeholder="结果名称">';
+    h += '<input class="inp" type="number" step="1" data-dt="p" data-i="' + i + '" value="' + (+b.p || 0) + '">';
+    h += '<input class="inp" type="number" step="1" data-dt="v" data-i="' + i + '" value="' + (+b.v || 0) + '" placeholder="可为负">';
+    h += '<button class="btn btn--mini" data-dtdel="' + i + '">删除</button>';
+    h += '</div>';
+  });
+  h += '</div>';
+  return h;
+}
+
+function renderSimDt(){
+  var S = sim(), d = S.dt;
+  var setv = function(id, v){ var e = $(id); if(e) e.value = v; };
+  setv('#dtCost', d.cost);
+  var rs = d.rs || {};
+  setv('#dtRsCost', rs.cost); setv('#dtRsImp', rs.imp);
+  var rsw = $('#dtRsOn'); if(rsw) rsw.checked = !!rs.on;
+
+  var box = $('#dtRows');
+  if(box){
+    box.innerHTML = dtRowsHtml();
+    box.querySelectorAll('[data-dt]').forEach(function(el){
+      el.addEventListener('input', dtOnInput);
+    });
+    box.querySelectorAll('[data-dtdel]').forEach(function(el){
+      el.addEventListener('click', function(){
+        var i = +el.getAttribute('data-dtdel');
+        sim().dt.bs.splice(i, 1);
+        save(); renderSimDt();
+      });
+    });
+  }
+
+  var r = calcDecisionTree();
+  var out = $('#dtOut'), ch = $('#dtChart');
+  if(!r.ok){
+    if(out) out.innerHTML = '<div class="warnbox">⚠ ' + esc(r.msg) + '</div>';
+    if(ch) ch.innerHTML = '<span class="ph">—</span>';
+    return;
+  }
+
+  if(out){
+    var h = '';
+    if(r.needNorm){
+      h += '<div class="note">概率之和为 <b>' + r.sumP.toFixed(0) + '%</b>，已自动归一化为 100%。' +
+           '（如果你的原始估计是有意为之，请检查是否漏填或重复计算。）</div>';
+    }
+    h += '<div class="kvlist">';
+    h += '<div class="kv"><span>期望值 EV</span><b>' + r.ev.toFixed(1) + ' 万元</b></div>';
+    h += '<div class="kv"><span>投入成本</span><b>' + r.cost + ' 万元</b></div>';
+    h += '<div class="kv"><span>净期望值</span><b class="' + (r.net > 0 ? 'good' : 'bad') + '">' +
+         (r.net >= 0 ? '+' : '') + r.net.toFixed(1) + ' 万元</b></div>';
+    h += '<div class="kv"><span>下行概率</span><b>' + (r.downP * 100).toFixed(1) + '%</b></div>';
+    h += '<div class="kv"><span>下行期望损失</span><b class="' + (r.downEV < 0 ? 'bad' : '') + '">' +
+         r.downEV.toFixed(1) + ' 万元</b></div>';
+    h += '</div>';
+
+    h += '<div class="' + (r.go ? 'okbox' : 'warnbox') + '">' +
+         (r.go ? '✅ 净期望为正：在<b>你给定的这组概率</b>下，这个赌注值得下。'
+               : '⚠ 净期望为负：<b>按你填的概率</b>，这笔投入不划算。') +
+         '</div>';
+
+    if(r.downP > 0.2){
+      h += '<div class="note">有 <b>' + (r.downP * 100).toFixed(0) +
+           '%</b> 的概率落在亏损分支。净期望为正<b>不等于</b>可以承受一次失败——' +
+           '如果这笔钱亏不起，就该选更小的投入档位，而不是看 EV 决定。</div>';
+    }
+
+    if(r.voi){
+      var v = r.voi;
+      h += '<div class="note" style="margin-top:10px"><b>信息价值（VOI）</b>：先花 <b>' + v.cost +
+           ' 万元</b>做调研，把「' + esc(v.target) + '」的概率从 <b>' + (v.p0 * 100).toFixed(0) +
+           '%</b> 提到 <b>' + (v.p1 * 100).toFixed(0) + '%</b>。<br>' +
+           'EV 由 ' + v.ev0.toFixed(1) + ' → ' + v.ev1.toFixed(1) + ' 万元（+' + v.gain.toFixed(1) + '），' +
+           '扣掉调研费后净收益 ' + (v.worth >= 0 ? '+' : '') + v.worth.toFixed(1) + ' 万元 → ' +
+           '<b class="' + (v.worth > 0 ? 'good' : 'bad') + '">' +
+           (v.worth > 0 ? '这笔调研值得做' : '这笔调研不值') + '</b>。</div>';
+      h += '<div class="note">这就是<b>调研预算的定价依据</b>：不是"要不要做调研"，而是"花多少调研费换多少把握"。</div>';
+    }
+    out.innerHTML = h;
+  }
+  if(ch) ch.innerHTML = svgDecisionTree(r);
+}
+
+/* ---------- ⑤ 渲染：学习曲线 ---------- */
+function renderSimLc(){
+  var S = sim(), l = S.lc;
+  var setv = function(id, v){ var e = $(id); if(e) e.value = v; };
+  setv('#lcC1', l.c1); setv('#lcLr', l.lr); setv('#lcN', l.n);
+  setv('#lcRival', l.rival); setv('#lcTarget', l.target);
+
+  var r = calcLearning();
+  var out = $('#lcOut'), ch = $('#lcChart');
+  if(!r.ok){
+    if(out) out.innerHTML = '<div class="warnbox">⚠ ' + esc(r.msg) + '</div>';
+    if(ch) ch.innerHTML = '<span class="ph">—</span>';
+    return;
+  }
+
+  if(out){
+    var h = '<div class="kvlist">';
+    h += '<div class="kv"><span>当前单位成本</span><b>' + r.cn.toFixed(2) + '</b></div>';
+    h += '<div class="kv"><span>产量翻倍后</span><b>' + r.c2n.toFixed(2) +
+         '（降至 ' + (r.c2n / r.cn * 100).toFixed(1) + '%）</b></div>';
+    if(r.rival > 0){
+      h += '<div class="kv"><span>与对手差距</span><b class="' + (r.gap <= 0 ? 'good' : 'bad') + '">' +
+           (r.gap >= 0 ? '高 ' : '低 ') + Math.abs(r.gap * 100).toFixed(1) + '%</b></div>';
+    }
+    if(r.nRival !== null){
+      h += '<div class="kv"><span>追平对手需累计</span><b>' + Math.round(r.nRival).toLocaleString() + ' 件</b></div>';
+      if(r.needMore > 0){
+        h += '<div class="kv"><span>还需再生产</span><b class="bad">' + Math.round(r.needMore).toLocaleString() +
+             ' 件</b></div>';
+      }
+    }
+    if(r.nTarget !== null){
+      h += '<div class="kv"><span>达到目标成本需累计</span><b>' + Math.round(r.nTarget).toLocaleString() + ' 件</b></div>';
+    }
+    h += '</div>';
+
+    if(r.gap !== null && r.gap > 0){
+      h += '<div class="warnbox">⚠ 你比对手成本高 <b>' + (r.gap * 100).toFixed(0) +
+           '%</b>。打价格战前先算清楚：需要再生产 <b>' + Math.round(Math.max(0, r.needMore)).toLocaleString() +
+           '</b> 件才能追平——这段时间你撑得住吗？</div>';
+    } else if(r.gap !== null){
+      h += '<div class="okbox">✅ 你的单位成本已低于对手，价格战对你有利。</div>';
+    }
+    if(r.hint) h += '<div class="note">💡 ' + esc(r.hint) + '</div>';
+    h += '<div class="note">模型边界：学习曲线假设<b>成本下降只由累计产量驱动</b>，' +
+         '忽略了技术突变、原材料价格波动、工艺换代。它回答"按当前效率继续下去会怎样"，不是预测。</div>';
+    out.innerHTML = h;
+  }
+  if(ch) ch.innerHTML = svgLearning(r);
+}
+
 /* ---------- 交互 ---------- */
 function simOnInput(){
   var S = sim();
@@ -20069,19 +20566,110 @@ function simExport(){
     });
     md += '\n最敏感变量：**' + t.rows[0].n + '**——优先验证它。\n';
   }
-  md += '\n## 三、模型假设与边界\n\n';
+  md += '\n## 三、决策树与期望值\n\n';
+  var dt = calcDecisionTree();
+  if(dt.ok){
+    md += '- 投入成本：' + dt.cost + ' 万元\n';
+    if(dt.needNorm) md += '- 原始概率之和 ' + dt.sumP.toFixed(0) + '%，已归一化为 100%\n';
+    md += '\n| 结果 | 概率 | 收益（万元） |\n|---|---|---|\n';
+    dt.bs.forEach(function(x){
+      md += '| ' + x.n + ' | ' + (x.pr * 100).toFixed(1) + '% | ' + x.v + ' |\n';
+    });
+    md += '\n- **期望值 EV：' + dt.ev.toFixed(1) + ' 万元**\n';
+    md += '- **净期望值：' + (dt.net >= 0 ? '+' : '') + dt.net.toFixed(1) + ' 万元** → ' +
+          (dt.go ? '值得投入' : '不划算') + '\n';
+    md += '- 下行概率：' + (dt.downP * 100).toFixed(1) + '%，下行期望损失 ' + dt.downEV.toFixed(1) + ' 万元\n';
+    if(dt.voi){
+      var v = dt.voi;
+      md += '\n**信息价值（VOI）**：先花 ' + v.cost + ' 万元调研，把「' + v.target + '」的概率从 ' +
+            (v.p0 * 100).toFixed(0) + '% 提到 ' + (v.p1 * 100).toFixed(0) + '%。\n';
+      md += 'EV 由 ' + v.ev0.toFixed(1) + ' → ' + v.ev1.toFixed(1) + ' 万元，扣除调研费后净收益 ' +
+            (v.worth >= 0 ? '+' : '') + v.worth.toFixed(1) + ' 万元 → ' +
+            (v.worth > 0 ? '这笔调研值得做' : '这笔调研不值') + '。\n';
+    }
+    md += '\n> 概率为你自行估计的主观值。本报告不预测未来，只呈现这组假设的后果。\n';
+  } else {
+    md += dt.msg + '\n';
+  }
+
+  md += '\n## 四、学习曲线\n\n';
+  var lc = calcLearning();
+  if(lc.ok){
+    md += '- 首件单位成本：' + lc.c1 + ' · 学习率：' + lc.lr + '%\n';
+    md += '- 当前累计产量：' + Math.round(lc.n).toLocaleString() + ' 件 → 单位成本 ' + lc.cn.toFixed(2) + '\n';
+    md += '- 产量翻倍后：' + lc.c2n.toFixed(2) + '（降至 ' + (lc.c2n / lc.cn * 100).toFixed(1) + '%）\n';
+    if(lc.rival > 0){
+      md += '- 与对手差距：' + (lc.gap >= 0 ? '高 ' : '低 ') + Math.abs(lc.gap * 100).toFixed(1) + '%\n';
+      if(lc.nRival !== null){
+        md += '- **追平对手需累计 ' + Math.round(lc.nRival).toLocaleString() + ' 件**' +
+              (lc.needMore > 0 ? '，还需再生产 ' + Math.round(lc.needMore).toLocaleString() + ' 件' : '') + '\n';
+      }
+    }
+    if(lc.nTarget !== null) md += '- 达到目标成本需累计 ' + Math.round(lc.nTarget).toLocaleString() + ' 件\n';
+    if(lc.hint) md += '\n> ' + lc.hint + '\n';
+  } else {
+    md += lc.msg + '\n';
+  }
+
+  md += '\n## 五、模型假设与边界\n\n';
   md += '- 收入与变动成本按线性处理；真实场景可能存在规模效应或阶梯成本（已提供阶梯开关）。\n';
   md += '- 敏感性分析仅测试单变量扰动，未考虑变量之间的联动（如降价可能同时推高销量）。\n';
+  md += '- 决策树的概率为主观估计；净期望为正不等于可以承受一次失败。\n';
+  md += '- 学习曲线假设成本下降只由累计产量驱动，忽略技术突变与原材料波动。\n';
   md += '- 所有数字取决于你填入的估算值，**本报告不预测未来，只呈现假设的后果**。\n';
 
   downloadFile('决策推演报告_' + todayStr() + '.md', md, 'text/markdown');
   toast('已导出决策推演报告');
 }
 
+function dtOnInput(){
+  var S = sim(), d = S.dt;
+  var g = function(id){ var e = $(id); return e ? e.value : ''; };
+  d.cost = +g('#dtCost') || 0;
+  var rows = document.querySelectorAll('#dtRows [data-dt]');
+  rows.forEach(function(el){
+    var i = +el.getAttribute('data-i'), k = el.getAttribute('data-dt');
+    if(!d.bs[i]) d.bs[i] = { n:'', p:0, v:0 };
+    d.bs[i][k] = (k === 'n') ? el.value : (+el.value || 0);
+  });
+  var rs = d.rs || (d.rs = {});
+  rs.cost = +g('#dtRsCost') || 0;
+  rs.imp = +g('#dtRsImp') || 0;
+  var sw = $('#dtRsOn'); rs.on = sw ? !!sw.checked : false;
+  save();
+  renderSimDt();
+}
+
+function dtAddBranch(){
+  var d = sim().dt;
+  if(d.bs.length >= 5){ toast('最多 5 个结果分支'); return; }
+  d.bs.push({ n:'新结果', p:0, v:0 });
+  save(); renderSimDt();
+}
+
+function lcOnInput(){
+  var l = sim().lc;
+  var g = function(id){ var e = $(id); return e ? e.value : ''; };
+  l.c1 = +g('#lcC1') || 0;
+  l.lr = +g('#lcLr') || 0;
+  l.n = +g('#lcN') || 1;
+  l.rival = +g('#lcRival') || 0;
+  l.target = +g('#lcTarget') || 0;
+  save();
+  renderSimLc();
+}
+
 /* ---------- 注册到全局（供 HTML 内联调用） ---------- */
 window.renderSimAll = renderSimAll;
 window.simOnInput = simOnInput;
 window.simExport = simExport;
+window.dtOnInput = dtOnInput;
+window.dtAddBranch = dtAddBranch;
+window.lcOnInput = lcOnInput;
+window.calcDecisionTree = calcDecisionTree;
+window.calcLearning = calcLearning;
+window.calcBreakEven = calcBreakEven;
+window.calcTornado = calcTornado;
 
 /* ===== src/16-boot.js ===== */
 /* ================= 回填 ================= */
