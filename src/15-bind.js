@@ -586,8 +586,22 @@ function bind(){
     var doc = {title:$('#d_title').value, body:$('#d_body').value,
                tags:$('#d_tags').value, link:$('#d_link').value};
     if(!doc.title && !doc.body){ toast('标题或正文至少填一项'); return; }
+
+    /* 软上限提醒：不阻止保存（用户有权存长文），但要让他知情。
+       知识库是唯一无上限且高频粘贴的地方，也是撑爆存储的主要路径。 */
+    var chars = (doc.body || '').length;
+    var b = chars * 2;                       /* localStorage 按 UTF-16 计 */
+    if (chars > KB_DOC_SOFT_CHARS) {
+      if(!confirm('这篇很长：约 ' + chars.toLocaleString() + ' 字（' +
+          (b / 1024).toFixed(0) + ' KB）。\n\n' +
+          '知识库是存储占用最大的地方，长文建议拆成几篇保存。\n\n' +
+          '仍要保存吗？')) return;
+    }
+
     if(state.kb.curDoc >= 0) f.docs[state.kb.curDoc] = doc; else { f.docs.push(doc); state.kb.curDoc = f.docs.length-1; }
-    renderKb(); updateKbStat(); save(); toast('已保存');
+    renderKb(); updateKbStat(); save();
+    toast(chars > KB_DOC_SOFT_CHARS ? '已保存（' + (b / 1024).toFixed(0) + ' KB）' : '已保存');
+    kbWarnIfLarge();
   };
   $('#btnDelDoc').onclick = function(){
     var f = state.kb.folders[state.kb.curFolder];

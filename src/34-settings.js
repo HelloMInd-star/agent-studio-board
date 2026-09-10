@@ -49,12 +49,24 @@ function setTodayStr(){
          String(d.getMonth() + 1).padStart(2, '0') + '-' +
          String(d.getDate()).padStart(2, '0');
 }
+/* localStorage 按 UTF-16 存储：每个字符 2 字节（BMP 字符）。
+   注意不能用 Blob.size —— 那是 UTF-8 字节数，中文会比实际占用高估约 50%。 */
 function setBytes(){
   try {
     var s = localStorage.getItem(KEY) || '';
-    return (new Blob([s])).size;
+    return s.length * 2;
   } catch (e) {
-    return (JSON.stringify(state) || '').length;
+    return (JSON.stringify(state) || '').length * 2;
+  }
+}
+/* 单个 state 字段的占用（同样按 UTF-16 计） */
+function setFieldBytes(v){
+  if (v === undefined || v === null) return 0;
+  try {
+    var s = typeof v === 'string' ? v : JSON.stringify(v);
+    return (s || '').length * 2;
+  } catch (e) {
+    return 0;
   }
 }
 function setFmtBytes(b){
@@ -63,11 +75,90 @@ function setFmtBytes(b){
   if (b < 1024 * 1024) return (b / 1024).toFixed(1) + ' KB';
   return (b / 1024 / 1024).toFixed(2) + ' MB';
 }
-/* localStorage 上限通常 5MB，用占比提示风险 */
-function setUsagePct(){
-  var b = setBytes();
-  var cap = 5 * 1024 * 1024;
-  return Math.min(100, Math.round(b / cap * 100));
+
+/* ---------- 分类明细 ----------
+ * 为什么不做「总量 / 5MB」进度条：
+ *   实测正常用满全部模块约 475 KB，占 5MB 上限不到 10%，
+ *   进度条永远停在 1%~2%，黄线 50% / 红线 80% 永远触发不了——是个死预警。
+ *   真正会撑爆的是「知识库塞几百篇长文」这种单一行为，
+ *   而总量进度条恰好看不出是哪一项涨上去的。
+ * 所以改成：分类明细 + 基于真实风险的阈值。
+ * ============================================================ */
+function setKbStat(){
+  var n = 0, b = 0, big = 0;
+  (state.kb && state.kb.folders ? state.kb.folders : []).forEach(function(f){
+    (f.docs || []).forEach(function(d){
+      n++;
+      var sz = setFieldBytes(d);
+      b += sz;
+      if (sz > 100 * 1024) big++;   /* 单篇 > 100KB */
+    });
+  });
+  return { n:n, b:b, big:big };
+}
+function setUsageBreakdown(){
+  var items = [];
+  var kb = setKbStat();
+  items.push({ k:'kb',   n:'品牌知识库', icon:'📚', b:kb.b, note:kb.n + ' 篇' });
+
+  items.push({ k:'blocks', n:'工作台文档', icon:'💬',
+               b:setFieldBytes(state.blocks),
+               note:(state.blocks ? state.blocks.length : 0) + ' 块' });
+
+  items.push({ k:'scores', n:'内容评分记录', icon:'🩺',
+               b:setFieldBytes(state.scores),
+               note:(state.scores ? state.scores.length : 0) + ' 条' });
+
+  /* 思考成果：品牌内核 / 调研 / 竞品 / 战略 / 定价 / 市场 / 财务 */
+  var think = 0, thinkN = 0;
+  [['bc','品牌内核'], ['rs','调研方案'], ['rivals','竞品档案'],
+   ['mx','战略矩阵'], ['pr','定价'], ['mk','市场'], ['fin','财务']].forEach(function(p){
+    var v = state[p[0]];
+    if (v) { think += setFieldBytes(v); thinkN++; }
+  });
+  items.push({ k:'think', n:'策略与档案', icon:'🏛️', b:think, note:thinkN + ' 个模块有数据' });
+
+  /* 其余：对话 / 日历 / 历史 / 工作流 / trace / 品牌记忆 等 */
+  var known = ['kb','blocks','scores','bc','rs','rivals','mx','pr','mk','fin','theme','net','startTab'];
+  var other = 0;
+  Object.keys(state || {}).forEach(function(key){
+    if (known.indexOf(key) < 0) other += setFieldBytes(state[key]);
+  });
+  items.push({ k:'other', n:'其他（对话/日历/工作流等）', icon:'🗂️', b:other, note:'' });
+
+  var total = 0;
+  items.forEach(function(it){ total += it.b; });
+  items.sort(function(a, b){ return b.b - a.b; });
+  /* 占比按总额算（而非 5MB），这样条形图才有区分度 */
+  items.forEach(function(it){
+    it.pct = total > 0 ? Math.round(it.b / total * 100) : 0;
+  });
+  return { items:items, total:total, kb:kb };
+}
+
+/* 基于真实风险的预警，不再用 5MB 的百分比 */
+function setUsageWarn(u){
+  var w = [];
+  if (u.total > 1024 * 1024) {
+    w.push({ lv:'high', t:'数据已超 1 MB（约 25 万字）',
+             d:'相当于几十万字的资料量。建议现在导出一份备份，并清理不再需要的旧内容。' });
+  } else if (u.total > 512 * 1024) {
+    w.push({ lv:'mid', t:'数据已超 512 KB',
+             d:'内容已经不少了，建议导出一份备份留底。' });
+  }
+  if (u.kb.n >= 50) {
+    w.push({ lv:'mid', t:'知识库已存 ' + u.kb.n + ' 篇',
+             d:'知识库是最大的存储占用项。不用的旧资料建议删除，或先导出备份再清理。' });
+  }
+  if (u.kb.b > 2 * 1024 * 1024) {
+    w.push({ lv:'high', t:'知识库已占 ' + setFmtBytes(u.kb.b),
+             d:'接近浏览器单域名 5 MB 上限的一半。继续大量粘贴长文有写满风险，建议清理。' });
+  }
+  if (u.kb.big > 0) {
+    w.push({ lv:'low', t:'有 ' + u.kb.big + ' 篇超过 100 KB',
+             d:'单篇过长的文档会显著占用存储。长文建议拆分保存。' });
+  }
+  return w;
 }
 
 /* ---------- 备份 ---------- */
@@ -118,8 +209,8 @@ function renderSettings(){
   if (!host) return;
 
   var b = setBytes();
-  var pct = setUsagePct();
-  var barColor = pct > 80 ? '#dc2626' : (pct > 50 ? '#f59e0b' : '#0ea5e9');
+  var u = setUsageBreakdown();
+  var warns = setUsageWarn(u);
 
   /* 品牌基准 */
   var bc = state.bc || {};
@@ -147,10 +238,39 @@ function renderSettings(){
   h += '<div class="card__bd">';
   h += '<div class="setrow">';
   h += '<div class="setrow__lb">存储占用</div>';
-  h += '<div class="setrow__val">' + setFmtBytes(b) + ' <span class="setrow__note">/ 约 5 MB 上限（' + pct + '%）</span></div>';
-  h += '<div class="setbar"><div class="setbar__in" style="width:' + Math.max(2, pct) + '%;background:' + barColor + '"></div></div>';
-  h += '<div class="setrow__hint">全部数据只存在这台设备的浏览器里，不上传任何服务器。清缓存会丢失，所以导出备份很重要。</div>';
+  h += '<div class="setrow__val"><strong>' + setFmtBytes(b) + '</strong> ' +
+       '<span class="setrow__note">· 全部在这台设备的浏览器里，不上传任何服务器</span></div>';
+  h += '<div class="setrow__hint">清缓存会丢失，所以定期导出备份很重要。</div>';
   h += '</div>';
+
+  /* 分类明细：占比按「各类之间」算，这样条形图才有区分度
+     （若按 5MB 上限算，正常使用时全部条目都不足 10%，看不出差异） */
+  h += '<div class="setusg">';
+  u.items.forEach(function(it){
+    var w = Math.max(2, it.pct);
+    h += '<div class="setusg__row">';
+    h += '<div class="setusg__hd"><span>' + it.icon + ' ' + esc(it.n) + '</span>' +
+         '<span class="setusg__num">' + setFmtBytes(it.b) +
+         '<span class="setusg__pct">' + it.pct + '%</span></span></div>';
+    h += '<div class="setbar"><div class="setbar__in" style="width:' + w + '%;background:' +
+         (it.pct >= 40 ? '#0ea5e9' : 'var(--brand)') + '"></div></div>';
+    if (it.note) h += '<div class="setusg__note">' + esc(it.note) + '</div>';
+    h += '</div>';
+  });
+  h += '</div>';
+
+  /* 基于真实风险的预警（不用 5MB 的百分比，那个永远触发不了） */
+  if (warns.length) {
+    warns.forEach(function(w){
+      h += '<div class="setwarn setwarn--' + w.lv + '">' +
+           '<div class="setwarn__t">' +
+           (w.lv === 'high' ? '🛑' : (w.lv === 'mid' ? '⚠️' : '💡')) + ' ' +
+           esc(w.t) + '</div>' +
+           '<div class="setwarn__d">' + esc(w.d) + '</div></div>';
+    });
+  } else {
+    h += '<div class="setwarn setwarn--ok">✅ 占用正常，暂无需清理</div>';
+  }
   h += '<div class="setrow setrow--btns">';
   h += '<button class="btn btn--sm" id="btnSetExport">📤 导出全量备份</button>';
   h += '<button class="btn btn--sm btn--ghost" id="btnSetImport">📥 恢复备份</button>';

@@ -377,7 +377,7 @@ Six groups, deliberately nothing more:
 
 | Group | Contents |
 |---|---|
-| 💾 Data & backup | full JSON export / restore / clear, storage usage bar |
+| 💾 Data & backup | full JSON export / restore / clear, storage usage **breakdown** |
 | 🎨 Appearance | light / dark (two-way sync with the topbar toggle) |
 | 🏛️ Brand baseline | which brand the tone check scores against |
 | 🚀 Startup | which tab opens by default |
@@ -388,8 +388,47 @@ Deliberately **not** built: accounts, cloud sync, i18n, custom shortcuts, a
 plugin marketplace. Each either needs a backend (breaking the privacy promise)
 or is something nobody would actually use.
 
-`localStorage` caps at roughly 5 MB, so the usage bar turns amber past 50 % and
-red past 80 % — a nudge to export and clean up before it actually breaks.
+#### Storage: a breakdown, not a "x / 5 MB" bar
+
+The first version showed a single bar against the ~5 MB `localStorage` cap.
+**That bar is dead on arrival.** Measured: filling every module with realistic
+content lands around **475 KB — under 10 %** of the cap, so the bar sits at
+1–2 % forever and the amber(50 %)/red(80 %) thresholds can never fire.
+
+What actually blows the cap is a *single* behaviour: pasting hundreds of long
+documents into the knowledge base — which is the one place with no cap and the
+highest paste frequency. A single total bar cannot show *which* item grew.
+
+So it now renders a **per-category breakdown**, with percentages computed
+*between categories* (not against 5 MB) so the bars actually differentiate:
+
+| Category | Capped? |
+|---|---|
+| 📚 Knowledge base | ❌ no (**the real risk**) |
+| 💬 Workspace blocks | ❌ no |
+| 🩺 Content scores | ✅ 100 entries |
+| 🏛️ Strategy & dossiers | — |
+| 🗂️ Other (chat / calendar / workflow / trace) | ✅ chat 60, history 50 |
+
+Warnings use **absolute thresholds** instead of a percentage of 5 MB:
+total > 512 KB → export; total > 1 MB (~250k chars) → export *and* clean;
+knowledge base > 50 docs or > 2 MB → clean up; any single doc > 100 KB → split.
+
+**Byte counting:** UTF-16 (2 bytes/char), which is what `localStorage` actually
+uses. The earlier `Blob.size` version counted UTF-8 and **over-reported Chinese
+text by ~50 %**.
+
+#### Knowledge base soft cap
+
+Soft = inform, never block:
+
+- Saving a doc over **50 000 chars** (~100 KB) → confirm dialog stating the size
+  and suggesting a split, but saving still proceeds if confirmed
+- Total over **50 docs or 2 MB** → one-time toast (not repeated per save)
+- A persistent "N docs · X KB" line under the doc list, amber when over
+
+The stance is *informed consent*, not prohibition: users may store long material,
+they just get to know what it costs.
 
 ---
 
