@@ -281,7 +281,7 @@ function renderSettings(){
   h += '<div class="setrow setrow--btns">';
   h += '<button class="btn btn--sm" id="btnSetExport">📤 导出全量备份</button>';
   h += '<button class="btn btn--sm btn--ghost" id="btnSetImport">📥 恢复备份</button>';
-  h += '<button class="btn btn--sm btn--ghost" id="btnSetClear" style="color:#dc2626">🗑️ 清空全部数据</button>';
+  h += '<button class="btn btn--sm btn--ghost" id="btnSetClear" style="color:var(--alert)">🗑️ 清空全部数据</button>';
   h += '<input type="file" id="setFile" accept=".json,application/json" style="display:none" />';
   h += '</div>';
   h += '</div></div>';

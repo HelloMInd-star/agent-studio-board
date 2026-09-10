@@ -93,23 +93,23 @@ function calcHotspot(){
   if(hasHigh){
     adviceKey = 'stop';
     advice = '🛑 不建议跟进';
-    color = '#b91c1c';
+    color = 'var(--alert)';
   } else if(total >= 70){
     adviceKey = 'go';
     advice = '🟢 果断跟进';
-    color = '#047857';
+    color = 'var(--ok)';
   } else if(total >= 50){
     adviceKey = 'careful';
     advice = '🟡 谨慎跟进（建议换角度）';
-    color = '#b45309';
+    color = 'var(--warn)';
   } else {
     adviceKey = 'no';
     advice = '⚪ 不建议投入资源';
-    color = '#64748b';
+    color = 'var(--gray-500)';
   }
   if(vetoed && adviceKey !== 'stop'){
     advice = '🟠 文本含高危话题，建议重新评估';
-    color = '#c2410c';
+    color = 'var(--orange)';
   }
 
   /* 跟进角度建议 */

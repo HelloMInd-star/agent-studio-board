@@ -55,7 +55,7 @@ function renderSteps(){
     var no = document.createElement('span'); no.className = 'step__no'; no.textContent = (i+1) + '.';
     var outBox = document.createElement('span'); outBox.className = 'step__out';
     outBox.textContent = '→ ' + (s.outVar || '?');
-    if(!s.outVar) outBox.style.color = '#ef4444';
+    if(!s.outVar) outBox.style.color = 'var(--alert)';
     var del = document.createElement('button'); del.className = 'step__del'; del.textContent = '✕';
     del.onclick = function(){ state.flow.steps.splice(i,1); renderSteps(); save(); };
     hd.appendChild(no); hd.appendChild(outBox); hd.appendChild(del);

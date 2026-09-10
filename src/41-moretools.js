@@ -253,7 +253,7 @@ function auditAssetsReport(){
       out += '*色彩与定位的关联为经验共识，非精确科学，仅供参考。*\n';
     }
   } else {
-    out += '未设置主色。填一个 HEX（如 #4f46e5）后可自动换算 HSL 并检查与定位的匹配度。\n';
+    out += '未设置主色。填一个 HEX（如 #2563eb）后可自动换算 HSL 并检查与定位的匹配度。\n';
   }
   return out;
 }

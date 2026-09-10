@@ -170,7 +170,7 @@ function renderAssets(){
   h += '<div class="card__hd">🎨 色值与字体规范 <span class="eyebrow" style="margin-left:auto">品牌一致性的基准</span></div>';
   h += '<div class="card__bd">';
   h += '<div class="grid3">';
-  [['main','主色','#4f46e5'],['sub','辅色',''],['acc','强调色','']].forEach(function(c){
+  [['main','主色','#2563eb'],['sub','辅色',''],['acc','强调色','']].forEach(function(c){
     h += '<label class="fld"><span>' + c[1] + '</span>' +
          '<input type="text" id="as_c_' + c[0] + '" class="inp" placeholder="' + c[2] + '" value="' +
          esc(a.colors[c[0]] || '') + '"></label>';
