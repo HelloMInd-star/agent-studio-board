@@ -84,6 +84,7 @@
       <button class="tab" data-tab="agent"><span class="tab__name">💬 Agent 工作台</span><span class="tab__desc">对话 · 文档 · 工具</span></button>
       <button class="tab" data-tab="cal"><span class="tab__name">📅 营销日历</span><span class="tab__desc">排期 · 追踪 · 提醒</span></button>
       <button class="tab" data-tab="synth"><span class="tab__name">📋 方案合成</span><span class="tab__desc">跨模块 · 一键聚合</span></button>
+      <button class="tab" data-tab="packs"><span class="tab__name">📦 内容包</span><span class="tab__desc">4 个场景 · 跑完出图</span></button>
     </div>
   </div>
   <div class="tgroup" data-group="keep">
@@ -597,6 +598,21 @@
     </section>
 
     <!-- ===== 营销工作流 ===== -->
+    <section class="panel" data-panel="packs">
+      <h2 class="panel__hd">📦 内容包 · 照着跑就能出活</h2>
+      <p class="panel__sub">
+        4 个包，<b>全部免费</b>。每个包都标明哪几步能本地真跑、哪几步需要 AI —— 跑完即有真实数字，
+        结果页自动汇总成图表。<b>不新增任何能力</b>，只是把已有模块按场景串成一条路。
+      </p>
+      <div id="packList" class="pkgrid"></div>
+      <div id="packRun" class="pkrun"></div>
+      <div id="packResult"></div>
+      <p class="hint" style="margin-top:12px">
+        💡 带 ⚡ 的步骤由本地确定性函数执行，结果可复现、不依赖模型；
+        带 🤖 的步骤需要你把 AI 平台的产出粘贴回来。<b>这是刻意的分工</b>：能算的不交给模型。
+      </p>
+    </section>
+
     <section class="panel" data-panel="flow">
       <h2 class="panel__hd">🔗 工作流编排 · 详细指令版</h2>
       <p class="panel__sub">每一步写清「做什么 + 用什么工具」，生成完整路由包。</p>

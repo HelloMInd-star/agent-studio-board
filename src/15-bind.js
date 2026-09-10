@@ -15,6 +15,8 @@ function bind(){
       if(k === 'timeline'){ renderTimeline(); if(typeof renderInsight === 'function') renderInsight(); }
       // 切到系统设置时重渲染（存储占用会随使用变化）
       if(k === 'settings' && typeof renderSettings === 'function') renderSettings();
+      // 切到内容包时重渲染（进度与结果可能已变化）
+      if(k === 'packs' && typeof renderPacks === 'function') renderPacks();
     };
   });
 

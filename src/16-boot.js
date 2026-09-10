@@ -241,6 +241,8 @@ renderScoreTrend();
 
 /* 系统设置（34）：渲染面板 + 应用「默认打开哪个模块」 */
 if (typeof renderSettings === 'function') renderSettings();
+/* 内容包（38）：渲染包列表，并恢复上次正在跑的包 */
+if (typeof renderPacks === 'function') { renderPacks(); renderPackRun(); }
 if (state.startTab && state.startTab !== 'guide' && typeof switchTab === 'function') {
   switchTab(state.startTab);
 }

@@ -536,6 +536,45 @@ where the gaps are.
 
 ---
 
+### 3.16 Content packs (packs)
+
+Productisation, not new capability. The four packs existed before as
+workflow presets buried in a dropdown, while the landing page showed four
+cards reading "coming soon" — the thing was built, but the door said closed.
+
+| Pack | Steps | Local |
+|---|---|---|
+| 📕 小红书爆款 | 6 | 4 (`brandcore` → `scan` → `tonecheck` → `cal`) |
+| ⚔️ 竞品情报 | 5 | 2 (`comp`, `mx`) |
+| 🏷️ 品牌策略 | 5 | 3 (`brandcore`, `stp`, `mx`) |
+| 📈 投放复盘 | 6 | 3 (`fin`, `scan`, `cal`) |
+
+**Local-first re-orchestration.** The original presets were almost entirely
+LLM steps — the 小红书 pack had *zero* local functions, meaning every step
+required a manual round-trip to another AI platform. Re-sequenced so each
+pack carries 2–4 genuinely executable steps, which is also what makes the
+result page's charts possible.
+
+**Where the visualisation comes from.** LLM output is free text and cannot
+be structured, so charts are built from exactly two real sources: step
+completion state, and the numbers returned by local functions
+(`bcAnalyze().score`, `scoreContent().total`, `calcLtv().ratio`, …). Free
+text is never dressed up as a chart.
+
+**Execution reuse.** `pkRunLocal` calls the existing `runLocalStep` with a
+throwaway container and reads back the textarea, so the 14-ish function
+branches exist in exactly one place and cannot drift apart. `scan` and
+`tonecheck` need a text argument, so those call `scoreContent` / `tcAnalyze`
+directly with the previous step's output.
+
+**Verified end to end.** Running 小红书 with a luxury brand profile and a
+hard-sell draft (`限时秒杀！全场最低价！赶紧冲！！！`) yields: brand
+health 90/100, content score 64/100, **tone 0/25** — the same copy scored
+against a value brand passes. The brand→copy constraint holds through the
+pack pipeline.
+
+---
+
 ## 4. Data
 
 Everything lives in `localStorage` under `ym_studio_v1`. Clearing browser

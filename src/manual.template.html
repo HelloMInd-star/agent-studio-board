@@ -213,6 +213,7 @@ a:hover{text-decoration:underline;}
       <a href="#charts">📊 商业图卡</a>
       <a href="#cal">📅 营销日历</a>
       <a href="#flow">🔄 工作流编排</a>
+      <a href="#packs">📦 内容包</a>
       <a href="#synth">📋 方案合成</a>
     </div>
     <div class="mgroup">
@@ -768,6 +769,48 @@ a:hover{text-decoration:underline;}
         <b>提醒的边界</b>：只有在<b>你打开页面时</b>才会提醒。
         关掉页面 JS 就停止运行，做不到"定时推送"——这是纯前端的硬限制。
       </div>
+    </section>
+
+    <section class="msec" id="packs">
+      <h2><span class="ico">📦</span>内容包</h2>
+      <div class="mflow" data-flow="packs">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">选一个场景包</span><span class="mfl__arrow">→</span><span class="mfl__step">按顺序跑步骤</span><span class="mfl__arrow">→</span><span class="mfl__step">⚡ 本地步真跑 / 🤖 AI 步粘贴</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">结果页出完成度与真实指标</span></div>
+        <div class="mflow__note">标 ⚡ 的步骤由本地确定性函数执行，结果可复现；标 🤖 的步骤需要你把 AI 平台的产出粘贴回来。</div>
+      </div>
+      <p>4 个包，<b>全部免费</b>。它们的能力全部来自已有模块——
+      此前以「工作流预设」的形式藏在下拉里，而首页 4 张卡片却写着「即将推出」。
+      这里做的是<b>产品化，不是新建功能</b>。</p>
+
+      <h3>本地函数优先</h3>
+      <p>原有的 4 个预设几乎全是 LLM 步骤（小红书包原本<b>一个本地函数都没有</b>），
+      意味着每一步都要人工去别的平台跑完再粘回来。重新编排后：</p>
+      <table>
+        <tr><th>包</th><th>步数</th><th>可本地真跑</th></tr>
+        <tr><td>📕 小红书爆款</td><td>6</td><td>4（品牌内核 → 体检 → 调性 → 排期）</td></tr>
+        <tr><td>⚔️ 竞品情报</td><td>5</td><td>2（竞品排名、TOWS）</td></tr>
+        <tr><td>🏷️ 品牌策略</td><td>5</td><td>3（内核、STP、战略）</td></tr>
+        <tr><td>📈 投放复盘</td><td>6</td><td>3（财务、体检、排期）</td></tr>
+      </table>
+      <p>每个包跑完即有真实数字，结果页的图表才有依据——<b>能算的不交给模型</b>。</p>
+
+      <h3>结果页的图从哪来</h3>
+      <p>AI 步骤的产出是自由文本，无法结构化。因此可视化只基于两个真实来源：</p>
+      <ul>
+        <li><b>步骤完成情况</b>——完成度环形图、步骤分布条</li>
+        <li><b>本地函数返回的数字</b>——如品牌健康度、内容体检分、LTV/CAC、排期节点数</li>
+      </ul>
+      <p>指标卡下的明细条（如体检的六维）直接来自 <code>scoreContent</code> 的真实计算，
+      不是硬编码。<b>自由文本不会被包装成图表。</b></p>
+      <div class="mnote is-ok">
+        <b>实测一例</b>：用奢侈品品牌档案跑小红书包，正文贴「限时秒杀！全场最低价！赶紧冲！！！」，
+        结果——品牌健康度 90/100、内容体检 64/100、<b>调性得分 0/25</b>。
+        同样的文案换成性价比品牌是通过的。品牌对文案的约束，在包里同样生效。
+      </div>
+
+      <h3>数据不足时</h3>
+      <p>本地步骤若依赖你先填的数据（如品牌内核、竞品矩阵），没填时会标为「待填数据」，
+      并给一个直达按钮跳去对应模块——<b>不会假装跑通</b>。</p>
     </section>
 
     <section class="msec" id="flow">
