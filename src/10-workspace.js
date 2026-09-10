@@ -62,6 +62,14 @@ function renderTraceList(){
   });
 }
 
+/* 本地步骤执行器扩展点。
+ * 背景：runLocalStep 原来是一条 if-else 链，每加一个可编排工具都要改本文件；
+ *       而新工具的实现往往依赖后加载的模块（如 assets / insight），
+ *       在 10-workspace.js 里直接写会造成「定义时依赖尚不存在」。
+ * 做法：后续模块只需 LOCAL_STEP_RUNNERS[key] = function(){ return 文本 } 即可注册，
+ *       索引与 TOOLS / LOCAL_TOOLS 对齐即可被工作流选中并执行。 */
+var LOCAL_STEP_RUNNERS = {};
+
 /* 执行本地确定性工具，把结果填进 trace */
 function runLocalStep(s, wrapEl){
   var out = '';
@@ -293,6 +301,10 @@ function runLocalStep(s, wrapEl){
           }
         }
       }
+    }
+    else if(s.local.key && LOCAL_STEP_RUNNERS[s.local.key]){
+      /* 后注册的工具（见 LOCAL_STEP_RUNNERS） */
+      out = LOCAL_STEP_RUNNERS[s.local.key]();
     }
   }catch(e){ out = '执行出错：' + e.message; }
   var ta = wrapEl.querySelector('.traceOut');

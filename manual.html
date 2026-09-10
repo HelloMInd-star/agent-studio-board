@@ -731,10 +731,10 @@ a:hover{text-decoration:underline;}
       <h2><span class="ico">📅</span>营销日历</h2>
       <div class="mflow" data-flow="cal">
         <div class="mflow__hd">用户流程</div>
-        <div class="mflow__steps"><span class="mfl__step">新建事件 / 从节点库一键添加</span><span class="mfl__arrow">→</span><span class="mfl__step">设优先级与状态</span><span class="mfl__arrow">→</span><span class="mfl__step">月视图追踪进度</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">打开时提醒逾期与临期</span></div>
+        <div class="mflow__steps"><span class="mfl__step">新建事件 / 从节点库一键添加</span><span class="mfl__arrow">→</span><span class="mfl__step">设优先级与状态</span><span class="mfl__arrow">→</span><span class="mfl__step">选视图追踪（月/周/日/看板/季）</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">打开时提醒逾期与临期</span></div>
         <div class="mflow__note">策略里的营销日历倒排结果，可以一键「存入日历」。</div>
       </div>
-      <p>月视图 + 事件增删改 + 17 个预置节点 + 到期提醒。</p>
+      <p>五种视图 + 事件增删改 + 17 个预置节点 + 到期提醒。视图切换按钮在日历工具栏上：月 / 周 / 日 / 看板 / 季。</p>
       <p>与「策略 → 计算模式 → 营销日历倒排」联动：倒排跑完可一键「📅 存入日历」。</p>
       <h3>起止区间：把大促表达成一条</h3>
       <p>真实的营销活动都有周期——618 是 6/1 预热到 6/18 爆发。此前事件只有单个日期，
@@ -765,6 +765,25 @@ a:hover{text-decoration:underline;}
         <li>每格最多显示 2 条，超出的标 <code>+N</code>；点事件直接编辑，点空白新建</li>
         <li>可翻上季 / 下季（跨年自动进位）；切回月视图时，会停在你浏览的季度内的对应月份，不丢失上下文</li>
       </ul>
+      <h3>周视图 / 日视图：本周负荷与今天做什么</h3>
+      <p>月视图看密度、季度视图看节奏，但都回答不了「这周我要干几件事」「今天该推哪条」。</p>
+      <ul>
+        <li><b>周视图</b>：7 列并排，每列列出当天事件。哪天堆满了、哪天还空着，一眼可见</li>
+        <li><b>日视图</b>：单日清单，含优先级、状态、起止区间与备注；未完成和高优先级排在前面</li>
+        <li>两个视图都能用工具栏的上/下按钮翻（周按周翻、日按天翻），「今天」随时回到当天</li>
+        <li>跨天事件同样在覆盖的每一天出现，延续日显示 <code>↳</code></li>
+      </ul>
+      <h3>看板视图：流程堵在哪</h3>
+      <p>按状态分成四列：待开始 / 进行中 / 已完成 / 已延期。顶部给出总数、完成率、进行中、已延期。</p>
+      <ul>
+        <li>卡片上的 <b>▶</b> 可推进状态：待开始 → 进行中 → 已完成（已完成再点回到待开始）</li>
+        <li>已过计划日且未完成的卡片标红并显示「已逾期」，并优先排在列首</li>
+        <li>看板是全局视图，翻页按钮会自动隐藏</li>
+      </ul>
+      <div class="mnote is-ok">
+        五个视图共用<b>同一份数据</b>和同一套跨天规则，切换视图不会丢浏览位置——
+        在 5 月翻到 Q3 再切回月视图，会落在 8 月而不是跳回 7 月。
+      </div>
       <div class="mnote is-no">
         <b>提醒的边界</b>：只有在<b>你打开页面时</b>才会提醒。
         关掉页面 JS 就停止运行，做不到"定时推送"——这是纯前端的硬限制。
@@ -775,7 +794,7 @@ a:hover{text-decoration:underline;}
       <h2><span class="ico">📦</span>内容包</h2>
       <div class="mflow" data-flow="packs">
         <div class="mflow__hd">用户流程</div>
-        <div class="mflow__steps"><span class="mfl__step">选包→打开独立窗口</span><span class="mfl__arrow">→</span><span class="mfl__step">对话采集 3 题</span><span class="mfl__arrow">→</span><span class="mfl__step">⚡ 本地步真跑 / 🤖 AI 步粘贴</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">结果页出完成度与真实指标</span></div>
+        <div class="mflow__steps"><span class="mfl__step">选包→打开独立窗口</span><span class="mfl__arrow">→</span><span class="mfl__step">按包采集 2–3 题</span><span class="mfl__arrow">→</span><span class="mfl__step">⚡ 本地步真跑 / 🤖 AI 步粘贴</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">结果页出完成度与真实指标</span></div>
         <div class="mflow__note">标 ⚡ 的步骤由本地确定性函数执行，结果可复现；标 🤖 的步骤需要你把 AI 平台的产出粘贴回来。</div>
       </div>
       <p>4 个包，<b>全部免费</b>。它们的能力全部来自已有模块——
@@ -786,7 +805,7 @@ a:hover{text-decoration:underline;}
       <p>点包卡片会打开一个<b>全屏窗口</b>，而不是在页面里塞更多东西。顶部有阶段指示器：</p>
       <table>
         <tr><th>阶段</th><th>做什么</th></tr>
-        <tr><td>1 采集</td><td>对话式问 3 个问题（品牌基准 / 本次目标 / 硬限制），答案注入后续每一步的提示词</td></tr>
+        <tr><td>1 采集</td><td>按包问 2–3 题（小红书问品牌基准/目标/硬限制，投放复盘问周期与预算），答案注入后续每一步的提示词</td></tr>
         <tr><td>2 执行</td><td>按步骤跑。⚡ 步骤点按钮即出真实数字；🤖 步骤给可复制提示词</td></tr>
         <tr><td>3 成果</td><td>完成度环形图 + 指标卡 + 步骤分布，可导出 Markdown</td></tr>
       </table>
@@ -861,6 +880,29 @@ a:hover{text-decoration:underline;}
       <p>6 步编排，可导出<b>三种 Agent 格式</b>：标准 Agent JSON、Coze、Dify DSL。</p>
       <p>每个步骤可以选「本地函数」而不是 LLM——导出时变成确定性 tool 调用，
       Agent 跑到这里不靠模型自由发挥。</p>
+      <h3>17 个可编排的本地函数</h3>
+      <p>步骤的工具下拉里，带「⚡ 本地函数」的项会<b>真跑</b>——同一个输入永远同一个输出，
+      不靠模型发挥。目前共 <b>17 个</b>：</p>
+      <div class="mtable">
+        <table>
+          <tr><th>类别</th><th>函数</th></tr>
+          <tr><td>分析</td><td>竞品矩阵 · STP 市场选择 · 区域市场 · 热点决策 · 调研方案 · 战略矩阵 · 财务测算</td></tr>
+          <tr><td>品牌</td><td>品牌内核诊断 · 品牌调性约束</td></tr>
+          <tr><td>执行</td><td>营销日历倒排 · 内容体检评分 · 思维导图 · 方案合成 · 定价策略</td></tr>
+          <tr><td>新增</td><td>A/B 标题评分 · 品牌资产台账审计 · 品牌轨迹洞察</td></tr>
+        </table>
+      </div>
+      <h3>A/B 标题评分怎么用</h3>
+      <p>在内容工厂生成或粘贴<b>多个候选标题</b>（每行一个，最多 20 条），
+      然后让工作流跑到这一步，它会逐条打分排序。</p>
+      <p>打分看的是<b>表层特征</b>：长度（理想 12–22 字）、有没有数字、有没有悬念、
+      感叹号密度、绝对化用词、促销硬词、emoji 数量；如果填过品牌内核，
+      还会额外复核调性是否跑偏。</p>
+      <div class="mnote is-warn">
+        <b>它不预测点击率。</b>「哪个标题会火」只有投放后才知道。
+        这个工具的作用是<b>把明显有坑的淘汰掉</b>——绝对化词（最好/第一/绝对）既不可信
+        又容易命中广告法违禁词，感叹号超过 3 个会变成叫卖感。
+      </div>
       <h3>Trace 运行记录</h3>
       <p>每步可记录真实产出 + 状态（成功/部分成功/失败/跳过），导出成 Markdown。
       这证明工作流<b>不只是设计稿，是执行过且可复现的</b>。</p>

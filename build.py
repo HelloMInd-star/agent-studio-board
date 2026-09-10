@@ -59,8 +59,10 @@ MODULES = [
     '35-insight.js',      # 洞察与导出：趋势分析 + 日历 iCal/CSV（须在 timeline/calendar 后、boot 前）
     '36-assets.js',       # 品牌资产台账：Logo 版本 / 物料进度 / 色值规范（须在 brandcore 后）
     '37-quarter.js',      # 营销日历季度视图：三个月并排看节奏（须在 calendar 后、boot 前）
+    '40-calview.js',      # 营销日历周/日/看板视图 + 五视图调度接管（须在 quarter 后、boot 前）
     '38-packs.js',        # 内容包：工作流预设产品化，本地函数优先 + 结果可视化（须在 workspace 后）
     '39-packwiz.js',      # 内容包独立窗口：全屏模态 + 启动前对话式采集 + AI 步骤引导（须在 packs 后）
+    '41-moretools.js',    # 扩充可编排工具集：A/B标题/资产审计/轨迹洞察（须在 tonecheck·insight·assets 后）
     '16-boot.js',       # 回填 + 启动（最后，含 })();）
 ]
 

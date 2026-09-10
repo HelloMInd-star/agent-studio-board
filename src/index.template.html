@@ -881,7 +881,13 @@
         <span class="calbar__ym" id="calYM"></span>
         <button class="btn btn--sm btn--ghost" id="btnCalNext">下月 ›</button>
         <button class="btn btn--sm btn--ghost" id="btnCalToday">今天</button>
-        <button class="btn btn--sm btn--ghost" id="btnCalView">🗓️ 季度视图</button>
+        <div class="calviews" id="calViews">
+          <button class="calview" data-v="month" title="月视图：看密度">月</button>
+          <button class="calview" data-v="week" title="周视图：看本周负荷">周</button>
+          <button class="calview" data-v="day" title="日视图：看今天做什么">日</button>
+          <button class="calview" data-v="board" title="看板视图：看流程堵在哪">看板</button>
+          <button class="calview" data-v="quarter" title="季度视图：看三个月节奏">季</button>
+        </div>
         <span class="spacer"></span>
         <button class="btn btn--sm btn--primary" id="btnCalAdd">➕ 新建事件</button>
         <button class="btn btn--sm btn--ghost" id="btnCalNode">🎯 节点库</button>
@@ -889,6 +895,9 @@
 
       <div class="calgrid" id="calGrid"></div>
       <div class="calquarter" id="calQuarter" style="display:none"></div>
+      <div class="calweek" id="calWeek" style="display:none"></div>
+      <div class="calday" id="calDay" style="display:none"></div>
+      <div class="calboard" id="calBoard" style="display:none"></div>
 
       <div class="callegend">
         <span><i style="background:var(--brand)"></i>待开始</span>

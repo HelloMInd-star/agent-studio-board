@@ -1565,6 +1565,128 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
   .mwiz__in input{min-width:100%;}
 }
 
+/* ============================================================
+   营销日历 · 周 / 日 / 看板视图（40）
+   ============================================================ */
+/* 视图切换组 */
+.calviews{display:inline-flex;gap:2px;padding:2px;background:var(--bg-soft,rgba(127,127,127,.05));border-radius:8px;}
+.calview{
+  border:0;background:transparent;cursor:pointer;font-size:11.5px;font-weight:600;
+  color:var(--text-3);padding:4px 10px;border-radius:6px;transition:all .15s;font-family:inherit;
+}
+.calview:hover{color:var(--text-1);}
+.calview.is-on{background:var(--bg-1,#fff);color:var(--brand);box-shadow:0 1px 3px rgba(0,0,0,.08);}
+
+/* ---- 周视图 ---- */
+.wkgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
+.wkcol{border:1px solid var(--line);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;min-height:190px;}
+.wkcol.is-today{border-color:var(--brand);box-shadow:0 0 0 1px var(--brand);}
+.wkcol__hd{
+  display:flex;align-items:baseline;gap:4px;padding:6px 8px;
+  background:var(--bg-soft,rgba(127,127,127,.05));border-bottom:1px solid var(--line);
+}
+.wkcol__hd b{font-size:14px;color:var(--text-1);font-family:var(--font-mono,monospace);}
+.wkcol__hd span{font-size:10.5px;color:var(--text-3);}
+.wkcol__n{
+  margin-left:auto;font-style:normal;font-size:9.5px;font-weight:700;color:var(--brand);
+  background:var(--brand-soft,rgba(108,92,231,.12));border-radius:8px;padding:1px 5px;
+}
+.wkcol__body{flex:1;padding:6px;display:flex;flex-direction:column;gap:4px;cursor:pointer;}
+.wkcol__body:hover{background:rgba(127,127,127,.03);}
+.wkcol__empty{font-size:11px;color:var(--text-3);opacity:.5;text-align:center;padding:14px 0;}
+.calv{
+  font-size:11px;line-height:1.4;padding:4px 6px;border-radius:5px;cursor:pointer;
+  background:var(--brand-soft,rgba(108,92,231,.12));color:var(--brand);
+  border-left:2.5px solid var(--brand);transition:all .15s;
+}
+.calv:hover{transform:translateX(1px);filter:brightness(.96);}
+.calv--high{border-left-width:3.5px;font-weight:600;}
+.calv--done{opacity:.55;text-decoration:line-through;border-left-color:var(--ok);}
+.calv--delayed{border-left-color:var(--alert);background:rgba(185,28,28,.09);color:var(--alert);}
+.calv--cont{opacity:.6;background:transparent;border-left-style:dashed;font-style:italic;}
+.calv__t{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+@media (max-width:900px){
+  .wkgrid{grid-template-columns:repeat(2,1fr);}
+  .wkcol{min-height:120px;}
+}
+
+/* ---- 日视图 ---- */
+.dayhd{
+  display:flex;align-items:baseline;gap:8px;padding:9px 12px;margin-bottom:10px;
+  border:1px solid var(--line);border-radius:10px;background:var(--bg-soft,rgba(127,127,127,.05));
+}
+.dayhd.is-today{border-color:var(--brand);background:var(--brand-soft,rgba(108,92,231,.07));}
+.dayhd b{font-size:14px;color:var(--text-1);}
+.dayhd span{font-size:11.5px;color:var(--text-3);}
+.dayhd__n{margin-left:auto;font-style:normal;font-size:11px;color:var(--text-3);}
+.dayev{
+  border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;
+  cursor:pointer;transition:all .15s;background:var(--bg-1,#fff);
+}
+.dayev:hover{border-color:var(--brand);box-shadow:0 2px 8px rgba(0,0,0,.05);}
+.dayev--done{opacity:.6;}
+.dayev__top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.dayev__t{font-size:13px;font-weight:600;color:var(--text-1);}
+.dayev__tags{margin-left:auto;display:flex;gap:5px;align-items:center;}
+.tagpri{font-style:normal;font-size:9.5px;padding:1px 6px;border-radius:8px;font-weight:700;}
+.tagpri--high{background:rgba(185,28,28,.12);color:var(--alert);}
+.tagpri--mid{background:rgba(200,140,0,.12);color:#b8860b;}
+.tagpri--low{background:rgba(127,127,127,.12);color:var(--text-3);}
+.tagst{font-style:normal;font-size:9.5px;padding:1px 6px;border-radius:8px;background:rgba(127,127,127,.1);color:var(--text-2);}
+.tagst.is-doing{background:rgba(108,92,231,.12);color:var(--brand);}
+.tagst.is-done{background:rgba(5,150,105,.12);color:var(--ok);}
+.tagst.is-delayed{background:rgba(185,28,28,.12);color:var(--alert);}
+.dayev__meta{font-size:10.5px;color:var(--text-3);margin-top:4px;}
+.dayev__note{font-size:11.5px;color:var(--text-2);margin-top:5px;line-height:1.5;}
+.empty{padding:26px 14px;text-align:center;color:var(--text-3);font-size:12px;
+  border:1px dashed var(--line);border-radius:10px;}
+
+/* ---- 看板视图 ---- */
+.bdstat{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--text-2);
+  padding:8px 12px;margin-bottom:10px;border:1px solid var(--line);border-radius:10px;
+  background:var(--bg-soft,rgba(127,127,127,.05));}
+.bdstat b{color:var(--text-1);font-family:var(--font-mono,monospace);font-size:12.5px;}
+.bdstat .spacer{margin-left:auto;}
+.bdgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.bdcol{border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;min-height:200px;
+  background:var(--bg-soft,rgba(127,127,127,.03));}
+.bdcol__hd{display:flex;align-items:center;gap:6px;padding:8px 10px;font-size:12px;font-weight:700;
+  color:var(--text-1);border-bottom:1px solid var(--line);}
+.bddot{width:8px;height:8px;border-radius:3px;background:var(--brand);display:inline-block;}
+.bddot.is-doing{background:var(--signal);}
+.bddot.is-done{background:var(--ok);}
+.bddot.is-delayed{background:var(--alert);}
+.bdcol__n{margin-left:auto;font-style:normal;font-size:10px;color:var(--text-3);
+  background:var(--bg-1,#fff);border-radius:8px;padding:1px 6px;font-weight:600;}
+.bdcol__body{flex:1;padding:8px;display:flex;flex-direction:column;gap:7px;}
+.bdcol__empty{font-size:11px;color:var(--text-3);opacity:.5;text-align:center;padding:16px 0;}
+.bdcard{
+  border:1px solid var(--line);border-radius:9px;padding:8px 9px;cursor:pointer;
+  background:var(--bg-1,#fff);transition:all .15s;
+}
+.bdcard:hover{border-color:var(--brand);box-shadow:0 2px 8px rgba(0,0,0,.05);}
+.bdcard.is-overdue{border-color:var(--alert);background:rgba(185,28,28,.04);}
+.bdcard.is-done{opacity:.55;}
+.bdcard__t{font-size:12px;font-weight:600;color:var(--text-1);line-height:1.4;}
+.bdcard__meta{font-size:10px;color:var(--text-3);margin-top:4px;}
+.bdcard__bar{display:flex;align-items:center;margin-top:6px;min-height:18px;}
+.bdcard__flag{
+  font-style:normal;font-size:9.5px;font-weight:700;color:var(--alert);
+  background:rgba(185,28,28,.12);border-radius:6px;padding:1px 6px;
+}
+.bdcard__next{
+  margin-left:auto;border:0;background:transparent;cursor:pointer;color:var(--text-3);
+  font-size:12px;padding:1px 6px;border-radius:5px;transition:all .15s;line-height:1;
+}
+.bdcard__next:hover{background:var(--brand-soft,rgba(108,92,231,.14));color:var(--brand);}
+@media (max-width:900px){
+  .bdgrid{grid-template-columns:repeat(2,1fr);}
+}
+@media (max-width:560px){
+  .bdgrid{grid-template-columns:1fr;}
+  .bdstat{gap:8px;font-size:11px;}
+}
+
 </style>
 </head>
 <body>
@@ -2440,7 +2562,13 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
         <span class="calbar__ym" id="calYM"></span>
         <button class="btn btn--sm btn--ghost" id="btnCalNext">下月 ›</button>
         <button class="btn btn--sm btn--ghost" id="btnCalToday">今天</button>
-        <button class="btn btn--sm btn--ghost" id="btnCalView">🗓️ 季度视图</button>
+        <div class="calviews" id="calViews">
+          <button class="calview" data-v="month" title="月视图：看密度">月</button>
+          <button class="calview" data-v="week" title="周视图：看本周负荷">周</button>
+          <button class="calview" data-v="day" title="日视图：看今天做什么">日</button>
+          <button class="calview" data-v="board" title="看板视图：看流程堵在哪">看板</button>
+          <button class="calview" data-v="quarter" title="季度视图：看三个月节奏">季</button>
+        </div>
         <span class="spacer"></span>
         <button class="btn btn--sm btn--primary" id="btnCalAdd">➕ 新建事件</button>
         <button class="btn btn--sm btn--ghost" id="btnCalNode">🎯 节点库</button>
@@ -2448,6 +2576,9 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
 
       <div class="calgrid" id="calGrid"></div>
       <div class="calquarter" id="calQuarter" style="display:none"></div>
+      <div class="calweek" id="calWeek" style="display:none"></div>
+      <div class="calday" id="calDay" style="display:none"></div>
+      <div class="calboard" id="calBoard" style="display:none"></div>
 
       <div class="callegend">
         <span><i style="background:var(--brand)"></i>待开始</span>
@@ -5265,6 +5396,14 @@ function renderTraceList(){
   });
 }
 
+/* 本地步骤执行器扩展点。
+ * 背景：runLocalStep 原来是一条 if-else 链，每加一个可编排工具都要改本文件；
+ *       而新工具的实现往往依赖后加载的模块（如 assets / insight），
+ *       在 10-workspace.js 里直接写会造成「定义时依赖尚不存在」。
+ * 做法：后续模块只需 LOCAL_STEP_RUNNERS[key] = function(){ return 文本 } 即可注册，
+ *       索引与 TOOLS / LOCAL_TOOLS 对齐即可被工作流选中并执行。 */
+var LOCAL_STEP_RUNNERS = {};
+
 /* 执行本地确定性工具，把结果填进 trace */
 function runLocalStep(s, wrapEl){
   var out = '';
@@ -5496,6 +5635,10 @@ function runLocalStep(s, wrapEl){
           }
         }
       }
+    }
+    else if(s.local.key && LOCAL_STEP_RUNNERS[s.local.key]){
+      /* 后注册的工具（见 LOCAL_STEP_RUNNERS） */
+      out = LOCAL_STEP_RUNNERS[s.local.key]();
     }
   }catch(e){ out = '执行出错：' + e.message; }
   var ta = wrapEl.querySelector('.traceOut');
@@ -16095,6 +16238,416 @@ function bindQuarter(){
 }
 bindQuarter();
 
+/* ===== src/40-calview.js ===== */
+/* ============================================================
+ * 40-calview.js —— 营销日历 · 周视图 / 日视图 / 看板视图
+ *
+ * 为什么补这三个视图（roadmap 上原本标着「进行中」）：
+ *   月视图看密度、季度视图看节奏，但都回答不了一个问题——
+ *   「这周我到底要干几件事？」「今天该推哪条？」「哪些卡住了？」
+ *   周视图回答本周负荷，日视图回答今天做什么，看板回答流程堵在哪。
+ *
+ * 设计原则（与 37-quarter 一致）：
+ *   · 只读聚合 state.cal.events，不新增数据结构
+ *   · 跨天事件在覆盖的每一天出现，延续日加 ↳（三视图统一）
+ *   · 点事件编辑、点空白新建，行为与月视图完全一致
+ *   · 不引入任何依赖，纯 DOM + 既有函数
+ *
+ * 依赖：17-calendar（openCalModal / ymd / today0 / renderCalAlerts / renderEvList）
+ *       37-quarter（qOfMonth / renderQuarter / calApplyView / calStep —— 本文件接管后两者）
+ * ============================================================ */
+
+var CAL_VIEWS = [
+  {k:'month',   n:'月',   t:'月视图'},
+  {k:'week',    n:'周',   t:'周视图'},
+  {k:'day',     n:'日',   t:'日视图'},
+  {k:'board',   n:'看板', t:'看板视图'},
+  {k:'quarter', n:'季',   t:'季度视图'}
+];
+/* 视图 -> 容器 id */
+var CAL_VIEW_EL = {
+  month:'calGrid', quarter:'calQuarter',
+  week:'calWeek', day:'calDay', board:'calBoard'
+};
+var CAL_ALL_EL = ['calGrid', 'calQuarter', 'calWeek', 'calDay', 'calBoard'];
+
+var WD_CN = ['日', '一', '二', '三', '四', '五', '六'];
+
+/* 当前焦点日（周/日视图用），缺失时回落到今天 */
+function calFocusDate(){
+  var c = state.cal;
+  if(!c.d){
+    c.d = ymd(today0());
+  }
+  var d = new Date(c.d + 'T00:00:00');
+  if(isNaN(d)){ d = today0(); c.d = ymd(d); }
+  return d;
+}
+
+/* 某日命中的事件（与月视图同一套区间逻辑） */
+function calEvsOn(ds){
+  return (state.cal.events || []).filter(function(e){
+    if(!e.date) return false;
+    if(e.dateEnd && e.dateEnd > e.date) return ds >= e.date && ds <= e.dateEnd;
+    return e.date === ds;
+  });
+}
+/* 是否跨天区间的延续日（非首日） */
+function calIsCont(e, ds){
+  return !!(e.dateEnd && e.dateEnd > e.date && ds > e.date);
+}
+function calEvCls(e, extra){
+  return 'calv' + (e.status === 'done' ? ' calv--done' : e.status === 'delayed' ? ' calv--delayed' : '') +
+         (e.pri === 'high' ? ' calv--high' : '') + (extra || '');
+}
+
+/* ============================================================
+ * 周视图：7 列，每列列出当天事件
+ * ============================================================ */
+function renderWeek(){
+  var host = $('#calWeek');
+  if(!host) return;
+  var c = state.cal;
+  var base = calFocusDate();
+  var start = new Date(base);
+  start.setDate(base.getDate() - base.getDay());   // 周日起，与月视图一致
+  var todayS = ymd(today0());
+
+  var h = '<div class="wkgrid">';
+  for(var i = 0; i < 7; i++){
+    var d = new Date(start); d.setDate(start.getDate() + i);
+    var ds = ymd(d);
+    var isToday = (ds === todayS);
+    var evs = calEvsOn(ds);
+    h += '<div class="wkcol' + (isToday ? ' is-today' : '') + '">';
+    h += '<div class="wkcol__hd"><b>' + d.getDate() + '</b><span>周' + WD_CN[d.getDay()] + '</span>' +
+         (evs.length ? '<i class="wkcol__n">' + evs.length + '</i>' : '') + '</div>';
+    h += '<div class="wkcol__body" data-date="' + ds + '">';
+    if(!evs.length){
+      h += '<div class="wkcol__empty">—</div>';
+    } else {
+      evs.forEach(function(e){
+        var cont = calIsCont(e, ds);
+        h += '<div class="' + calEvCls(e, cont ? ' calv--cont' : '') + '" data-ev="' + e.id +
+             '" title="' + esc(e.title) + (e.dateEnd && e.dateEnd > e.date ? '（' + e.date + ' → ' + e.dateEnd + '）' : '') + '">' +
+             '<span class="calv__t">' + (cont ? '↳ ' : '') + esc(e.title) + '</span>' +
+             '</div>';
+      });
+    }
+    h += '</div></div>';
+  }
+  h += '</div>';
+  h += '<div class="hint" style="margin-top:8px">💡 一周负荷一眼可见：哪天堆满了、哪天空着。点空白处新建当天事件。</div>';
+  host.innerHTML = h;
+
+  host.onclick = function(e){
+    var ev = e.target.closest('.calv');
+    if(ev && ev.getAttribute('data-ev')){ openCalModal(ev.getAttribute('data-ev')); return; }
+    var col = e.target.closest('.wkcol__body');
+    if(col){ openCalModal(null, col.getAttribute('data-date')); }
+  };
+}
+
+/* ============================================================
+ * 日视图：单日清单，含完整信息
+ * ============================================================ */
+function renderDay(){
+  var host = $('#calDay');
+  if(!host) return;
+  var c = state.cal;
+  var d = calFocusDate();
+  var ds = ymd(d);
+  var todayS = ymd(today0());
+  var isToday = (ds === todayS);
+  var evs = calEvsOn(ds);
+
+  var h = '';
+  h += '<div class="dayhd' + (isToday ? ' is-today' : '') + '">' +
+       '<b>' + d.getFullYear() + ' 年 ' + (d.getMonth() + 1) + ' 月 ' + d.getDate() + ' 日</b>' +
+       '<span>星期' + WD_CN[d.getDay()] + (isToday ? ' · 今天' : '') + '</span>' +
+       '<i class="dayhd__n">' + evs.length + ' 个事件</i></div>';
+
+  if(!evs.length){
+    h += '<div class="empty">这一天还没有安排。点「➕ 新建事件」为 ' + (d.getMonth() + 1) + ' 月 ' + d.getDate() + ' 日 排一个动作。</div>';
+  } else {
+    /* 未完成在前，高优先级在前 */
+    var ord = {doing:0, todo:1, delayed:2, done:3};
+    evs.slice().sort(function(a, b){
+      var sa = ord[a.status] != null ? ord[a.status] : 1;
+      var sb = ord[b.status] != null ? ord[b.status] : 1;
+      if(sa !== sb) return sa - sb;
+      var pa = a.pri === 'high' ? 0 : (a.pri === 'mid' ? 1 : 2);
+      var pb = b.pri === 'high' ? 0 : (b.pri === 'mid' ? 1 : 2);
+      return pa - pb;
+    }).forEach(function(e){
+      var span = (e.dateEnd && e.dateEnd > e.date);
+      h += '<div class="dayev ' + (e.status === 'done' ? 'dayev--done' : '') + '" data-ev="' + e.id + '">';
+      h += '<div class="dayev__top"><span class="dayev__t">' + esc(e.title) + '</span>';
+      h += '<span class="dayev__tags">' +
+           (e.pri ? '<i class="tagpri tagpri--' + e.pri + '">' + (EV_PRI[e.pri] || {}).n + '</i>' : '') +
+           '<i class="tagst ' + ((EV_STATUS[e.status] || {}).cls || '') + '">' + ((EV_STATUS[e.status] || {}).n || '待开始') + '</i>' +
+           '</span></div>';
+      h += '<div class="dayev__meta mono">' + e.date + (span ? ' → ' + e.dateEnd + '（' + calSpanDays(e) + ' 天）' : '') + '</div>';
+      if(e.note) h += '<div class="dayev__note">' + esc(e.note) + '</div>';
+      h += '</div>';
+    });
+    h += '<div class="hint" style="margin-top:8px">💡 点任意一条可直接改状态或编辑。</div>';
+  }
+  host.innerHTML = h;
+
+  host.onclick = function(e){
+    var ev = e.target.closest('.dayev');
+    if(ev && ev.getAttribute('data-ev')){ openCalModal(ev.getAttribute('data-ev')); }
+  };
+}
+/* 区间天数（含首尾） */
+function calSpanDays(e){
+  if(!e.dateEnd || e.dateEnd <= e.date) return 1;
+  var a = new Date(e.date + 'T00:00:00'), b = new Date(e.dateEnd + 'T00:00:00');
+  if(isNaN(a) || isNaN(b)) return 1;
+  return Math.round((b - a) / 86400000) + 1;
+}
+
+/* ============================================================
+ * 看板视图：按状态分列，卡在哪个环节一眼可见
+ * ============================================================ */
+var BOARD_COLS = ['todo', 'doing', 'done', 'delayed'];
+
+function renderBoard(){
+  var host = $('#calBoard');
+  if(!host) return;
+  var evs = (state.cal.events || []).slice();
+  var todayS = ymd(today0());
+
+  var h = '';
+  /* 顶部统计 */
+  var by = {todo:0, doing:0, done:0, delayed:0};
+  evs.forEach(function(e){ var s = e.status || 'todo'; if(by[s] != null) by[s]++; else by.todo++; });
+  var total = evs.length;
+  var rate = total ? Math.round(by.done / total * 100) : 0;
+  h += '<div class="bdstat">';
+  h += '<span>共 <b>' + total + '</b> 个动作</span>';
+  h += '<span>完成率 <b>' + rate + '%</b></span>';
+  h += '<span>进行中 <b>' + by.doing + '</b></span>';
+  h += '<span>已延期 <b style="color:var(--alert)">' + by.delayed + '</b></span>';
+  h += '<span class="spacer"></span>';
+  h += '<span class="hint">点卡片上的 ▶ 推进状态（待开始 → 进行中 → 已完成）</span>';
+  h += '</div>';
+
+  h += '<div class="bdgrid">';
+  BOARD_COLS.forEach(function(st){
+    var meta = EV_STATUS[st] || {n:st};
+    var list = evs.filter(function(e){ return (e.status || 'todo') === st; });
+    /* 排序：逾期的在前，其次高优先级，其次日期近的 */
+    list.sort(function(a, b){
+      var oa = (a.status !== 'done' && a.date && a.date < todayS) ? 0 : 1;
+      var ob = (b.status !== 'done' && b.date && b.date < todayS) ? 0 : 1;
+      if(oa !== ob) return oa - ob;
+      var pa = a.pri === 'high' ? 0 : (a.pri === 'mid' ? 1 : 2);
+      var pb = b.pri === 'high' ? 0 : (b.pri === 'mid' ? 1 : 2);
+      if(pa !== pb) return pa - pb;
+      return String(a.date || '') < String(b.date || '') ? -1 : 1;
+    });
+    h += '<div class="bdcol">';
+    h += '<div class="bdcol__hd"><span class="bddot ' + (meta.cls || '') + '"></span>' + meta.n +
+         '<i class="bdcol__n">' + list.length + '</i></div>';
+    h += '<div class="bdcol__body">';
+    if(!list.length){
+      h += '<div class="bdcol__empty">暂无</div>';
+    } else {
+      list.forEach(function(e){
+        var overdue = (e.status !== 'done' && e.date && e.date < todayS);
+        var span = (e.dateEnd && e.dateEnd > e.date);
+        h += '<div class="bdcard' + (overdue ? ' is-overdue' : '') + (e.status === 'done' ? ' is-done' : '') + '" data-ev="' + e.id + '">';
+        h += '<div class="bdcard__t">' + esc(e.title) + '</div>';
+        h += '<div class="bdcard__meta mono">' + (e.date || '—') +
+             (span ? ' → ' + e.dateEnd : '') +
+             (e.pri === 'high' ? '　🔥' : '') + '</div>';
+        h += '<div class="bdcard__bar">';
+        if(overdue) h += '<i class="bdcard__flag">已逾期</i>';
+        h += '<button class="bdcard__next" data-next="' + e.id + '" title="推进状态">▶</button>';
+        h += '</div>';
+        h += '</div>';
+      });
+    }
+    h += '</div></div>';
+  });
+  h += '</div>';
+  host.innerHTML = h;
+
+  host.onclick = function(e){
+    var nx = e.target.closest('.bdcard__next');
+    if(nx){ evAdvance(nx.getAttribute('data-next')); return; }
+    var card = e.target.closest('.bdcard');
+    if(card && card.getAttribute('data-ev')){ openCalModal(card.getAttribute('data-ev')); }
+  };
+}
+
+/* 推进状态：todo → doing → done → todo（循环）；delayed → doing */
+function evAdvance(id){
+  var ev = (state.cal.events || []).filter(function(x){ return x.id === id; })[0];
+  if(!ev) return;
+  var cur = ev.status || 'todo';
+  var next = cur === 'todo' ? 'doing' : (cur === 'doing' ? 'done' : (cur === 'done' ? 'todo' : 'doing'));
+  ev.status = next;
+  save();
+  toast('已改为「' + ((EV_STATUS[next] || {}).n || next) + '」');
+  calApplyView();
+  if(typeof renderCalAlerts === 'function') renderCalAlerts();
+  if(typeof renderEvList === 'function') renderEvList();
+}
+
+/* ============================================================
+ * 接管视图调度：calApplyView / calStep
+ * 37-quarter.js 只认 month / quarter，这里扩展为 5 视图，
+ * 并保留对原实现的调用（不复制逻辑，避免两处漂移）。
+ * ============================================================ */
+var __calApplyQ = (typeof calApplyView === 'function') ? calApplyView : null;
+var __calStepQ  = (typeof calStep === 'function') ? calStep : null;
+var __renderCalBase = (typeof __renderCalOrig === 'function') ? __renderCalOrig : renderCal;
+
+calApplyView = function(){
+  var c = state.cal;
+  var v = c.view || 'month';
+  if(!CAL_VIEW_EL[v]) v = 'month';
+
+  /* 1. 容器显隐 */
+  CAL_ALL_EL.forEach(function(id){
+    var el = $('#' + id);
+    if(el) el.style.display = (CAL_VIEW_EL[v] === id) ? '' : 'none';
+  });
+
+  /* 2. 渲染当前视图 */
+  if(v === 'quarter')      renderQuarter();
+  else if(v === 'month')   __renderCalBase();
+  else if(v === 'week')    renderWeek();
+  else if(v === 'day')     renderDay();
+  else if(v === 'board')   renderBoard();
+
+  /* 3. 头部文案 */
+  var ym = $('#calYM');
+  if(ym) ym.textContent = calHeadText(v);
+
+  /* 4. 上/下一步按钮文案 */
+  var pv = $('#btnCalPrev'), nx = $('#btnCalNext');
+  var stepName = {month:'月', week:'周', day:'天', quarter:'季', board:'月'}[v];
+  if(pv) pv.textContent = '‹ 上' + stepName;
+  if(nx) nx.textContent = '下' + stepName + ' ›';
+  /* 看板是全局视图，翻页无意义 */
+  if(pv) pv.style.display = (v === 'board') ? 'none' : '';
+  if(nx) nx.style.display = (v === 'board') ? 'none' : '';
+
+  /* 5. 视图按钮高亮 */
+  var box = $('#calViews');
+  if(box){
+    [].forEach.call(box.querySelectorAll('.calview'), function(b){
+      b.classList.toggle('is-on', b.getAttribute('data-v') === v);
+    });
+  }
+
+  /* 6. 提醒与事件列表（月视图已由 renderCal 内部渲染，此处补齐其余视图） */
+  if(v !== 'month'){
+    if(typeof renderCalAlerts === 'function') renderCalAlerts();
+    if(typeof renderEvList === 'function') renderEvList();
+  }
+};
+
+function calHeadText(v){
+  var c = state.cal;
+  if(v === 'quarter'){
+    return c.y + ' 年 Q' + ((c.q == null ? qOfMonth(c.m) : c.q) + 1);
+  }
+  if(v === 'month') return c.y + ' 年 ' + (c.m + 1) + ' 月';
+  if(v === 'week'){
+    var base = calFocusDate();
+    var s = new Date(base); s.setDate(base.getDate() - base.getDay());
+    var e2 = new Date(s); e2.setDate(s.getDate() + 6);
+    return c.y + ' 年 ' + (s.getMonth() + 1) + '/' + s.getDate() + ' – ' +
+           (e2.getMonth() + 1) + '/' + e2.getDate() + '（本周）';
+  }
+  if(v === 'day'){
+    var d = calFocusDate();
+    return d.getFullYear() + ' 年 ' + (d.getMonth() + 1) + ' 月 ' + d.getDate() + ' 日 星期' + WD_CN[d.getDay()];
+  }
+  if(v === 'board') return '全部 ' + ((state.cal.events || []).length) + ' 个动作 · 看板';
+  return '';
+}
+
+calStep = function(dir){
+  var c = state.cal;
+  if(c.view === 'week' || c.view === 'day'){
+    var base = calFocusDate();
+    base.setDate(base.getDate() + dir * (c.view === 'week' ? 7 : 1));
+    c.d = ymd(base);
+    /* 与月/季联动，切回月视图时落在同一处 */
+    c.y = base.getFullYear();
+    c.m = base.getMonth();
+    c.q = qOfMonth(c.m);
+    save();
+    calApplyView();
+  } else if(__calStepQ){
+    __calStepQ(dir);
+  }
+};
+
+/* ============================================================
+ * 绑定：视图切换组 + 今天（周/日视图要同步焦点日）
+ * 37-quarter.js 的 bindQuarter() 已在加载时绑过一次，
+ * 这里重绑同名元素即可覆盖（元素上存在 onclick 属性赋值，后者生效）。
+ * ============================================================ */
+function bindCalViews(){
+  var box = $('#calViews');
+  if(box){
+    box.onclick = function(e){
+      var b = e.target.closest('.calview');
+      if(!b) return;
+      var v = b.getAttribute('data-v');
+      if(v === state.cal.view) return;
+      calSetViewEx(v);
+    };
+  }
+  var pv = $('#btnCalPrev'); if(pv) pv.onclick = function(){ calStep(-1); };
+  var nx = $('#btnCalNext'); if(nx) nx.onclick = function(){ calStep(1); };
+  var td = $('#btnCalToday');
+  if(td) td.onclick = function(){
+    var t = today0();
+    var c = state.cal;
+    c.y = t.getFullYear();
+    c.m = t.getMonth();
+    c.q = qOfMonth(c.m);
+    c.d = ymd(t);
+    save();
+    calApplyView();
+  };
+}
+
+/* 视图切换（含焦点日初始化） */
+function calSetViewEx(v){
+  var c = state.cal;
+  if(v === 'week' || v === 'day'){
+    /* 从月/季切进来时，焦点日取当前月今天；若已在其他月，取该月 1 日 */
+    if(!c.d){
+      var t = today0();
+      c.d = (c.y === t.getFullYear() && c.m === t.getMonth()) ? ymd(t)
+            : ymd(new Date(c.y, c.m, 1));
+    }
+    c.view = v;
+    save();
+    calApplyView();
+    return;
+  }
+  /* 月 / 季 / 看板：沿用 37 的切换逻辑（它负责月份位置的换算） */
+  if(typeof calSetView === 'function' && (v === 'month' || v === 'quarter')){
+    calSetView(v);
+    return;
+  }
+  c.view = v;
+  save();
+  calApplyView();
+}
+
+bindCalViews();
+
 /* ===== src/38-packs.js ===== */
 /* ============================================================
  * 38-packs.js —— 内容包：把工作流预设做成「照着跑就能出活」
@@ -17094,6 +17647,352 @@ function pkCountUpdate(idx, ta){
     el.textContent = '已粘贴 ' + n + ' 字';
   }
 }
+
+/* ===== src/41-moretools.js ===== */
+/* ============================================================
+ * 41-moretools.js —— 扩充可编排工具集（14 → 17）
+ *
+ * 为什么补这三项（roadmap 上原本标着「规划中」）：
+ *   可编排工具越多，工作流越能少依赖人工粘贴。但每加一个都必须是
+ *   「能算的」而不是「让 AI 自由发挥的」，否则违背整个产品的原则。
+ *
+ * 本次新增：
+ *   25  A/B 标题评分      score_title_variants
+ *   26  品牌资产台账审计   audit_brand_assets
+ *   27  品牌轨迹洞察      analyze_brand_timeline
+ *
+ * 注册方式：写 LOCAL_TOOLS[索引] + TOOLS.push + LOCAL_STEP_RUNNERS[key]。
+ * 索引必须与 TOOLS 数组下标一一对应，否则会出现
+ * 「选 A 却执行 B」的静默错误（历史上踩过，见 10-workspace.js 注释）。
+ *
+ * 依赖：13-scan（scoreContent 可选）、32-tonecheck（tcAnalyze 可选）
+ *       33-timeline（tlCollect）、35-insight（ins*）、36-assets（asState 等）
+ * ============================================================ */
+
+/* ============================================================
+ * ① A/B 标题评分
+ * ------------------------------------------------------------
+ * 输入：当前预览区（#preview）里的多行文本，每行一个候选标题。
+ *      与 scan / tonecheck 保持同一取数口径——不新增输入框。
+ *
+ * 评分信号（全部可量化，不含语义理解）：
+ *   长度   理想 12–22 字；过短信息不足，过长被平台折叠
+ *   数字   含阿拉伯数字，具体感更强
+ *   悬念   疑问/反转词，制造信息缺口
+ *   强调   1 个感叹号加分，3 个以上转为叫卖感
+ *   绝对化 最/第一/顶级… —— 既不可信，又是违禁词高危区
+ *   促销词 秒杀/免费/限时… —— 与溢价定位天然冲突
+ *   调性   若已填品牌内核，用 tcAnalyze 复核是否跑偏
+ *
+ * 边界：这是「表层特征打分」，不是「哪个标题会火」。
+ *      真实点击率只有投放后才知道，工具只负责把明显的坑挑出来。
+ * ============================================================ */
+var TITLE_ABS_WORDS = ['最好','最佳','最强','第一','顶级','绝对','唯一','100%','全网','史上','万能','永久'];
+var TITLE_HYPE_WORDS = ['秒杀','清仓','亏本','免费送','仅限今天','最后一天','不买后悔','抓紧'];
+var TITLE_HOOK_WORDS = ['为什么','居然','竟然','原来','没想到','才发现','秘密','真相','竟然','凭什么','到底','如何'];
+
+function titleSignals(t){
+  var s = String(t || '').trim();
+  var n = s.replace(/\s/g, '').length;
+  var r = {len:n, num:0, hook:0, emph:0, abs:[], hype:[], emoji:0, score:0, tips:[]};
+
+  /* 基准分 30：标题本身存在即可得，其余信号在此基础上加减，
+     这样「没有明显优点也没有硬伤」的标题落在 50 上下，符合直觉。 */
+  r.score = 30;
+
+  /* 长度 */
+  if(n >= 12 && n <= 22){ r.score += 20; }
+  else if((n >= 8 && n < 12) || (n > 22 && n <= 28)){ r.score += 10; r.tips.push(n < 12 ? '偏短，信息量可能不足' : '偏长，部分平台会折叠'); }
+  else if(n < 8){ r.score -= 15; r.tips.push('太短，读者看不出讲什么'); }
+  else { r.score -= 5; r.tips.push('过长，建议压到 22 字以内'); }
+
+  /* 数字 */
+  var nums = s.match(/[0-9]+/g);
+  if(nums){ r.num = nums.length; r.score += 12; }
+  else r.tips.push('没有数字，具体感偏弱（如「5 个方法」）');
+
+  /* 悬念 */
+  var hooks = TITLE_HOOK_WORDS.filter(function(w){ return s.indexOf(w) > -1; });
+  var hasQ = /[？?]/.test(s);
+  if(hooks.length || hasQ){
+    r.hook = hooks.length + (hasQ ? 1 : 0);
+    r.score += 15;
+  }
+
+  /* 强调（感叹号） */
+  var bangs = (s.match(/[!！]/g) || []).length;
+  r.emph = bangs;
+  if(bangs === 1) r.score += 6;
+  else if(bangs === 2) r.score += 3;
+  else if(bangs >= 3){ r.score -= 12; r.tips.push('感叹号过多（' + bangs + ' 个），有叫卖感'); }
+
+  /* emoji */
+  var emo = s.match(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu);
+  r.emoji = emo ? emo.length : 0;
+  if(r.emoji >= 1 && r.emoji <= 2) r.score += 5;
+  else if(r.emoji > 3) { r.score -= 5; r.tips.push('emoji 过多（' + r.emoji + ' 个），显得杂乱'); }
+
+  /* 绝对化词 */
+  r.abs = TITLE_ABS_WORDS.filter(function(w){ return s.indexOf(w) > -1; });
+  if(r.abs.length){
+    r.score -= 12;
+    r.tips.push('绝对化用词「' + r.abs.join('、') + '」：既不可信，也容易命中广告法违禁词');
+  }
+
+  /* 促销硬词 */
+  r.hype = TITLE_HYPE_WORDS.filter(function(w){ return s.indexOf(w) > -1; });
+  if(r.hype.length){
+    r.score -= 15;
+    r.tips.push('促销硬词「' + r.hype.join('、') + '」：与溢价定位冲突，且降低质感');
+  }
+
+  return r;
+}
+
+/* 取候选标题：预览区按行拆分，去空行、去 markdown 标记行 */
+function titleCandidates(){
+  var pv = $('#preview');
+  var txt = pv ? (pv.textContent || '') : '';
+  if(!txt || txt.indexOf('请填写字段') > -1) return [];
+  /* 只剥离真正的列表标记（- / * / • / 1. / 1、 / 1)）与 Markdown 标题号。
+     注意：不能把行首的裸数字一起吃掉——「5 个技巧」里的 5 是标题的一部分，
+     也是后面「含数字」信号的依据，吃掉会导致评分失真。 */
+  return txt.split('\n').map(function(x){
+    return x.replace(/^\s*-+\s*/, '')
+            .replace(/^\s*[*•]\s*/, '')
+            .replace(/^\s*\d+[.、)]\s+/, '')
+            .replace(/^\s*#{1,6}\s*/, '')
+            .trim();
+  }).filter(function(x){ return x && x.length >= 2; }).slice(0, 20);
+}
+
+function scoreTitles(){
+  var list = titleCandidates();
+  if(!list.length) return null;
+  /* 品牌基准（可缺省） */
+  var base = null;
+  try{
+    if(typeof tcAnalyze === 'function'){
+      var probe = tcAnalyze(list[0]);
+      if(probe && probe.base) base = probe.base;
+    }
+  }catch(e){ base = null; }
+
+  var rows = list.map(function(t){
+    var r = titleSignals(t);
+    r.t = t;
+    r.tone = null;
+    if(base && typeof tcAnalyze === 'function'){
+      try{
+        var tc = tcAnalyze(t);
+        if(tc){
+          r.tone = tc.score;
+          if(tc.score >= 20) r.score += 10;
+          else if(tc.score >= 15) r.score += 5;
+          else if(tc.score < 10){ r.score -= 10; r.tips.push('与品牌调性不符（调性 ' + tc.score + '/25）'); }
+          if(tc.hard && tc.hard.length){
+            r.score -= 10;
+            r.tips.push('命中品类禁忌：' + tc.hard.map(function(h){ return h.d; }).join('；'));
+          }
+        }
+      }catch(e){ /* 调性检查失败不影响基础评分 */ }
+    }
+    r.score = Math.max(0, Math.min(100, r.score));
+    return r;
+  });
+  rows.sort(function(a, b){ return b.score - a.score; });
+  return {rows: rows, base: base};
+}
+
+function titleReport(){
+  var R = scoreTitles();
+  if(!R) return '（请先在内容工厂生成或粘贴候选标题，每行一个，最多 20 条）';
+  var out = '# 🅰️ A/B 标题评分（' + R.rows.length + ' 条候选）\n\n';
+  if(R.base) out += '**调性基准**：' + R.base.srcName + '（已计入评分）\n\n';
+  else out += '**调性基准**：未启用（在「🏛️ 品牌内核」填好后自动计入）\n\n';
+
+  out += '| 排名 | 标题 | 得分 | 主要问题 |\n|---|---|---|---|\n';
+  R.rows.forEach(function(r, i){
+    out += '| ' + (i + 1) + ' | ' + r.t.slice(0, 40) + ' | **' + r.score + '** | ' +
+           (r.tips.length ? r.tips.slice(0, 2).join('；') : '无明显问题') + ' |\n';
+  });
+
+  var top = R.rows.slice(0, 3);
+  out += '\n### 建议优先测试\n\n';
+  top.forEach(function(r, i){
+    out += (i + 1) + '. **' + r.t + '**（' + r.score + ' 分）\n';
+  });
+
+  var bad = R.rows.filter(function(r){ return r.score < 50; });
+  if(bad.length){
+    out += '\n### 建议修改或直接淘汰（<50 分，共 ' + bad.length + ' 条）\n\n';
+    bad.slice(0, 3).forEach(function(r){
+      out += '- ' + r.t + ' —— ' + (r.tips[0] || '综合评分偏低') + '\n';
+    });
+  }
+  out += '\n*表层特征打分，用于淘汰明显有坑的标题；真实点击率需投放验证。*';
+  return out;
+}
+
+/* ============================================================
+ * ② 品牌资产台账审计
+ * ============================================================ */
+function auditAssetsCalc(){
+  var a = (typeof asState === 'function') ? asState() : (state.assets || {});
+  var logos = a.logos || [], mats = a.materials || [], colors = a.colors || {};
+  var todayS = ymd(today0());
+
+  var logoCur = logos.filter(function(x){ return x.st === 'cur'; });
+  var matBy = {design:0, review:0, done:0, archived:0};
+  mats.forEach(function(m){ var s = m.st || 'design'; if(matBy[s] != null) matBy[s]++; });
+  var overdue = mats.filter(function(m){
+    return m.due && m.due < todayS && m.st !== 'done' && m.st !== 'archived';
+  });
+
+  /* 完备度：五要素加权 */
+  var parts = [
+    {k:'Logo 在用版本', ok: logoCur.length > 0, w:30},
+    {k:'物料已定稿',   ok: matBy.done > 0,       w:25},
+    {k:'主色已定义',   ok: !!colors.main,        w:20},
+    {k:'字体已定义',   ok: !!a.fonts,            w:10},
+    {k:'使用规范',     ok: !!a.norm,             w:15}
+  ];
+  var got = 0;
+  parts.forEach(function(p){ if(p.ok) got += p.w; });
+
+  /* 色值与调性 */
+  var hsl = colors.main ? hexToHsl(colors.main) : null;
+  var hint = (hsl && typeof colorToneHint === 'function') ? colorToneHint(hsl) : null;
+
+  return {
+    logoTotal: logos.length, logoCur: logoCur.length,
+    matTotal: mats.length, matBy: matBy, overdue: overdue,
+    colors: colors, fonts: a.fonts || '', norm: a.norm || '',
+    parts: parts, ready: got, hsl: hsl, hint: hint
+  };
+}
+
+function auditAssetsReport(){
+  var A = auditAssetsCalc();
+  var out = '# 🎨 品牌资产台账审计\n\n';
+  out += '**完备度** ' + A.ready + '/100\n\n';
+  A.parts.forEach(function(p){
+    out += '- ' + (p.ok ? '✅' : '⬜') + ' ' + p.k + '（' + p.w + ' 分）\n';
+  });
+
+  out += '\n### Logo\n\n';
+  out += '共 ' + A.logoTotal + ' 个版本，其中在用 ' + A.logoCur + ' 个。\n';
+  if(A.logoCur === 0 && A.logoTotal > 0) out += '\n⚠️ 没有标记「在用」版本，团队容易拿错图。\n';
+  if(A.logoCur > 1) out += '\n⚠️ 有 ' + A.logoCur + ' 个版本同时标记为「在用」，建议只保留一个，其余标为历史版本。\n';
+
+  out += '\n### 物料\n\n';
+  out += '共 ' + A.matTotal + ' 项：设计中 ' + A.matBy.design + ' · 待审核 ' + A.matBy.review +
+         ' · 已定稿 ' + A.matBy.done + ' · 已归档 ' + A.matBy.archived + '\n';
+  if(A.overdue.length){
+    out += '\n🔴 **已逾期未定稿 ' + A.overdue.length + ' 项**：\n';
+    A.overdue.slice(0, 5).forEach(function(m){
+      out += '- ' + m.name + '（' + m.type + '，应完成 ' + m.due + '）\n';
+    });
+  }
+
+  out += '\n### 色值\n\n';
+  if(A.hsl){
+    out += '主色 ' + A.colors.main + ' → H ' + Math.round(A.hsl.h) + '° / S ' +
+           Math.round(A.hsl.s) + '% / L ' + Math.round(A.hsl.l) + '%\n';
+    if(A.hint && A.hint.txt){
+      out += '\n' + (A.hint.ok ? '✅ ' : '⚠️ ') + A.hint.txt + '\n';
+      out += '*色彩与定位的关联为经验共识，非精确科学，仅供参考。*\n';
+    }
+  } else {
+    out += '未设置主色。填一个 HEX（如 #4f46e5）后可自动换算 HSL 并检查与定位的匹配度。\n';
+  }
+  return out;
+}
+
+/* ============================================================
+ * ③ 品牌轨迹洞察
+ * ============================================================ */
+function analyzeTimelineCalc(){
+  var all = (typeof tlCollect === 'function') ? tlCollect() : [];
+  return {
+    all: all,
+    act: (typeof insActivity === 'function') ? insActivity(all) : null,
+    sc:  (typeof insScoreTrend === 'function') ? insScoreTrend() : null,
+    cs:  (typeof insCalStat === 'function') ? insCalStat() : null,
+    gaps:(typeof insGaps === 'function') ? insGaps(all) : null,
+    sp:  (typeof insSpread === 'function') ? insSpread(all) : null
+  };
+}
+
+function analyzeTimelineReport(){
+  var R = analyzeTimelineCalc();
+  var out = '# 🕐 品牌轨迹洞察\n\n';
+  var sp = R.sp || {total:0};
+  if(!sp.total){
+    return out + '暂无记录。用一段时间（生成内容、排期、记竞品动态）后，这里会给出节奏与趋势。';
+  }
+  out += '**记录总数** ' + sp.total + ' 条\n\n';
+
+  if(R.act){
+    out += '### 最近 30 天活跃度\n\n';
+    out += '新增 ' + R.act.total + ' 条，分布在 ' + R.act.active + ' 天（30 天中）。\n';
+    if(sp.top) out += '最多的一类：' + sp.top.em + ' ' + sp.top.n + ' ' + sp.top.c + ' 条。\n';
+    out += '\n';
+  }
+
+  if(R.sc && R.sc.n){
+    out += '### 内容质量趋势\n\n';
+    out += '样本 ' + R.sc.n + ' 条　均值 ' + R.sc.avg + '　最新 ' + R.sc.last + '\n';
+    out += '趋势：**' + R.sc.dirTxt + '**（斜率 ' + R.sc.slope.toFixed(2) + '）\n';
+    if(!R.sc.halfOk) out += '\n*样本不足 10 条，暂不做前后半段对比，避免得出假结论。*\n';
+    else out += '\n前段均值 ' + R.sc.earlyAvg + ' → 后段均值 ' + R.sc.recentAvg + '\n';
+    out += '\n';
+  }
+
+  if(R.cs && R.cs.total){
+    out += '### 执行完成率\n\n';
+    out += '共 ' + R.cs.total + ' 个动作，已完成 ' + R.cs.by.done + '（**' + R.cs.rate + '%**）' +
+           '　进行中 ' + R.cs.by.doing + '　待开始 ' + R.cs.by.todo + '　已延期 ' + R.cs.by.delayed + '\n';
+    if(R.cs.overdue.length){
+      out += '\n🔴 逾期未完成 ' + R.cs.overdue.length + ' 项：' +
+             R.cs.overdue.slice(0, 3).map(function(e){ return e.title; }).join('、') + '\n';
+    }
+    out += '\n';
+  }
+
+  if(R.gaps && R.gaps.length){
+    out += '### 该补记录了\n\n';
+    R.gaps.slice(0, 4).forEach(function(g){
+      out += '- ' + g.em + ' ' + g.n + '：距上次 ' + g.days + ' 天\n';
+    });
+  }
+  return out;
+}
+
+/* ============================================================
+ * 注册：索引必须落在 TOOLS 数组末尾，与 LOCAL_TOOLS 一一对应
+ * ============================================================ */
+(function(){
+  if(typeof LOCAL_TOOLS === 'undefined' || typeof TOOLS === 'undefined') return;
+
+  var idx = TOOLS.length;   // 25
+  LOCAL_TOOLS[idx]     = {key:'titles',   name:'score_title_variants',   label:'A/B 标题评分'};
+  TOOLS.push('⚡ A/B标题评分(本地函数)');
+
+  idx = TOOLS.length;       // 26
+  LOCAL_TOOLS[idx]     = {key:'assets',   name:'audit_brand_assets',     label:'品牌资产台账审计'};
+  TOOLS.push('⚡ 资产台账审计(本地函数)');
+
+  idx = TOOLS.length;       // 27
+  LOCAL_TOOLS[idx]     = {key:'insight',  name:'analyze_brand_timeline', label:'品牌轨迹洞察'};
+  TOOLS.push('⚡ 轨迹洞察(本地函数)');
+
+  if(typeof LOCAL_STEP_RUNNERS !== 'undefined'){
+    LOCAL_STEP_RUNNERS['titles']  = titleReport;
+    LOCAL_STEP_RUNNERS['assets']  = auditAssetsReport;
+    LOCAL_STEP_RUNNERS['insight'] = analyzeTimelineReport;
+  }
+})();
 
 /* ===== src/16-boot.js ===== */
 /* ================= 回填 ================= */

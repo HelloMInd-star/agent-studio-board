@@ -4,7 +4,7 @@
 content → collect the result — entirely in your browser.**
 
 A local-first decision chain for brand and growth: **23 tabs (24 modules)**,
-**25 deterministic calculations** (14 of them registered as orchestrable
+**28 deterministic calculations** (17 of them registered as orchestrable
 workflow tools), **70 marketing frameworks** rendered from 25 graphic
 skeletons, **5 SVG chart types**. No backend, no tracking, no login.
 
@@ -671,6 +671,60 @@ not exist. Each entry names the cause, not just the fix.
 
 ---
 
+### 3.20 Calendar week / day / board views (`40-calview.js`)
+
+Three views that were on the roadmap as "in progress" and are now done.
+Each answers a question the month and quarter views cannot:
+
+| View | Question it answers |
+|---|---|
+| Week | What is my load this week — which day is overloaded, which is empty |
+| Day | What exactly should I push today |
+| Board | Where is work stuck (todo / doing / done / delayed) |
+
+Design constraints, same as `37-quarter.js`:
+
+- Reads `state.cal.events` only; no new data structure.
+- Span events (`date` → `dateEnd`) appear on every covered day, with a
+  `↳` continuation marker, identical across all five views.
+- Board cards advance status with `▶` (todo → doing → done), and overdue
+  items are flagged when `date < today` and status is not done.
+- `40-calview.js` *takes over* `calApplyView` / `calStep` by saving the
+  previous implementation and calling it for the month/quarter cases,
+  rather than copying that logic — so the two files cannot drift apart.
+
+### 3.21 Three more orchestrable tools (`41-moretools.js`)
+
+`runLocalStep` used to be a single `if/else` chain in `10-workspace.js`.
+Every new tool meant editing that file — and new tools often depend on
+modules loaded *later* (assets, insight), which the chain could not see.
+It now ends with a registry lookup:
+
+```js
+var LOCAL_STEP_RUNNERS = {};
+// ...
+else if (s.local.key && LOCAL_STEP_RUNNERS[s.local.key]) {
+  out = LOCAL_STEP_RUNNERS[s.local.key]();
+}
+```
+
+A module registers itself with `LOCAL_TOOLS[i]`, `TOOLS.push(...)`, and
+`LOCAL_STEP_RUNNERS[key]`. The index must match the `TOOLS` array position —
+an off-by-one here silently dispatches the *wrong* function, which is a bug
+this project has already shipped once (see chapter 10 of `design.html`).
+
+Added: `score_title_variants` (25), `audit_brand_assets` (26),
+`analyze_brand_timeline` (27).
+
+**Title scoring is deliberately shallow.** It scores surface features —
+length, digits, hook words, exclamation density, absolute claims, promo
+hard-sell words, emoji count, plus a brand-tone cross-check when Brand Core
+is filled. It does not predict click-through; only a live test can. The
+report says so, and the score is framed as "eliminate the obvious duds",
+not "pick the winner".
+
+---
+
 ## 4. Data
 
 Everything lives in `localStorage` under `ym_studio_v1`. Clearing browser
@@ -692,9 +746,9 @@ landing page together.
 | Tabs | **23** | unique `data-tab` values in `src/index.template.html` |
 | Groups | **6** | unique `data-group` values |
 | Modules | **24** | 23 tabs + brand tone constraint (embedded, not a tab) |
-| Deterministic calculations | **25** | 22 `calc*` functions + `analyzeBrandCore` + `tcAnalyze` + `scoreContent` |
-| Orchestrable in workflows | **14** | `LOCAL_TOOLS` indices 11–24 |
-| Source files | **38** | `src/*.js`, merged by `build.py` |
+| Deterministic calculations | **28** | 22 `calc*` functions + `analyzeBrandCore` + `tcAnalyze` + `scoreContent` + `scoreTitles` + `auditAssetsCalc` + `analyzeTimelineCalc` |
+| Orchestrable in workflows | **17** | `LOCAL_TOOLS` indices 11–27 |
+| Source files | **40** | `src/*.js`, merged by `build.py` |
 | Frameworks mapped | **70** | `src/27-toolmap.js` — 27 done / 4 planned / 39 reference-only |
 | Graphic skeletons | **25** | distinct `s:` values in `src/29-framecfg.js` |
 | Chart types | **5** | `CHART_TYPES` in `src/07-charts.js` |
@@ -703,7 +757,7 @@ landing page together.
 
 Two of these are worth defending explicitly:
 
-- **14 orchestrable, not 25.** Eleven calculations are called directly by
+- **17 orchestrable, not 28.** Eleven calculations are called directly by
   their own module but were never registered as workflow tools. Registering
   them is mechanical; it has not been done because no workflow needed them.
 - **39 of 70 frameworks are reference-only.** They render a structure
