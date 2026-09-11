@@ -1,0 +1,37 @@
+# 统一换行符：仓库内一律 LF，签出不转 CRLF
+# 解决 Windows 上 git add 时刷屏 "LF will be replaced by CRLF" 的问题
+
+* text=auto eol=lf
+
+# ── 源码（明确文本） ──────────────────────────
+*.js    text eol=lf
+*.css   text eol=lf
+*.html  text eol=lf
+*.md    text eol=lf
+*.py    text eol=lf
+*.json  text eol=lf
+*.svg   text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.txt   text eol=lf
+.editorconfig text eol=lf
+
+# ── 二进制（禁止任何转换） ─────────────────────
+*.zip   binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.woff  binary
+*.woff2 binary
+*.ttf   binary
+*.eot   binary
+*.pdf   binary
+
+# ── 构建产物：不计入语言统计、不进 diff ──────────
+# 这些由 build.py 从 src/ 生成，真正的源码在 src/*.js
+index.html    linguist-generated=true linguist-vendored
+landing.html  linguist-generated=true linguist-vendored
+manual.html   linguist-generated=true linguist-vendored
+design.html   linguist-generated=true linguist-vendored

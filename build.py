@@ -71,7 +71,9 @@ MODULES = [
 
 
 def read(path):
-    with open(path, encoding='utf-8') as f:
+    # newline='' 必须保留：否则 Python 的通用换行模式会把 CRLF 静默转成 LF，
+    # 导致下面的编码自检永远检测不到真实的换行问题（曾实际踩过）。
+    with open(path, encoding='utf-8', newline='') as f:
         return f.read()
 
 
@@ -110,6 +112,23 @@ def build():
     for fn in ['function bind(', 'function restoreAll(', 'var state =']:
         if fn not in out:
             problems.append('缺少关键定义: ' + fn)
+
+    # 5. 编码自检（防回归：产物必须 UTF-8 无 BOM、换行统一 LF）
+    try:
+        out.encode('utf-8')
+    except UnicodeEncodeError as e:
+        problems.append('产物非合法 UTF-8: %s' % e)
+    if out.startswith('\ufeff'):
+        problems.append('产物开头有 BOM（会导致 <!DOCTYPE> 失效）')
+    elif '\ufeff' in out:
+        problems.append('产物正文含 BOM 字符（源文件里混入了 U+FEFF）')
+    if '\r\n' in out:
+        problems.append('产物含 CRLF 换行（应为纯 LF）')
+    if '\r' in out.replace('\r\n', ''):
+        problems.append('产物含孤立 CR（换行符混乱）')
+    if 'charset="UTF-8"' not in out and 'charset=utf-8' not in out:
+        problems.append('产物缺少 charset=UTF-8 声明（中文会乱码）')
+
     if problems:
         print('[x] 校验失败:')
         for p in problems:

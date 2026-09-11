@@ -868,6 +868,41 @@ Both blocks state their boundaries in the UI and the export: the decision
 tree assumes subjective probabilities, the learning curve assumes cost falls
 only from cumulative volume (ignoring process leaps and material shifts).
 
+### 3.24 Encoding and line endings (`.gitattributes`, `build.py`)
+
+The whole pipeline is UTF-8 end to end, and this is now **enforced rather
+than assumed**.
+
+| Layer | Guarantee |
+|---|---|
+| Sources (`src/*`) | UTF-8, no BOM, LF only |
+| `build.py` | reads and writes explicit `encoding='utf-8'`, `newline='\n'` |
+| `index.html` / `landing.html` / `manual.html` / `design.html` | UTF-8, no BOM, LF only, `charset="UTF-8"` declared |
+| CSV export | `\uFEFF` BOM prepended so Excel does not mojibake Chinese |
+| SVG / Markdown export | `;charset=utf-8` on the Blob MIME type |
+| localStorage accounting | counted as **UTF-16** (2 bytes per BMP char), not UTF-8 |
+
+Two guards were added:
+
+**`.gitattributes`** pins `eol=lf` for text and `binary` for archives and
+fonts. Without it, a Windows checkout with `core.autocrlf=true` rewrites
+every text file on every `git add`, which floods the terminal with
+`warning: LF will be replaced by CRLF` and needlessly rewrites the 1 MB
+`index.html` on each commit. Verified with `git check-attr`: `.js` reports
+`text: set, eol: lf`, `.zip` reports `binary: set`.
+
+**`build.py`** now fails the build if the output is not valid UTF-8, starts
+with a BOM (which would invalidate `<!DOCTYPE>`), contains CRLF or a stray
+CR, or lacks the `charset="UTF-8"` declaration. Encoding bugs are cheap to
+prevent and confusing to debug later, so this is checked at build time
+rather than discovered in a browser.
+
+If you cloned before this file existed, renormalise once:
+
+```bash
+git add --renormalize .
+```
+
 ---
 
 ## 4. Data
