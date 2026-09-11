@@ -1231,14 +1231,23 @@
       </div>
 
       <div class="card">
-        <div class="card__hd">1️⃣ SWOT 分析（每条可绑定数据指标）</div>
-        <p class="hint">💡 每条后面可填<b>数值</b>、<b>变化率</b>、<b>来源</b>——把"品牌认知度高"变成"品牌认知度 87%（+5%，来自 Q1 调研）"，告别拍脑袋。</p>
+        <div class="card__hd">1️⃣ SWOT 分析（每条可绑定数据指标 + 权重）</div>
+        <p class="hint">💡 每条后面可填<b>数值</b>、<b>变化率</b>、<b>来源</b>、<b>权重 ⚖1-5</b>——把"品牌认知度高"变成"品牌认知度 87%（+5%，来自 Q1 调研）"，告别拍脑袋。<b>权重</b>决定该项在本象限内的分量，是加权态势图唯一的量化输入。</p>
+        <div class="svbar">
+          <div class="svtoggle" id="smSwotToggle">
+            <button class="svtoggle__b is-on" data-svswot="edit">📝 编辑条目</button>
+            <button class="svtoggle__b" data-svswot="viz">📊 加权态势图</button>
+          </div>
+          <span class="eyebrow" id="smSwotSum"></span>
+        </div>
         <div class="swgrid" id="smSwot"></div>
+        <div class="svviz" id="smSwotViz" hidden></div>
       </div>
 
       <div class="card">
         <div class="card__hd">2️⃣ TOWS 交叉策略（自动生成）</div>
-        <p class="hint">💡 四象限交叉推导，每条策略都会<b>列出参与要素</b>与<b>判断依据</b>，不是模板话术。点「📅 推到日历」可变成待执行任务。</p>
+        <p class="hint">💡 四象限交叉推导，每条策略都会<b>列出参与要素</b>与<b>判断依据</b>，不是模板话术。上方矩阵显示<b>交叉强度</b>与<b>空缺象限</b>；点「📅 推到日历」可变成待执行任务。</p>
+        <div class="svviz" id="smTowsViz"></div>
         <div class="towslist" id="smTows"></div>
       </div>
 
@@ -1261,6 +1270,10 @@
         <button class="btn btn--ghost btn--sm" id="btnSnapAdd">💾 保存当前为快照</button>
         <div class="snaplist" id="smSnaps"></div>
         <div class="preview" id="smSnapOut"></div>
+        <div class="svviz" id="smBcgTrack"></div>
+        <div class="card__hd" style="margin-top:16px">📈 战略姿态迁移轨迹（多次快照）</div>
+        <p class="hint">💡 按时间顺序连接每次快照的<b>内部净值</b>与<b>外部净值</b>落点。轨迹越靠右上越好；<b>反复穿越中心线说明战略摇摆</b>。</p>
+        <div class="svviz" id="smSnapTrack"></div>
       </div>
     </section>
 

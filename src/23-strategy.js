@@ -44,6 +44,11 @@ function renderSwot(){
           '<input type="text" class="switem__v" value="' + esc(it.v||'') + '" placeholder="数值 87%">' +
           '<input type="text" class="switem__d" value="' + esc(it.d||'') + '" placeholder="变化 +5%">' +
           '<input type="text" class="switem__src" value="' + esc(it.src||'') + '" placeholder="来源">' +
+          '<select class="switem__w" title="权重 1-5：该项在本象限内的重要程度（加权 SWOT / TOWS 强度用）">' +
+            [1,2,3,4,5].map(function(n){
+              return '<option value="' + n + '"' + (svW(it) === n ? ' selected' : '') + '>⚖' + n + '</option>';
+            }).join('') +
+          '</select>' +
         '</div>' +
         '<button class="btn btn--sm btn--ghost switem__x" data-swdel="' + K.k + ':' + i + '">✕</button>' +
       '</div>';
@@ -57,10 +62,19 @@ function renderSwot(){
     [].forEach.call(items, function(row, i){
       var it = S.swot[K.k][i];
       var q = function(sel){ return row.querySelector(sel); };
-      q('.switem__t').addEventListener('input', function(){ it.t = this.value; save(); renderTows(); });
+      q('.switem__t').addEventListener('input', function(){
+        it.t = this.value; save(); renderTows(); renderTowsViz();
+      });
       q('.switem__v').addEventListener('input', function(){ it.v = this.value; save(); renderTows(); });
       q('.switem__d').addEventListener('input', function(){ it.d = this.value; save(); renderTows(); });
       q('.switem__src').addEventListener('input', function(){ it.src = this.value; save(); });
+      var wsel = q('.switem__w');
+      if(wsel){
+        wsel.addEventListener('change', function(){
+          it.w = parseInt(this.value, 10);
+          save(); renderTows(); renderTowsViz(); renderSnapTrack(); renderSwotViz();
+        });
+      }
     });
   });
   [].forEach.call(host.querySelectorAll('[data-swadd]'), function(b){
@@ -426,6 +440,7 @@ function renderSnaps(){
   if(cnt) cnt.textContent = S.snaps.length ? (S.snaps.length + ' 个快照') : '暂无';
   if(!S.snaps.length){
     host.innerHTML = '<span class="ph">保存快照后可对比两次分析的位置迁移</span>';
+    renderSnapTrack();
     return;
   }
   host.innerHTML = '';
@@ -445,8 +460,10 @@ function renderSnaps(){
   [].forEach.call(host.querySelectorAll('[data-snapdel]'), function(b){
     b.onclick = function(){
       sm().snaps.splice(parseInt(b.getAttribute('data-snapdel'),10),1); save(); renderSnaps();
+      var tr = $('#smBcgTrack'); if(tr) tr.innerHTML = '';
     };
   });
+  renderSnapTrack();
 }
 
 /* 迁移对比：同一业务线两次快照的象限变化 */
@@ -500,6 +517,8 @@ function cmpSnap(i){
   }
   var host = $('#smSnapOut');
   if(host) host.innerHTML = mdLite(o.join('\n'));
+  // 矢量迁移图（BCG 象限间箭头）
+  renderSnapShift(i);
 }
 
 /* ---------- 导出 ---------- */
@@ -521,11 +540,14 @@ function exportStrategy(){
     if(!items.length){ o.push('*未填写*'); o.push(''); return; }
     items.forEach(function(x){
       o.push('- **' + x.t + '**' +
+        '　⚖' + svW(x) +
         (x.v ? '　📊 ' + x.v + (x.d ? ' ' + x.d : '') : '') +
         (x.src ? '　*来源：' + x.src + '*' : ''));
     });
     o.push('');
   });
+  // 加权态势与 TOWS 交叉强度（矢量层的结论，纯文本形式进报告）
+  svExportBlock().forEach(function(l){ o.push(l); });
   o.push('## 二、TOWS 交叉策略');
   o.push('');
   var tw = calcTows();
@@ -598,5 +620,6 @@ function demoStrategy(){
 
 function renderStratAll(){
   renderSwot(); renderBcg(); renderSnaps();
+  svBindToggles(); renderTowsViz(); renderSnapTrack();
   var nm = $('#smName'); if(nm) nm.value = sm().name || '';
 }

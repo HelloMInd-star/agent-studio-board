@@ -387,10 +387,10 @@ a:hover{text-decoration:underline;}
       <h2><span class="ico">🎯</span>战略矩阵<span class="mtag is-done">方法论层</span></h2>
       <div class="mflow" data-flow="strategy">
         <div class="mflow__hd">用户流程</div>
-        <div class="mflow__steps"><span class="mfl__step">填 SWOT 条目（可绑数据）</span><span class="mfl__arrow">→</span><span class="mfl__step">自动生成 TOWS 四策略</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">一键推到营销日历</span></div>
-        <div class="mflow__note">另有 BCG：填业务线数据 → 象限判定 → 预算建议 → 存快照对比迁移。</div>
+        <div class="mflow__steps"><span class="mfl__step">填 SWOT 条目（可绑数据 + 权重）</span><span class="mfl__arrow">→</span><span class="mfl__step">加权算内部/外部净值</span><span class="mfl__arrow">→</span><span class="mfl__step">自动生成 TOWS 四策略</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">一键推到营销日历</span></div>
+        <div class="mflow__note">另有 BCG：填业务线数据 → 象限判定 → 预算建议 → 存快照对比迁移（迁移图 + 战略姿态轨迹）。</div>
       </div>
-      <p>增强版 SWOT + BCG，针对传统分析的三个问题：<b>静态、主观、孤岛</b>。</p>
+      <p>增强版 SWOT + BCG，针对传统分析的三个问题：<b>静态、主观、孤岛</b>。加权层补上第四个问题：<b>列了 20 条，却不知道哪边更重</b>。</p>
       <h3>增强版 SWOT</h3>
       <ul>
         <li><b>每条可绑数据</b>：把"品牌认知度高"写成"品牌认知度 87%（+5%，来源 Q1 调研）"</li>
@@ -400,6 +400,33 @@ a:hover{text-decoration:underline;}
       <div class="mnote">
         <b>策略不是模板话术</b>：要素来自你填的条目，改一个条目，策略文本就跟着变。
       </div>
+
+      <h3>加权 SWOT 与战略态势图</h3>
+      <p>常用 SWOT 有两个毛病：列了 20 条却<b>不知道哪边更重</b>；四个格子填完就<b>停在描述</b>，到不了结论。所以每条后面多了一个<b>权重 ⚖1-5</b>，让 SWOT 变得可计算。</p>
+      <p>点「📊 加权态势图」切到矢量视图，会得到两个净值：</p>
+      <div class="mcode">内部净值 = (优势 − 劣势) / (优势 + 劣势) × 100　→　−100 全是劣势，+100 全是优势
+外部净值 = (机会 − 威胁) / (机会 + 威胁) × 100　→　−100 全是威胁，+100 全是机会</div>
+      <p>这两个数把品牌放到一张<b>战略态势图</b>上，四个象限直接对应 TOWS 的四种主策略——所以加权 SWOT 不只是描述现状，它<b>告诉你该用哪条策略</b>：</p>
+      <div class="mtable">
+        <table>
+          <tr><th>内部</th><th>外部</th><th>象限</th><th>主导策略</th></tr>
+          <tr><td>强</td><td>好</td><td>右上</td><td>🟢 SO 进攻型</td></tr>
+          <tr><td>弱</td><td>好</td><td>左上</td><td>🔵 WO 补强型</td></tr>
+          <tr><td>强</td><td>差</td><td>右下</td><td>🟡 ST 防御型</td></tr>
+          <tr><td>弱</td><td>差</td><td>左下</td><td>🔴 WT 转型型</td></tr>
+        </table>
+      </div>
+      <div class="mnote">
+        <b>权重是唯一的量化输入</b>：数值栏（如 87%）只用来判断「这条有没有数据支撑」，<b>不参与求和</b>——87% 和 120万 加不出任何有意义的东西，硬加只会制造虚假精确。
+      </div>
+      <p>如果所有条目都没调权重（全是默认 3），界面会明说：<b>此时加权等于按条数计数</b>，调整权重才有意义。</p>
+
+      <h3>TOWS 交叉矩阵</h3>
+      <p>上方矩阵显示四条策略的<b>交叉强度</b>，用的是几何平均而不是算术平均：</p>
+      <div class="mcode">交叉强度 = √(内部加权分 × 外部加权分)</div>
+      <p>原因有两条：<b>任一侧为空，策略根本不成立</b>（不是"弱"，是无法推导）；而算术平均会把"一侧极强、另一侧几乎为零"包装成中等强度，让人误以为还有得打。</p>
+      <p>矩阵还会标出<b>空缺象限</b>。比如没填劣势，WO 和 WT 会同时无法推导——只列优势不列劣势，等于默认自己没有短板。</p>
+
       <h3>BCG 业务组合</h3>
       <p>气泡图（大小=销售额），自动判定象限并给预算建议。支持两种份额口径：</p>
       <div class="mtable">
@@ -411,8 +438,12 @@ a:hover{text-decoration:underline;}
       </div>
       <p>除了单象限建议，还会做<b>组合健康度诊断</b>——这才是 BCG 真正的用法：</p>
       <div class="mcode">⚠️ 无现金牛却有问题儿童：缺少自我造血业务，扩张依赖外部输血</div>
-      <h3>版本快照</h3>
-      <p>存快照后点「对比当前」，可看业务线在四象限间的迁移，如"小红书从 ❓ 问题儿童进入 ⭐ 明星，说明投入有效"。</p>
+      <h3>版本快照与迁移</h3>
+      <p>存快照后点「对比当前」，可看业务线在四象限间的迁移，如"小红书从 ❓ 问题儿童进入 ⭐ 明星，说明投入有效"。下方还会画出<b>迁移图</b>：虚线圈是快照位置，实心点是当前位置，箭头即迁移路径，绿=更优、红=恶化、蓝=新增。</p>
+      <p>此外有<b>战略姿态迁移轨迹</b>（需 2 个以上快照）：按时间把每次快照的内部/外部净值连成轨迹。</p>
+      <div class="mnote">
+        <b>怎么看轨迹</b>：越靠右上越好；<b>反复穿越中心线说明战略摇摆</b>——这不是数据问题，是决策层还没定下来。
+      </div>
     </section>
 
     <section class="msec" id="hotspot">

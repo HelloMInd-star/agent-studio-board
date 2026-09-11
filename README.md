@@ -4,7 +4,7 @@
 content → collect the result — entirely in your browser.**
 
 A local-first decision chain for brand and growth: **24 tabs (25 modules)**,
-**36 deterministic calculations** (17 of them registered as orchestrable
+**38 deterministic calculations** (17 of them registered as orchestrable
 workflow tools), **70 marketing frameworks** rendered from 25 graphic
 skeletons, **5 SVG chart types**. No backend, no tracking, no login.
 
@@ -905,6 +905,59 @@ git add --renormalize .
 
 ---
 
+### 3.25 Strategy matrix: weighted SWOT and vector layer (`45-stratviz.js`)
+
+The strategy tab used to hold **one** real chart in 26 KB — the BCG matrix.
+SWOT was four input boxes and TOWS was a table, even though every SWOT item
+had already been storing `v` (value), `d` (change) and `src` (source) fields
+that nothing ever read.
+
+`45-stratviz.js` adds four vector pieces and, more importantly, makes SWOT
+**computable**:
+
+| Piece | What it answers |
+|---|---|
+| Weighted SWOT (A'WOT, simplified) | Which quadrant dominates — not "what did we list" |
+| TOWS cross matrix | Which of the four strategies is actually available, and which is missing |
+| Snapshot shift | How each business line moved between BCG quadrants |
+| Posture track | Whether the strategy is converging or oscillating |
+
+**How the weighting works.** Each item carries a weight of 1–5 (default 3).
+Per quadrant the weighted sum feeds two net scores:
+
+```
+inner = (S − W) / (S + W) × 100     −100 = all weakness, +100 = all strength
+outer = (O − T) / (O + T) × 100     −100 = all threats,  +100 = all opportunity
+```
+
+Those two numbers place the brand on a **posture map** whose four quadrants
+map straight back onto TOWS: internal-strong/external-good is `SO` (attack),
+internal-weak/external-good is `WO` (reinforce), and so on. So the weighted
+SWOT does not just describe the situation — it tells you which TOWS strategy
+should lead.
+
+TOWS cell strength uses the **geometric mean** `√(A × B)`, not the arithmetic
+one: if either side is empty the strategy cannot exist at all, and an
+arithmetic mean would dress up "one side huge, the other nearly empty" as a
+respectable middle score.
+
+**The deliberate boundary.** Weight is the *only* quantified input. The `v`
+field is used solely to flag whether an item has data behind it — it never
+enters a sum, because `87%` and `¥1.2M` cannot be added. Summing them would
+manufacture precision the user does not have. The UI states this, and warns
+when every item still sits at the default weight (at which point weighting
+degenerates into a plain item count).
+
+Two further honesty guards:
+
+- Change direction is parsed with **explicit signs first, Chinese direction
+  words second, and "unknown" otherwise**. A naive number-only regex reads
+  `下降 12 个点` ("down 12 points") as *+12* — an increase. That is a semantic
+  error, not a formatting one, and it is caught by a test.
+- The UI refuses to infer a direction from a bare `5%`.
+
+---
+
 ## 4. Data
 
 Everything lives in `localStorage` under `ym_studio_v1`. Clearing browser
@@ -926,9 +979,9 @@ landing page together.
 | Tabs | **24** | unique `data-tab` values in `src/index.template.html` |
 | Groups | **6** | unique `data-group` values |
 | Modules | **25** | 24 tabs + brand tone constraint (embedded, not a tab) |
-| Deterministic calculations | **36** | 29 `calc*` functions + 7 non-`calc` cores (`analyzeBrandCore`, `bcAnalyze`, `scoreContent`, `tcAnalyze`, `scoreTitles`, `auditAssetsCalc`, `analyzeTimelineCalc`) |
+| Deterministic calculations | **38** | 31 `calc*` functions + 7 non-`calc` cores (`analyzeBrandCore`, `bcAnalyze`, `scoreContent`, `tcAnalyze`, `scoreTitles`, `auditAssetsCalc`, `analyzeTimelineCalc`) |
 | Orchestrable in workflows | **17** | `LOCAL_TOOLS` indices 11–27 |
-| Source files | **43** | `src/*.js`, merged by `build.py` |
+| Source files | **44** | `src/*.js`, merged by `build.py` |
 | Frameworks mapped | **70** | `src/27-toolmap.js` — 27 done / 4 planned / 39 reference-only |
 | Graphic skeletons | **25** | distinct `s:` values in `src/29-framecfg.js` |
 | Chart types | **5** | `CHART_TYPES` in `src/07-charts.js` |

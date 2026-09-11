@@ -66,6 +66,7 @@ MODULES = [
     '42-icons.js',      # 线性图标系统：23 个 Tab 的 1.5px 线性 SVG（须在 boot 前）
     '41-moretools.js',    # 扩充可编排工具集：A/B标题/资产审计/轨迹洞察（须在 tonecheck·insight·assets 后）
     '44-sim.js',       # 决策推演：盈亏平衡/敏感性龙卷风/BCG迁移（须在 strategy 后、boot 前）
+    '45-stratviz.js',  # 战略矩阵矢量层：加权SWOT态势图/TOWS交叉矩阵/快照迁移/态势轨迹（须在 strategy 后、boot 前）
     '16-boot.js',       # 回填 + 启动（最后，含 })();）
 ]
 

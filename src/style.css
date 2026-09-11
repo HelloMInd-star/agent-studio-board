@@ -852,15 +852,41 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
 }
 .switem__t:hover{border-color:var(--line);background:var(--bg);}
 .switem__m{display:flex;gap:5px;margin-top:3px;}
-.switem__v,.switem__d,.switem__src{
+.switem__v,.switem__d,.switem__src,.switem__w{
   font-size:10.5px;padding:2px 5px;border:1px solid var(--line);
   border-radius:5px;background:var(--bg);color:var(--text-2);min-width:0;
 }
-.switem__v{flex:0 0 62px;}
-.switem__d{flex:0 0 54px;}
+.switem__v{flex:0 0 58px;}
+.switem__d{flex:0 0 50px;}
 .switem__src{flex:1;}
+.switem__w{flex:0 0 52px;cursor:pointer;color:var(--text);font-weight:600;}
+.switem__w:hover{border-color:var(--brand-line);background:var(--brand-soft);}
 .switem__x{position:absolute;right:0;top:2px;padding:2px 5px;font-size:10px;}
 .swadd{margin-top:8px;width:100%;}
+
+/* ===== 战略矩阵 · 矢量分析层 ===== */
+.svbar{display:flex;align-items:center;gap:12px;margin:10px 0 12px;flex-wrap:wrap;}
+.svtoggle{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:2px;background:var(--bg-soft);}
+.svtoggle__b{
+  border:0;background:transparent;color:var(--text-2);font:inherit;font-size:12px;
+  padding:5px 14px;border-radius:999px;cursor:pointer;transition:all .16s;
+}
+.svtoggle__b:hover{color:var(--text);}
+.svtoggle__b.is-on{background:var(--card);color:var(--brand-ink);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+.svviz{margin-top:10px;}
+.svviz svg{width:100%;height:auto;display:block;}
+.svnote{
+  margin-top:10px;border:1px solid var(--line);border-radius:10px;
+  background:var(--bg-soft);padding:10px 12px;display:flex;flex-direction:column;gap:6px;
+}
+.svnote--warn{border-color:var(--warn-line);background:var(--warn-soft);}
+.svnote__row{display:flex;gap:10px;font-size:12px;line-height:1.5;}
+.svnote__row b{flex:0 0 62px;color:var(--text-3);font-weight:600;}
+.svnote__row span{flex:1;color:var(--text-2);}
+@media (max-width:900px){
+  .svnote__row{flex-direction:column;gap:2px;}
+  .svnote__row b{flex:none;}
+}
 
 .towslist{display:flex;flex-direction:column;gap:10px;}
 .towscard{
