@@ -11,7 +11,7 @@ function bind(){
       if(k === 'synth') renderSynthSources();
       // 切到日历时重渲染（其他模块可能刚推送了任务进来）
       if(k === 'cal') renderCal();
-      // 切到品牌轨迹时重采（7 类记录可能刚在其他模块产生）
+      // 切到品牌轨迹时重采（8 类记录可能刚在其他模块产生）
       if(k === 'timeline'){ renderTimeline(); if(typeof renderInsight === 'function') renderInsight(); }
       // 切到系统设置时重渲染（存储占用会随使用变化）
       if(k === 'settings' && typeof renderSettings === 'function') renderSettings();
@@ -417,6 +417,8 @@ function bind(){
   $('#btnRvAdd').onclick  = addRival;
   $('#btnRvDemo').onclick = demoRivals;
   $('#btnRvExp').onclick  = exportRivals;
+  $('#btnRiScan').onclick = function(){ riRender(); toast('已重新识别信号'); };
+  $('#btnRiExp').onclick  = riExportMd;
   var rgEl = $('#rg_rows');
   if(rgEl){
     rgEl.addEventListener('input', function(){ state.region.rows = rgEl.value; save(); });
@@ -427,9 +429,11 @@ function bind(){
   $('#btnPrCalc').onclick = renderPricing;
   $('#btnPrDemo').onclick = demoPricing;
   $('#btnPrSvg').onclick  = exportPricingSvg;
+  // 调研方案的 WTP 结论文案（切到本 Tab 就应看到是否已可带入）
+  if(typeof renderPricingWtpTip === 'function') renderPricingWtpTip();
   // 输入即重算（参数齐全时）
   ['pr_cost','pr_gm','pr_fixed','pr_qty','pr_rlo','pr_rhi','pr_value','pr_cap',
-   'pr_base','pr_varc','pr_disc'].forEach(function(id){
+   'pr_base','pr_varc','pr_disc','pr_cat'].forEach(function(id){
     var el = $('#' + id);
     if(el) el.addEventListener('change', function(){
       if(lastPricing) renderPricing();

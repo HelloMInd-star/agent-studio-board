@@ -11,6 +11,44 @@ function money(v){
 }
 
 /* ---------- 核心计算 ---------- */
+/* ---------- 需求价格弹性：经验参考区间 ----------
+ * 说明（重要）：下列区间是营销学常见的经验量级，用于判断"降价换量的要求是否离谱"，
+ * 不是对你产品的实测，也不能预测你真实的弹性。
+ * 判定口径：|E| = 需要的销量增幅 ÷ 价格降幅。
+ */
+var ELAS_CAT = {
+  general:{n:'通用（未指定）',    lo:0.8, hi:2.5},
+  fmcg:   {n:'快消 / 日用',      lo:1.0, hi:2.5},
+  beauty: {n:'美妆 / 服饰',      lo:1.5, hi:3.5},
+  digital:{n:'3C / 家电',        lo:1.5, hi:3.0},
+  food:   {n:'餐饮 / 本地生活',   lo:1.5, hi:3.0},
+  fresh:  {n:'生鲜 / 食品',      lo:2.0, hi:4.0},
+  luxury: {n:'奢侈品 / 高端',     lo:0.2, hi:0.8},
+  b2b:    {n:'B2B / 企业服务',    lo:0.5, hi:1.5},
+  medical:{n:'医药 / 强刚需',     lo:0.1, hi:0.5}
+};
+
+/* 判定某个折扣所要求的弹性是否现实 */
+function judgeElasticity(mult, discPct, catKey){
+  var cat = ELAS_CAT[catKey] || ELAS_CAT.general;
+  var drop = 1 - discPct / 100;                 // 价格降幅（比例）
+  if(!(drop > 0)) return {e:null, tag:'none', cat:cat, why:'未打折，无需增量'};
+  // 折后单件毛利 <= 0：卖得越多亏越多，任何弹性都救不回来
+  if(mult === null || !isFinite(mult)) return {e:null, tag:'impossible', cat:cat,
+    why:'折后价已击穿单位变动成本，多卖反而扩大亏损——这不是弹性问题'};
+  var needQ = mult - 1;                         // 需要的销量增幅（比例）
+  var e = needQ / drop;                         // 所需 |E|
+  var tag;
+  if(needQ <= 0)      tag = 'ok';
+  else if(e <= cat.hi)         tag = 'ok';
+  else if(e <= cat.hi * 1.4)   tag = 'stretch';
+  else                          tag = 'unlikely';
+  return {e:e, tag:tag, cat:cat,
+    why: tag === 'ok' ? '所需弹性在「' + cat.n + '」常见区间内'
+       : tag === 'stretch' ? '略高于「' + cat.n + '」常见区间上限，需要强理由（如大促流量、清仓）'
+       : '远超「' + cat.n + '」常见区间，这个折扣大概率换不回足够的量'};
+}
+
 function calcPricing(){
   var num = function(id, dft){
     var el = $(id); if(!el) return dft;
@@ -76,22 +114,24 @@ function calcPricing(){
     use:'强品牌、强差异化的产品'
   });
 
-  // 4. 渗透定价
+  // 4. 渗透定价（说明：系数与「竞品锚定 + 性价比定位」相同，并非独立方法）
   var p4 = rivalAvg * 0.85;
   strategies.push({
     k:'penetrate', n:'渗透定价', icon:'📉', price:p4,
     logic:'竞品均价 × 0.85',
     desc:'低价换份额，需要销量规模支撑',
-    use:'新进入市场、追求快速起量'
+    use:'新进入市场、追求快速起量',
+    dup:'与「竞品锚定 × 性价比定位（0.85）」同价——它是锚定法在低定位下的取值，不是独立算法'
   });
 
-  // 5. 撇脂定价
+  // 5. 撇脂定价（说明：1.25 与竞品锚定的高端系数 1.2 接近）
   var p5 = rivalAvg * 1.25;
   strategies.push({
     k:'skim', n:'撇脂定价', icon:'📈', price:p5,
     logic:'竞品均价 × 1.25',
     desc:'高价收割早期用户，后期逐步降价',
-    use:'创新品类、有明显先发优势'
+    use:'创新品类、有明显先发优势',
+    dup:'系数 1.25 与「竞品锚定 × 高端定位（1.2）」接近，两者差异在 4% 内——可视为锚定法的高位取值'
   });
 
   /* --- 每种策略的盈亏平衡销量 --- */
@@ -115,6 +155,9 @@ function calcPricing(){
   var disc = num('#pr_disc', 80);                    // 折扣（如 80 = 8折）
   disc = Math.max(1, Math.min(99, disc));
 
+  var cat = $('#pr_cat') ? $('#pr_cat').value : 'general';
+  if(!ELAS_CAT[cat]) cat = 'general';
+
   var promo = [];
   [90, 85, 80, 70, 60].forEach(function(d){
     var np = base * (d / 100);
@@ -127,7 +170,8 @@ function calcPricing(){
       margin: m1,
       mult: mult,
       safe: m1 > 0,
-      needPct: mult ? ((mult - 1) * 100) : null
+      needPct: mult ? ((mult - 1) * 100) : null,
+      elas: judgeElasticity(mult, d, cat)
     });
   });
 
@@ -139,7 +183,8 @@ function calcPricing(){
       d: disc, price: np0, margin: mm1,
       mult: mm1 > 0 ? mm0 / mm1 : null,
       safe: mm1 > 0,
-      needPct: mm1 > 0 ? ((mm0 / mm1 - 1) * 100) : null
+      needPct: mm1 > 0 ? ((mm0 / mm1 - 1) * 100) : null,
+      elas: judgeElasticity(mm1 > 0 ? mm0 / mm1 : null, disc, cat)
     };
   }
 
@@ -149,7 +194,7 @@ function calcPricing(){
     value:value, capR:capR,
     strategies:strategies,
     lo:lo, hi:hi,
-    base:base, varC:varC, disc:disc,
+    base:base, varC:varC, disc:disc, cat:cat,
     promo:promo, curDisc:curDisc
   };
 }
@@ -247,8 +292,48 @@ function svgPriceBand(d){
 var lastPricing = null;
 var lastPricingSvg = '';
 
+/* ---------- 调研方案的 WTP 结论：一键带入感知价值 ---------- */
+function renderPricingWtpTip(){
+  var box = $('#prWtpBox');
+  if(!box) return;
+  var w = (typeof rsWtpResult === 'function') ? rsWtpResult() : null;
+  if(!w){
+    box.innerHTML = '<div class="prwtp prwtp--empty">💡 在「调研方案 → 定价验证」跑过支付意愿后，' +
+                    '结论会出现在这里，可一键带入下方「用户感知价值」——不必凭记忆重填。</div>';
+    return;
+  }
+  var bits = [];
+  if(w.best != null) bits.push('收入最大化价 <b>' + w.best + '</b>');
+  if(w.med  != null) bits.push('50% 接受价 <b>' + w.med + '</b>');
+  if(w.ipc  != null) bits.push('Van Westendorp 最优价 <b>' + w.ipc + '</b>');
+  if(w.lo != null && w.hi != null) bits.push('可接受区间 <b>' + w.lo + ' – ' + w.hi + '</b>');
+
+  var h = '<div class="prwtp"><div class="prwtp__t">📥 调研方案已算出（样本 ' + (w.total || 0) + ' 份）：' +
+          bits.join('　·　') + '</div><div class="row" style="margin-top:8px">';
+  if(w.ipc  != null) h += '<button class="btn btn--ghost btn--sm" data-wtp="ipc">带入 VW 最优价 ' + w.ipc + '</button>';
+  if(w.best != null) h += '<button class="btn btn--ghost btn--sm" data-wtp="best">带入收入最大化价 ' + w.best + '</button>';
+  if(w.med  != null) h += '<button class="btn btn--ghost btn--sm" data-wtp="med">带入 50% 接受价 ' + w.med + '</button>';
+  h += '<span class="ph">带入后自动重算</span></div></div>';
+  box.innerHTML = h;
+
+  box.onclick = function(e){
+    var t = e.target || e.srcElement;
+    var b = (t && t.closest) ? t.closest('[data-wtp]') : null;
+    if(!b) return;
+    var k = b.getAttribute('data-wtp');
+    var v = (k === 'ipc') ? w.ipc : (k === 'best') ? w.best : w.med;
+    if(v == null) return;
+    var el = $('#pr_value');
+    if(!el) return;
+    el.value = v;
+    if(typeof toast === 'function') toast('已带入感知价值 ' + v + '（来自调研方案）');
+    renderPricing();
+  };
+}
+
 function renderPricing(){
   var d = calcPricing();
+  renderPricingWtpTip();
   lastPricing = d;
   if(!d){
     lastPricingSvg = '';
@@ -292,7 +377,11 @@ function renderPricing(){
   out.push('');
   d.strategies.forEach(function(s){
     out.push('- **' + s.icon + ' ' + s.n + '**：' + s.logic + '　→　' + s.desc + '　*适合：' + s.use + '*');
+    if(s.dup) out.push('  - ⓘ *' + s.dup + '*');
   });
+  out.push('');
+  out.push('> ⓘ **关于"五种"**：其中成本加成、竞品锚定、价值定价是三种互相独立的方法；' +
+           '渗透与撇脂是竞品锚定法在两个固定系数下的取值，并非独立算法——保留它们是因为这两种叫法更常用、更易沟通。');
   out.push('');
   out.push('## 二、建议价格区间');
   out.push('');
@@ -305,12 +394,18 @@ function renderPricing(){
   out.push('');
   out.push('原价 **' + money(d.base) + '**，促销期单位变动成本 ' + money(d.varC) + '。');
   out.push('');
-  out.push('| 折扣 | 折后价 | 单件毛利 | 保本需多卖 | 判断 |');
-  out.push('|---|---|---|---|---|');
+  out.push('| 折扣 | 折后价 | 单件毛利 | 保本需多卖 | 所需弹性 \\|E\\| | 现实性 |');
+  out.push('|---|---|---|---|---|---|');
   d.promo.forEach(function(p){
+    var ej = p.elas || {e:null, tag:'none', why:''};
+    var eTxt = (ej.e === null || ej.e === undefined) ? '—' : ej.e.toFixed(2);
+    var jTxt = ej.tag === 'ok' ? '✅ 区间内'
+             : ej.tag === 'stretch' ? '⚠️ 偏高'
+             : ej.tag === 'unlikely' ? '🔴 不现实'
+             : ej.tag === 'impossible' ? '❌ 无解' : '—';
     out.push('| ' + (p.d / 10).toFixed(1) + ' 折 | ' + money(p.price) + ' | ' + money(p.margin) + ' | ' +
              (p.mult ? ('×' + p.mult.toFixed(2) + '（+' + p.needPct.toFixed(0) + '%）') : '—') + ' | ' +
-             (p.safe ? '✅ 可行' : '❌ 击穿成本') + ' |');
+             eTxt + ' | ' + jTxt + ' |');
   });
   out.push('');
   if(d.curDisc){
@@ -334,6 +429,28 @@ function renderPricing(){
                '，每卖一件亏一件。**');
     }
   }
+
+  /* --- 弹性现实性：这个增量要求做得到吗 --- */
+  var ej3 = d.curDisc ? d.curDisc.elas : null;
+  if(ej3 && ej3.cat){
+    out.push('');
+    out.push('### 现实性：这个要求做得到吗');
+    out.push('');
+    if(ej3.tag === 'impossible'){
+      out.push('折后价已击穿单位变动成本，**这不是"要多卖多少"的问题——卖得越多，亏得越多**。任何弹性都救不回来。');
+    } else if(ej3.e !== null && ej3.e !== undefined){
+      out.push('打 ' + (d.disc / 10).toFixed(1) + ' 折，价格降 **' + ((1 - d.disc / 100) * 100).toFixed(0) +
+               '%**，需要销量涨 **+' + (d.curDisc.needPct || 0).toFixed(0) + '%**，' +
+               '相当于要求需求价格弹性 \\|E\\| 达到 **' + ej3.e.toFixed(2) + '**。');
+      out.push('');
+      out.push('「' + ej3.cat.n + '」的常见经验区间：**' + ej3.cat.lo + ' – ' + ej3.cat.hi + '**。' +
+               '　→　' + ej3.why + '。');
+    }
+    out.push('');
+    out.push('> ⓘ 上述区间是营销学常见的经验量级，**不是你产品的实测值**。它只用来判断"这个要求离不离谱"，' +
+             '不预测你的真实弹性——真实弹性需要用你自己的历史促销数据（价格—销量配对）回归得出。');
+  }
+
   out.push('');
   out.push('---');
   out.push('');

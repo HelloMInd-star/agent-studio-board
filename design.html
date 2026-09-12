@@ -92,7 +92,7 @@
   <p>定义品牌 → 验证市场 → 制定策略 → 执行传播 → 回收结果，全程在浏览器本地运行。</p>
   <div class="tags">
     <span>零后端</span><span>零依赖</span><span>单文件 840KB</span>
-    <span>36 个确定性计算</span><span>70 个框架</span>
+    <span>40 个确定性计算</span><span>70 个框架</span>
   </div>
 </div>
 
@@ -118,8 +118,8 @@
 <div class="kv">
   <div><b>24</b><span>个模块（23 Tab + 调性约束）</span></div>
   <div><b>23</b><span>个 Tab，分 6 组</span></div>
-  <div><b>38</b><span>个源文件 / 14220 行</span></div>
-  <div><b>28</b><span>个确定性计算函数</span></div>
+  <div><b>45</b><span>个源文件 / 19235 行</span></div>
+  <div><b>40</b><span>个确定性计算函数（17 个可编排）</span></div>
   <div><b>14</b><span>个可被工作流编排</span></div>
   <div><b>70</b><span>个营销框架</span></div>
   <div><b>25</b><span>种 SVG 骨架</span></div>
@@ -129,7 +129,7 @@
 <tr><th>项</th><th>数值</th><th>统计方式</th></tr>
 <tr><td>Tab 数</td><td>23</td><td><code>data-tab</code> 唯一值</td></tr>
 <tr><td>分组</td><td>6</td><td><code>data-group</code> 去重（entry/think/calc/make/chain/keep）</td></tr>
-<tr><td>确定性计算</td><td>25</td><td>22 个 <code>calc*</code> + <code>analyzeBrandCore</code> + <code>tcAnalyze</code> + <code>scoreContent</code></td></tr>
+<tr><td>确定性计算</td><td>40</td><td>31 个 <code>calc*</code> + 9 个非 <code>calc</code> 核心（<code>analyzeBrandCore</code>、<code>bcAnalyze</code>、<code>scoreContent</code>、<code>tcAnalyze</code>、<code>scoreTitles</code>、<code>auditAssetsCalc</code>、<code>analyzeTimelineCalc</code>、<code>riScanRival</code>、<code>judgeElasticity</code>）</td></tr>
 <tr><td>可编排函数</td><td>17</td><td><code>LOCAL_TOOLS</code> 索引 11–27</td></tr>
 <tr><td>框架总数</td><td>70</td><td>工具地图条目数</td></tr>
 <tr><td>框架状态</td><td>27 / 4 / 39</td><td>已实现 / 部分覆盖 / 方法论速查</td></tr>
@@ -139,7 +139,7 @@
 <div class="box warn">
   <div class="t">口径说明</div>
   <p>「25 个模块」= 24 个 Tab + 品牌调性约束（内嵌在内容工厂，非独立 Tab）。<br>
-  「36 个计算 / 17 个可编排」——<code>matchIntent</code>、<code>matchScene</code> 是路由不是计算，已排除在外；36 = 29 个 <code>calc*</code> + 7 个非 calc 核心（<code>analyzeBrandCore</code> / <code>bcAnalyze</code> / <code>scoreContent</code> / <code>tcAnalyze</code> / <code>scoreTitles</code> / <code>auditAssetsCalc</code> / <code>analyzeTimelineCalc</code>）。可编排的 17 个是注册进 <code>LOCAL_TOOLS</code> 的，其余 19 个是模块内直接调用——其中战略钟 / 价值曲线 / CPM 是交互填表型，工作流单步调用没有意义。</p>
+  「40 个计算 / 17 个可编排」——<code>matchIntent</code>、<code>matchScene</code> 是路由不是计算，已排除在外；40 = 31 个 <code>calc*</code> + 9 个非 calc 核心（<code>analyzeBrandCore</code> / <code>bcAnalyze</code> / <code>scoreContent</code> / <code>tcAnalyze</code> / <code>scoreTitles</code> / <code>auditAssetsCalc</code> / <code>analyzeTimelineCalc</code> / <code>riScanRival</code> / <code>judgeElasticity</code>）。可编排的 17 个是注册进 <code>LOCAL_TOOLS</code> 的，其余 23 个是模块内直接调用——其中战略钟 / 价值曲线 / CPM 是交互填表型，工作流单步调用没有意义。</p>
 </div>
 </section>
 
@@ -172,7 +172,7 @@
 <div class="lay">
   <div class="row"><div class="lbl">决策链层</div><div class="val">品牌内核 → 调研/战略 → 定价/竞品 → 内容/日历 → 财务/方案合成</div></div>
   <div class="row"><div class="lbl">方法论层</div><div class="val">回答"凭什么这么建议"：调研方案、战略矩阵、70 框架、品牌内核三层结构</div></div>
-  <div class="row"><div class="lbl">计算层</div><div class="val">36 个确定性函数，纯前端可验算，不依赖模型</div></div>
+  <div class="row"><div class="lbl">计算层</div><div class="val">40 个确定性函数，纯前端可验算，不依赖模型</div></div>
   <div class="row"><div class="lbl">执行层</div><div class="val">5 种图卡 + 25 种骨架 + 日历 + 工作流 + 导出（MD/JSON/CSV/iCal/SVG）</div></div>
   <div class="row"><div class="lbl">入口层</div><div class="val">流程导航（场景→步骤）+ 对话路由（意图→函数）+ 内容包独立窗口</div></div>
   <div class="row"><div class="lbl">存储层</div><div class="val">localStorage 单一 <code>state</code>，全量备份/恢复 .json</div></div>
@@ -186,7 +186,7 @@
 
 <section id="s5">
 <h3 class="sec">5 · 代码结构</h3>
-<p>43 个源文件按职责分层，构建时由 <code>build.py</code> 合并成单文件 <code>index.html</code>。</p>
+<p>45 个源文件按职责分层，构建时由 <code>build.py</code> 合并成单文件 <code>index.html</code>。</p>
 <table>
 <tr><th>层</th><th>文件</th><th>职责</th></tr>
 <tr><td>核心</td><td>01-core / 02-presets / 03-rules / 04-store / 05-brand / 06-render</td><td>状态、预设、规则、存储、渲染</td></tr>
@@ -207,13 +207,21 @@
 
 <section id="s6">
 <h3 class="sec">6 · 核心算法</h3>
-<p>36 个确定性函数，全部可用手算验证。选几个代表性的：</p>
+<p>40 个确定性函数，全部可用手算验证。选几个代表性的：</p>
 <h4>品牌内核：位置型 vs 强度型维度</h4>
 <p>关键设计——<b>价格定位是位置型维度，无好坏只有选择</b>。星巴克在溢价端不是缺点，是选择。所以主战场识别看<b>相对品类基准的偏离</b>，而非绝对分：</p>
 <pre><code>主战场   = 绝对分 ≥ 4.0（下了重注）
 差异化   = 相对基准偏离 ≥ 0.5
 撕裂检测 = 预置矛盾对（溢价↔高频折扣、稀缺↔全渠道铺货…）</code></pre>
 <p>验证：星巴克、瑞幸、香奈儿、DIOR 四个案例全部判定"自洽且有记忆点"——它们只是选了不同主战场。而"奢侈品 + 高频折扣"的反例能正确检出冲突。<b>它不评判哪个更好，只判断有没有前后矛盾。</b></p>
+<h4>定价：把「要多卖多少」换算成「要求多离谱」</h4>
+<p>折扣表原本只给保本倍数（打 8 折要多卖 36%），数字本身不说明可行性。<code>judgeElasticity()</code> 把它换算成所需价格弹性，再对照品类经验区间分档：</p>
+<pre><code>|E| = 需要的销量增幅 ÷ 价格降幅
+
+8 折（降 20%），需多卖 35.4%  → |E| = 1.77  → 通用品类区间内
+6 折（降 40%），需多卖 109.4% → |E| = 2.74  → 偏高，需强理由
+同上但选「医药/强刚需」      → 远超 0.1–0.5 → 不现实</code></pre>
+<p>两处刻意的边界：区间是<b>经验量级不是实测</b>，报告里明写；折后价击穿变动成本时判「无解」而非给一个大数字——那时卖得越多亏得越多，给弹性值是误导。另外五种定价法里，渗透 ×0.85 与撇脂 ×1.25 其实是竞品锚定法在两个系数下的取值，代码和报告都标注了这一层，不冒充五种独立算法。</p>
 <h4>调性约束：同一文案、不同品牌、不同结论</h4>
 <pre><code>文案："限时秒杀！全场最低价！赶紧冲！！！"
 

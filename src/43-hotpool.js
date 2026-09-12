@@ -308,3 +308,9 @@ function hsRenderPool(){
   h += '</div>';
   host.innerHTML = h;
 }
+
+/* ---------- 暴露到 window：修「载入评估」按钮点了没反应 ----------
+ * 原因同 21-hotspot.js：全站 JS 包在 IIFE 里，内联 onclick 访问不到闭包内函数。
+ * 本文件是唯一另一处使用内联 onclick 的模块。
+ */
+window.hsLoadNode = hsLoadNode;

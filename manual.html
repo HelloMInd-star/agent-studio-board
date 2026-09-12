@@ -203,6 +203,7 @@ a:hover{text-decoration:underline;}
       <a href="#competitor">⚔️ 竞品对比矩阵</a>
       <a href="#stp">🎯 STP 市场选择</a>
       <a href="#region">🗺️ 区域市场</a>
+      <a href="#rivalintel">📡 竞品动态情报</a>
       <a href="#pricing">💰 定价策略</a>
       <a href="#finance">💹 财务测算</a>
       <a href="#scan">🩺 内容体检</a>
@@ -752,14 +753,50 @@ a:hover{text-decoration:underline;}
       </div>
     </section>
 
+    <section class="msec" id="rivalintel">
+      <h2><span class="ico">📡</span>竞品动态情报<span class="mtag is-local">确定性函数</span></h2>
+      <div class="mflow" data-flow="rivalintel">
+        <div class="mflow__hd">用户流程</div>
+        <div class="mflow__steps"><span class="mfl__step">录入竞品动态（日期+类型）</span><span class="mfl__arrow">→</span><span class="mfl__step">六类模式识别</span><span class="mfl__arrow">→</span><span class="mfl__step">低置信信号单独标注</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">最紧迫清单 + 活跃度时间线</span></div>
+        <div class="mflow__note">只分析你录入的数据，不抓取、不预测。</div>
+      </div>
+      <p>竞品动态是全项目<b>唯一的时序竞争数据</b>。但原本它只被用来倒序显示——一个电子表格，不是情报工具。
+        本模块从已录事件里识别六类模式信号。</p>
+      <div class="mtable">
+        <table>
+          <tr><th>信号</th><th>触发条件</th><th>说明</th></tr>
+          <tr><td>💰 价格战</td><td>90 天内 ≥2 次降价，或价格/促销合计 ≥3 次</td><td>收益有上限、损伤无下限，跟进前先确认成本结构是否更优</td></tr>
+          <tr><td>📣 声量挤压</td><td>30 天内内容/代言合计 ≥3 次</td><td>它在抢声量份额，你不出现的场合会被默认成它主场</td></tr>
+          <tr><td>🆕 产品加速</td><td>180 天内 ≥3 次新品且间隔在缩短</td><td>你的差异化窗口正在关闭</td></tr>
+          <tr><td>🏬 渠道扩张</td><td>90 天内 ≥2 次渠道动作</td><td>它认为现有渠道见顶，正向你的腹地下沉</td></tr>
+          <tr><td>💼 资本注入</td><td>365 天内 ≥1 次融资/并购</td><td>拿到钱后最常见的动作是补贴换份额</td></tr>
+          <tr><td>🌙 沉默期</td><td>最近一条动态距今 ≥90 天</td><td>可能在憋大招，也可能已收缩——<b>工具不猜</b></td></tr>
+        </table>
+      </div>
+      <h3>三条边界</h3>
+      <div class="mnote">
+        <b>一、不预测未来。</b>只说「按已录数据，它呈现出 X 模式」，不说「它下一步会 Y」。
+      </div>
+      <div class="mnote">
+        <b>二、样本不足不给强判断。</b>比如只有 2 次新品时能算出 1 个间隔，但没有比较基准——
+        此时给出「有动作但节奏不明」的<b>低置信</b>信号，不谎称「加速」。低置信信号不会进「最紧迫」清单。
+      </div>
+      <div class="mnote">
+        <b>三、每条信号必须可反驳。</b>信号下方会列出触发它的具体事件（日期 + 类型 + 内容），
+        你可以自己判断这个判定对不对。不可反驳的结论没有价值。
+      </div>
+      <p>另外两个刻意的设计：<b>促销不等于价格战</b>——两次促销是常态，只有出现真降价（或频次过高）才算；
+        <b>对手减速不报警</b>——它慢下来对你有利，那是好消息不是警报。</p>
+    </section>
+
     <section class="msec" id="pricing">
       <h2><span class="ico">💰</span>定价策略<span class="mtag is-local">确定性函数</span></h2>
       <div class="mflow" data-flow="pricing">
         <div class="mflow__hd">用户流程</div>
         <div class="mflow__steps"><span class="mfl__step">填成本 / 目标毛利 / 竞品价</span><span class="mfl__arrow">→</span><span class="mfl__step">5 种定价法并行计算</span><span class="mfl__arrow">→</span><span class="mfl__step">折扣保本倍数测算</span><span class="mfl__arrow">→</span><span class="mfl__step is-out">价格带图 + 建议区间</span></div>
-        <div class="mflow__note">折扣那栏是关键：打 8 折要多卖 36% 才保住总毛利。</div>
+        <div class="mflow__note">折扣那栏是关键：打 8 折要多卖 36% 才保住总毛利；还需换算成「所需弹性」并对标品类区间。</div>
       </div>
-      <p>五种定价法并行计算 + 促销折扣保本测算。</p>
+      <p>五种定价法并行计算 + 促销折扣保本测算 + 折扣弹性现实性判定。其中成本加成、竞品锚定、价值定价是三种互相独立的方法；渗透与撇脂是竞品锚定法在两个固定系数下的取值（渗透 ×0.85 与「锚定 + 性价比定位」完全同价），已在使用说明中标注，不冒充五种算法。</p>
       <div class="mtable">
         <table>
           <tr><th>策略</th><th>公式</th></tr>
@@ -775,6 +812,33 @@ a:hover{text-decoration:underline;}
       <p>比如成本 30、原价 128、打 8 折：需要多卖 <b>36%</b> 才能保住总毛利。
       这个数字大部分人做促销时压根没算过。工具还会按增量要求给风险分级，
       超过 100% 会建议改用满减。</p>
+
+      <h3>所需弹性：这个要求现实吗</h3>
+      <p>「要多卖 36%」只说了一半——还得看这个要求在不在合理范围内。工具把它换算成
+      需求价格弹性：<code>|E| = 需要的销量增幅 ÷ 价格降幅</code>，再对照所选品类的经验区间。</p>
+      <div class="mtable">
+        <table>
+          <tr><th>品类</th><th>常见 \|E\| 区间</th></tr>
+          <tr><td>医药 / 强刚需</td><td>0.1 – 0.5</td></tr>
+          <tr><td>奢侈品 / 高端</td><td>0.2 – 0.8</td></tr>
+          <tr><td>B2B / 企业服务</td><td>0.5 – 1.5</td></tr>
+          <tr><td>快消 / 日用</td><td>1.0 – 2.5</td></tr>
+          <tr><td>3C / 家电、餐饮 / 本地生活</td><td>1.5 – 3.0</td></tr>
+          <tr><td>美妆 / 服饰</td><td>1.5 – 3.5</td></tr>
+          <tr><td>生鲜 / 食品</td><td>2.0 – 4.0</td></tr>
+        </table>
+      </div>
+      <div class="mnote">
+        <b>边界</b>：这些区间是营销学常见的经验量级，<b>不是你产品的实测值</b>。
+        它只用来回答「这个要求离不离谱」，不能预测你的真实弹性——真实弹性需要用你自己的
+        历史促销数据（价格—销量配对）回归得出。另外，当折后价击穿单位变动成本时，
+        工具直接判定「无解」而不给弹性数值：此时卖得越多亏得越多，任何弹性都救不回来。
+      </div>
+
+      <h3>从调研方案带入感知价值</h3>
+      <p>在「调研方案 → 定价验证」跑过支付意愿后，结论会保存在本地。回到定价页，
+      参数区上方会出现带入条，显示收入最大化价、50% 接受价、Van Westendorp 最优价与可接受区间，
+      点一下即填入「用户感知价值」并自动重算——不用凭记忆把调研结果重敲一遍。</p>
     </section>
 
     <section class="msec" id="finance">

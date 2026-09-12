@@ -93,6 +93,7 @@ function restoreAll(){
   if($('#rg_rows')) $('#rg_rows').value = state.region.rows || '';
   state.rivals = state.rivals || [];
   renderRivals();
+  riRender();
   if(state.region.rows) renderRegion();
 
   /* 热点决策：回填 */

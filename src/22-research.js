@@ -231,6 +231,7 @@ function rs(){
   if(!Array.isArray(R.attrVars))    R.attrVars = [];
   if(!R.market || typeof R.market !== 'object') R.market = {};
   if(!R.wtp   || typeof R.wtp   !== 'object')   R.wtp = {prices:'0,9.9,19,39,99', counts:'', target:''};
+  if(R.wtpRes !== null && typeof R.wtpRes !== 'object') R.wtpRes = null;
   if(!R.feas  || typeof R.feas  !== 'object')   R.feas = {stages:'', risks:''};
   if(!R.gates || typeof R.gates !== 'object')   R.gates = {};
   return R;
@@ -673,8 +674,35 @@ function calcWTP(){
   }
 
   var res = {rows:rows, total:total, best:best, med:med, target:target, vw:vw};
+
+  /* 保存结论供「定价策略」带入——避免用户凭记忆把调研结果重敲一遍 */
+  R.wtpRes = {
+    best:  best ? best.p : null,
+    bestRev: best ? best.rev : null,
+    med:   med,
+    opp:   vw ? vw.opp : null,
+    ipc:   vw ? vw.ipc : null,
+    lo:    vw ? vw.lo : null,
+    hi:    vw ? vw.hi : null,
+    total: total,
+    ts:    Date.now()
+  };
+  save();
+
+  /* 定价模块可能已渲染，同步刷新它的「带入」提示 */
+  if(typeof renderPricingWtpTip === 'function') renderPricingWtpTip();
+
   if(host) host.innerHTML = mdLite(wtpReport(res));
   return res;
+}
+
+/* 供定价模块读取：本次调研算出的价格结论（无则 null） */
+function rsWtpResult(){
+  var R = (typeof state !== 'undefined' && state && state.research) ? state.research : null;
+  var w = R && R.wtpRes ? R.wtpRes : null;
+  if(!w) return null;
+  if(w.best == null && w.med == null && w.ipc == null) return null;
+  return w;
 }
 
 /* 标准 Van Westendorp 求解：给定若干价格点的四类百分比，线性插值求交点 */

@@ -40,7 +40,7 @@ function tlTime(s){
   return m ? String(m[1]).padStart(2,'0') + ':' + m[2] : '';
 }
 
-/* ---------- 采集 7 类 ---------- */
+/* ---------- 采集 8 类（V46 新增第 8 类：热点追踪） ---------- */
 function tlCollect(){
   var out = [];
 

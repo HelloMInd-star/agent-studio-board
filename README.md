@@ -4,7 +4,7 @@
 content → collect the result — entirely in your browser.**
 
 A local-first decision chain for brand and growth: **24 tabs (25 modules)**,
-**38 deterministic calculations** (17 of them registered as orchestrable
+**40 deterministic calculations** (17 of them registered as orchestrable
 workflow tools), **70 marketing frameworks** rendered from 25 graphic
 skeletons, **5 SVG chart types**. No backend, no tracking, no login.
 
@@ -653,7 +653,7 @@ A standalone 12-chapter document, opened from the top bar of every page:
 | 2 | Verified numbers — every count with how it was measured |
 | 3 | Boundaries: 7 things deliberately not built, 4 that were re-framed |
 | 4 | Six-layer architecture, plus an honest answer to "is this an agent?" |
-| 5 | The 43 source files grouped by layer |
+| 5 | The 45 source files grouped by layer |
 | 6 | Core algorithms (positional dimensions, the tone-0 case, sample-size guards) |
 | 7 | All 23 tabs / 6 groups |
 | 8 | Data design (`localStorage` shape, per-module keys) |
@@ -958,6 +958,90 @@ Two further honesty guards:
 
 ---
 
+### 3.26 Competitor move intelligence (`46-rivalintel.js`)
+
+Competitor events were the **only time-series competitive data** in the whole
+product — eight kinds of moves (launch / price / promo / channel / spokes /
+funding / content / other), each with a date. They were used for exactly one
+thing: printing them in reverse-chronological order. A spreadsheet, not an
+intelligence tool.
+
+`46-rivalintel.js` recognises six patterns from the events already recorded:
+
+| Signal | Trigger |
+|---|---|
+| 💰 Price war | ≥2 real price cuts in 90 days, or ≥3 price/promo moves combined |
+| 📣 Voice squeeze | ≥3 content/spokesperson moves in 30 days |
+| 🆕 Product acceleration | ≥3 launches in 180 days **with shrinking intervals** |
+| 🏬 Channel push | ≥2 channel moves in 90 days |
+| 💼 Capital injection | ≥1 funding/M&A move in 365 days |
+| 🌙 Silence | Newest move ≥90 days old |
+
+**Not prediction.** It reports "the recorded data shows pattern X", never
+"they will do Y next".
+
+**Three deliberate boundaries:**
+
+1. **Insufficient sample never yields a strong claim.** Two launches give you
+   one interval and no baseline — so the signal fires as *low confidence* with
+   "moves present, rhythm unclear", instead of claiming acceleration. Low
+   confidence signals are excluded from the "most urgent" list.
+2. **Every signal is falsifiable.** Each one lists the exact events that
+   triggered it (date + type + text), so the user can overrule it. A verdict
+   you cannot argue with has no value.
+3. **Two guards against false alarms.** Promotions alone are not a price war
+   (two sales campaigns are just business as usual — a real price cut, or
+   unusual frequency, is required). And a *slowing* competitor raises no
+   alarm: them decelerating is good news for you, not a warning.
+
+`riSvgTimeline()` additionally plots the last 180 days as a per-competitor
+row with type-coloured dots, so rhythm reads as *shape* — something a table
+cannot show.
+
+---
+
+### 3.27 Pricing: elasticity realism and WTP hand-off (`19-pricing.js`, `22-research.js`)
+
+Two gaps closed in the pricing module.
+
+**Discount realism.** The promo table always computed the break-even multiple
+("8折 needs +35% volume") but stopped at the number, leaving the user to
+guess whether +35% is plausible. `judgeElasticity(mult, discPct, catKey)`
+converts that into a required price elasticity:
+
+```
+|E| = (required volume increase) ÷ (price reduction)
+```
+
+and compares it against a per-category experience band (`ELAS_CAT`, nine
+categories from 奢侈品 0.2–0.8 to 生鲜 2.0–4.0), tagging each level
+`ok` / `stretch` / `unlikely`. Three points are deliberate:
+
+- The bands are **textbook magnitude, not measurements of your product**. The
+  report says so in as many words. It answers "is this ask absurd", never
+  "this is your elasticity" — real elasticity needs your own price–volume
+  history regressed.
+- When the discounted price breaks unit variable cost, the tag is
+  `impossible`, not a large number. Selling more then **widens** the loss; no
+  elasticity rescues it, and printing one would be misleading.
+- The category selector defaults to 通用 so nothing changes for existing users.
+
+**Five methods, three algorithms.** 渗透 (×0.85) and 撇脂 (×1.25) are the
+competitor-anchoring method at two fixed coefficients — the first is
+identical to anchoring with 性价比 positioning, the second within 4% of
+anchoring with 高端 positioning. Rather than quietly claiming five
+independent methods, each now carries a `dup` note and the report adds an
+inline disclosure. They are kept because the names are what people say.
+
+**WTP hand-off.** `calcWTP()` in the research module now persists its
+conclusions to `state.research.wtpRes` (revenue-maximising price, 50%
+acceptance price, Van Westendorp optimal point and acceptable band). Pricing
+renders a hand-off bar with one-click 带入 into 用户感知价值. Previously the
+two modules were severed: research could compute the optimal price and pricing
+still asked you to type a perceived value from memory.
+
+---
+
 ## 4. Data
 
 Everything lives in `localStorage` under `ym_studio_v1`. Clearing browser
@@ -979,9 +1063,9 @@ landing page together.
 | Tabs | **24** | unique `data-tab` values in `src/index.template.html` |
 | Groups | **6** | unique `data-group` values |
 | Modules | **25** | 24 tabs + brand tone constraint (embedded, not a tab) |
-| Deterministic calculations | **38** | 31 `calc*` functions + 7 non-`calc` cores (`analyzeBrandCore`, `bcAnalyze`, `scoreContent`, `tcAnalyze`, `scoreTitles`, `auditAssetsCalc`, `analyzeTimelineCalc`) |
+| Deterministic calculations | **40** | 31 `calc*` functions + 9 non-`calc` cores (`analyzeBrandCore`, `bcAnalyze`, `scoreContent`, `tcAnalyze`, `scoreTitles`, `auditAssetsCalc`, `analyzeTimelineCalc`, `riScanRival`, `judgeElasticity`) |
 | Orchestrable in workflows | **17** | `LOCAL_TOOLS` indices 11–27 |
-| Source files | **44** | `src/*.js`, merged by `build.py` |
+| Source files | **45** | `src/*.js`, merged by `build.py` |
 | Frameworks mapped | **70** | `src/27-toolmap.js` — 27 done / 4 planned / 39 reference-only |
 | Graphic skeletons | **25** | distinct `s:` values in `src/29-framecfg.js` |
 | Chart types | **5** | `CHART_TYPES` in `src/07-charts.js` |
@@ -990,7 +1074,7 @@ landing page together.
 
 Two of these are worth defending explicitly:
 
-- **17 orchestrable, not 36.** Nineteen calculations are called directly by
+- **17 orchestrable, not 40.** Twenty-three calculations are called directly by
   their own module but were never registered as workflow tools. Two kinds:
   text-report tools that a workflow step could call (registering them is
   mechanical; no workflow has needed them yet), and interactive fill-in

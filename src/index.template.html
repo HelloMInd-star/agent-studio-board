@@ -93,7 +93,7 @@
     <div class="tgroup__tabs">
       <button class="tab" data-tab="kb"><span class="tab__name">📚 品牌知识库</span><span class="tab__desc">卖点 · 竞品 · 违禁词</span></button>
       <button class="tab" data-tab="assets"><span class="tab__name">🎨 品牌资产</span><span class="tab__desc">Logo · 物料 · 色值规范</span></button>
-      <button class="tab" data-tab="timeline"><span class="tab__name">🕐 品牌轨迹</span><span class="tab__desc">7 类记录 · 时间线</span></button>
+      <button class="tab" data-tab="timeline"><span class="tab__name">🕐 品牌轨迹</span><span class="tab__desc">8 类记录 · 时间线</span></button>
       <button class="tab" data-tab="settings"><span class="tab__name">⚙️ 系统设置</span><span class="tab__desc">备份 · 主题 · 隐私</span></button>
     </div>
   </div>
@@ -973,6 +973,7 @@
             </select>
           </label>
         </div>
+        <div id="prWtpBox" style="margin-top:10px"></div>
       </div>
 
       <div class="card">
@@ -981,6 +982,19 @@
           <label class="f"><span>原价</span><input type="number" id="pr_base" placeholder="例：128"></label>
           <label class="f"><span>促销期单位变动成本</span><input type="number" id="pr_varc" placeholder="例：30"></label>
           <label class="f"><span>计划折扣（80 = 8 折）</span><input type="number" id="pr_disc" value="80"></label>
+          <label class="f"><span>品类（用于弹性参考区间）</span>
+            <select id="pr_cat">
+              <option value="general" selected>通用（未指定）</option>
+              <option value="fmcg">快消 / 日用</option>
+              <option value="beauty">美妆 / 服饰</option>
+              <option value="digital">3C / 家电</option>
+              <option value="food">餐饮 / 本地生活</option>
+              <option value="fresh">生鲜 / 食品</option>
+              <option value="luxury">奢侈品 / 高端</option>
+              <option value="b2b">B2B / 企业服务</option>
+              <option value="medical">医药 / 强刚需</option>
+            </select>
+          </label>
         </div>
         <div class="row" style="margin-top:12px">
           <button class="btn btn--primary btn--sm" id="btnPrCalc">⚡ 计算定价</button>
@@ -1028,6 +1042,21 @@
           <button class="btn btn--ghost btn--sm" id="btnRvExp">⬇️ 导出情报台账</button>
         </div>
         <div class="rvlist" id="rvList"></div>
+      </div>
+
+      <div class="card">
+        <div class="card__hd">📡 动态情报信号 <span class="eyebrow" id="riStat" style="margin-left:auto"></span></div>
+        <p class="hint">竞品动态是全项目<b>唯一的时序竞争数据</b>，但原本只被用来倒序显示。这里从已录事件里识别六类模式信号。<br>
+          边界：<b>只分析你录入的数据，不抓取、不预测</b>。它回答「已录数据呈现出什么模式」，不回答「对手下一步会做什么」。</p>
+        <div class="row" style="margin:10px 0">
+          <button class="btn btn--ghost btn--sm" id="btnRiScan">⚡ 重新识别</button>
+          <button class="btn btn--ghost btn--sm" id="btnRiExp">⬇️ 导出信号报告</button>
+        </div>
+        <div id="riSigs"></div>
+        <div class="chartwrap" id="riChart" style="margin-top:12px"><span class="ph">录入竞品动态后生成活跃度时间线</span></div>
+        <p class="hint">💡 六类信号：<b>价格战</b>（90天内反复动价）· <b>声量挤压</b>（30天内密集投放）· <b>产品加速</b>（新品节奏变快）·
+          <b>渠道扩张</b>（渠道动作密集）· <b>资本注入</b>（融资并购）· <b>沉默期</b>（超 90 天无动作）。
+          样本不足时标为<b>低置信</b>，不进「最紧迫」汇总。</p>
       </div>
     </section>
 

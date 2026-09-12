@@ -202,6 +202,8 @@ function renderRivals(){
       if(act === 'del') delRival(i); else addRivalEvent(i);
     };
   });
+  /* 动态增删改后同步刷新情报信号面板（46 模块；未加载时静默跳过） */
+  if(typeof riRender === 'function'){ try{ riRender(); }catch(e){} }
 }
 
 /* ---------- 档案操作 ---------- */
@@ -294,6 +296,10 @@ function exportRivals(){
         var tp = RIVAL_TYPES.filter(function(x){ return x.k === e.type; })[0] || RIVAL_TYPES[7];
         out.push('| ' + e.date + ' | ' + tp.icon + ' ' + tp.n + ' | ' + e.text + ' |');
       });
+      if(typeof riExportBlock === 'function'){
+        var rb = riExportBlock(r);
+        if(rb.length){ out.push(''); rb.forEach(function(x){ out.push(x); }); }
+      }
     } else {
       out.push('*暂无动态记录*');
     }

@@ -825,3 +825,18 @@ function hotspotToPack(id){
   pkOpenModal(pid);
   toast('已带入热点语境');
 }
+
+/* ---------- 暴露到 window：修「动作按钮点了没反应」 ----------
+ * 为什么必须暴露：整个 index.html 的 JS 包在 (function(){ ... })(); 里
+ * （01-core.js 开头 / 16-boot.js 结尾），本文件的函数是闭包内的私有函数。
+ * 内联 onclick="hsLogAdd(...)" 只能访问全局作用域，
+ * 因此这些按钮渲染出来后点击会静默失败——不报错，但什么都不发生。
+ * 其余模块都用 addEventListener 绑定（在闭包内正常），
+ * 全项目只有本文件 5 处 + 43-hotpool.js 1 处用了内联 onclick。
+ * 修法：显式挂到 window。这是最小改动，且不影响闭包内调用。
+ */
+window.hsLogAdd     = hsLogAdd;
+window.hsLogDel     = hsLogDel;
+window.hsFillResult = hsFillResult;
+window.hotspotToPack = hotspotToPack;
+window.hotspotToScan = hotspotToScan;
