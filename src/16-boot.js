@@ -281,6 +281,8 @@ if (typeof renderPacks === 'function') { renderPacks(); renderPackRun(); }
 /* 首页内容包卡片 → 打开独立窗口（39-packwiz）
    必须放在 IIFE 内：pkBindHomeCards 定义在闭包里，外面访问不到 */
 if (typeof pkBindHomeCards === 'function') pkBindHomeCards();
+/* 平台知识预览（47）：绑定投放平台/字数/注入开关的变化刷新 */
+if (typeof pfBindKnow === 'function') pfBindKnow();
 if (state.startTab && state.startTab !== 'guide' && typeof switchTab === 'function') {
   switchTab(state.startTab);
 }

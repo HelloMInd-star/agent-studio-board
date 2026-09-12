@@ -910,6 +910,25 @@ a:hover{text-decoration:underline;}
       <p>生成后可一键送体检。若觉得判错了，点「🚩 报告误报」，
       工具会自动生成反馈文本（含涉及词、工具判定理由、你的原文），你复制后自己发送——
       <b>不会自动上传</b>。</p>
+
+      <h3>平台知识与生成端注入</h3>
+      <p>早期版本在提示词里写「严格遵守该平台的调性、排版习惯与禁忌」——
+      但工具自己并不知道那是什么，等于把问题丢给外部模型去猜。
+      现在每个平台（小红书 / 抖音口播 / 公众号 / B站 / 知乎 / 微博 / 电商详情页）
+      都有明确的<b>调性、开头钩子、专属结构、排版规范、平台禁忌</b>，
+      生成时一并注入，共四层：</p>
+      <div class="mgrid">
+        <div class="mcard"><div class="mcard__t">① 平台知识</div><div class="mcard__d">专属结构模板、排版规范、平台禁忌</div></div>
+        <div class="mcard"><div class="mcard__t">② 品类禁忌</div><div class="mcard__d">来自品牌内核的 10 个品类基准</div></div>
+        <div class="mcard"><div class="mcard__t">③ 品牌调性</div><div class="mcard__d">偏离品类基准的维度转成语气指令</div></div>
+        <div class="mcard"><div class="mcard__t">④ 平台违禁词</div><div class="mcard__d">按平台过滤，最多 12 条</div></div>
+      </div>
+      <div class="mtip"><b>字数的真实含义</b>：同样选「800 字」，在小红书是标准长笔记、
+      在抖音约 2.5–3 分钟口播、在公众号算偏短、在微博已是超长。
+      所以每个平台对同一字数给出不同说明。</div>
+      <div class="mtip"><b>边界</b>：这七份平台画像是编辑性知识，不代替阅读平台最新规则
+      （平台规则变动频繁）。注入可随时用「注入平台知识与品牌约束」开关关闭，
+      关闭后退回通用提示词。</div>
     </section>
 
     <section class="msec" id="charts">

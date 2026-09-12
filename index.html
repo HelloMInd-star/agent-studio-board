@@ -2007,6 +2007,25 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
 .prwtp__t{color:var(--ink)}
 .prwtp b{color:var(--brand)}
 
+/* ===== 内容工厂：平台知识注入区 ===== */
+.pfknow{margin-top:10px;padding:11px 13px;border:1px solid var(--line);
+  border-radius:12px;background:var(--bg-soft)}
+.pfknow__sw{display:flex;align-items:center;gap:7px;font-size:13px;
+  font-weight:600;color:var(--ink);cursor:pointer;user-select:none}
+.pfknow__sw input{width:15px;height:15px;accent-color:var(--brand);cursor:pointer}
+.pfknow__body{margin-top:9px;padding-top:9px;border-top:1px dashed var(--line-strong);
+  display:flex;flex-direction:column;gap:5px}
+.pfknow__hd{font-size:13px;font-weight:700;color:var(--brand);
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pfknow__tag{font-size:11px;font-weight:600;padding:1px 8px;border-radius:20px;
+  background:var(--brand-soft);color:var(--brand-ink);border:1px solid var(--brand-line)}
+.pfknow__line{font-size:12.2px;line-height:1.65;color:var(--text-2)}
+.pfknow__line b{display:inline-block;min-width:46px;color:var(--text);
+  font-weight:600;margin-right:6px}
+@media(max-width:820px){
+  .pfknow__line b{min-width:0;display:block;margin-bottom:1px}
+}
+
 </style>
 </head>
 <body>
@@ -2383,6 +2402,11 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
       </div>
       <label class="f"><span>📚 参考素材（每行一条）</span><textarea id="c_ref" placeholder="竞品爆款标题 / 用户真实评论 / 产品资料"></textarea></label>
       <label class="f"><span>📌 额外要求</span><textarea id="c_extra" placeholder="例：开头 3 秒必须有钩子；结尾带 CTA"></textarea></label>
+      <div class="pfknow">
+        <label class="pfknow__sw"><input type="checkbox" id="c_inject" checked><span>注入平台知识与品牌约束</span></label>
+        <div id="c_pfknow" class="pfknow__body"></div>
+        <p class="hint">开启时注入：平台专属结构模板 / 篇幅的真实含义 / 品类禁忌 / 品牌调性语气 / 该平台高危违禁词。关闭后退回通用提示词（只剩「严格遵守平台调性」这类空话）。</p>
+      </div>
       <label class="f"><span>⚖️ 体检平台（决定叠加哪套平台规则）</span>
         <select id="c_scanpf">
           <option value="__follow__">跟随上方「投放平台」</option>
@@ -6838,27 +6862,113 @@ function genRole(){
   setPreview(txt); pushHistory('营销角色 · ' + (state.curPreset || '自定义'), txt); save();
 }
 
+/* ------------------------------------------------------------
+ * 组装「平台 + 品牌」约束块
+ * ------------------------------------------------------------
+ * 这是内容工厂的核心修正：原本提示词里只有一句「严格遵守该平台的
+ * 调性、排版习惯与禁忌」——工具自己并不知道那是什么，等于让外部
+ * 模型去猜。现在把四层已有资产真正注入：
+ *   ① 平台知识（结构 / 排版 / 篇幅含义 / 禁忌）  ← 47-platform.js
+ *   ② 品类禁忌                                    ← BC_CATS.taboo
+ *   ③ 品牌调性 → 语气指令                          ← 品牌内核 dims
+ *   ④ 平台相关违禁词                               ← WORD_RULES.pf 过滤
+ * 开关：c_inject（默认开）。关掉则退回原来的通用提示词。
+ * ------------------------------------------------------------ */
+function contentConstraints(c){
+  if(typeof PLATFORMS === 'undefined') return '';
+  var pf = pfKnow(c.platform);
+  var pfKey = (typeof PLATFORM_MAP !== 'undefined') ? PLATFORM_MAP[c.platform] : '';
+  var s = '';
+
+  /* ---- ① 平台知识 ---- */
+  if(pf){
+    s += '## 平台适配：' + pf.n + '\n\n';
+    s += '### 调性\n' + pf.tone + '\n\n';
+    if(pf.lenBand && pf.lenBand[c.len]){
+      s += '### 篇幅含义\n' + c.len + ' 在' + pf.n + '意味着：' + pf.lenBand[c.len] + '\n\n';
+    }
+    s += '### 开头\n' + pf.hook + '\n\n';
+    s += '### 结构（按此展开，不要用通用三段式替代）\n';
+    pf.structure.forEach(function(x, i){ s += (i+1) + '. ' + x + '\n'; });
+    s += '\n### 排版\n';
+    pf.format.forEach(function(x){ s += '- ' + x + '\n'; });
+    s += '\n### ' + pf.n + '禁忌\n';
+    pf.taboo.forEach(function(x){ s += '- ⛔ ' + x + '\n'; });
+    s += '\n';
+  }
+
+  /* ---- ②③ 品牌调性与品类禁忌 ---- */
+  var guide = [], taboos = [], catName = '';
+  try{
+    if(typeof tcBase === 'function'){
+      var b = tcBase();
+      if(b && b.mode !== 'off' && b.mode !== 'none'){
+        guide = pfToneGuide(b.dims, b.cat ? b.cat.base : null);
+        if(b.cat){
+          catName = b.cat.n || '';
+          taboos = b.cat.taboo || [];
+        }
+      }
+    }
+  }catch(e){ /* 品牌内核不可用时静默跳过，不影响生成 */ }
+
+  if(guide.length || taboos.length){
+    s += '## 品牌约束\n\n';
+    if(guide.length){
+      s += '### 语气（来自品牌内核，与品类基准偏离较大的维度）\n';
+      guide.forEach(function(g){
+        s += '- ' + g.n + '偏' + g.dir + '：' + g.t + '\n';
+      });
+      s += '\n';
+    }
+    if(taboos.length){
+      s += '### ' + catName + '品类禁忌（违反会伤害品牌资产）\n';
+      taboos.forEach(function(t){ s += '- ⛔ ' + t + '\n'; });
+      s += '\n';
+    }
+  }
+
+  /* ---- ④ 平台相关违禁词 ---- */
+  var risks = pfWordRisks(pfKey, 12);
+  if(risks.length){
+    var pfLabel = (typeof PLATFORM_LABEL !== 'undefined' && PLATFORM_LABEL[pfKey]) ? PLATFORM_LABEL[pfKey] : (pf ? pf.n : '当前平台');
+    s += '## 违禁词提醒\n';
+    s += '以下词条在' + pfLabel + '场景下命中率最高，生成时主动规避（共列出 ' + risks.length + ' 条，非全部）：\n\n';
+    risks.forEach(function(h){
+      var r = h.r;
+      s += '- 「' + r.t + '」（' + pfLvText(r.lv) + '）：' + r.why + ' → 改用：' + (r.fix || '删除') + '（' + (r.law || '—') + '）\n';
+    });
+    s += '\n';
+  }
+  return s;
+}
+
 function genContent(){
   var c = {
     title:$('#c_title').value, kw:$('#c_kw').value, platform:$('#c_platform').value,
     len:$('#c_len').value, style:$('#c_style').value, aud:$('#c_aud').value,
     ref:$('#c_ref').value, extra:$('#c_extra').value
   };
+  var injectEl = $('#c_inject');
+  c.inject = injectEl ? !!injectEl.checked : true;
   state.content = c;
   if(!c.title){ toast('请先填写内容题目'); return; }
   var out = '你是一位深耕「' + c.platform + '」的内容操盘手。\n\n';
   out += '## 任务\n围绕主题《' + c.title + '》创作一篇' + c.len + '左右的' + c.style + '内容。\n\n';
   out += '## 硬性要求\n';
-  out += '- 平台：' + c.platform + '（严格遵守该平台的调性、排版习惯与禁忌）\n';
+  out += '- 平台：' + c.platform + '\n';
   out += '- 篇幅：' + c.len + '\n';
   out += '- 风格：' + c.style + '\n';
   if(c.aud)  out += '- 目标人群：' + c.aud + '\n';
   if(c.kw)   out += '- 必须自然融入关键词：' + c.kw + '\n';
   if(c.extra) out += '- 额外要求：' + c.extra + '\n';
-  out += '\n## 结构建议\n';
-  out += '1. 开头 3 秒内给出强钩子（痛点 / 反常识 / 利益点）\n';
-  out += '2. 中段给出可信证据或具体场景，不要空讲概念\n';
-  out += '3. 结尾给出明确的行动号召或互动引导\n\n';
+  out += '\n';
+
+  if(c.inject){
+    var cons = contentConstraints(c);
+    if(cons) out += cons + '\n';
+  }
+
   if(c.ref){
     out += '## 参考素材\n' + c.ref.split('\n').filter(Boolean).map(function(l){ return '- ' + l; }).join('\n') + '\n\n';
   }
@@ -22904,6 +23014,376 @@ function riExportMd(){
   downloadFile('竞品动态情报信号_' + ymd(new Date()) + '.md', o.join('\n'), 'text/markdown');
 }
 
+/* ===== src/47-platform.js ===== */
+/* ============================================================
+ * 47-platform.js  平台知识库
+ * ------------------------------------------------------------
+ * 解决的问题：内容工厂原本在提示词里写「严格遵守该平台的调性、
+ * 排版习惯与禁忌」——但工具自己根本不知道那是什么，只是把这句话
+ * 丢给外部模型猜。结构建议也是通用三段式，五个平台一字不改。
+ *
+ * 本模块把每个平台的「调性 / 结构 / 排版 / 字数带 / 禁忌」显性化，
+ * 供生成端注入。全部是静态知识，不调用任何外部接口。
+ *
+ * 设计原则：
+ *  1. 只写「换到别的平台就不成立」的东西。通用写作建议不写。
+ *  2. 字数带是差异最大的一块：同样是 800 字，在小红书是标准长文、
+ *     在抖音约 3 分钟口播、在公众号算短文、在微博已是超长文。
+ *  3. 禁忌只写平台规则与生态习惯，不重复 WORD_RULES（那是法律层，
+ *     由 pf 字段按平台过滤后单独注入）。
+ * ============================================================ */
+
+var PLATFORMS = [
+  {
+    k:'xhs', n:'小红书', em:'📕',
+    tone:'第一人称真实体验。口语化但不啰嗦，可以有亲昵称呼但克制。忌官方通稿腔、忌硬广感、忌辞藻堆砌。',
+    /* 字数带的真实含义——这是平台差异最大的一块 */
+    lenBand:{
+      '300 字':'纯种草短笔记。用户刷到即划走，成败几乎全在封面与标题，正文只负责坐实封面承诺。',
+      '800 字':'标准种草长笔记（主流）。有足够的空间讲清楚过程、细节与适用边界。',
+      '1500 字':'深度测评 / 选购攻略。必须有清晰的小标题分层，否则没人看得完。',
+      '3000 字':'合集或长攻略。小红书生态里偏长，除非信息密度极高，否则建议拆分。'
+    },
+    hook:'标题 20 字内，带数字、悬念或具体场景。正文首句必须接住标题的承诺，不要寒暄。',
+    structure:[
+      '标题（20 字内，带数字 / 悬念 / 具体场景）',
+      '开篇：一句痛点或场景切入，让人对号入座',
+      '主体：个人真实体验过程，按时间或使用步骤展开',
+      '细节：成分 / 用法 / 前后对比，要有具体到可验证的信息',
+      '边界：明确说清适合谁、不适合谁（有缺点才可信）',
+      '结尾：轻互动引导，不要硬 CTA'
+    ],
+    format:[
+      '短句为主，每段 1-3 行，多换行',
+      'emoji 用于分段与视觉锚点，全文不超过 8 个',
+      '关键信息用【】或换行强调，不用大段加粗',
+      '文末 3-5 个话题标签，与内容强相关'
+    ],
+    taboo:[
+      '不能写成广告：小红书用户对硬广高度敏感，软广也需真实体验背书',
+      '不能无脑夸：通篇优点没有缺点，反而降低可信度',
+      '不能站外导流（加微信 / 私下联系等）',
+      '不能暗示医疗功效或疗效承诺'
+    ]
+  },
+  {
+    k:'dy', n:'抖音口播', em:'🎵',
+    tone:'口语、短句、节奏快。情绪可以外放，但每句都要推动信息前进，不要废话。',
+    lenBand:{
+      '300 字':'约 1 分钟口播。信息必须极度收敛，只讲一个点。',
+      '800 字':'约 2.5-3 分钟口播。可以有一个完整的转折或反转。',
+      '1500 字':'约 5 分钟口播。需要分章节，且每章都有钩子，否则中途划走。',
+      '3000 字':'约 10 分钟口播。属长视频，需脚本级结构与画面配合。'
+    },
+    hook:'前 3 秒定生死。用反常识、冲突、强利益点或悬念开场，不要用自我介绍开场。',
+    structure:[
+      '钩子（前 3 秒：反常识 / 冲突 / 强利益点 / 悬念）',
+      '抛出问题：把观众的场景痛点挑明',
+      '给答案：直接给结论，不要铺垫',
+      '展开过程或论证（可配演示、对比）',
+      '反转或强化（第二个钩子，防止中途划走）',
+      'CTA：关注 / 评论 / 下单，只给一个动作'
+    ],
+    format:[
+      '按口播节奏断句，一句一行，长句必须拆开',
+      '标注画面提示（如「画面：产品特写」）便于拍摄',
+      '避免书面语、成语、长定语从句——念不顺',
+      '数字与卖点要能口播，不要写「详见下方」'
+    ],
+    taboo:[
+      '前 3 秒没有钩子 = 直接划走，这是抖音最大的失败模式',
+      '长句、书面语，口播念起来不自然',
+      '画面与口播内容无关（会被判定为低质）',
+      '一个视频塞多个卖点，观众一个都记不住'
+    ]
+  },
+  {
+    k:'wx', n:'公众号 / 视频号', em:'💬',
+    tone:'可以深度、可以有观点，允许完整的逻辑链。语调取决于账号人设，但整体比短视频更克制。',
+    lenBand:{
+      '300 字':'短文 / 快讯。公众号里偏短，适合观点卡或活动通知。',
+      '800 字':'标准推文长度（偏短），需要结构紧凑。',
+      '1500 字':'主流深度文。有足够的空间做分层论证与案例。',
+      '3000 字':'长文。需要强结构（小标题 + 摘要），否则完读率极低。'
+    },
+    hook:'标题决定打开率。可用悬念、数字、反差，但必须与正文兑现，标题党会反噬。',
+    structure:[
+      '标题（决定打开率，需与正文兑现）',
+      '引子：场景 / 数据 / 新闻 / 一个具体的人',
+      '分层论证：每个小标题回答一个问题',
+      '案例或数据支撑，避免空讲概念',
+      '结论与观点升华（给读者一个可带走的判断）',
+      'CTA：留言 / 在看 / 关注 / 加社群，视目标而定'
+    ],
+    format:[
+      '小标题分层，段落 3-5 行',
+      '重点句加粗，但通篇加粗等于没加粗',
+      '长文需在开头给出摘要或「本文讲什么」',
+      '预留配图位（标注图注）'
+    ],
+    taboo:[
+      '标题党：标题与正文不符，短期有打开率、长期掉粉',
+      '800 字在公众号算短的——不要用小红书的篇幅感来写公众号',
+      '通篇观点无依据（公众号读者会较真）',
+      '未标注的广告或软文'
+    ]
+  },
+  {
+    k:'bili', n:'B站', em:'📺',
+    tone:'真诚、有梗、不装。UP 主人格化强，观众对"恰饭"宽容但对敷衍零容忍。',
+    lenBand:{
+      '300 字':'约 1-1.5 分钟短片。适合快评或冷知识。',
+      '800 字':'约 3 分钟。标准中视频。',
+      '1500 字':'约 5-6 分钟。需要分章节。',
+      '3000 字':'约 10-12 分钟长视频。B站容忍度高，但要求信息密度。'
+    },
+    hook:'开场要有梗或抛争议点。B站观众容忍慢热，但要求真诚。',
+    structure:[
+      '开场白（人格化，可带梗）',
+      '铺垫：为什么讲这个 / 争议点在哪',
+      '主体：分章节推进，每章有明确信息增量',
+      '高潮或反转',
+      '结尾：总结 + 三连引导',
+      '（恰饭内容）明确标注广告，并保留真实评价'
+    ],
+    format:[
+      '按口播断句，可分章节标注时间戳',
+      '梗与注释可以放括号，便于后期加字幕',
+      '信息密度优先，不要注水'
+    ],
+    taboo:[
+      '恰饭不标注——B站观众对此极为敏感',
+      '敷衍的恰饭（照稿念、不实测）比不接更伤号',
+      '把观众当外行，缺乏信息增量',
+      '抄袭或洗稿（B站社区反抄袭机制强）'
+    ]
+  },
+  {
+    k:'zhihu', n:'知乎', em:'🧠',
+    tone:'理性、有依据、先说结论。情绪化表达会被质疑，观点必须有支撑。',
+    lenBand:{
+      '300 字':'短回答。适合反问、抖机灵或一句话结论 + 简要说明。',
+      '800 字':'标准回答。结论 + 3 个以内论证点。',
+      '1500 字':'深度回答。需要完整的论证结构与数据来源。',
+      '3000 字':'长回答 / 专栏级。需要目录级结构。'
+    },
+    hook:'结论前置。第一句就给出判断，再展开论证。不要铺垫。',
+    structure:[
+      '结论（第一句直接给判断）',
+      '论证：数据 / 逻辑 / 案例，逐条支撑',
+      '边界条件：说明这个结论在什么情况下不成立',
+      '利益相关声明（如涉及自家产品）',
+      '补充：常见反驳与回应'
+    ],
+    format:[
+      '可用分点，但不要通篇罗列',
+      '引用数据需注明来源',
+      '长回答建议加粗关键句，便于跳读'
+    ],
+    taboo:[
+      '无依据的观点——知乎会被追问到体无完肤',
+      '软文不声明利益相关（一旦被发现，答案会被折叠）',
+      '情绪化、站队式表达',
+      '答非所问（先确认理解了问题再回答）'
+    ]
+  },
+  {
+    k:'weibo', n:'微博', em:'🌐',
+    tone:'短、快、情绪驱动、话题导向。适合观点与情绪传播，不适合深度论证。',
+    lenBand:{
+      '300 字':'标准长微博。已经接近读者耐心上限。',
+      '800 字':'超长。需配图或分段，且开头必须极强。',
+      '1500 字':'微博生态里过长，建议改成长图或文章链接。',
+      '3000 字':'不适合直接在微博发布。'
+    },
+    hook:'第一句就是全部。要么给观点，要么给冲突，不留铺垫。',
+    structure:[
+      '一句话观点 / 冲突 / 爆料',
+      '补充事实或截图描述',
+      '表态或反问（引发评论）',
+      '话题标签（1-2 个，蹭已有话题）'
+    ],
+    format:[
+      '段落极短，或直接用换行分隔',
+      '配图描述需标注',
+      '话题标签用 # 包裹，挂到活跃话题上'
+    ],
+    taboo:[
+      '写太长——微博的阅读是碎片式的',
+      '无观点的事实搬运（没有传播力）',
+      '蹭与内容无关的热点话题（会被反感）'
+    ]
+  },
+  {
+    k:'tb', n:'电商详情页', em:'🛒',
+    tone:'卖点明确、证据充分、减少决策阻力。不是"写文章"，是"消除疑虑"。',
+    lenBand:{
+      '300 字':'极简详情页 / 单品卡。只讲核心卖点。',
+      '800 字':'标准详情页。痛点 + 卖点 + 基本证据。',
+      '1500 字':'完整详情页。含参数、场景、对比、保障。',
+      '3000 字':'长详情页 / 品牌页。需要模块化分区。'
+    },
+    hook:'首屏解决"这是什么、对我有什么用"。不要品牌故事开场。',
+    structure:[
+      '痛点开场（用户为什么需要）',
+      '产品是什么（一句话说清）',
+      '核心卖点 3 条（多了记不住，每条配一句利益点）',
+      '证据：检测报告 / 销量 / 真实评价 / 对比',
+      '使用场景与规格参数',
+      '售后保障与退换政策（消除最后一道阻力）'
+    ],
+    format:[
+      '模块化分区，每区一个任务',
+      '卖点用「短标题 + 一句解释」',
+      '参数用表格或列表，不要用段落',
+      '关键承诺（如包退换）要显眼'
+    ],
+    taboo:[
+      '绝对化用语与功效承诺（这是广告法执法最集中的场景）',
+      '虚假销量、虚假评价',
+      '参数含糊，用"约""左右"回避关键信息',
+      '卖点超过 5 个——等于没有卖点'
+    ]
+  }
+];
+
+/* 平台名（中文）→ 知识条目。兼容 PLATFORM_MAP 的同名写法。 */
+function pfKnow(name){
+  if(!name) return null;
+  for(var i=0;i<PLATFORMS.length;i++){
+    var p = PLATFORMS[i];
+    if(p.n === name || p.k === name) return p;
+  }
+  /* 兜底：视频号/朋友圈归属微信生态 */
+  if(name === '视频号' || name === '朋友圈') return pfKnow('公众号 / 视频号');
+  return null;
+}
+
+/* 平台 key（xhs/dy/...）→ 知识条目 */
+function pfKnowByKey(k){
+  if(!k) return null;
+  for(var i=0;i<PLATFORMS.length;i++){ if(PLATFORMS[i].k === k) return PLATFORMS[i]; }
+  return null;
+}
+
+/* ------------------------------------------------------------
+ * 按平台过滤违禁词：WORD_RULES 的 pf 字段标明该词适用哪些平台。
+ *
+ * 注意：不能只取 red/yellow。实际核查发现——平台专属词（有 pf 的）
+ * 全部是 blue 级（平台规则，如小红书「私信我」「加微信」、抖音
+ * 「点小黄车」「手慢无」），而 red/yellow 是法律层、全平台通用。
+ * 只取 red/yellow 会一条平台专属词都拿不到，平台适配就失去意义。
+ *
+ * 因此排序为：平台专属优先 → 其次红线 → 风险 → 平台规则。
+ * 级别含义在提示词里注明（red=违法，blue=不违法但会被限流/处置）。
+ * ------------------------------------------------------------ */
+function pfWordRisks(pfKey, maxN){
+  var max = maxN || 12;
+  var LV_ORDER = { red:0, yellow:1, blue:2 };
+  if(!pfKey || typeof WORD_RULES === 'undefined') return [];
+  var hit = [];
+  for(var i=0;i<WORD_RULES.length;i++){
+    var r = WORD_RULES[i];
+    /* 无 pf = 全平台通用；有 pf = 仅列指定平台 */
+    if(!r.pf || r.pf.length === 0) hit.push({r:r, spec:false});
+    else if(r.pf.indexOf(pfKey) > -1) hit.push({r:r, spec:true});
+  }
+  hit.sort(function(a,b){
+    if(a.spec !== b.spec) return a.spec ? -1 : 1;   /* 平台专属最前 */
+    return (LV_ORDER[a.r.lv] || 9) - (LV_ORDER[b.r.lv] || 9);
+  });
+  return hit.slice(0, max);
+}
+
+/* 级别 → 提示词里的说法 */
+function pfLvText(lv){
+  if(lv === 'red') return '红线（违法）';
+  if(lv === 'yellow') return '风险';
+  return '平台规则（不违法但会被限流/处置）';
+}
+
+/* ------------------------------------------------------------
+ * 品牌调性 → 语气指令
+ * 把 BC_DIMS 的打分（1-5）转成人能执行的语气要求。
+ * 只取与品类基准偏离较大的维度：和基准一致的维度不需要强调。
+ * ------------------------------------------------------------ */
+function pfToneGuide(dims, base){
+  if(!dims) return [];
+  var out = [];
+  var HIGH = { func:'讲清楚它到底解决什么问题，用具体参数和场景，少用形容词',
+    price:'可以谈价值但要克制，不要出现打折促销话术',
+    channel:'强调易得性与便利，降低行动门槛',
+    speed:'强调快、省事、即时见效，用时间短句',
+    sensory:'多写感官细节：质地、气味、触感、声音',
+    service:'语气要有温度，主动替读者想到后续问题',
+    emotion:'先共情再讲产品，允许情绪化表达',
+    belonging:'用圈内语言，制造"我们这一类人"的归属感',
+    status:'语气克制有分寸，不讨好、不叫卖，留白与暗示',
+    values:'把产品放进更大的价值主张里讲，允许有态度' };
+  var LOW = { func:'不必堆参数，重点讲体验与感受',
+    price:'不要强调价格，避免让人先想到便宜',
+    channel:'不要强调随处可买，稀缺性更重要',
+    speed:'不要强调快，慢与过程本身是价值',
+    sensory:'不要堆砌感官形容词',
+    service:'保持距离感，不要过度热情',
+    emotion:'保持理性克制，不要煽情',
+    belonging:'不要强行拉圈子',
+    status:'不要端着，语气要平易',
+    values:'不要上价值，就事论事' };
+  if(typeof BC_DIMS === 'undefined') return out;
+  BC_DIMS.forEach(function(d){
+    var v = dims[d.k];
+    if(v == null) return;
+    var b = (base && base[d.k] != null) ? base[d.k] : 3.0;
+    var diff = v - b;
+    if(diff >= 0.8 && HIGH[d.k]) out.push({ k:d.k, n:d.n, dir:'高', t:HIGH[d.k] });
+    else if(diff <= -0.8 && LOW[d.k]) out.push({ k:d.k, n:d.n, dir:'低', t:LOW[d.k] });
+  });
+  return out;
+}
+
+/* ------------------------------------------------------------
+ * 界面：平台知识预览 + 注入开关
+ * 让用户看见「即将注入什么」，而不是黑箱。
+ * ------------------------------------------------------------ */
+function pfRenderKnow(){
+  var box = document.getElementById('c_pfknow');
+  if(!box) return;
+  var pfEl = document.getElementById('c_platform');
+  var lenEl = document.getElementById('c_len');
+  var name = pfEl ? pfEl.value : '';
+  var len = lenEl ? lenEl.value : '';
+  var p = pfKnow(name);
+  if(!p){ box.innerHTML = ''; return; }
+  var pfKey = (typeof PLATFORM_MAP !== 'undefined') ? PLATFORM_MAP[name] : '';
+  var risks = pfWordRisks(pfKey, 12);
+
+  var h = '';
+  h += '<div class="pfknow__hd">' + (p.em || '') + ' ' + p.n + '　<span class="pfknow__tag">' + (len || '') + '</span></div>';
+  if(p.lenBand && p.lenBand[len]){
+    h += '<div class="pfknow__line"><b>篇幅</b>' + p.lenBand[len] + '</div>';
+  }
+  h += '<div class="pfknow__line"><b>调性</b>' + p.tone + '</div>';
+  h += '<div class="pfknow__line"><b>结构</b>' + p.structure.join(' → ') + '</div>';
+  h += '<div class="pfknow__line"><b>禁忌</b>' + p.taboo.length + ' 条：' + p.taboo[0] + ' 等</div>';
+  if(risks.length){
+    var words = risks.slice(0, 6).map(function(x){ return x.r.t; }).join('、');
+    h += '<div class="pfknow__line"><b>违禁词</b>将注入 ' + risks.length + ' 条高危词：' + words + '…</div>';
+  }
+  box.innerHTML = h;
+}
+
+/* 绑定：平台 / 字数 / 开关变化时刷新预览 */
+function pfBindKnow(){
+  var pfEl = document.getElementById('c_platform');
+  var lenEl = document.getElementById('c_len');
+  var injEl = document.getElementById('c_inject');
+  if(pfEl) pfEl.addEventListener('change', pfRenderKnow);
+  if(lenEl) lenEl.addEventListener('change', pfRenderKnow);
+  if(injEl) injEl.addEventListener('change', pfRenderKnow);
+  pfRenderKnow();
+}
+
 /* ===== src/16-boot.js ===== */
 /* ================= 回填 ================= */
 function restoreAll(){
@@ -23188,6 +23668,8 @@ if (typeof renderPacks === 'function') { renderPacks(); renderPackRun(); }
 /* 首页内容包卡片 → 打开独立窗口（39-packwiz）
    必须放在 IIFE 内：pkBindHomeCards 定义在闭包里，外面访问不到 */
 if (typeof pkBindHomeCards === 'function') pkBindHomeCards();
+/* 平台知识预览（47）：绑定投放平台/字数/注入开关的变化刷新 */
+if (typeof pfBindKnow === 'function') pfBindKnow();
 if (state.startTab && state.startTab !== 'guide' && typeof switchTab === 'function') {
   switchTab(state.startTab);
 }

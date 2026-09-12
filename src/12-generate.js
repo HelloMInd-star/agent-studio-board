@@ -16,27 +16,113 @@ function genRole(){
   setPreview(txt); pushHistory('营销角色 · ' + (state.curPreset || '自定义'), txt); save();
 }
 
+/* ------------------------------------------------------------
+ * 组装「平台 + 品牌」约束块
+ * ------------------------------------------------------------
+ * 这是内容工厂的核心修正：原本提示词里只有一句「严格遵守该平台的
+ * 调性、排版习惯与禁忌」——工具自己并不知道那是什么，等于让外部
+ * 模型去猜。现在把四层已有资产真正注入：
+ *   ① 平台知识（结构 / 排版 / 篇幅含义 / 禁忌）  ← 47-platform.js
+ *   ② 品类禁忌                                    ← BC_CATS.taboo
+ *   ③ 品牌调性 → 语气指令                          ← 品牌内核 dims
+ *   ④ 平台相关违禁词                               ← WORD_RULES.pf 过滤
+ * 开关：c_inject（默认开）。关掉则退回原来的通用提示词。
+ * ------------------------------------------------------------ */
+function contentConstraints(c){
+  if(typeof PLATFORMS === 'undefined') return '';
+  var pf = pfKnow(c.platform);
+  var pfKey = (typeof PLATFORM_MAP !== 'undefined') ? PLATFORM_MAP[c.platform] : '';
+  var s = '';
+
+  /* ---- ① 平台知识 ---- */
+  if(pf){
+    s += '## 平台适配：' + pf.n + '\n\n';
+    s += '### 调性\n' + pf.tone + '\n\n';
+    if(pf.lenBand && pf.lenBand[c.len]){
+      s += '### 篇幅含义\n' + c.len + ' 在' + pf.n + '意味着：' + pf.lenBand[c.len] + '\n\n';
+    }
+    s += '### 开头\n' + pf.hook + '\n\n';
+    s += '### 结构（按此展开，不要用通用三段式替代）\n';
+    pf.structure.forEach(function(x, i){ s += (i+1) + '. ' + x + '\n'; });
+    s += '\n### 排版\n';
+    pf.format.forEach(function(x){ s += '- ' + x + '\n'; });
+    s += '\n### ' + pf.n + '禁忌\n';
+    pf.taboo.forEach(function(x){ s += '- ⛔ ' + x + '\n'; });
+    s += '\n';
+  }
+
+  /* ---- ②③ 品牌调性与品类禁忌 ---- */
+  var guide = [], taboos = [], catName = '';
+  try{
+    if(typeof tcBase === 'function'){
+      var b = tcBase();
+      if(b && b.mode !== 'off' && b.mode !== 'none'){
+        guide = pfToneGuide(b.dims, b.cat ? b.cat.base : null);
+        if(b.cat){
+          catName = b.cat.n || '';
+          taboos = b.cat.taboo || [];
+        }
+      }
+    }
+  }catch(e){ /* 品牌内核不可用时静默跳过，不影响生成 */ }
+
+  if(guide.length || taboos.length){
+    s += '## 品牌约束\n\n';
+    if(guide.length){
+      s += '### 语气（来自品牌内核，与品类基准偏离较大的维度）\n';
+      guide.forEach(function(g){
+        s += '- ' + g.n + '偏' + g.dir + '：' + g.t + '\n';
+      });
+      s += '\n';
+    }
+    if(taboos.length){
+      s += '### ' + catName + '品类禁忌（违反会伤害品牌资产）\n';
+      taboos.forEach(function(t){ s += '- ⛔ ' + t + '\n'; });
+      s += '\n';
+    }
+  }
+
+  /* ---- ④ 平台相关违禁词 ---- */
+  var risks = pfWordRisks(pfKey, 12);
+  if(risks.length){
+    var pfLabel = (typeof PLATFORM_LABEL !== 'undefined' && PLATFORM_LABEL[pfKey]) ? PLATFORM_LABEL[pfKey] : (pf ? pf.n : '当前平台');
+    s += '## 违禁词提醒\n';
+    s += '以下词条在' + pfLabel + '场景下命中率最高，生成时主动规避（共列出 ' + risks.length + ' 条，非全部）：\n\n';
+    risks.forEach(function(h){
+      var r = h.r;
+      s += '- 「' + r.t + '」（' + pfLvText(r.lv) + '）：' + r.why + ' → 改用：' + (r.fix || '删除') + '（' + (r.law || '—') + '）\n';
+    });
+    s += '\n';
+  }
+  return s;
+}
+
 function genContent(){
   var c = {
     title:$('#c_title').value, kw:$('#c_kw').value, platform:$('#c_platform').value,
     len:$('#c_len').value, style:$('#c_style').value, aud:$('#c_aud').value,
     ref:$('#c_ref').value, extra:$('#c_extra').value
   };
+  var injectEl = $('#c_inject');
+  c.inject = injectEl ? !!injectEl.checked : true;
   state.content = c;
   if(!c.title){ toast('请先填写内容题目'); return; }
   var out = '你是一位深耕「' + c.platform + '」的内容操盘手。\n\n';
   out += '## 任务\n围绕主题《' + c.title + '》创作一篇' + c.len + '左右的' + c.style + '内容。\n\n';
   out += '## 硬性要求\n';
-  out += '- 平台：' + c.platform + '（严格遵守该平台的调性、排版习惯与禁忌）\n';
+  out += '- 平台：' + c.platform + '\n';
   out += '- 篇幅：' + c.len + '\n';
   out += '- 风格：' + c.style + '\n';
   if(c.aud)  out += '- 目标人群：' + c.aud + '\n';
   if(c.kw)   out += '- 必须自然融入关键词：' + c.kw + '\n';
   if(c.extra) out += '- 额外要求：' + c.extra + '\n';
-  out += '\n## 结构建议\n';
-  out += '1. 开头 3 秒内给出强钩子（痛点 / 反常识 / 利益点）\n';
-  out += '2. 中段给出可信证据或具体场景，不要空讲概念\n';
-  out += '3. 结尾给出明确的行动号召或互动引导\n\n';
+  out += '\n';
+
+  if(c.inject){
+    var cons = contentConstraints(c);
+    if(cons) out += cons + '\n';
+  }
+
   if(c.ref){
     out += '## 参考素材\n' + c.ref.split('\n').filter(Boolean).map(function(l){ return '- ' + l; }).join('\n') + '\n\n';
   }

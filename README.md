@@ -653,7 +653,7 @@ A standalone 12-chapter document, opened from the top bar of every page:
 | 2 | Verified numbers — every count with how it was measured |
 | 3 | Boundaries: 7 things deliberately not built, 4 that were re-framed |
 | 4 | Six-layer architecture, plus an honest answer to "is this an agent?" |
-| 5 | The 45 source files grouped by layer |
+| 5 | The 46 source files grouped by layer |
 | 6 | Core algorithms (positional dimensions, the tone-0 case, sample-size guards) |
 | 7 | All 23 tabs / 6 groups |
 | 8 | Data design (`localStorage` shape, per-module keys) |
@@ -1040,6 +1040,49 @@ renders a hand-off bar with one-click 带入 into 用户感知价值. Previously
 two modules were severed: research could compute the optimal price and pricing
 still asked you to type a perceived value from memory.
 
+### 3.28 Content factory: platform knowledge and generation-side injection (`47-platform.js`, `12-generate.js`)
+
+The content generator used to emit this line:
+
+> 平台：小红书（严格遵守该平台的调性、排版习惯与禁忌）
+
+which was empty — the tool had no idea what that tone, layout or those taboos
+were, so it handed the sentence to an external model and let the model guess.
+The structure advice that followed was a generic three-paragraph shape
+identical for every platform.
+
+`47-platform.js` makes the missing knowledge explicit for 7 platforms
+(小红书 / 抖音口播 / 公众号 / B站 / 知乎 / 微博 / 电商详情页): tone, opening
+hook, a platform-specific structure, formatting rules, and platform taboos.
+Generation now injects four layers, all from assets that already existed but
+were never wired to generation:
+
+1. **Platform knowledge** — structure, formatting, and the *real meaning of
+   the requested length*.
+2. **Category taboos** — from `BC_CATS.taboo` in the brand core.
+3. **Brand tone → wording instructions** — from the brand core's dimensions.
+4. **Platform-filtered banned words** — from `WORD_RULES`.
+
+**The length band is where platforms differ most.** The same `800 字` means
+standard long-form on 小红书, roughly 2.5–3 minutes of spoken script on 抖音,
+a short article on 公众号, and is already over-long on 微博. One shared
+length dropdown for all platforms was wrong; each platform now says what the
+number actually implies.
+
+**A bug found while building this.** `pfWordRisks()` originally kept only
+`red`/`yellow` (legal-tier) words. Checking the data showed that every
+platform-specific entry is `blue` (platform rule — 小红书's 私信我 / 加微信,
+抖音's 点小黄车 / 手慢无), while `red`/`yellow` are legal and platform-agnostic.
+Filtering to `red`/`yellow` therefore returned *zero* platform-specific words
+and defeated the point. Ordering is now platform-specific first, then
+red → yellow → blue, and the prompt labels each tier (red = illegal, blue =
+not illegal but will get you throttled).
+
+**Boundaries.** The seven profiles are editorial knowledge, not a substitute
+for reading each platform's current rules — platforms change them often. The
+injection is toggleable (`c_inject`), and the preview panel shows exactly what
+will be injected rather than doing it invisibly.
+
 ---
 
 ## 4. Data
@@ -1065,11 +1108,12 @@ landing page together.
 | Modules | **25** | 24 tabs + brand tone constraint (embedded, not a tab) |
 | Deterministic calculations | **40** | 31 `calc*` functions + 9 non-`calc` cores (`analyzeBrandCore`, `bcAnalyze`, `scoreContent`, `tcAnalyze`, `scoreTitles`, `auditAssetsCalc`, `analyzeTimelineCalc`, `riScanRival`, `judgeElasticity`) |
 | Orchestrable in workflows | **17** | `LOCAL_TOOLS` indices 11–27 |
-| Source files | **45** | `src/*.js`, merged by `build.py` |
+| Source files | **46** | `src/*.js`, merged by `build.py` |
+| Platforms in content factory | **7** | `PLATFORMS` in `src/47-platform.js` — each with tone / structure / length-band / taboos |
 | Frameworks mapped | **70** | `src/27-toolmap.js` — 27 done / 4 planned / 39 reference-only |
 | Graphic skeletons | **25** | distinct `s:` values in `src/29-framecfg.js` |
 | Chart types | **5** | `CHART_TYPES` in `src/07-charts.js` |
-| Manual chapters | **33** | `<h2>` in `manual.html` (22 carry a user-flow strip) |
+| Manual chapters | **35** | `<h2>` in `manual.html` (22 carry a user-flow strip) |
 | Deployed artifact | **~1.0 MB** | `index.html`, single file, zero runtime dependencies |
 
 Two of these are worth defending explicitly:

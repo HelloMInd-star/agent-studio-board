@@ -1999,3 +1999,22 @@ select[multiple]{min-height:150px;padding:6px;border:1px solid var(--line);borde
 .prwtp--empty{background:transparent;border-style:dashed}
 .prwtp__t{color:var(--ink)}
 .prwtp b{color:var(--brand)}
+
+/* ===== 内容工厂：平台知识注入区 ===== */
+.pfknow{margin-top:10px;padding:11px 13px;border:1px solid var(--line);
+  border-radius:12px;background:var(--bg-soft)}
+.pfknow__sw{display:flex;align-items:center;gap:7px;font-size:13px;
+  font-weight:600;color:var(--ink);cursor:pointer;user-select:none}
+.pfknow__sw input{width:15px;height:15px;accent-color:var(--brand);cursor:pointer}
+.pfknow__body{margin-top:9px;padding-top:9px;border-top:1px dashed var(--line-strong);
+  display:flex;flex-direction:column;gap:5px}
+.pfknow__hd{font-size:13px;font-weight:700;color:var(--brand);
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pfknow__tag{font-size:11px;font-weight:600;padding:1px 8px;border-radius:20px;
+  background:var(--brand-soft);color:var(--brand-ink);border:1px solid var(--brand-line)}
+.pfknow__line{font-size:12.2px;line-height:1.65;color:var(--text-2)}
+.pfknow__line b{display:inline-block;min-width:46px;color:var(--text);
+  font-weight:600;margin-right:6px}
+@media(max-width:820px){
+  .pfknow__line b{min-width:0;display:block;margin-bottom:1px}
+}
